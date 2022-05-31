@@ -1,0 +1,10 @@
+node_modules
+cdk.out
+cdk.context.json
+.env*
+.DS_Store
+yarn-error.log
+query.ts
+.editorconfig
+.eslintcache
+.dist

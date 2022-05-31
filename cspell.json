@@ -1,0 +1,30 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "amazoncognito",
+    "amazonses",
+    "andiago",
+    "apigatewayv2",
+    "barcodes",
+    "certificatemanager",
+    "cognitoidentityserviceprovider",
+    "datalake",
+    "domainkey",
+    "esbuild",
+    "eventbridge",
+    "fullname",
+    "ingestions",
+    "invisipay",
+    "kinesisfirehose",
+    "nosniff",
+    "passwordless",
+    "Schemy",
+    "sesv",
+    "sinapsis",
+    "spreedly",
+    "timestream",
+    "wafv2"
+  ],
+  "ignorePaths": ["*/node_modules/**", "*/cdk.out/**"]
+}

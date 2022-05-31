@@ -1,0 +1,37 @@
+{
+  "name": "@sinapsis-co/cloud-components",
+  "description": "Developer utils",
+  "author": "sinapsis.co",
+  "license": "MIT",
+  "repository": "git://github.com/sinapsis-co/co.sinapsis.cloud-components.git",
+  "private": true,
+  "workspaces": [
+    "platform",
+    "infra"
+  ],
+  "scripts": {
+    "verify": "npx tsc --pretty --noEmit && npx eslint . --ext .ts && npx prettier -c . && npx cspell '**/*.ts'",
+    "release": "bash script/release.bash"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.2",
+    "cspell": "^5.13.3",
+    "eslint": "^7.30.0",
+    "husky": "^7.0.4",
+    "lint-staged": ">=10",
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.5"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "tsc --pretty --noEmit --esModuleInterop",
+      "eslint . --ext .ts",
+      "prettier --write",
+      "npx cspell '**/*.ts'"
+    ],
+    "*.json": "prettier --write",
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
+  }
+}
