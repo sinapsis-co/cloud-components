@@ -6,6 +6,7 @@ import { PrivateBucket, PrivateBucketParams } from './private-bucket';
 
 export type AssetBucketParams = PrivateBucketParams & {
   folder?: string;
+  prefix?: string;
 };
 
 export class AssetBucket extends PrivateBucket {
@@ -16,6 +17,7 @@ export class AssetBucket extends PrivateBucket {
       new BucketDeployment(this, 'DeployBucket', {
         sources: [Source.asset(params.folder)],
         destinationBucket: this.bucket,
+        destinationKeyPrefix: params.prefix,
       });
     }
   }
