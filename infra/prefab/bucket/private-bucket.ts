@@ -36,11 +36,11 @@ export class PrivateBucket extends Construct {
       ...params.bucketProps,
     });
   }
-
-  public addReaderFunction(variableName = 'BUCKET_NAME') {
-    return (lambdaFunction: NodejsFunction): void => {
-      lambdaFunction.addEnvironment(variableName, this.bucket.bucketName);
-      this.bucket.grantRead(lambdaFunction);
+  // (x: number): (y: number) => number
+  public modifierBucketReader(variableName = 'BUCKET_NAME'): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda.addEnvironment(variableName, this.bucket.bucketName);
+      this.bucket.grantRead(lambda);
     };
   }
   public addWriterFunction(lambdaFunction: NodejsFunction, variableName = 'BUCKET_NAME'): void {
