@@ -40,6 +40,8 @@ export const bootstrap = async <
     const command = `npx cdk bootstrap ${serviceAccount}/${region} \
       --require-approval='never' \
       --trust ${rootAccount} \
+      --trust-for-lookup ${rootAccount} \
+      --no-bootstrap-customer-key \
       --require-approval='never' \
       --cloudformation-execution-policies=arn:aws:iam::aws:policy/AdministratorAccess \
       --context env=${envNameInput} \

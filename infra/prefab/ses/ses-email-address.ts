@@ -4,18 +4,17 @@ import { AwsCustomResource, PhysicalResourceId } from 'aws-cdk-lib/custom-resour
 import { getLogicalName } from '../../common/naming/get-logical-name';
 import { BaseServiceProps } from '../../common/synth/props-types';
 import { getShortResourceName } from '../../common/naming/get-resource-name';
-import { generateSesPolicyForCustomResource, SesDomain } from './ses-domain';
+import { generateSesPolicyForCustomResource } from './ses-domain';
 
 export type SesEmailAddressParams = {
   emailSender: string;
-  sesDomain?: SesDomain;
 };
 
 export class SesEmailAddress extends Construct {
   constructor(scope: Construct, props: BaseServiceProps, params: SesEmailAddressParams) {
     super(scope, getLogicalName(SesEmailAddress.name));
 
-    const verifyEmailAddress = new AwsCustomResource(this, 'VerifyEmailAddressIdentity', {
+    new AwsCustomResource(this, 'VerifyEmailAddressIdentity', {
       functionName: getShortResourceName('ses-verification', props),
       onCreate: {
         service: 'SES',
@@ -34,9 +33,5 @@ export class SesEmailAddress extends Construct {
       },
       policy: generateSesPolicyForCustomResource('VerifyEmailIdentity', 'DeleteIdentity'),
     });
-
-    if (params.sesDomain) {
-      verifyEmailAddress.node.addDependency(params.sesDomain);
-    }
   }
 }
