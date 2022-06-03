@@ -1,0 +1,20 @@
+export type NotificationTemplateKeys = {
+  name: string;
+  payload: Record<string, string>;
+};
+
+export type NotificationTemplate<keys extends NotificationTemplateKeys = NotificationTemplateKeys> = {
+  name: keys['name'];
+  payload: keys['payload'];
+};
+
+export type NotificationEmailAttachment = {
+  key: string;
+  filename: string;
+};
+
+export type NotificationMessageN<Template extends NotificationTemplate = NotificationTemplate> = {
+  template: Template;
+  addressTo: string;
+  attachments?: NotificationEmailAttachment[];
+};
