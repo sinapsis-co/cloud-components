@@ -26,14 +26,16 @@ export class RuntimeSecret extends Construct {
     });
   }
 
-  public addReaderFunction(lambdaFunction: NodejsFunction): void {
-    lambdaFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['secretsmanager:GetSecretValue', 'secretsmanager:DescribeSecret'],
-        resources: [this.secret.ref],
-      })
-    );
-    lambdaFunction.addEnvironment(this.secretName, this.secret.ref);
+  public readerModifier(): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda.addToRolePolicy(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['secretsmanager:GetSecretValue', 'secretsmanager:DescribeSecret'],
+          resources: [this.secret.ref],
+        })
+      );
+      lambda.addEnvironment(this.secretName, this.secret.ref);
+    };
   }
 }

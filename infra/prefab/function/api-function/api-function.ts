@@ -24,6 +24,7 @@ export type ApiHandlerParams = NodejsFunctionProps & {
   isPublic?: ApiConfig<ApiInterface>['isPublic'];
   environment?: Record<string, string>;
   tablePermission?: TablePermission;
+  modifiers?: ((lambda: NodejsFunction) => any)[];
 };
 
 export type ApiFunctionParams = ApiHandlerParams & {

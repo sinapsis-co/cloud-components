@@ -17,6 +17,7 @@ export type BucketHandlerProps = NodejsFunctionProps & {
   name: string;
   environment?: Record<string, string>;
   tablePermission?: TablePermission;
+  modifiers?: ((lambda: NodejsFunction) => any)[];
 };
 
 export type BucketFunctionProps = BucketHandlerProps & {
@@ -44,6 +45,8 @@ export class BucketFunction extends Construct {
       environment: params.environment || {},
       ...params,
     });
+
+    params.modifiers?.map((fn) => fn(this.lambdaFunction));
 
     const s3PutEventSource = new S3EventSource(params.bucket, {
       events: params.eventTypes || [EventType.OBJECT_CREATED_PUT],

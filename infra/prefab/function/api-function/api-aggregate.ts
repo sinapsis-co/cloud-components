@@ -34,6 +34,7 @@ export type ApiAggregateParams<HandlerName extends string = string> = {
   authPool?: ApiAuthPoolParams;
   tableOptions?: ServiceTableParams;
   environment?: Record<string, string>;
+  modifiers?: ((lambda: NodejsFunction) => any)[];
   skipTable?: true;
   eventBus?: CustomEventBusParams;
   compiled?: true;
@@ -70,6 +71,7 @@ export class ApiAggregate<HandlerName extends string = string> extends Construct
         table: this.table,
         api: this.api,
         authorizer: this.authorizer,
+        modifiers: [...(params.modifiers || []), ...(params.handlers[handler].modifiers || [])],
         environment: { ...params.environment, ...params.handlers[handler].environment },
       }).lambdaFunction;
     });

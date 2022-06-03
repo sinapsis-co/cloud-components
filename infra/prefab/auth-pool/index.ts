@@ -101,21 +101,23 @@ export class AuthPool extends Construct {
     };
   }
 
-  public addCognitoAdminFunction(lambdaFunction: NodejsFunction): void {
-    lambdaFunction
-      .addEnvironment('USER_POOL_ID', this.userPool.userPoolId)
-      .addEnvironment('USER_POOL_CLIENT_ID', this.userPoolClient.userPoolClientId)
-      .role?.addToPrincipalPolicy(
-        new PolicyStatement({
-          actions: [
-            'cognito-idp:SignUp',
-            'cognito-idp:InitiateAuth',
-            'cognito-idp:AdminConfirmSignUp',
-            'cognito-idp:AdminUpdateUserAttributes',
-            'cognito-idp:AdminDeleteUser',
-          ],
-          resources: ['*'],
-        })
-      );
+  public poolAdminModifier(): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda
+        .addEnvironment('USER_POOL_ID', this.userPool.userPoolId)
+        .addEnvironment('USER_POOL_CLIENT_ID', this.userPoolClient.userPoolClientId)
+        .role?.addToPrincipalPolicy(
+          new PolicyStatement({
+            actions: [
+              'cognito-idp:SignUp',
+              'cognito-idp:InitiateAuth',
+              'cognito-idp:AdminConfirmSignUp',
+              'cognito-idp:AdminUpdateUserAttributes',
+              'cognito-idp:AdminDeleteUser',
+            ],
+            resources: ['*'],
+          })
+        );
+    };
   }
 }

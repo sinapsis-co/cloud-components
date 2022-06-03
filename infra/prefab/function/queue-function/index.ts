@@ -22,6 +22,7 @@ export type QueueHandlerProps = NodejsFunctionProps & {
   batchWindow?: Duration;
   environment?: Record<string, string>;
   tablePermission?: TablePermission;
+  modifiers?: ((lambda: NodejsFunction) => any)[];
 };
 
 export type QueueFunctionProps = QueueHandlerProps & {
@@ -49,6 +50,8 @@ export class QueueFunction extends Construct {
       environment: params.environment || {},
       ...params,
     });
+
+    params.modifiers?.map((fn) => fn(this.lambdaFunction));
 
     this.lambdaFunction.addEventSource(
       new SqsEventSource(this.customQueue.queue, {

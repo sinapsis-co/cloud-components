@@ -5,6 +5,7 @@ import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { getResourceName } from '../../common/naming/get-resource-name';
 import { BaseServiceProps } from '../../common/synth/props-types';
 import { getLogicalName } from '../../common/naming/get-logical-name';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 
 export type CustomQueueParams = {
   name: string;
@@ -38,5 +39,12 @@ export class CustomQueue extends Construct {
         maxReceiveCount: params.maxRetries || 3,
       },
     });
+  }
+
+  public writerModifier(variableName = 'DEST_QUEUE'): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda.addEnvironment(variableName, this.queue.queueUrl);
+      this.queue.grantSendMessages(lambda);
+    };
   }
 }

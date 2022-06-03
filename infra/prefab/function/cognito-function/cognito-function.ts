@@ -17,7 +17,7 @@ export type CognitoHandlerParams = NodejsFunctionProps & {
   operation: UserPoolOperation;
   environment?: Record<string, string>;
   tablePermission?: TablePermission;
-  modifiers?: ((lambda: NodejsFunction) => void)[];
+  modifiers?: ((lambda: NodejsFunction) => any)[];
 };
 
 export type CognitoFunctionParams = CognitoHandlerParams & {
@@ -43,6 +43,7 @@ export class CognitoFunction extends Construct {
       environment: params.environment || {},
       ...params,
     });
+
     params.modifiers?.map((fn) => fn(this.lambdaFunction));
 
     params.userPool.addTrigger(params.operation, this.lambdaFunction);

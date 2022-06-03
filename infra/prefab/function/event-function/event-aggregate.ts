@@ -12,6 +12,7 @@ export type EventAggregateParams<HandlerName extends string = string> = {
   handlers: Record<HandlerName, EventHandlerProps>;
   eventBus: CustomEventBusParams;
   baseFunctionFolder: string;
+  modifiers?: ((lambda: NodejsFunction) => any)[];
   environment?: Record<string, string>;
   table?: Table;
   tablePermission?: TablePermission;
@@ -28,6 +29,7 @@ export class EventAggregate<HandlerName extends string = string> extends Constru
       this.handlers[handler] = new EventFunction(this, props, {
         ...params,
         ...params.handlers[handler],
+        modifiers: [...(params.modifiers || []), ...(params.handlers[handler].modifiers || [])],
         environment: { ...params.environment, ...params.handlers[handler].environment },
       }).lambdaFunction;
     });

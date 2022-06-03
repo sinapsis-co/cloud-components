@@ -11,6 +11,7 @@ import { CustomEventBusParams } from '../../../services/custom-event-bus';
 export type CronAggregateParams<HandlerName extends string = string> = {
   handlers: Record<HandlerName, CronHandlerProps>;
   baseFunctionFolder: string;
+  modifiers?: ((lambda: NodejsFunction) => any)[];
   environment?: Record<string, string>;
   eventBus?: CustomEventBusParams;
   table?: Table;
@@ -28,6 +29,7 @@ export class CronAggregate<HandlerName extends string = string> extends Construc
       this.handlers[handler] = new CronFunction(this, props, {
         ...params,
         ...params.handlers[handler],
+        modifiers: [...(params.modifiers || []), ...(params.handlers[handler].modifiers || [])],
         environment: { ...params.environment, ...params.handlers[handler].environment },
       }).lambdaFunction;
     });

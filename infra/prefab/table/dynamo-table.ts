@@ -34,6 +34,31 @@ export class ServiceTable extends Construct {
     if (props.envName === 'prod') this.table.applyRemovalPolicy(RemovalPolicy.RETAIN);
   }
 
+  public readerModifier(variableName = 'TABLE'): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda.addEnvironment(variableName, this.table.tableName);
+      this.table.grantReadData(lambda);
+    };
+  }
+  public writerModifier(variableName = 'TABLE'): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda.addEnvironment(variableName, this.table.tableName);
+      this.table.grantWriteData(lambda);
+    };
+  }
+  public tableModifier(tablePermission: TablePermission, variableName = 'TABLE'): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda.addEnvironment(variableName, this.table.tableName);
+      if (tablePermission === 'none') return;
+      const permissionMapper = {
+        read: () => this.table.grantReadData(lambda),
+        write: () => this.table.grantWriteData(lambda),
+        readWrite: () => this.table.grantReadWriteData(lambda),
+      };
+      permissionMapper[tablePermission]();
+    };
+  }
+
   public static addTable(
     lambdaFunction: NodejsFunction,
     table?: Table,

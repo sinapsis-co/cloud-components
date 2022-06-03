@@ -36,20 +36,24 @@ export class PrivateBucket extends Construct {
       ...params.bucketProps,
     });
   }
-  // (x: number): (y: number) => number
-  public modifierBucketReader(variableName = 'BUCKET_NAME'): (lambda: NodejsFunction) => void {
+
+  public readerModifier(variableName = 'BUCKET_NAME'): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
       lambda.addEnvironment(variableName, this.bucket.bucketName);
       this.bucket.grantRead(lambda);
     };
   }
-  public addWriterFunction(lambdaFunction: NodejsFunction, variableName = 'BUCKET_NAME'): void {
-    lambdaFunction.addEnvironment(variableName, this.bucket.bucketName);
-    this.bucket.grantWrite(lambdaFunction);
+  public writerModifier(variableName = 'BUCKET_NAME'): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda.addEnvironment(variableName, this.bucket.bucketName);
+      this.bucket.grantWrite(lambda);
+    };
   }
-  public addDeleteFunction(lambdaFunction: NodejsFunction, variableName = 'BUCKET_NAME'): void {
-    lambdaFunction.addEnvironment(variableName, this.bucket.bucketName);
-    this.bucket.grantDelete(lambdaFunction);
+  public deleteModifier(variableName = 'BUCKET_NAME'): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda.addEnvironment(variableName, this.bucket.bucketName);
+      this.bucket.grantDelete(lambda);
+    };
   }
 
   public addTopicNotification(params: {

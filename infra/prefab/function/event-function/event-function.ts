@@ -19,6 +19,7 @@ export type EventHandlerProps = NodejsFunctionProps & {
   eventConfig: EventConfig[];
   environment?: Record<string, string>;
   tablePermission?: TablePermission;
+  modifiers?: ((lambda: NodejsFunction) => any)[];
 };
 
 export type EventFunctionProps = EventHandlerProps & {
@@ -44,6 +45,8 @@ export class EventFunction extends Construct {
       environment: params.environment || {},
       ...params,
     });
+
+    params.modifiers?.map((fn) => fn(this.lambdaFunction));
 
     const source = params.eventConfig.map((e) => e.source);
     const detailType = params.eventConfig.map((e) => e.name);

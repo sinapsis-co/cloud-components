@@ -42,40 +42,45 @@ export class TimestreamTable extends Construct {
     if (props.envName === 'prod') this.table.applyRemovalPolicy(RemovalPolicy.RETAIN);
   }
 
-  addWriterFunction(lambdaFunction: NodejsFunction): void {
-    lambdaFunction.addEnvironment('TIMESTREAM_TABLE', this.table.tableName!);
-    lambdaFunction.addEnvironment('TIMESTREAM_DB', this.database.databaseName!);
-    lambdaFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['timestream:WriteRecords'],
-        resources: [this.table.attrArn],
-      })
-    );
-    lambdaFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['timestream:DescribeEndpoints'],
-        resources: ['*'],
-      })
-    );
+  public writerModifier(): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda.addEnvironment('TIMESTREAM_TABLE', this.table.tableName!);
+      lambda.addEnvironment('TIMESTREAM_DB', this.database.databaseName!);
+      lambda.addToRolePolicy(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['timestream:WriteRecords'],
+          resources: [this.table.attrArn],
+        })
+      );
+      lambda.addToRolePolicy(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['timestream:DescribeEndpoints'],
+          resources: ['*'],
+        })
+      );
+    };
   }
-  addReaderFunction(lambdaFunction: NodejsFunction): void {
-    lambdaFunction.addEnvironment('TIMESTREAM_TABLE', this.table.tableName!);
-    lambdaFunction.addEnvironment('TIMESTREAM_DB', this.database.databaseName!);
-    lambdaFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['timestream:Select', 'timestream:SelectValues'],
-        resources: [this.table.attrArn],
-      })
-    );
-    lambdaFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['timestream:DescribeEndpoints'],
-        resources: ['*'],
-      })
-    );
+
+  public readerModifier(): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda.addEnvironment('TIMESTREAM_TABLE', this.table.tableName!);
+      lambda.addEnvironment('TIMESTREAM_DB', this.database.databaseName!);
+      lambda.addToRolePolicy(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['timestream:Select', 'timestream:SelectValues'],
+          resources: [this.table.attrArn],
+        })
+      );
+      lambda.addToRolePolicy(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['timestream:DescribeEndpoints'],
+          resources: ['*'],
+        })
+      );
+    };
   }
 }

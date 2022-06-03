@@ -18,6 +18,7 @@ export type CronHandlerProps = NodejsFunctionProps & {
   cronOptions: CronOptions;
   environment?: Record<string, string>;
   tablePermission?: TablePermission;
+  modifiers?: ((lambda: NodejsFunction) => any)[];
 };
 
 export type CronFunctionProps = CronHandlerProps & {
@@ -42,6 +43,8 @@ export class CronFunction extends Construct {
       environment: params.environment || {},
       ...params,
     });
+
+    params.modifiers?.map((fn) => fn(this.lambdaFunction));
 
     new Rule(scope, 'EventProcessorRule', {
       schedule: Schedule.cron(params.cronOptions),

@@ -13,6 +13,7 @@ export type CognitoAggregateParams<HandlerName extends string = string> = {
   handlers: Record<HandlerName, CognitoHandlerParams>;
   baseFunctionFolder: string;
   userPool: UserPool;
+  modifiers?: ((lambda: NodejsFunction) => any)[];
   environment?: Record<string, string>;
   eventBus?: CustomEventBusParams;
   table?: Table;
@@ -30,6 +31,7 @@ export class CognitoAggregate<HandlerName extends string = string> extends Const
       this.handlers[handler] = new CognitoFunction(this, props, {
         ...params,
         ...params.handlers[handler],
+        modifiers: [...(params.modifiers || []), ...(params.handlers[handler].modifiers || [])],
         environment: { ...params.environment, ...params.handlers[handler].environment },
       }).lambdaFunction;
     });

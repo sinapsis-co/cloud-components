@@ -22,11 +22,15 @@ export class CustomTopic extends Construct {
       topicName: getResourceName(params.name, props),
     });
   }
+
   public addQueueSubs(queue: Queue): void {
     this.topic.addSubscription(new SqsSubscription(queue));
   }
-  public addWriterFunction(lambdaFunction: NodejsFunction, envName = 'DEST_TOPIC'): void {
-    lambdaFunction.addEnvironment(envName, this.topic.topicArn);
-    this.topic.grantPublish(lambdaFunction);
+
+  public writerModifier(variableName = 'DEST_TOPIC'): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda.addEnvironment(variableName, this.topic.topicArn);
+      this.topic.grantPublish(lambda);
+    };
   }
 }
