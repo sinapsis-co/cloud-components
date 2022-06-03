@@ -1,10 +1,10 @@
 export type NotificationTemplateKeys = {
-  name: string;
+  templateName: string;
   payload: Record<string, string>;
 };
 
 export type NotificationTemplate<keys extends NotificationTemplateKeys = NotificationTemplateKeys> = {
-  name: keys['name'];
+  templateName: keys['templateName'];
   payload: keys['payload'];
 };
 
