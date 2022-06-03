@@ -13,7 +13,7 @@ export type NotificationEmailAttachment = {
   filename: string;
 };
 
-export type NotificationMessageN<Template extends NotificationTemplate = NotificationTemplate> = {
+export type NotificationMessage<Template extends NotificationTemplate = NotificationTemplate> = {
   template: Template;
   addressTo: string;
   attachments?: NotificationEmailAttachment[];
