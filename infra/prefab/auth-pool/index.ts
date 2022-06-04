@@ -101,23 +101,47 @@ export class AuthPool extends Construct {
     };
   }
 
-  public poolAdminModifier(): (lambda: NodejsFunction) => void {
+  public static postConfirmationModifier(): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda.role?.addToPrincipalPolicy(
+        new PolicyStatement({
+          actions: ['cognito-idp:AdminUpdateUserAttributes'],
+          resources: ['*'],
+        })
+      );
+    };
+  }
+  public userOpsAdminModifier(): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
       lambda
         .addEnvironment('USER_POOL_ID', this.userPool.userPoolId)
         .addEnvironment('USER_POOL_CLIENT_ID', this.userPoolClient.userPoolClientId)
         .role?.addToPrincipalPolicy(
           new PolicyStatement({
-            actions: [
-              'cognito-idp:SignUp',
-              'cognito-idp:InitiateAuth',
-              'cognito-idp:AdminConfirmSignUp',
-              'cognito-idp:AdminUpdateUserAttributes',
-              'cognito-idp:AdminDeleteUser',
-            ],
+            actions: ['cognito-idp:AdminConfirmSignUp', 'cognito-idp:SignUp', 'cognito-idp:InitiateAuth'],
             resources: ['*'],
           })
         );
+    };
+  }
+  public poolAdminDeleteModifier(): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda.addEnvironment('USER_POOL_ID', this.userPool.userPoolId).role?.addToPrincipalPolicy(
+        new PolicyStatement({
+          actions: ['cognito-idp:AdminDeleteUser'],
+          resources: ['*'],
+        })
+      );
+    };
+  }
+  public poolAdminUpdateModifier(): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda.addEnvironment('USER_POOL_ID', this.userPool.userPoolId).role?.addToPrincipalPolicy(
+        new PolicyStatement({
+          actions: ['cognito-idp:AdminUpdateUserAttributes'],
+          resources: ['*'],
+        })
+      );
     };
   }
 }
