@@ -34,7 +34,7 @@ export class CustomTopic extends Construct {
       this.topic.grantPublish(lambda);
     };
   }
-  public smsSenderModifier(): (lambda: NodejsFunction) => void {
+  public static smsSenderModifier(): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
       lambda.addToRolePolicy(new PolicyStatement({ effect: Effect.ALLOW, actions: ['sns:Publish'], resources: ['*'] }));
     };

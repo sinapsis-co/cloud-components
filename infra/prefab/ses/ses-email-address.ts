@@ -37,7 +37,7 @@ export class SesEmailAddress extends Construct {
     });
   }
 
-  public emailSenderModifier(): (lambda: NodejsFunction) => void {
+  public static emailSenderModifier(): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
       lambda.addToRolePolicy(
         new PolicyStatement({ effect: Effect.ALLOW, actions: ['ses:SendRawEmail'], resources: ['*'] })
