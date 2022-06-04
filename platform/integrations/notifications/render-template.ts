@@ -7,7 +7,7 @@ const s3 = new S3();
 export const renderEmailTemplate = async <Template extends NotificationTemplate = NotificationTemplate>(
   bucketName: string,
   attributes: {
-    templateName: Template['name'];
+    templateName: Template['templateName'];
     payload: Template['payload'];
   }
 ): Promise<{ subject: string; body: string }> => {
