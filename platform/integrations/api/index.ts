@@ -1,6 +1,5 @@
 import fetch from 'node-fetch';
-import { ApiConfig } from '../../catalog/api/api-config';
-import { ApiInterfaceExtended, ApiInterface } from '../../catalog/api/api-interface';
+import { ApiInterfaceExtended, ApiInterface, ApiConfig } from '../../catalog/api';
 
 export type ApiParams<Api extends ApiInterfaceExtended> = Partial<Omit<Api, 'response' | 'claims'>>;
 

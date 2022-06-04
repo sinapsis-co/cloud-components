@@ -1,6 +1,6 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import { ApiError } from '../../handler/api/api-error';
-import { CreateItemFunc, Entity, EntityBuilder, EntityCreate, EntityRepositoryConfig } from '../repository-interface';
+import { CreateItemFunc, Entity, EntityBuilder, EntityCreate, EntityRepositoryConfig } from '../interface';
 
 export const createItem = <Builder extends EntityBuilder, Omitted extends keyof Builder['body'] = ''>(
   repoConfig: EntityRepositoryConfig<Builder, EntityCreate<Builder, Omitted>>,

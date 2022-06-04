@@ -9,7 +9,7 @@ import {
   EntityCreate,
   EntityRepositoryConfig,
   EntityStore,
-} from '../repository-interface';
+} from '../interface';
 
 export const batchCreateItem = <Builder extends EntityBuilder>(
   repoConfig: EntityRepositoryConfig<Builder>,

@@ -1,6 +1,6 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import { ApiError } from '../../handler/api/api-error';
-import { Entity, EntityBuilder, EntityRepositoryConfig, RecoverItemFunc } from '../repository-interface';
+import { Entity, EntityBuilder, EntityRepositoryConfig, RecoverItemFunc } from '../interface';
 
 export const recoverItem = <Builder extends EntityBuilder>(
   repoConfig: EntityRepositoryConfig<Builder>,

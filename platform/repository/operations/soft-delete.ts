@@ -8,7 +8,7 @@ import {
   EntityUpdate,
   SoftDeleteItemFunc,
   TimeToDelete,
-} from '../repository-interface';
+} from '../interface';
 import { updateMapper } from '../update-mapper';
 
 export const softDeleteItem = <Builder extends EntityBuilder>(

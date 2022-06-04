@@ -1,6 +1,6 @@
 import { APIGatewayProxyEventV2WithJWTAuthorizer } from 'aws-lambda';
 import { Schemy } from 'schemy-ts';
-import { ApiInterfaceKeys, ApiInterfaceRequest } from '../../../catalog/api/api-interface';
+import { ApiInterfaceKeys, ApiInterfaceRequest } from '../../../catalog/api';
 import { bodyParser } from './body-parser';
 import { paramsParser } from './params-parser';
 

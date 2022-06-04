@@ -11,7 +11,7 @@ import { scanTable } from './operations/scan';
 import { updateItem } from './operations/update';
 import { checkItemExists } from './operations/check-item-exists';
 
-import { EntityBuilder, EntityRepositoryConfig, Repository } from './repository-interface';
+import { EntityBuilder, EntityRepositoryConfig, Repository } from './interface';
 
 const dynamodb = new DynamoDB.DocumentClient();
 

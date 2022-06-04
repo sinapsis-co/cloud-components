@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import DynamoDB from 'aws-sdk/clients/dynamodb';
-import { PaginatedResponse } from '../catalog/api/api-interface';
+import { PaginatedResponse } from '../catalog/api';
 
 export type TimeToDelete = {
   amount: number;

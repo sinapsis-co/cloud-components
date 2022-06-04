@@ -1,8 +1,8 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb';
-import { PaginatedResponse } from '../../catalog/api/api-interface';
+import { PaginatedResponse } from '../../catalog/api';
 import { ApiError } from '../../handler/api/api-error';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from '../../util/pagination';
-import { Entity, EntityBuilder, EntityRepositoryConfig, ListItemFunc } from '../repository-interface';
+import { Entity, EntityBuilder, EntityRepositoryConfig, ListItemFunc } from '../interface';
 
 export const listItem = <Builder extends EntityBuilder>(
   repoConfig: EntityRepositoryConfig<Builder>,

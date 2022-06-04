@@ -2,7 +2,7 @@ import DynamoDB from 'aws-sdk/clients/dynamodb';
 import { ApiError } from '../../handler/api/api-error';
 import { chunkArray } from '../../util/array/chunk-array';
 import { wait } from '../../util/executers';
-import { BatchGetItemFunc, Entity, EntityBuilder, EntityRepositoryConfig, EntityStore } from '../repository-interface';
+import { BatchGetItemFunc, Entity, EntityBuilder, EntityRepositoryConfig, EntityStore } from '../interface';
 
 export const batchGetItem = <Builder extends EntityBuilder>(
   repoConfig: EntityRepositoryConfig<Builder>,

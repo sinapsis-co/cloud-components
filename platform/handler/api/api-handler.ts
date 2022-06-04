@@ -3,8 +3,7 @@
 import { APIGatewayProxyEventV2WithJWTAuthorizer, APIGatewayProxyResultV2 } from 'aws-lambda';
 import { apiParser } from './api-parser';
 import { DEFAULT_HEADERS } from './headers';
-import { ApiConfig } from '../../catalog/api/api-config';
-import { ApiInterface, ApiInterfaceRequest } from '../../catalog/api/api-interface';
+import { ApiInterface, ApiConfig, ApiInterfaceRequest } from '../../catalog/api';
 
 type Handler<T extends ApiInterface> = (
   event: APIGatewayProxyEventV2WithJWTAuthorizer,

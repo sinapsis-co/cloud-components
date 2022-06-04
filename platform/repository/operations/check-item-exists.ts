@@ -1,6 +1,6 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import { ApiError } from '../../handler/api/api-error';
-import { CheckItemExistsFunc, Entity, EntityBuilder, EntityRepositoryConfig } from '../repository-interface';
+import { CheckItemExistsFunc, Entity, EntityBuilder, EntityRepositoryConfig } from '../interface';
 
 export const checkItemExists = <Builder extends EntityBuilder>(
   repoConfig: EntityRepositoryConfig<Builder>,

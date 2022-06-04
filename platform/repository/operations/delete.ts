@@ -1,6 +1,6 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import { ApiError } from '../../handler/api/api-error';
-import { DeleteItemFunc, Entity, EntityBuilder, EntityRepositoryConfig } from '../repository-interface';
+import { DeleteItemFunc, Entity, EntityBuilder, EntityRepositoryConfig } from '../interface';
 
 export const deleteItem = <Builder extends EntityBuilder>(
   repoConfig: EntityRepositoryConfig<Builder>,

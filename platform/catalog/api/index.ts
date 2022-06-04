@@ -1,3 +1,5 @@
+import { Schemy } from 'schemy-ts';
+
 export type EmptyObject = Record<string, null>;
 
 export type ApiInterfaceKeys = {
@@ -43,4 +45,20 @@ export type PaginatedQueryParams = {
 export type PaginatedResponse<ResponseType> = {
   items: ResponseType[];
   nextToken: string | number | null;
+};
+
+export type ApiMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+export type TablePermission = 'read' | 'write' | 'readWrite' | 'none';
+
+export type ApiConfig<T extends ApiInterface> = {
+  name: string;
+  basePath: string;
+  path: string;
+  method: ApiMethod;
+  isPublic?: true;
+  baseUrl?: string;
+  scope?: string;
+  schema?: Schemy;
+  tablePermission?: TablePermission;
+  authorizationMdw?: (request: ApiInterfaceRequest<T>, scope?: string) => void;
 };

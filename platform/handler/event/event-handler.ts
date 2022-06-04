@@ -1,5 +1,5 @@
 import { EventBridgeEvent } from 'aws-lambda';
-import { EventInterface } from '../../catalog/event/event-interface';
+import { EventInterface } from '../../catalog/event';
 
 type Handler<Event extends EventInterface> = (
   event: EventBridgeEvent<Event['name'], Event['payload']>

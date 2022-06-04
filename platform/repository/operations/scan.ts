@@ -1,8 +1,8 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import { ApiError } from '../../handler/api/api-error';
-import { PaginatedResponse } from '../../catalog/api/api-interface';
+import { PaginatedResponse } from '../../catalog/api';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from '../../util/pagination';
-import { Entity, EntityBuilder, EntityRepositoryConfig, ScanTableFunc } from '../repository-interface';
+import { Entity, EntityBuilder, EntityRepositoryConfig, ScanTableFunc } from '../interface';
 
 export const scanTable = <Builder extends EntityBuilder>(
   repoConfig: EntityRepositoryConfig<Builder>,

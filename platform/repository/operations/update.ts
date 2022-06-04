@@ -1,6 +1,6 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import { ApiError } from '../../handler/api/api-error';
-import { Entity, EntityBuilder, EntityRepositoryConfig, EntityUpdate, UpdateItemFunc } from '../repository-interface';
+import { Entity, EntityBuilder, EntityRepositoryConfig, EntityUpdate, UpdateItemFunc } from '../interface';
 import { updateMapper } from '../update-mapper';
 
 export const updateItem = <Builder extends EntityBuilder>(

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import EventBridge from 'aws-sdk/clients/eventbridge';
-import { EventConfig, EventInterface } from '../../catalog/event/event-interface';
+import { EventConfig, EventInterface } from '../../catalog/event';
 
 const eventBridge = new EventBridge();
 
