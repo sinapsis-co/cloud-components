@@ -74,6 +74,7 @@ export type BaseGlobalProps<
   regionName: BaseRegionName;
   ephemeralEnvName?: string;
   deployTarget: GlobalDeployTarget;
+  emailSender: string;
 } & GlobalConstConfig &
   GlobalEnv;
 
