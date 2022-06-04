@@ -2,7 +2,7 @@ import { NotificationTemplate } from '../../../catalog/notifications';
 
 export const getCognitoTemplateName = <Template extends NotificationTemplate>(
   triggerSource: string
-): Template['name'] => {
+): Template['templateName'] => {
   const templates = {
     CustomMessage_SignUp: 'confirmation-code',
     CustomMessage_ResendCode: 'confirmation-code',
