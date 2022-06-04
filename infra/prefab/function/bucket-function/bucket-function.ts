@@ -34,7 +34,7 @@ export class BucketFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
 
   constructor(scope: Construct, props: BaseServiceProps, params: BucketFunctionProps) {
-    super(scope, getLogicalName(BucketFunction.name));
+    super(scope, getLogicalName(BucketFunction.name, params.name));
 
     this.lambdaFunction = new NodejsFunction(this, params.name, {
       runtime: Runtime.NODEJS_14_X,

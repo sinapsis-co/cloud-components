@@ -32,7 +32,7 @@ export class CognitoFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
 
   constructor(scope: Construct, props: BaseServiceProps, params: CognitoFunctionParams) {
-    super(scope, getLogicalName(CognitoFunction.name));
+    super(scope, getLogicalName(CognitoFunction.name, params.name));
 
     this.lambdaFunction = new NodejsFunction(this, params.name, {
       runtime: Runtime.NODEJS_14_X,

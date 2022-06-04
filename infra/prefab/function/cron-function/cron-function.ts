@@ -32,7 +32,7 @@ export class CronFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
 
   constructor(scope: Construct, props: BaseServiceProps, params: CronFunctionProps) {
-    super(scope, getLogicalName(CronFunction.name));
+    super(scope, getLogicalName(CronFunction.name, params.name));
 
     this.lambdaFunction = new NodejsFunction(this, params.name, {
       runtime: Runtime.NODEJS_14_X,
