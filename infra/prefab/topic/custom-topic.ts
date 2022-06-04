@@ -7,6 +7,7 @@ import { getResourceName } from '../../common/naming/get-resource-name';
 import { BaseServiceProps } from '../../common/synth/props-types';
 import { getLogicalName } from '../../common/naming/get-logical-name';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 export type CustomTopicParams = {
   name: string;
@@ -31,6 +32,11 @@ export class CustomTopic extends Construct {
     return (lambda: NodejsFunction): void => {
       lambda.addEnvironment(variableName, this.topic.topicArn);
       this.topic.grantPublish(lambda);
+    };
+  }
+  public smsSenderModifier(): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda.addToRolePolicy(new PolicyStatement({ effect: Effect.ALLOW, actions: ['sns:Publish'], resources: ['*'] }));
     };
   }
 }
