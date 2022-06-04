@@ -56,7 +56,7 @@ export type BaseServiceDependencies<ServiceDependencies = {}> = {} & ServiceDepe
 
 export type BaseServiceConstConfig<ExtendedConst = {}> = {} & ExtendedConst;
 
-export type BaseServiceEnv<ExtendedEnv = {}> = {} & ExtendedEnv;
+export type BaseServiceEnv<ExtendedEnv = { emailSender: string }> = {} & ExtendedEnv;
 
 export type BaseServiceEnvConfig<
   AllowedEnv extends BaseEnvName = BaseEnvName,
@@ -74,7 +74,6 @@ export type BaseGlobalProps<
   regionName: BaseRegionName;
   ephemeralEnvName?: string;
   deployTarget: GlobalDeployTarget;
-  emailSender: string;
 } & GlobalConstConfig &
   GlobalEnv;
 
