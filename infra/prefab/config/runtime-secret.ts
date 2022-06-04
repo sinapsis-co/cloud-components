@@ -2,7 +2,7 @@ import { Construct } from 'constructs';
 import { PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 import { CfnSecret } from 'aws-cdk-lib/aws-secretsmanager';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { SecretConfig } from '@sinapsis-co/cc-platform-v2/catalog/secret/secret-interface';
+import { SecretConfig } from '@sinapsis-co/cc-platform-v2/catalog/secret';
 
 import { getLogicalName } from '../../common/naming/get-logical-name';
 import { getResourceName } from '../../common/naming/get-resource-name';

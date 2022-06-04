@@ -28,6 +28,7 @@ export type BaseGlobalEnv<ExtendedEnv = {}> = {
   hostedZoneName?: string;
   baseDomainName?: string;
   envDomainName?: string;
+  emailSender: string;
   useRepositoryDefaultConfig?: boolean;
   repositoryName?: string;
   repositoryOwner?: string;

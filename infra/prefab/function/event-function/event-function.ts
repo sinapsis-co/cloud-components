@@ -11,8 +11,8 @@ import { BaseServiceProps } from '../../../common/synth/props-types';
 import { CustomEventBusConstruct, CustomEventBusParams } from '../../../services/custom-event-bus';
 import { ServiceTable } from '../../table/dynamo-table';
 import { getFunctionEntry } from '../../../common/naming/get-function-entry';
-import { TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api/api-config';
-import { EventConfig } from '@sinapsis-co/cc-platform-v2/catalog/event/event-interface';
+import { TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api';
+import { EventConfig } from '@sinapsis-co/cc-platform-v2/catalog/event';
 
 export type EventHandlerProps = NodejsFunctionProps & {
   name: string;

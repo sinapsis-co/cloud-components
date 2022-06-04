@@ -10,7 +10,7 @@ import { BaseServiceProps } from '../../../common/synth/props-types';
 import { CustomEventBusConstruct, CustomEventBusParams } from '../../../services/custom-event-bus';
 import { ServiceTable } from '../../table/dynamo-table';
 import { getFunctionEntry } from '../../../common/naming/get-function-entry';
-import { TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api/api-config';
+import { TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api';
 
 export type CognitoHandlerParams = NodejsFunctionProps & {
   name: string;

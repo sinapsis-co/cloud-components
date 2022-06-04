@@ -6,8 +6,7 @@ import { HttpApi, HttpMethod } from '@aws-cdk/aws-apigatewayv2-alpha';
 import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
 import { HttpUserPoolAuthorizer } from '@aws-cdk/aws-apigatewayv2-authorizers-alpha';
 
-import { ApiInterface } from '@sinapsis-co/cc-platform-v2/catalog/api/api-interface';
-import { ApiConfig, TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api/api-config';
+import { ApiInterface, ApiConfig, TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api';
 
 import { getShortResourceName } from '../../../common/naming/get-resource-name';
 import { getLogicalName } from '../../../common/naming/get-logical-name';

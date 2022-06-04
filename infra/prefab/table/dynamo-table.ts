@@ -3,7 +3,7 @@ import { RemovalPolicy } from 'aws-cdk-lib';
 import { Table, AttributeType, BillingMode, StreamViewType } from 'aws-cdk-lib/aws-dynamodb';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 
-import { TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api/api-config';
+import { TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api';
 import { getResourceName } from '../../common/naming/get-resource-name';
 import { BaseServiceProps } from '../../common/synth/props-types';
 import { getLogicalName } from '../../common/naming/get-logical-name';

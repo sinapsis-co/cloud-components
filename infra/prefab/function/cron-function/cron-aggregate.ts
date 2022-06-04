@@ -5,7 +5,7 @@ import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { BaseServiceProps } from '../../../common/synth/props-types';
 import { getLogicalName } from '../../../common/naming/get-logical-name';
 import { CronFunction, CronHandlerProps } from './cron-function';
-import { TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api/api-config';
+import { TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api';
 import { CustomEventBusParams } from '../../../services/custom-event-bus';
 
 export type CronAggregateParams<HandlerName extends string = string> = {
