@@ -34,7 +34,6 @@ export class AuthPool extends Construct {
       userPoolName: getResourceName('', props),
       accountRecovery: AccountRecovery.EMAIL_ONLY,
       selfSignUpEnabled: true,
-      standardAttributes: { email: { mutable: true, required: true } },
       autoVerify: { email: true },
       passwordPolicy: params.passwordPolicy || { minLength: 8, requireDigits: true },
     };
