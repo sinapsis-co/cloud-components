@@ -51,6 +51,8 @@ export class ApiFunction extends Construct {
       ...params,
     });
 
+    params.modifiers?.map((fn) => fn(this.lambdaFunction));
+
     const path = params.path === '/' ? '' : params.path;
     params.api.addRoutes({
       path: `/${params.basePath}${path}`,
