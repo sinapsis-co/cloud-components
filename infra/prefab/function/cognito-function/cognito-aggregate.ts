@@ -4,9 +4,10 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 
 import { BaseServiceProps } from '../../../common/synth/props-types';
 import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { CognitoFunction, CognitoFunctionParams, CognitoHandlerParams } from './cognito-function';
+import { CognitoFunction, CognitoHandlerParams } from './cognito-function';
+import { BaseFunctionParams } from '../base-function';
 
-export type CognitoAggregateParams<HandlerName extends string = string> = CognitoFunctionParams & {
+export type CognitoAggregateParams<HandlerName extends string = string> = BaseFunctionParams & {
   handlers: Record<HandlerName, CognitoHandlerParams>;
   userPool: UserPool;
 };

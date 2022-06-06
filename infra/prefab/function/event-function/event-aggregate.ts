@@ -3,10 +3,11 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 
 import { BaseServiceProps } from '../../../common/synth/props-types';
 import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { EventFunction, EventFunctionParams, EventHandlerParams } from './event-function';
+import { EventFunction, EventHandlerParams } from './event-function';
 import { CustomEventBusParams } from '../../../services/custom-event-bus';
+import { BaseFunctionParams } from '../base-function';
 
-export type EventAggregateParams<HandlerName extends string = string> = EventFunctionParams & {
+export type EventAggregateParams<HandlerName extends string = string> = BaseFunctionParams & {
   handlers: Record<HandlerName, EventHandlerParams>;
   eventBus: CustomEventBusParams;
 };

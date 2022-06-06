@@ -3,9 +3,10 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 
 import { BaseServiceProps } from '../../../common/synth/props-types';
 import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { CronFunction, CronFunctionParams, CronHandlerParams } from './cron-function';
+import { CronFunction, CronHandlerParams } from './cron-function';
+import { BaseFunctionParams } from '../base-function';
 
-export type CronAggregateParams<HandlerName extends string = string> = CronFunctionParams & {
+export type CronAggregateParams<HandlerName extends string = string> = BaseFunctionParams & {
   handlers: Record<HandlerName, CronHandlerParams>;
 };
 

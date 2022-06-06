@@ -11,9 +11,10 @@ import { getLogicalName } from '../../../common/naming/get-logical-name';
 import { ServiceTable, ServiceTableParams } from '../../table/dynamo-table';
 import { ApiRest } from '../../api/api-rest';
 
-import { ApiFunction, ApiFunctionParams, ApiHandlerParams } from './api-function';
+import { ApiFunction, ApiHandlerParams } from './api-function';
 import { SynthError } from '../../../common/synth/synth-error';
 import { HttpOriginProps } from 'aws-cdk-lib/aws-cloudfront-origins';
+import { BaseFunctionParams } from '../base-function';
 
 export type ApiCdnApiParams = {
   distribution: Distribution;
@@ -25,7 +26,7 @@ export type ApiAuthPoolParams = {
   userPoolClient?: UserPoolClient;
 };
 
-export type ApiAggregateParams<HandlerName extends string = string> = ApiFunctionParams & {
+export type ApiAggregateParams<HandlerName extends string = string> = BaseFunctionParams & {
   basePath: string;
   handlers: Record<HandlerName, ApiHandlerParams>;
   cdnApi: ApiCdnApiParams;
