@@ -23,7 +23,7 @@ export type CdnAssetConstructProps = {
 };
 
 export class CdnAssetConstruct extends Construct {
-  public readonly bucket: Bucket;
+  public readonly bucket: AssetBucket;
   public readonly domain: string;
   public readonly baseUrl: string;
   public readonly distribution: Distribution;
@@ -42,7 +42,7 @@ export class CdnAssetConstruct extends Construct {
         cors: [{ allowedMethods: [HttpMethods.GET, HttpMethods.POST], allowedOrigins: ['*'], allowedHeaders: ['*'] }],
         ...params.assetBucketProps?.bucketProps,
       },
-    }).bucket;
+    });
 
     this.behaviorOptions = {
       compress: true,
@@ -63,7 +63,7 @@ export class CdnAssetConstruct extends Construct {
       certificate: params.certificate,
       domainNames: [this.domain],
       defaultBehavior: {
-        origin: new S3Origin(this.bucket),
+        origin: new S3Origin(this.bucket.bucket),
         ...this.behaviorOptions,
       },
       webAclId: params.waf?.webACL?.attrArn,
