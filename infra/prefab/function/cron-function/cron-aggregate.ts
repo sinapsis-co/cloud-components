@@ -1,22 +1,12 @@
 import { Construct } from 'constructs';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Table } from 'aws-cdk-lib/aws-dynamodb';
 
 import { BaseServiceProps } from '../../../common/synth/props-types';
 import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { CronFunction, CronHandlerProps } from './cron-function';
-import { TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api';
-import { CustomEventBusParams } from '../../../services/custom-event-bus';
+import { CronFunction, CronFunctionParams, CronHandlerParams } from './cron-function';
 
-export type CronAggregateParams<HandlerName extends string = string> = {
-  handlers: Record<HandlerName, CronHandlerProps>;
-  baseFunctionFolder: string;
-  modifiers?: ((lambda: NodejsFunction) => any)[];
-  environment?: Record<string, string>;
-  eventBus?: CustomEventBusParams;
-  table?: Table;
-  tablePermission?: TablePermission;
-  compiled?: true;
+export type CronAggregateParams<HandlerName extends string = string> = CronFunctionParams & {
+  handlers: Record<HandlerName, CronHandlerParams>;
 };
 
 export class CronAggregate<HandlerName extends string = string> extends Construct {

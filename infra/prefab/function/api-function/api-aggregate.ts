@@ -11,10 +11,9 @@ import { getLogicalName } from '../../../common/naming/get-logical-name';
 import { ServiceTable, ServiceTableParams } from '../../table/dynamo-table';
 import { ApiRest } from '../../api/api-rest';
 
-import { ApiFunction, ApiHandlerParams } from './api-function';
+import { ApiFunction, ApiFunctionParams, ApiHandlerParams } from './api-function';
 import { SynthError } from '../../../common/synth/synth-error';
 import { HttpOriginProps } from 'aws-cdk-lib/aws-cloudfront-origins';
-import { CustomEventBusParams } from '../../../services/custom-event-bus';
 
 export type ApiCdnApiParams = {
   distribution: Distribution;
@@ -26,18 +25,13 @@ export type ApiAuthPoolParams = {
   userPoolClient?: UserPoolClient;
 };
 
-export type ApiAggregateParams<HandlerName extends string = string> = {
+export type ApiAggregateParams<HandlerName extends string = string> = ApiFunctionParams & {
   basePath: string;
-  baseFunctionFolder: string;
   handlers: Record<HandlerName, ApiHandlerParams>;
   cdnApi: ApiCdnApiParams;
   authPool?: ApiAuthPoolParams;
   tableOptions?: ServiceTableParams;
-  environment?: Record<string, string>;
-  modifiers?: ((lambda: NodejsFunction) => any)[];
   skipTable?: true;
-  eventBus?: CustomEventBusParams;
-  compiled?: true;
 };
 
 export class ApiAggregate<HandlerName extends string = string> extends Construct {

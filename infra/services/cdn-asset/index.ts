@@ -12,7 +12,7 @@ import { BaseServiceProps } from '../../common/synth/props-types';
 import { getLogicalName } from '../../common/naming/get-logical-name';
 import { getResourceName } from '../../common/naming/get-resource-name';
 import { AssetBucket, AssetBucketParams } from '../../prefab/bucket/asset-bucket';
-import { Bucket, HttpMethods } from 'aws-cdk-lib/aws-s3';
+import { HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { Waf } from '../waf';
 
 export type CdnAssetConstructProps = {

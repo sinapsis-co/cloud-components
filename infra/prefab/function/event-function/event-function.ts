@@ -1,52 +1,29 @@
 import { Construct } from 'constructs';
-import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Rule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
-import { Table } from 'aws-cdk-lib/aws-dynamodb';
 
-import { getShortResourceName } from '../../../common/naming/get-resource-name';
 import { getLogicalName } from '../../../common/naming/get-logical-name';
 import { BaseServiceProps } from '../../../common/synth/props-types';
-import { CustomEventBusConstruct, CustomEventBusParams } from '../../../services/custom-event-bus';
-import { ServiceTable } from '../../table/dynamo-table';
-import { getFunctionEntry } from '../../../common/naming/get-function-entry';
-import { TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api';
+import { CustomEventBusParams } from '../../../services/custom-event-bus';
 import { EventConfig } from '@sinapsis-co/cc-platform-v2/catalog/event';
+import { BaseHandlerParams, BaseFunction, BaseFunctionParams } from '../base-function';
 
-export type EventHandlerProps = NodejsFunctionProps & {
-  name: string;
+export type EventHandlerParams = BaseHandlerParams & {
   eventConfig: EventConfig[];
-  environment?: Record<string, string>;
-  tablePermission?: TablePermission;
-  modifiers?: ((lambda: NodejsFunction) => any)[];
 };
 
-export type EventFunctionProps = EventHandlerProps & {
-  baseFunctionFolder: string;
+export type EventFunctionParams = BaseFunctionParams & {
   eventBus: CustomEventBusParams;
-  environment?: Record<string, string>;
-  table?: Table;
-  compiled?: true;
 };
 
 export class EventFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: EventFunctionProps) {
+  constructor(scope: Construct, props: BaseServiceProps, params: EventFunctionParams & EventHandlerParams) {
     super(scope, getLogicalName(EventFunction.name, params.name));
 
-    this.lambdaFunction = new NodejsFunction(this, params.name, {
-      runtime: Runtime.NODEJS_14_X,
-      logRetention: 30,
-      handler: 'handler',
-      functionName: getShortResourceName(params.name, props),
-      entry: getFunctionEntry(params.baseFunctionFolder, params.name, params.compiled),
-      environment: params.environment || {},
-      ...params,
-    });
-
-    params.modifiers?.map((fn) => fn(this.lambdaFunction));
+    this.lambdaFunction = new BaseFunction(this, props, params).lambdaFunction;
 
     const source = params.eventConfig.map((e) => e.source);
     const detailType = params.eventConfig.map((e) => e.name);
@@ -61,8 +38,5 @@ export class EventFunction extends Construct {
       },
       targets: [new LambdaFunction(this.lambdaFunction)],
     });
-
-    ServiceTable.addTable(this.lambdaFunction, params.table, params.tablePermission);
-    CustomEventBusConstruct.addBus(this.lambdaFunction, params.eventBus);
   }
 }

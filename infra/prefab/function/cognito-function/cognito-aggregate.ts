@@ -1,24 +1,14 @@
 import { Construct } from 'constructs';
 import { UserPool } from 'aws-cdk-lib/aws-cognito';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Table } from 'aws-cdk-lib/aws-dynamodb';
 
 import { BaseServiceProps } from '../../../common/synth/props-types';
 import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { CognitoFunction, CognitoHandlerParams } from './cognito-function';
-import { TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api';
-import { CustomEventBusParams } from '../../../services/custom-event-bus';
+import { CognitoFunction, CognitoFunctionParams, CognitoHandlerParams } from './cognito-function';
 
-export type CognitoAggregateParams<HandlerName extends string = string> = {
+export type CognitoAggregateParams<HandlerName extends string = string> = CognitoFunctionParams & {
   handlers: Record<HandlerName, CognitoHandlerParams>;
-  baseFunctionFolder: string;
   userPool: UserPool;
-  modifiers?: ((lambda: NodejsFunction) => any)[];
-  environment?: Record<string, string>;
-  eventBus?: CustomEventBusParams;
-  table?: Table;
-  tablePermission?: TablePermission;
-  compiled?: true;
 };
 
 export class CognitoAggregate<HandlerName extends string = string> extends Construct {
