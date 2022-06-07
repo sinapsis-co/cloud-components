@@ -36,7 +36,7 @@ export class BaseFunction extends Construct {
     super(scope, getLogicalName(BaseFunction.name, params.name));
 
     this.lambdaFunction = new NodejsFunction(this, params.name, {
-      runtime: Runtime.NODEJS_14_X,
+      runtime: Runtime.NODEJS_16_X,
       logRetention: 30,
       handler: 'handler',
       functionName: getShortResourceName(params.name, props),
