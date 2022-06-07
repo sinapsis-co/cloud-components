@@ -33,7 +33,7 @@ export class BaseFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
 
   constructor(service: Service, params: BaseHandlerParams & BaseFunctionParams) {
-    super(service.scope, getLogicalName(BaseFunction.name, params.name));
+    super(service, getLogicalName(BaseFunction.name, params.name));
 
     this.lambdaFunction = new NodejsFunction(this, params.name, {
       runtime: Runtime.NODEJS_16_X,

@@ -13,7 +13,7 @@ export class CronAggregate<HandlerName extends string = string> extends Construc
   public readonly handlers: Record<HandlerName, NodejsFunction> = {} as Record<HandlerName, NodejsFunction>;
 
   constructor(service: Service, params: CronAggregateParams<HandlerName>) {
-    super(service.scope, getLogicalName(CronAggregate.name));
+    super(service, getLogicalName(CronAggregate.name));
 
     Object.keys(params.handlers).forEach((handler: string) => {
       this.handlers[handler] = new CronFunction(service, {

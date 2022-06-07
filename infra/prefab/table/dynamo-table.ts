@@ -19,7 +19,7 @@ export class ServiceTable extends Construct {
   public readonly table: Table;
 
   constructor(service: Service, params: ServiceTableParams) {
-    super(service.scope, getLogicalName(ServiceTable.name, params.tableName));
+    super(service, getLogicalName(ServiceTable.name, params.tableName));
 
     this.table = new Table(this, params.tableName, {
       tableName: getResourceName(params.tableName, service.props),

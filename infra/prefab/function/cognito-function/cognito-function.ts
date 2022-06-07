@@ -18,7 +18,7 @@ export class CognitoFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
 
   constructor(service: Service, params: CognitoFunctionParams & CognitoHandlerParams) {
-    super(service.scope, getLogicalName(CognitoFunction.name, params.name));
+    super(service, getLogicalName(CognitoFunction.name, params.name));
 
     this.lambdaFunction = new BaseFunction(service, params).lambdaFunction;
 

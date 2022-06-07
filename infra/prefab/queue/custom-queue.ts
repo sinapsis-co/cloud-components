@@ -21,7 +21,7 @@ export class CustomQueue extends Construct {
   public readonly queue: Queue;
 
   constructor(service: Service, params: CustomQueueParams) {
-    super(service.scope, getLogicalName(CustomQueue.name, params.name));
+    super(service, getLogicalName(CustomQueue.name, params.name));
 
     this.dlq =
       params.dlq ||

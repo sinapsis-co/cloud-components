@@ -19,7 +19,7 @@ export class PrivateBucket extends Construct {
   public readonly bucket: Bucket;
 
   constructor(service: Service, params: PrivateBucketParams) {
-    super(service.scope, getLogicalName(PrivateBucket.name, params.bucketName));
+    super(service, getLogicalName(PrivateBucket.name, params.bucketName));
 
     const defaultProps: BucketProps = {
       encryption: BucketEncryption.S3_MANAGED,

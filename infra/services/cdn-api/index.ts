@@ -27,7 +27,7 @@ export class CdnApiConstruct extends Construct {
   public readonly behaviorOptions: Omit<BehaviorOptions, 'origin'>;
 
   constructor(service: Service, params: CdnApiConstructProps) {
-    super(service.scope, getLogicalName(CdnApiConstruct.name, params.subDomain));
+    super(service, getLogicalName(CdnApiConstruct.name, params.subDomain));
 
     this.domain = getDomain(params.subDomain, service.props);
     this.baseUrl = `https://${this.domain}/`;

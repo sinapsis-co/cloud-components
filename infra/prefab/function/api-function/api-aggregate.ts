@@ -42,7 +42,7 @@ export class ApiAggregate<HandlerName extends string = string> extends Construct
   public readonly handlers: Record<HandlerName, NodejsFunction> = {} as Record<HandlerName, NodejsFunction>;
 
   constructor(service: Service, params: ApiAggregateParams) {
-    super(service.scope, getLogicalName('ApiAggregate'));
+    super(service, getLogicalName('ApiAggregate'));
 
     const apiRest = new ApiRest(service, { ...params, ...params.cdnApi, ...params.authPool });
 

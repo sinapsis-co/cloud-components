@@ -10,7 +10,7 @@ export class DnsSubdomainCertificateConstruct extends Construct {
   public readonly certificate: Certificate;
 
   constructor(service: Service) {
-    super(service.scope, getLogicalName(DnsSubdomainCertificateConstruct.name));
+    super(service, getLogicalName(DnsSubdomainCertificateConstruct.name));
 
     const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', service.props) });
 

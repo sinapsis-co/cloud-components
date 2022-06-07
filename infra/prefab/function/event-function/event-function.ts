@@ -21,7 +21,7 @@ export class EventFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
 
   constructor(service: Service, params: EventFunctionParams & EventHandlerParams) {
-    super(service.scope, getLogicalName(EventFunction.name, params.name));
+    super(service, getLogicalName(EventFunction.name, params.name));
 
     this.lambdaFunction = new BaseFunction(service, params).lambdaFunction;
 

@@ -15,7 +15,7 @@ export class TimestreamDatabase extends Construct {
   public readonly database: CfnDatabase;
 
   constructor(service: Service, params: TimeStreamDBParams) {
-    super(service.scope, getLogicalName(TimestreamDatabase.name, params.databaseName));
+    super(service, getLogicalName(TimestreamDatabase.name, params.databaseName));
 
     this.database = new CfnDatabase(this, 'Database', {
       databaseName: getResourceName(params.databaseName, service.props),

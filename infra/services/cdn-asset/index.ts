@@ -30,7 +30,7 @@ export class CdnAssetConstruct extends Construct {
   public readonly behaviorOptions: Omit<BehaviorOptions, 'origin'>;
 
   constructor(service: Service, params: CdnAssetConstructProps) {
-    super(service.scope, getLogicalName(CdnAssetConstruct.name, params.subDomain));
+    super(service, getLogicalName(CdnAssetConstruct.name, params.subDomain));
 
     this.domain = getDomain(params.subDomain, service.props);
     this.baseUrl = `https://${this.domain}/`;

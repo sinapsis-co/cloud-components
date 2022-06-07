@@ -8,7 +8,7 @@ export type DnsBaseDomainRefConstructParams = { hostedZoneNS: string };
 
 export class DnsBaseDomainRefConstruct extends Construct {
   constructor(service: Service, params: DnsBaseDomainRefConstructParams) {
-    super(service.scope, getLogicalName(DnsBaseDomainRefConstruct.name));
+    super(service, getLogicalName(DnsBaseDomainRefConstruct.name));
 
     if (!params.hostedZoneNS || !service.props.hostedZoneName) return;
 

@@ -15,7 +15,7 @@ export class Waf extends Construct {
   public readonly webACL: CfnWebACL | undefined;
 
   constructor(service: Service, props: BaseServiceProps & WafProps) {
-    super(service.scope, getLogicalName(Waf.name));
+    super(service, getLogicalName(Waf.name));
     const defaultRules = [
       {
         priority: 0,

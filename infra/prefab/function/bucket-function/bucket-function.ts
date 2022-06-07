@@ -19,7 +19,7 @@ export class BucketFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
 
   constructor(service: Service, params: BucketFunctionProps & BucketHandlerProps) {
-    super(service.scope, getLogicalName(BucketFunction.name, params.name));
+    super(service, getLogicalName(BucketFunction.name, params.name));
 
     this.lambdaFunction = new BaseFunction(service, params).lambdaFunction;
 

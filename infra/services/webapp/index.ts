@@ -32,7 +32,7 @@ export class WebappConstruct extends Construct {
   public readonly distribution: Distribution;
 
   constructor(service: Service, params: WebappConstructParams) {
-    super(service.scope, getLogicalName(WebappConstruct.name, params.subDomain));
+    super(service, getLogicalName(WebappConstruct.name, params.subDomain));
 
     this.domain = getDomain(params.subDomain, service.props);
     this.baseUrl = `https://${this.domain}/`;

@@ -21,7 +21,7 @@ export type DeployPipelineProps = {
 
 export class DeployPipelineConstruct extends Construct {
   constructor(service: Service, params: DeployPipelineProps) {
-    super(service.scope, getLogicalName(DeployPipelineConstruct.name));
+    super(service, getLogicalName(DeployPipelineConstruct.name));
 
     if (service.props.ephemeralEnvName) return;
 

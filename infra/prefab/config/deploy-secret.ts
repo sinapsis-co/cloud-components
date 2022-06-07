@@ -15,7 +15,7 @@ export class DeploySecret extends Construct {
   public readonly secrets: Record<string, StringParameter> = {};
 
   constructor(service: Service, params: DeploySecretProps) {
-    super(service.scope, getLogicalName(DeploySecret.name));
+    super(service, getLogicalName(DeploySecret.name));
 
     params.secretsKeys?.map((secretKey) => {
       const secretName = `secret/${secretKey}`;

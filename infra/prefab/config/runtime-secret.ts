@@ -17,7 +17,7 @@ export class RuntimeSecret extends Construct {
   public readonly secretName: string;
 
   constructor(service: Service, params: RuntimeSecretBuilderProps) {
-    super(service.scope, getLogicalName(RuntimeSecret.name));
+    super(service, getLogicalName(RuntimeSecret.name));
 
     this.secretName = params.secretConfig.name;
 

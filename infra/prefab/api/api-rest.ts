@@ -24,7 +24,7 @@ export class ApiRest extends Construct {
   public readonly authorizer: HttpUserPoolAuthorizer;
 
   constructor(service: Service, params: ApiRestParams) {
-    super(service.scope, getLogicalName(ApiRest.name));
+    super(service, getLogicalName(ApiRest.name));
 
     if (params.userPool && params.userPoolClient)
       this.authorizer = new HttpUserPoolAuthorizer('Authorizer', params.userPool, {

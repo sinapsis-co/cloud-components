@@ -22,7 +22,7 @@ export class QueueFunction extends Construct {
   public readonly customQueue: CustomQueue;
 
   constructor(service: Service, params: QueueFunctionParams & QueueHandlerParams) {
-    super(service.scope, getLogicalName(QueueFunction.name, params.name));
+    super(service, getLogicalName(QueueFunction.name, params.name));
 
     this.customQueue = params.queue || new CustomQueue(service, { name: params.name });
 

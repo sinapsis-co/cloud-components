@@ -26,7 +26,7 @@ export class AuthPool extends Construct {
   public readonly frontendRefs: Record<string, string>;
 
   constructor(service: Service, params: AuthPoolParams) {
-    super(service.scope, getLogicalName(AuthPool.name));
+    super(service, getLogicalName(AuthPool.name));
 
     const callbackUrl = params.callbackUrl || getDomain('app', service.props, true);
 

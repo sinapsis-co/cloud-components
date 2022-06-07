@@ -24,7 +24,7 @@ export class AutoVisualization extends Construct {
   public readonly database: CfnDatabase;
 
   constructor(service: Service, params: AutoVisualizationProps) {
-    super(service.scope, getLogicalName(AutoVisualization.name));
+    super(service, getLogicalName(AutoVisualization.name));
 
     const quicksightUserARN = `arn:aws:quicksight:${service.props.regionName}:${params.accountId}:user/default/${params.quicksightUser}`;
 

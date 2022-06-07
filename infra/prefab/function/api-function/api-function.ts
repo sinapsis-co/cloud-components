@@ -25,7 +25,7 @@ export class ApiFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
 
   constructor(service: Service, params: ApiHandlerParams & ApiFunctionParams) {
-    super(service.scope, getLogicalName(ApiFunction.name, params.name));
+    super(service, getLogicalName(ApiFunction.name, params.name));
 
     this.lambdaFunction = new BaseFunction(service, params).lambdaFunction;
 

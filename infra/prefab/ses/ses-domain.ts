@@ -9,7 +9,7 @@ import { Service } from '../../common/service';
 
 export class SesDomain extends Construct {
   constructor(service: Service) {
-    super(service.scope, getLogicalName(SesDomain.name));
+    super(service, getLogicalName(SesDomain.name));
 
     const domain = getDomain('', service.props);
     const zone = this.getHostedZone(domain);

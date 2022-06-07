@@ -15,7 +15,7 @@ export class AutoETL extends Construct {
   public readonly database: CfnDatabase;
 
   constructor(service: Service, params: AutoETLProps) {
-    super(service.scope, getLogicalName(AutoETL.name));
+    super(service, getLogicalName(AutoETL.name));
 
     this.database = new CfnDatabase(service.scope, 'Database', {
       catalogId: getDeployConfig(service.props).env.account,

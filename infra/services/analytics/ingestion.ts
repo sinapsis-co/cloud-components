@@ -28,7 +28,7 @@ export class EventIngestion extends Construct {
   public readonly datalakeBucket: Bucket;
 
   constructor(service: Service, params: EventIngestionProps) {
-    super(service.scope, getLogicalName(EventIngestion.name));
+    super(service, getLogicalName(EventIngestion.name));
 
     const dataLakeBucket = new Bucket(service.scope, 'DataLakeBucket', {
       bucketName: getResourceName('datalake', service.props),

@@ -15,7 +15,7 @@ export class CognitoAggregate<HandlerName extends string = string> extends Const
   public readonly handlers: Record<HandlerName, NodejsFunction> = {} as Record<HandlerName, NodejsFunction>;
 
   constructor(service: Service, params: CognitoAggregateParams<HandlerName>) {
-    super(service.scope, getLogicalName(CognitoAggregate.name));
+    super(service, getLogicalName(CognitoAggregate.name));
 
     Object.keys(params.handlers).forEach((handler: string) => {
       this.handlers[handler] = new CognitoFunction(service, {

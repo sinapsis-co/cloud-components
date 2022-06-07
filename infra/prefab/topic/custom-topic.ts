@@ -17,7 +17,7 @@ export class CustomTopic extends Construct {
   public readonly topic: Topic;
 
   constructor(service: Service, params: CustomTopicParams) {
-    super(service.scope, getLogicalName(CustomTopic.name, params.name));
+    super(service, getLogicalName(CustomTopic.name, params.name));
 
     this.topic = new Topic(this, params.name, {
       topicName: getResourceName(params.name, service.props),

@@ -17,7 +17,7 @@ export type SesEmailAddressParams = {
 
 export class SesEmailAddress extends Construct {
   constructor(service: Service, params: SesEmailAddressParams) {
-    super(service.scope, getLogicalName(SesEmailAddress.name));
+    super(service, getLogicalName(SesEmailAddress.name));
 
     new AwsCustomResource(this, 'VerifyEmailAddressIdentity', {
       functionName: getShortResourceName('ses-verification', service.props),

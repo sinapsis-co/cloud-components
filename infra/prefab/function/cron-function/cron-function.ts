@@ -17,7 +17,7 @@ export class CronFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
 
   constructor(service: Service, params: CronFunctionParams & CronHandlerParams) {
-    super(service.scope, getLogicalName(CronFunction.name, params.name));
+    super(service, getLogicalName(CronFunction.name, params.name));
 
     this.lambdaFunction = new BaseFunction(service, params).lambdaFunction;
 

@@ -16,7 +16,7 @@ export class EventAggregate<HandlerName extends string = string> extends Constru
   public readonly handlers: Record<HandlerName, NodejsFunction> = {} as Record<HandlerName, NodejsFunction>;
 
   constructor(service: Service, params: EventAggregateParams<HandlerName>) {
-    super(service.scope, getLogicalName(EventAggregate.name));
+    super(service, getLogicalName(EventAggregate.name));
 
     Object.keys(params.handlers).forEach((handler: string) => {
       this.handlers[handler] = new EventFunction(service, {
