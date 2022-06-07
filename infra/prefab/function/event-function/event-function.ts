@@ -29,7 +29,7 @@ export class EventFunction extends Construct {
     const detailType = params.eventConfig.map((e) => e.name);
     const detailRules = params.eventConfig.reduce((memo, e) => ({ ...memo, ...(e.detail || {}) }), {});
 
-    new Rule(service.scope, 'EventProcessorRule', {
+    new Rule(service, 'EventProcessorRule', {
       eventBus: params.eventBus,
       eventPattern: {
         ...(source.filter((e) => !!e).length > 0 ? { source } : {}),

@@ -16,7 +16,7 @@ export class DnsSubdomainHostedZoneConstruct extends Construct {
   constructor(service: Service, params: DnsSubdomainHostedZoneParams) {
     super(service, getLogicalName(DnsSubdomainHostedZoneConstruct.name));
 
-    const hostedZone = new HostedZone(service.scope, 'HostedZoneEnvDns', { zoneName: getDomain('', service.props) });
+    const hostedZone = new HostedZone(service, 'HostedZoneEnvDns', { zoneName: getDomain('', service.props) });
     hostedZone.applyRemovalPolicy(RemovalPolicy.DESTROY);
 
     const nsArray = hostedZone.hostedZoneNameServers as string[];

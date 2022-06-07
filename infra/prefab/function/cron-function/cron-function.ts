@@ -21,7 +21,7 @@ export class CronFunction extends Construct {
 
     this.lambdaFunction = new BaseFunction(service, params).lambdaFunction;
 
-    new Rule(service.scope, 'EventProcessorRule', {
+    new Rule(service, 'EventProcessorRule', {
       schedule: Schedule.cron(params.cronOptions),
       targets: [new LambdaFunction(this.lambdaFunction)],
     });

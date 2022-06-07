@@ -17,12 +17,12 @@ export class AutoETL extends Construct {
   constructor(service: Service, params: AutoETLProps) {
     super(service, getLogicalName(AutoETL.name));
 
-    this.database = new CfnDatabase(service.scope, 'Database', {
+    this.database = new CfnDatabase(service, 'Database', {
       catalogId: getDeployConfig(service.props).env.account,
       databaseInput: { name: getDatabaseName('datalake', service.props) },
     });
 
-    const role = new Role(service.scope, 'CrawlerRole', { assumedBy: new ServicePrincipal('glue.amazonaws.com') });
+    const role = new Role(service, 'CrawlerRole', { assumedBy: new ServicePrincipal('glue.amazonaws.com') });
 
     role.addToPrincipalPolicy(
       new PolicyStatement({
@@ -65,9 +65,9 @@ export class AutoETL extends Construct {
       },
     });
 
-    new CfnOutput(service.scope, 'CrawlerName', { exportName: 'CrawlerName', value: crawler.name as string });
-    new CfnOutput(service.scope, 'DatabaseName', { exportName: 'DatabaseName', value: this.database.ref.toString() });
-    new CfnOutput(service.scope, 'TableName', {
+    new CfnOutput(service, 'CrawlerName', { exportName: 'CrawlerName', value: crawler.name as string });
+    new CfnOutput(service, 'DatabaseName', { exportName: 'DatabaseName', value: this.database.ref.toString() });
+    new CfnOutput(service, 'TableName', {
       exportName: 'TableName',
       value: getDatabaseName('datalake', service.props),
     });
