@@ -11,6 +11,11 @@ import {
 
 export { Construct } from 'constructs';
 
+export type ServiceOptionalParams<ServiceDependencies extends BaseServiceDependencies = BaseServiceDependencies> = {
+  params?: ServiceDependencies;
+  deployConfigName?: string;
+};
+
 export class Service<
   GlobalProps extends BaseGlobalProps = BaseGlobalProps,
   ServiceDependencies extends BaseServiceDependencies = BaseServiceDependencies
@@ -18,10 +23,15 @@ export class Service<
   public readonly scope: Construct;
   public readonly props: BaseServiceProps<GlobalProps, ServiceDependencies>;
 
-  constructor(scope: Construct, name: string, globalProps: GlobalProps, deps: ServiceDependencies) {
-    super(scope, getServiceName(name, globalProps), getDeployConfig(globalProps));
+  constructor(
+    scope: Construct,
+    name: string,
+    globalProps: GlobalProps,
+    deps: ServiceOptionalParams<ServiceDependencies>
+  ) {
+    super(scope, getServiceName(name, globalProps), getDeployConfig(globalProps, deps.deployConfigName));
 
     this.scope = scope;
-    this.props = getServiceProps(name, globalProps, deps);
+    this.props = getServiceProps(name, globalProps, deps.params);
   }
 }
