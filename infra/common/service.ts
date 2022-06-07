@@ -20,6 +20,7 @@ export class Service<
   GlobalProps extends BaseGlobalProps = BaseGlobalProps,
   ServiceDependencies extends BaseServiceDependencies = BaseServiceDependencies
 > extends Stack {
+  public readonly stack: Stack;
   public readonly scope: Construct;
   public readonly props: BaseServiceProps<GlobalProps, ServiceDependencies>;
 
@@ -30,8 +31,7 @@ export class Service<
     deps: ServiceOptionalParams<ServiceDependencies>
   ) {
     super(scope, getServiceName(name, globalProps), getDeployConfig(globalProps, deps.deployConfigName));
-
-    this.scope = scope;
     this.props = getServiceProps(name, globalProps, deps.params);
+    this.scope = scope;
   }
 }

@@ -11,7 +11,7 @@ export class CustomEventBusConstruct extends Construct {
   public readonly bus: EventBus;
 
   constructor(service: Service) {
-    super(service.scope, getLogicalName(CustomEventBusConstruct.name));
+    super(service, getLogicalName(CustomEventBusConstruct.name));
 
     this.bus = new EventBus(this, 'bus', { eventBusName: getResourceName('', service.props) });
   }
