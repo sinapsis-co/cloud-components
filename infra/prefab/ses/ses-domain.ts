@@ -3,15 +3,15 @@ import { CnameRecord, HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { AwsCustomResource, AwsCustomResourcePolicy, PhysicalResourceId } from 'aws-cdk-lib/custom-resources';
 
 import { getLogicalName } from '../../common/naming/get-logical-name';
-import { BaseServiceProps } from '../../common/synth/props-types';
 import { getDomain } from '../../common/naming/get-domain';
 import { PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
+import { Service } from '../../common/service';
 
 export class SesDomain extends Construct {
-  constructor(scope: Construct, props: BaseServiceProps) {
-    super(scope, getLogicalName(SesDomain.name));
+  constructor(service: Service) {
+    super(service.scope, getLogicalName(SesDomain.name));
 
-    const domain = getDomain('', props);
+    const domain = getDomain('', service.props);
     const zone = this.getHostedZone(domain);
 
     const verifyDomainIdentity = this.verifyDomainIdentity(domain);

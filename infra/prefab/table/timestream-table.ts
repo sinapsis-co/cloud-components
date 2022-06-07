@@ -5,7 +5,7 @@ import { RemovalPolicy } from 'aws-cdk-lib';
 import { PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 
 import { getResourceName } from '../../common/naming/get-resource-name';
-import { BaseServiceProps } from '../../common/synth/props-types';
+import { Service } from '../../common/service';
 import { getLogicalName } from '../../common/naming/get-logical-name';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 
@@ -20,14 +20,13 @@ export class TimestreamTable extends Construct {
   public readonly table: CfnTable;
   public readonly database: CfnDatabase;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: TimestreamTableParams) {
-    super(scope, getLogicalName(TimestreamTable.name));
+  constructor(service: Service, params: TimestreamTableParams) {
+    super(service.scope, getLogicalName(TimestreamTable.name));
 
     this.database = params.database;
 
     this.table = new CfnTable(this, 'Table', {
-      ...props,
-      tableName: getResourceName(params.tableName, props),
+      tableName: getResourceName(params.tableName, service.props),
       databaseName: params.database.databaseName!,
       magneticStoreWriteProperties: {
         enableMagneticStoreWrites: true,
@@ -39,7 +38,7 @@ export class TimestreamTable extends Construct {
     });
 
     this.table.applyRemovalPolicy(RemovalPolicy.DESTROY);
-    if (props.envName === 'prod') this.table.applyRemovalPolicy(RemovalPolicy.RETAIN);
+    if (service.props.envName === 'prod') this.table.applyRemovalPolicy(RemovalPolicy.RETAIN);
   }
 
   public writerModifier(): (lambda: NodejsFunction) => void {

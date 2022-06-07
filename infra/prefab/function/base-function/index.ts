@@ -7,10 +7,10 @@ import { ApiInterface, ApiConfig, TablePermission } from '@sinapsis-co/cc-platfo
 
 import { getShortResourceName } from '../../../common/naming/get-resource-name';
 import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { BaseServiceProps } from '../../../common/synth/props-types';
 import { CustomEventBusConstruct, CustomEventBusParams } from '../../../services/custom-event-bus';
 import { ServiceTable } from '../../table/dynamo-table';
 import { getFunctionEntry } from '../../../common/naming/get-function-entry';
+import { Service } from '../../../common/service';
 
 export type BaseHandlerParams = NodejsFunctionProps & {
   name: ApiConfig<ApiInterface>['name'];
@@ -32,14 +32,14 @@ export type BaseFunctionParams = {
 export class BaseFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: BaseHandlerParams & BaseFunctionParams) {
-    super(scope, getLogicalName(BaseFunction.name, params.name));
+  constructor(service: Service, params: BaseHandlerParams & BaseFunctionParams) {
+    super(service.scope, getLogicalName(BaseFunction.name, params.name));
 
     this.lambdaFunction = new NodejsFunction(this, params.name, {
       runtime: Runtime.NODEJS_16_X,
       logRetention: 30,
       handler: 'handler',
-      functionName: getShortResourceName(params.name, props),
+      functionName: getShortResourceName(params.name, service.props),
       entry: getFunctionEntry(params.baseFunctionFolder, params.name, params.compiled),
       architecture: params.architecture || Architecture.ARM_64,
       environment: params.environment || {},

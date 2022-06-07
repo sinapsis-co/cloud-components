@@ -7,8 +7,8 @@ import { HttpOrigin, HttpOriginProps } from 'aws-cdk-lib/aws-cloudfront-origins'
 import { UserPool, UserPoolClient } from 'aws-cdk-lib/aws-cognito';
 
 import { getResourceName } from '../../common/naming/get-resource-name';
-import { BaseServiceProps } from '../../common/synth/props-types';
 import { getLogicalName } from '../../common/naming/get-logical-name';
+import { Service } from '../../common/service';
 
 export type ApiRestParams = {
   basePath: string;
@@ -23,8 +23,8 @@ export class ApiRest extends Construct {
   public readonly api: HttpApi;
   public readonly authorizer: HttpUserPoolAuthorizer;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: ApiRestParams) {
-    super(scope, getLogicalName(ApiRest.name));
+  constructor(service: Service, params: ApiRestParams) {
+    super(service.scope, getLogicalName(ApiRest.name));
 
     if (params.userPool && params.userPoolClient)
       this.authorizer = new HttpUserPoolAuthorizer('Authorizer', params.userPool, {
@@ -33,7 +33,7 @@ export class ApiRest extends Construct {
       });
 
     this.api = new HttpApi(this, 'HttpApi', {
-      apiName: getResourceName('', props),
+      apiName: getResourceName('', service.props),
       corsPreflight: {
         allowOrigins: ['*'],
         allowMethods: [CorsHttpMethod.ANY],
@@ -42,7 +42,7 @@ export class ApiRest extends Construct {
       },
     });
 
-    const apiUrl = Fn.join('', [this.api.apiId, '.execute-api.', props.regionName, '.amazonaws.com']);
+    const apiUrl = Fn.join('', [this.api.apiId, '.execute-api.', service.props.regionName, '.amazonaws.com']);
 
     params.distribution.addBehavior(
       `/${params.basePath}*`,

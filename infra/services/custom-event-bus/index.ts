@@ -3,17 +3,17 @@ import { EventBus, IEventBus } from 'aws-cdk-lib/aws-events';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 
 import { getResourceName } from '../../common/naming/get-resource-name';
-import { BaseServiceProps } from '../../common/synth/props-types';
+import { Service } from '../../common/service';
 import { getLogicalName } from '../../common/naming/get-logical-name';
 
 export type CustomEventBusParams = IEventBus;
 export class CustomEventBusConstruct extends Construct {
   public readonly bus: EventBus;
 
-  constructor(scope: Construct, props: BaseServiceProps) {
-    super(scope, getLogicalName(CustomEventBusConstruct.name));
+  constructor(service: Service) {
+    super(service.scope, getLogicalName(CustomEventBusConstruct.name));
 
-    this.bus = new EventBus(this, 'bus', { eventBusName: getResourceName('', props) });
+    this.bus = new EventBus(this, 'bus', { eventBusName: getResourceName('', service.props) });
   }
 
   public writerModifier(variableName = 'EVENT_BUS'): (lambda: NodejsFunction) => void {

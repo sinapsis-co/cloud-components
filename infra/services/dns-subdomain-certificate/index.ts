@@ -3,20 +3,20 @@ import { HostedZone } from 'aws-cdk-lib/aws-route53';
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
 
 import { getDomain } from '../../common/naming/get-domain';
-import { BaseServiceProps } from '../../common/synth/props-types';
+import { Service } from '../../common/service';
 import { getLogicalName } from '../../common/naming/get-logical-name';
 
 export class DnsSubdomainCertificateConstruct extends Construct {
   public readonly certificate: Certificate;
 
-  constructor(scope: Construct, props: BaseServiceProps) {
-    super(scope, getLogicalName(DnsSubdomainCertificateConstruct.name));
+  constructor(service: Service) {
+    super(service.scope, getLogicalName(DnsSubdomainCertificateConstruct.name));
 
-    const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', props) });
+    const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', service.props) });
 
     this.certificate = new Certificate(this, 'Certificate', {
-      domainName: getDomain('', props),
-      subjectAlternativeNames: [getDomain('*', props)],
+      domainName: getDomain('', service.props),
+      subjectAlternativeNames: [getDomain('*', service.props)],
       validation: CertificateValidation.fromDns(hostedZone),
     });
   }

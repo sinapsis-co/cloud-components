@@ -4,8 +4,8 @@ import { CronOptions, Rule, Schedule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 
 import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { BaseServiceProps } from '../../../common/synth/props-types';
 import { BaseHandlerParams, BaseFunction, BaseFunctionParams } from '../base-function';
+import { Service } from '../../../common/service';
 
 export type CronHandlerParams = BaseHandlerParams & {
   cronOptions: CronOptions;
@@ -16,12 +16,12 @@ export type CronFunctionParams = BaseFunctionParams;
 export class CronFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: CronFunctionParams & CronHandlerParams) {
-    super(scope, getLogicalName(CronFunction.name, params.name));
+  constructor(service: Service, params: CronFunctionParams & CronHandlerParams) {
+    super(service.scope, getLogicalName(CronFunction.name, params.name));
 
-    this.lambdaFunction = new BaseFunction(this, props, params).lambdaFunction;
+    this.lambdaFunction = new BaseFunction(service, params).lambdaFunction;
 
-    new Rule(scope, 'EventProcessorRule', {
+    new Rule(service.scope, 'EventProcessorRule', {
       schedule: Schedule.cron(params.cronOptions),
       targets: [new LambdaFunction(this.lambdaFunction)],
     });

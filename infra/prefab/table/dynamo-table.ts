@@ -5,8 +5,8 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 
 import { TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api';
 import { getResourceName } from '../../common/naming/get-resource-name';
-import { BaseServiceProps } from '../../common/synth/props-types';
 import { getLogicalName } from '../../common/naming/get-logical-name';
+import { Service } from '../../common/service';
 
 export type ServiceTableParams = {
   tableName: string;
@@ -18,11 +18,11 @@ export type ServiceTableParams = {
 export class ServiceTable extends Construct {
   public readonly table: Table;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: ServiceTableParams) {
-    super(scope, getLogicalName(ServiceTable.name, params.tableName));
+  constructor(service: Service, params: ServiceTableParams) {
+    super(service.scope, getLogicalName(ServiceTable.name, params.tableName));
 
     this.table = new Table(this, params.tableName, {
-      tableName: getResourceName(params.tableName, props),
+      tableName: getResourceName(params.tableName, service.props),
       partitionKey: { name: 'pk', type: AttributeType.STRING },
       billingMode: BillingMode.PAY_PER_REQUEST,
       timeToLiveAttribute: params.timeToLiveAttribute || 'deleteTTL',
@@ -31,7 +31,7 @@ export class ServiceTable extends Construct {
     });
 
     this.table.applyRemovalPolicy(RemovalPolicy.DESTROY);
-    if (props.envName === 'prod') this.table.applyRemovalPolicy(RemovalPolicy.RETAIN);
+    if (service.props.envName === 'prod') this.table.applyRemovalPolicy(RemovalPolicy.RETAIN);
   }
 
   public readerModifier(variableName = 'TABLE'): (lambda: NodejsFunction) => void {

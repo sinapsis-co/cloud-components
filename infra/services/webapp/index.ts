@@ -9,7 +9,7 @@ import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 
 import { getDomain } from '../../common/naming/get-domain';
-import { BaseServiceProps } from '../../common/synth/props-types';
+import { Service } from '../../common/service';
 import { getLogicalName } from '../../common/naming/get-logical-name';
 import { getResourceName } from '../../common/naming/get-resource-name';
 import { DeploySecret, DeploySecretProps } from '../../prefab/config/deploy-secret';
@@ -31,14 +31,14 @@ export class WebappConstruct extends Construct {
   public readonly baseUrl: string;
   public readonly distribution: Distribution;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: WebappConstructParams) {
-    super(scope, getLogicalName(WebappConstruct.name, params.subDomain));
+  constructor(service: Service, params: WebappConstructParams) {
+    super(service.scope, getLogicalName(WebappConstruct.name, params.subDomain));
 
-    this.domain = getDomain(params.subDomain, props);
+    this.domain = getDomain(params.subDomain, service.props);
     this.baseUrl = `https://${this.domain}/`;
 
     const bucket = new Bucket(this, 'WebappBucket', {
-      bucketName: getResourceName('webapp', props),
+      bucketName: getResourceName('webapp', service.props),
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       publicReadAccess: false,
       encryption: BucketEncryption.S3_MANAGED,
@@ -62,7 +62,7 @@ export class WebappConstruct extends Construct {
 
     this.distribution = new Distribution(this, 'Distribution', {
       enabled: true,
-      comment: getResourceName('cdn', props),
+      comment: getResourceName('cdn', service.props),
       certificate: params.certificate,
       domainNames: [this.domain],
       defaultRootObject: 'index.html',
@@ -91,9 +91,9 @@ export class WebappConstruct extends Construct {
       webAclId: params.waf?.webACL?.attrArn,
     });
 
-    const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', props) });
+    const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', service.props) });
 
-    new ARecord(scope, 'WebappRecords', {
+    new ARecord(service.scope, 'WebappRecords', {
       zone: hostedZone,
       target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
       recordName: this.domain,
@@ -101,20 +101,20 @@ export class WebappConstruct extends Construct {
 
     new StringParameter(this, 'Config', {
       simpleName: true,
-      parameterName: getResourceName('config', props),
+      parameterName: getResourceName('config', service.props),
       stringValue: JSON.stringify({
         domain: this.domain,
         bucketName: bucket.bucketName,
         distributionId: this.distribution.distributionId,
         assetMaxAge: params.assetMaxAge || '604800',
         indexMaxAge: params.indexMaxAge || '1800',
-        baseDir: params.baseDir || `frontend/${props.serviceName}`,
+        baseDir: params.baseDir || `frontend/${service.props.serviceName}`,
         distDir: params.distDir || 'build',
       }),
     });
     new CfnOutput(this, 'Domain', { value: this.domain });
     new CfnOutput(this, 'BaseUrl', { value: this.baseUrl });
 
-    if (params.envVars) new DeploySecret(this, props, { ...params.envVars, ...props });
+    if (params.envVars) new DeploySecret(service, { ...params.envVars });
   }
 }

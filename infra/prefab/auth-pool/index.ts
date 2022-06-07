@@ -6,9 +6,9 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 import { getResourceName } from '../../common/naming/get-resource-name';
-import { BaseServiceProps } from '../../common/synth/props-types';
 import { getLogicalName } from '../../common/naming/get-logical-name';
 import { getDomain } from '../../common/naming/get-domain';
+import { Service } from '../../common/service';
 
 export type AuthPoolParams = {
   userPool?: Partial<UserPoolProps>;
@@ -25,13 +25,13 @@ export class AuthPool extends Construct {
   public readonly userPoolDomain: UserPoolDomain;
   public readonly frontendRefs: Record<string, string>;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: AuthPoolParams) {
-    super(scope, getLogicalName(AuthPool.name));
+  constructor(service: Service, params: AuthPoolParams) {
+    super(service.scope, getLogicalName(AuthPool.name));
 
-    const callbackUrl = params.callbackUrl || getDomain('app', props, true);
+    const callbackUrl = params.callbackUrl || getDomain('app', service.props, true);
 
     const defaultUserPoolProps: UserPoolProps = {
-      userPoolName: getResourceName('', props),
+      userPoolName: getResourceName('', service.props),
       accountRecovery: AccountRecovery.EMAIL_ONLY,
       selfSignUpEnabled: true,
       autoVerify: { email: true },
@@ -46,7 +46,7 @@ export class AuthPool extends Construct {
     cfnUserPool.emailConfiguration = params.emailConfiguration || defaultEmailConfiguration;
 
     const defaultUserClientProps: Partial<UserPoolClientProps> = {
-      userPoolClientName: getResourceName('', props),
+      userPoolClientName: getResourceName('', service.props),
       authFlows: {
         custom: true,
         userSrp: true,
@@ -71,7 +71,7 @@ export class AuthPool extends Construct {
       ...params.userPoolClient,
     });
 
-    const defaultUserPoolDomainProps = { cognitoDomain: { domainPrefix: getResourceName('', props) } };
+    const defaultUserPoolDomainProps = { cognitoDomain: { domainPrefix: getResourceName('', service.props) } };
 
     const userPoolDomain = new UserPoolDomain(this, 'UserPoolDomain', {
       userPool,
@@ -86,7 +86,7 @@ export class AuthPool extends Construct {
     const userPoolClientId = userPoolClient.userPoolClientId;
 
     const userPoolDomainUrl = Fn.join('', ['https://', userPoolDomain.domainName, '.auth.us-east-1.amazoncognito.com']);
-    const userPoolRegion = props.regionName;
+    const userPoolRegion = service.props.regionName;
 
     new CfnOutput(this, 'UserPoolId', { value: userPoolId });
     new CfnOutput(this, 'UserPoolClientId', { value: userPoolClientId });

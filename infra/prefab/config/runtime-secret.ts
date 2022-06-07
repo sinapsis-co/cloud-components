@@ -6,7 +6,7 @@ import { SecretConfig } from '@sinapsis-co/cc-platform-v2/catalog/secret';
 
 import { getLogicalName } from '../../common/naming/get-logical-name';
 import { getResourceName } from '../../common/naming/get-resource-name';
-import { BaseServiceProps } from '../../common/synth/props-types';
+import { Service } from '../../common/service';
 
 export type RuntimeSecretBuilderProps = {
   secretConfig: SecretConfig;
@@ -16,13 +16,13 @@ export class RuntimeSecret extends Construct {
   public readonly secret: CfnSecret;
   public readonly secretName: string;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: RuntimeSecretBuilderProps) {
-    super(scope, getLogicalName(RuntimeSecret.name));
+  constructor(service: Service, params: RuntimeSecretBuilderProps) {
+    super(service.scope, getLogicalName(RuntimeSecret.name));
 
     this.secretName = params.secretConfig.name;
 
     this.secret = new CfnSecret(this, 'Secret', {
-      name: getResourceName(this.secretName, props),
+      name: getResourceName(this.secretName, service.props),
     });
   }
 

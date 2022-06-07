@@ -7,7 +7,7 @@ import { BlockPublicAccess, Bucket, BucketEncryption } from 'aws-cdk-lib/aws-s3'
 import { CfnWorkGroup, CfnNamedQuery } from 'aws-cdk-lib/aws-athena';
 
 import { getResourceName } from '../../common/naming/get-resource-name';
-import { BaseServiceProps } from '../../common/synth/props-types';
+import { Service } from '../../common/service';
 import { getLogicalName } from '../../common/naming/get-logical-name';
 
 export type AutoVisualizationProps = {
@@ -23,13 +23,13 @@ export type AutoVisualizationProps = {
 export class AutoVisualization extends Construct {
   public readonly database: CfnDatabase;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: AutoVisualizationProps) {
-    super(scope, getLogicalName(AutoVisualization.name));
+  constructor(service: Service, params: AutoVisualizationProps) {
+    super(service.scope, getLogicalName(AutoVisualization.name));
 
-    const quicksightUserARN = `arn:aws:quicksight:${props.regionName}:${params.accountId}:user/default/${params.quicksightUser}`;
+    const quicksightUserARN = `arn:aws:quicksight:${service.props.regionName}:${params.accountId}:user/default/${params.quicksightUser}`;
 
-    const bucket = new Bucket(scope, 'QueryOutputsBucket', {
-      bucketName: getResourceName('query-outputs', props),
+    const bucket = new Bucket(service.scope, 'QueryOutputsBucket', {
+      bucketName: getResourceName('query-outputs', service.props),
       versioned: false,
       publicReadAccess: false,
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
@@ -39,7 +39,7 @@ export class AutoVisualization extends Construct {
     });
 
     const quicksightRole = Role.fromRoleArn(
-      scope,
+      service.scope,
       'QuicksightRole',
       `arn:aws:iam::${params.accountId}:role/service-role/aws-quicksight-s3-consumers-role-v0`
     );
@@ -47,7 +47,7 @@ export class AutoVisualization extends Construct {
     bucket.grantReadWrite(quicksightRole);
     params.dataLakeBucket.grantRead(quicksightRole);
 
-    const workGroup = new CfnWorkGroup(scope, 'DataLakeWorkGroup', {
+    const workGroup = new CfnWorkGroup(service.scope, 'DataLakeWorkGroup', {
       name: 'data-lake',
       recursiveDeleteOption: true,
       workGroupConfiguration: {
@@ -61,7 +61,7 @@ export class AutoVisualization extends Construct {
     const queries = params.queries(params.dataLakeDatabase.ref.toString(), params.dataLakeTableName);
 
     Object.keys(queries).map((queryKey) => {
-      const query = new CfnNamedQuery(scope, queryKey, {
+      const query = new CfnNamedQuery(service.scope, queryKey, {
         database: params.dataLakeDatabase.ref.toString(),
         workGroup: workGroup.name,
         name: queryKey,
@@ -71,10 +71,10 @@ export class AutoVisualization extends Construct {
       query.addDependsOn(workGroup);
     });
 
-    const dataSource = new CfnDataSource(scope, 'DataSource', {
+    const dataSource = new CfnDataSource(service.scope, 'DataSource', {
       awsAccountId: params.accountId,
       name: 'DataLakeDataSource',
-      dataSourceId: `DataLakeDataSource${scope.node.addr}`,
+      dataSourceId: `DataLakeDataSource${service.scope.node.addr}`,
       type: 'ATHENA',
       permissions: [
         {
@@ -105,11 +105,11 @@ export class AutoVisualization extends Construct {
     dataSource.addDependsOn(workGroup);
 
     const sourceQueryName = params.dataSetQueryName;
-    const physicalId = `${sourceQueryName}${scope.node.addr}`;
+    const physicalId = `${sourceQueryName}${service.scope.node.addr}`;
 
-    const dataSet = new CfnDataSet(scope, 'DataSet', {
-      name: getResourceName('DataLakeDataSet', props),
-      dataSetId: `DataLakeDataSet${scope.node.addr}`,
+    const dataSet = new CfnDataSet(service.scope, 'DataSet', {
+      name: getResourceName('DataLakeDataSet', service.props),
+      dataSetId: `DataLakeDataSet${service.scope.node.addr}`,
       awsAccountId: params.accountId,
       importMode: 'DIRECT_QUERY',
       permissions: [
@@ -146,12 +146,12 @@ export class AutoVisualization extends Construct {
     });
     dataSet.addDependsOn(workGroup);
 
-    new CfnOutput(scope, 'DataSetARN', {
+    new CfnOutput(service.scope, 'DataSetARN', {
       exportName: 'DataSetARN',
       value: dataSet.attrArn,
     });
 
-    new CfnOutput(scope, 'QuicksightUserARN', {
+    new CfnOutput(service.scope, 'QuicksightUserARN', {
       exportName: 'QuicksightUserARN',
       value: quicksightUserARN,
     });

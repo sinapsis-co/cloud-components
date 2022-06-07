@@ -4,8 +4,8 @@ import { S3EventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { Bucket, EventType, NotificationKeyFilter } from 'aws-cdk-lib/aws-s3';
 
 import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { BaseServiceProps } from '../../../common/synth/props-types';
 import { BaseFunction, BaseFunctionParams, BaseHandlerParams } from '../base-function';
+import { Service } from '../../../common/service';
 
 export type BucketHandlerProps = BaseHandlerParams;
 
@@ -18,10 +18,10 @@ export type BucketFunctionProps = BaseFunctionParams & {
 export class BucketFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: BucketFunctionProps & BucketHandlerProps) {
-    super(scope, getLogicalName(BucketFunction.name, params.name));
+  constructor(service: Service, params: BucketFunctionProps & BucketHandlerProps) {
+    super(service.scope, getLogicalName(BucketFunction.name, params.name));
 
-    this.lambdaFunction = new BaseFunction(this, props, params).lambdaFunction;
+    this.lambdaFunction = new BaseFunction(service, params).lambdaFunction;
 
     const s3PutEventSource = new S3EventSource(params.bucket, {
       events: params.eventTypes || [EventType.OBJECT_CREATED_PUT],

@@ -9,7 +9,7 @@ import { HttpOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 
 import { getDomain } from '../../common/naming/get-domain';
-import { BaseServiceProps } from '../../common/synth/props-types';
+import { Service } from '../../common/service';
 import { getLogicalName } from '../../common/naming/get-logical-name';
 import { getResourceName } from '../../common/naming/get-resource-name';
 import { Waf } from '../waf';
@@ -26,14 +26,14 @@ export class CdnApiConstruct extends Construct {
   public readonly distribution: Distribution;
   public readonly behaviorOptions: Omit<BehaviorOptions, 'origin'>;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: CdnApiConstructProps) {
-    super(scope, getLogicalName(CdnApiConstruct.name, params.subDomain));
+  constructor(service: Service, params: CdnApiConstructProps) {
+    super(service.scope, getLogicalName(CdnApiConstruct.name, params.subDomain));
 
-    this.domain = getDomain(params.subDomain, props);
+    this.domain = getDomain(params.subDomain, service.props);
     this.baseUrl = `https://${this.domain}/`;
 
     const bucket = new Bucket(this, 'DefaultOrigin', {
-      bucketName: getResourceName('cdn-default-origin', props),
+      bucketName: getResourceName('cdn-default-origin', service.props),
       removalPolicy: RemovalPolicy.DESTROY,
     });
 
@@ -64,7 +64,7 @@ export class CdnApiConstruct extends Construct {
 
     this.distribution = new Distribution(this, 'Distribution', {
       enabled: true,
-      comment: getResourceName('cdn', props),
+      comment: getResourceName('cdn', service.props),
       certificate: params.certificate,
       domainNames: [this.domain],
       defaultBehavior: {
@@ -74,8 +74,8 @@ export class CdnApiConstruct extends Construct {
       webAclId: params.waf?.webACL?.attrArn,
     });
 
-    const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', props) });
-    new ARecord(scope, 'Record', {
+    const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', service.props) });
+    new ARecord(service.scope, 'Record', {
       zone: hostedZone,
       target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
       recordName: this.domain,

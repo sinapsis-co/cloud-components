@@ -6,8 +6,8 @@ import { HttpUserPoolAuthorizer } from '@aws-cdk/aws-apigatewayv2-authorizers-al
 import { ApiInterface, ApiConfig } from '@sinapsis-co/cc-platform-v2/catalog/api';
 
 import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { BaseServiceProps } from '../../../common/synth/props-types';
 import { BaseFunction, BaseFunctionParams, BaseHandlerParams } from '../base-function';
+import { Service } from '../../../common/service';
 
 export type ApiHandlerParams = BaseHandlerParams & {
   basePath: ApiConfig<ApiInterface>['basePath'];
@@ -24,10 +24,10 @@ export type ApiFunctionParams = BaseFunctionParams & {
 export class ApiFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: ApiHandlerParams & ApiFunctionParams) {
-    super(scope, getLogicalName(ApiFunction.name, params.name));
+  constructor(service: Service, params: ApiHandlerParams & ApiFunctionParams) {
+    super(service.scope, getLogicalName(ApiFunction.name, params.name));
 
-    this.lambdaFunction = new BaseFunction(this, props, params).lambdaFunction;
+    this.lambdaFunction = new BaseFunction(service, params).lambdaFunction;
 
     const path = params.path === '/' ? '' : params.path;
     params.api.addRoutes({

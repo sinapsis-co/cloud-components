@@ -4,9 +4,9 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 
 import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { BaseServiceProps } from '../../../common/synth/props-types';
 import { CustomQueue, CustomQueueParams } from '../../queue/custom-queue';
 import { BaseHandlerParams, BaseFunction, BaseFunctionParams } from '../base-function';
+import { Service } from '../../../common/service';
 
 export type QueueHandlerParams = BaseHandlerParams & {
   queue?: CustomQueue;
@@ -21,12 +21,12 @@ export class QueueFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
   public readonly customQueue: CustomQueue;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: QueueFunctionParams & QueueHandlerParams) {
-    super(scope, getLogicalName(QueueFunction.name, params.name));
+  constructor(service: Service, params: QueueFunctionParams & QueueHandlerParams) {
+    super(service.scope, getLogicalName(QueueFunction.name, params.name));
 
-    this.customQueue = params.queue || new CustomQueue(this, props, { name: params.name });
+    this.customQueue = params.queue || new CustomQueue(service, { name: params.name });
 
-    this.lambdaFunction = new BaseFunction(this, props, params).lambdaFunction;
+    this.lambdaFunction = new BaseFunction(service, params).lambdaFunction;
 
     this.lambdaFunction.addEventSource(
       new SqsEventSource(this.customQueue.queue, {

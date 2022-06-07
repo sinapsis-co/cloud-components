@@ -7,9 +7,9 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Topic } from 'aws-cdk-lib/aws-sns';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 
-import { BaseServiceProps } from '../../common/synth/props-types';
 import { getLogicalName } from '../../common/naming/get-logical-name';
 import { getResourceName } from '../../common/naming/get-resource-name';
+import { Service } from '../../common/service';
 
 export type PrivateBucketParams = {
   bucketName: string;
@@ -18,20 +18,20 @@ export type PrivateBucketParams = {
 export class PrivateBucket extends Construct {
   public readonly bucket: Bucket;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: PrivateBucketParams) {
-    super(scope, getLogicalName(PrivateBucket.name, params.bucketName));
+  constructor(service: Service, params: PrivateBucketParams) {
+    super(service.scope, getLogicalName(PrivateBucket.name, params.bucketName));
 
     const defaultProps: BucketProps = {
       encryption: BucketEncryption.S3_MANAGED,
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
-      removalPolicy: props.envName === 'prod' ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY,
-      autoDeleteObjects: props.envName !== 'prod',
+      removalPolicy: service.props.envName === 'prod' ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY,
+      autoDeleteObjects: service.props.envName !== 'prod',
       publicReadAccess: false,
       eventBridgeEnabled: true,
     };
 
     this.bucket = new Bucket(this, getLogicalName(PrivateBucket.name, 'Bucket'), {
-      bucketName: getResourceName(params.bucketName, props),
+      bucketName: getResourceName(params.bucketName, service.props),
       ...defaultProps,
       ...params.bucketProps,
     });

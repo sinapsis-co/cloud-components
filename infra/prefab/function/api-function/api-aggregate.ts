@@ -6,7 +6,6 @@ import { HttpUserPoolAuthorizer } from '@aws-cdk/aws-apigatewayv2-authorizers-al
 import { UserPool, UserPoolClient } from 'aws-cdk-lib/aws-cognito';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
 
-import { BaseServiceProps } from '../../../common/synth/props-types';
 import { getLogicalName } from '../../../common/naming/get-logical-name';
 import { ServiceTable, ServiceTableParams } from '../../table/dynamo-table';
 import { ApiRest } from '../../api/api-rest';
@@ -15,6 +14,7 @@ import { ApiFunction, ApiHandlerParams } from './api-function';
 import { SynthError } from '../../../common/synth/synth-error';
 import { HttpOriginProps } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { BaseFunctionParams } from '../base-function';
+import { Service } from '../../../common/service';
 
 export type ApiCdnApiParams = {
   distribution: Distribution;
@@ -41,16 +41,16 @@ export class ApiAggregate<HandlerName extends string = string> extends Construct
   public readonly authorizer: HttpUserPoolAuthorizer;
   public readonly handlers: Record<HandlerName, NodejsFunction> = {} as Record<HandlerName, NodejsFunction>;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: ApiAggregateParams) {
-    super(scope, getLogicalName('ApiAggregate'));
+  constructor(service: Service, params: ApiAggregateParams) {
+    super(service.scope, getLogicalName('ApiAggregate'));
 
-    const apiRest = new ApiRest(this, props, { ...params, ...params.cdnApi, ...params.authPool });
+    const apiRest = new ApiRest(service, { ...params, ...params.cdnApi, ...params.authPool });
 
     this.api = apiRest.api;
     this.authorizer = apiRest.authorizer;
 
     if (!params.skipTable) {
-      const serviceTable = new ServiceTable(this, props, { tableName: params.basePath, ...params });
+      const serviceTable = new ServiceTable(service, { tableName: params.basePath, ...params });
       this.table = serviceTable.table;
     }
 
@@ -58,9 +58,9 @@ export class ApiAggregate<HandlerName extends string = string> extends Construct
       if (params.basePath !== params.handlers[handler].basePath)
         throw new SynthError(
           `[ApiService] Invalid basePath: '${params.handlers[handler].basePath}' in '${handler}' function.`,
-          props
+          service.props
         );
-      this.handlers[handler] = new ApiFunction(this, props, {
+      this.handlers[handler] = new ApiFunction(service, {
         ...params,
         ...params.handlers[handler],
         table: this.table,

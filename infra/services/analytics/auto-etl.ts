@@ -4,7 +4,7 @@ import { CfnDatabase, CfnCrawler } from 'aws-cdk-lib/aws-glue';
 import { Role, ServicePrincipal, PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 
-import { BaseServiceProps } from '../../common/synth/props-types';
+import { Service } from '../../common/service';
 import { getDatabaseName, getResourceName } from '../../common/naming/get-resource-name';
 import { getLogicalName } from '../../common/naming/get-logical-name';
 import { getDeployConfig } from '../../common/naming/get-deploy-config';
@@ -14,15 +14,15 @@ export type AutoETLProps = { dataLakeBucket: Bucket };
 export class AutoETL extends Construct {
   public readonly database: CfnDatabase;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: AutoETLProps) {
-    super(scope, getLogicalName(AutoETL.name));
+  constructor(service: Service, params: AutoETLProps) {
+    super(service.scope, getLogicalName(AutoETL.name));
 
-    this.database = new CfnDatabase(scope, 'Database', {
-      catalogId: getDeployConfig(props).env.account,
-      databaseInput: { name: getDatabaseName('datalake', props) },
+    this.database = new CfnDatabase(service.scope, 'Database', {
+      catalogId: getDeployConfig(service.props).env.account,
+      databaseInput: { name: getDatabaseName('datalake', service.props) },
     });
 
-    const role = new Role(scope, 'CrawlerRole', { assumedBy: new ServicePrincipal('glue.amazonaws.com') });
+    const role = new Role(service.scope, 'CrawlerRole', { assumedBy: new ServicePrincipal('glue.amazonaws.com') });
 
     role.addToPrincipalPolicy(
       new PolicyStatement({
@@ -47,7 +47,7 @@ export class AutoETL extends Construct {
     params.dataLakeBucket.grantReadWrite(role);
 
     const crawler = new CfnCrawler(this, 'DatalakeTableCrawler', {
-      name: getResourceName('crawler', props),
+      name: getResourceName('crawler', service.props),
       databaseName: this.database.ref.toString(),
       role: role.roleArn,
       targets: { s3Targets: [{ path: params.dataLakeBucket.bucketName }] },
@@ -65,8 +65,11 @@ export class AutoETL extends Construct {
       },
     });
 
-    new CfnOutput(scope, 'CrawlerName', { exportName: 'CrawlerName', value: crawler.name as string });
-    new CfnOutput(scope, 'DatabaseName', { exportName: 'DatabaseName', value: this.database.ref.toString() });
-    new CfnOutput(scope, 'TableName', { exportName: 'TableName', value: getDatabaseName('datalake', props) });
+    new CfnOutput(service.scope, 'CrawlerName', { exportName: 'CrawlerName', value: crawler.name as string });
+    new CfnOutput(service.scope, 'DatabaseName', { exportName: 'DatabaseName', value: this.database.ref.toString() });
+    new CfnOutput(service.scope, 'TableName', {
+      exportName: 'TableName',
+      value: getDatabaseName('datalake', service.props),
+    });
   }
 }

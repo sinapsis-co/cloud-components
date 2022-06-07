@@ -8,7 +8,7 @@ import { IEventBus, Rule } from 'aws-cdk-lib/aws-events';
 import { KinesisFirehoseStream } from 'aws-cdk-lib/aws-events-targets';
 
 import { getResourceName, getShortResourceName } from '../../common/naming/get-resource-name';
-import { BaseServiceProps } from '../../common/synth/props-types';
+import { Service } from '../../common/service';
 import { getLogicalName } from '../../common/naming/get-logical-name';
 
 export type EventIngestionProps = {
@@ -27,11 +27,11 @@ export type EventIngestionProps = {
 export class EventIngestion extends Construct {
   public readonly datalakeBucket: Bucket;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: EventIngestionProps) {
-    super(scope, getLogicalName(EventIngestion.name));
+  constructor(service: Service, params: EventIngestionProps) {
+    super(service.scope, getLogicalName(EventIngestion.name));
 
-    const dataLakeBucket = new Bucket(scope, 'DataLakeBucket', {
-      bucketName: getResourceName('datalake', props),
+    const dataLakeBucket = new Bucket(service.scope, 'DataLakeBucket', {
+      bucketName: getResourceName('datalake', service.props),
       versioned: false,
       publicReadAccess: false,
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
@@ -53,21 +53,21 @@ export class EventIngestion extends Construct {
       ],
     });
 
-    const role = new Role(scope, 'DataLakeDeliveryStringRole', {
+    const role = new Role(service.scope, 'DataLakeDeliveryStringRole', {
       assumedBy: new ServicePrincipal('firehose.amazonaws.com'),
     });
 
     dataLakeBucket.grantReadWrite(role);
 
-    const lambdaFunction = new NodejsFunction(scope, 'ProcessorFunction', {
-      functionName: getShortResourceName('processor', props),
+    const lambdaFunction = new NodejsFunction(service.scope, 'ProcessorFunction', {
+      functionName: getShortResourceName('processor', service.props),
       entry: `${__dirname}/processor/handler.js`,
       handler: 'handler',
     });
 
     lambdaFunction.grantInvoke(role);
 
-    const deliveryStream = new CfnDeliveryStream(scope, 'DataLakeDeliveryStream', {
+    const deliveryStream = new CfnDeliveryStream(service.scope, 'DataLakeDeliveryStream', {
       deliveryStreamType: 'DirectPut',
       extendedS3DestinationConfiguration: {
         bucketArn: dataLakeBucket.bucketArn,
@@ -96,7 +96,7 @@ export class EventIngestion extends Construct {
       },
     });
 
-    new Rule(scope, 'EventProcessorRule', {
+    new Rule(service.scope, 'EventProcessorRule', {
       ...(params.eventBus ? { eventBus: params.eventBus } : {}),
       eventPattern: { source: [params.eventSource] },
       targets: [new KinesisFirehoseStream(deliveryStream)],

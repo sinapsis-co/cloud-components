@@ -3,8 +3,8 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { UserPool, UserPoolOperation } from 'aws-cdk-lib/aws-cognito';
 
 import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { BaseServiceProps } from '../../../common/synth/props-types';
 import { BaseHandlerParams, BaseFunction, BaseFunctionParams } from '../base-function';
+import { Service } from '../../../common/service';
 
 export type CognitoHandlerParams = BaseHandlerParams & {
   operation: UserPoolOperation;
@@ -17,10 +17,10 @@ export type CognitoFunctionParams = BaseFunctionParams & {
 export class CognitoFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: CognitoFunctionParams & CognitoHandlerParams) {
-    super(scope, getLogicalName(CognitoFunction.name, params.name));
+  constructor(service: Service, params: CognitoFunctionParams & CognitoHandlerParams) {
+    super(service.scope, getLogicalName(CognitoFunction.name, params.name));
 
-    this.lambdaFunction = new BaseFunction(this, props, params).lambdaFunction;
+    this.lambdaFunction = new BaseFunction(service, params).lambdaFunction;
 
     params.userPool.addTrigger(params.operation, this.lambdaFunction);
   }

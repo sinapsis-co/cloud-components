@@ -4,7 +4,7 @@ import { SqsSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 
 import { getResourceName } from '../../common/naming/get-resource-name';
-import { BaseServiceProps } from '../../common/synth/props-types';
+import { Service } from '../../common/service';
 import { getLogicalName } from '../../common/naming/get-logical-name';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
@@ -16,11 +16,11 @@ export type CustomTopicParams = {
 export class CustomTopic extends Construct {
   public readonly topic: Topic;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: CustomTopicParams) {
-    super(scope, getLogicalName(CustomTopic.name, params.name));
+  constructor(service: Service, params: CustomTopicParams) {
+    super(service.scope, getLogicalName(CustomTopic.name, params.name));
 
     this.topic = new Topic(this, params.name, {
-      topicName: getResourceName(params.name, props),
+      topicName: getResourceName(params.name, service.props),
     });
   }
 

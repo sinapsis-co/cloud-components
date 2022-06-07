@@ -3,7 +3,7 @@ import { RemovalPolicy, Fn } from 'aws-cdk-lib';
 import { HostedZone } from 'aws-cdk-lib/aws-route53';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 
-import { BaseServiceProps } from '../../common/synth/props-types';
+import { Service } from '../../common/service';
 import { getDomain } from '../../common/naming/get-domain';
 import { getLogicalName } from '../../common/naming/get-logical-name';
 import { getResourceName } from '../../common/naming/get-resource-name';
@@ -13,21 +13,24 @@ export type DnsSubdomainHostedZoneParams = { isBootstrapping: boolean };
 export class DnsSubdomainHostedZoneConstruct extends Construct {
   public readonly hostedZoneNS: string;
 
-  constructor(scope: Construct, props: BaseServiceProps, params: DnsSubdomainHostedZoneParams) {
-    super(scope, getLogicalName(DnsSubdomainHostedZoneConstruct.name));
+  constructor(service: Service, params: DnsSubdomainHostedZoneParams) {
+    super(service.scope, getLogicalName(DnsSubdomainHostedZoneConstruct.name));
 
-    const hostedZone = new HostedZone(scope, 'HostedZoneEnvDns', { zoneName: getDomain('', props) });
+    const hostedZone = new HostedZone(service.scope, 'HostedZoneEnvDns', { zoneName: getDomain('', service.props) });
     hostedZone.applyRemovalPolicy(RemovalPolicy.DESTROY);
 
     const nsArray = hostedZone.hostedZoneNameServers as string[];
     new StringParameter(this, 'HostedZoneNameServersParameter', {
       simpleName: true,
-      parameterName: getResourceName('HostedZoneNameServers', props),
+      parameterName: getResourceName('HostedZoneNameServers', service.props),
       stringValue: Fn.join(',', nsArray),
     });
 
     if (!params.isBootstrapping) {
-      this.hostedZoneNS = StringParameter.valueFromLookup(this, getResourceName('HostedZoneNameServers', props));
+      this.hostedZoneNS = StringParameter.valueFromLookup(
+        this,
+        getResourceName('HostedZoneNameServers', service.props)
+      );
     }
   }
 }

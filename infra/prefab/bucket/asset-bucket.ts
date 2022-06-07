@@ -1,8 +1,7 @@
-import { Construct } from 'constructs';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 
-import { BaseServiceProps } from '../../common/synth/props-types';
 import { PrivateBucket, PrivateBucketParams } from './private-bucket';
+import { Service } from '../../common/service';
 
 export type AssetBucketParams = PrivateBucketParams & {
   folder?: string;
@@ -10,8 +9,8 @@ export type AssetBucketParams = PrivateBucketParams & {
 };
 
 export class AssetBucket extends PrivateBucket {
-  constructor(scope: Construct, props: BaseServiceProps, params: AssetBucketParams) {
-    super(scope, props, params);
+  constructor(service: Service, params: AssetBucketParams) {
+    super(service, params);
 
     if (params.folder) {
       new BucketDeployment(this, 'DeployBucket', {
