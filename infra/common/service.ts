@@ -9,7 +9,7 @@ import {
   BaseServiceProps,
 } from '@sinapsis-co/cc-infra-v2/common/synth/props-types';
 
-export * as Construct from 'constructs';
+export { Construct } from 'constructs';
 
 export class Service<
   GlobalProps extends BaseGlobalProps = BaseGlobalProps,
