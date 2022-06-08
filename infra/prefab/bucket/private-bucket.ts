@@ -64,6 +64,26 @@ export class PrivateBucket extends Construct {
     },
   };
 
+  public m(variableName = 'BUCKET_NAME') {
+    return (lambda: NodejsFunction): Record<string, () => NodejsFunction> => {
+      lambda.addEnvironment(variableName, this.bucket.bucketName);
+      return {
+        reader: () => {
+          this.bucket.grantRead(lambda);
+          return lambda;
+        },
+        writer: () => {
+          this.bucket.grantWrite(lambda);
+          return lambda;
+        },
+        delete: () => {
+          this.bucket.grantDelete(lambda);
+          return lambda;
+        },
+      };
+    };
+  }
+
   public readerModifier(variableName = 'BUCKET_NAME'): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
       lambda.addEnvironment(variableName, this.bucket.bucketName);
