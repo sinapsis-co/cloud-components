@@ -37,23 +37,47 @@ export class PrivateBucket extends Construct {
     });
   }
 
+  public modifier = {
+    use: (variableName = 'BUCKET_NAME'): ((lambda: NodejsFunction) => NodejsFunction) => {
+      return (lambda: NodejsFunction): NodejsFunction => {
+        lambda.addEnvironment(variableName, this.bucket.bucketName);
+        return lambda;
+      };
+    },
+    reader: (): ((lambda: NodejsFunction) => NodejsFunction) => {
+      return (lambda: NodejsFunction): NodejsFunction => {
+        this.bucket.grantRead(lambda);
+        return lambda;
+      };
+    },
+    writer: (): ((lambda: NodejsFunction) => NodejsFunction) => {
+      return (lambda: NodejsFunction): NodejsFunction => {
+        this.bucket.grantRead(lambda);
+        return lambda;
+      };
+    },
+    delete: (): ((lambda: NodejsFunction) => NodejsFunction) => {
+      return (lambda: NodejsFunction): NodejsFunction => {
+        this.bucket.grantDelete(lambda);
+        return lambda;
+      };
+    },
+  };
+
   public readerModifier(variableName = 'BUCKET_NAME'): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
-      lambda.node.addDependency(this);
       lambda.addEnvironment(variableName, this.bucket.bucketName);
       this.bucket.grantRead(lambda);
     };
   }
   public bucketWriterModifier(variableName = 'BUCKET_NAME'): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
-      lambda.node.addDependency(this);
       lambda.addEnvironment(variableName, this.bucket.bucketName);
       this.bucket.grantWrite(lambda);
     };
   }
   public deleteModifier(variableName = 'BUCKET_NAME'): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
-      lambda.node.addDependency(this);
       lambda.addEnvironment(variableName, this.bucket.bucketName);
       this.bucket.grantDelete(lambda);
     };
