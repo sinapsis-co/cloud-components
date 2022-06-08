@@ -8,6 +8,7 @@ import { BaseFunctionParams } from '../base-function';
 import { Service } from '../../../common/service';
 
 export type EventAggregateParams<HandlerName extends string = string> = BaseFunctionParams & {
+  name?: string;
   handlers: Record<HandlerName, EventHandlerParams>;
   eventBus: CustomEventBusParams;
 };
@@ -16,7 +17,7 @@ export class EventAggregate<HandlerName extends string = string> extends Constru
   public readonly handlers: Record<HandlerName, NodejsFunction> = {} as Record<HandlerName, NodejsFunction>;
 
   constructor(service: Service, params: EventAggregateParams<HandlerName>) {
-    super(service, getLogicalName(EventAggregate.name));
+    super(service, getLogicalName(EventAggregate.name, params.name));
 
     Object.keys(params.handlers).forEach((handler: string) => {
       this.handlers[handler] = new EventFunction(service, {
