@@ -37,56 +37,37 @@ export class PrivateBucket extends Construct {
     });
   }
 
-  public modifier = {
-    use: (variableName = 'BUCKET_NAME'): ((lambda: NodejsFunction) => NodejsFunction) => {
+  public static modifier = {
+    // use: (variableName = 'BUCKET_NAME'): ((lambda: NodejsFunction) => NodejsFunction) => {
+    //   return (lambda: NodejsFunction): NodejsFunction => {
+    //     lambda.addEnvironment(variableName, this.bucket.bucketName);
+    //     return lambda;
+    //   };
+    // },
+    reader: (bucket: Bucket): ((lambda: NodejsFunction) => NodejsFunction) => {
       return (lambda: NodejsFunction): NodejsFunction => {
-        lambda.addEnvironment(variableName, this.bucket.bucketName);
+        bucket.grantRead(lambda);
         return lambda;
       };
     },
-    reader: (): ((lambda: NodejsFunction) => NodejsFunction) => {
+    writer: (bucket: Bucket): ((lambda: NodejsFunction) => NodejsFunction) => {
       return (lambda: NodejsFunction): NodejsFunction => {
-        this.bucket.grantRead(lambda);
+        bucket.grantRead(lambda);
         return lambda;
       };
     },
-    writer: (): ((lambda: NodejsFunction) => NodejsFunction) => {
+    delete: (bucket: Bucket): ((lambda: NodejsFunction) => NodejsFunction) => {
       return (lambda: NodejsFunction): NodejsFunction => {
-        this.bucket.grantRead(lambda);
-        return lambda;
-      };
-    },
-    delete: (): ((lambda: NodejsFunction) => NodejsFunction) => {
-      return (lambda: NodejsFunction): NodejsFunction => {
-        this.bucket.grantDelete(lambda);
+        bucket.grantDelete(lambda);
         return lambda;
       };
     },
   };
 
   public m(variableName = 'BUCKET_NAME') {
-    return (
-      lambda: NodejsFunction
-    ): {
-      reader: () => NodejsFunction;
-      writer: () => NodejsFunction;
-      delete: () => NodejsFunction;
-    } => {
+    return (lambda: NodejsFunction): Bucket => {
       lambda.addEnvironment(variableName, this.bucket.bucketName);
-      return {
-        reader: () => {
-          this.bucket.grantRead(lambda);
-          return lambda;
-        },
-        writer: () => {
-          this.bucket.grantWrite(lambda);
-          return lambda;
-        },
-        delete: () => {
-          this.bucket.grantDelete(lambda);
-          return lambda;
-        },
-      };
+      return this.bucket;
     };
   }
 
