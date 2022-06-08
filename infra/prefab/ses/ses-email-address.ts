@@ -46,10 +46,6 @@ export class SesEmailAddress extends Construct {
     };
   }
 
-  public useModWriter(): (lambda: NodejsFunction) => void {
-    return this.useMod([SesEmailAddress.modifier.emailSender]);
-  }
-
   public static modifier = {
     emailSender: (): ((lambda: NodejsFunction) => void) => {
       return (lambda: NodejsFunction): void => {
