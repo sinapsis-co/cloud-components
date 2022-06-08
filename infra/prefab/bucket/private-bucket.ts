@@ -37,37 +37,31 @@ export class PrivateBucket extends Construct {
     });
   }
 
-  // public static modifier = {
-  //   // use: (variableName = 'BUCKET_NAME'): ((lambda: NodejsFunction) => NodejsFunction) => {
-  //   //   return (lambda: NodejsFunction): NodejsFunction => {
-  //   //     lambda.addEnvironment(variableName, this.bucket.bucketName);
-  //   //     return lambda;
-  //   //   };
-  //   // },
-  //   reader: (bucket: Bucket): ((lambda: NodejsFunction) => NodejsFunction) => {
-  //     return (lambda: NodejsFunction): NodejsFunction => {
-  //       bucket.grantRead(lambda);
-  //       return this;
-  //     };
-  //   },
-  //   writer: (bucket: Bucket): ((lambda: NodejsFunction) => NodejsFunction) => {
-  //     return (lambda: NodejsFunction): NodejsFunction => {
-  //       bucket.grantRead(lambda);
-  //       return lambda;
-  //     };
-  //   },
-  //   delete: (bucket: Bucket): ((lambda: NodejsFunction) => NodejsFunction) => {
-  //     return (lambda: NodejsFunction): NodejsFunction => {
-  //       bucket.grantDelete(lambda);
-  //       return lambda;
-  //     };
-  //   },
-  // };
+  public static modifier = {
+    reader: (bucket: Bucket): ((lambda: NodejsFunction) => NodejsFunction) => {
+      return (lambda: NodejsFunction): NodejsFunction => {
+        bucket.grantRead(lambda);
+        return lambda;
+      };
+    },
+    writer: (bucket: Bucket): ((lambda: NodejsFunction) => NodejsFunction) => {
+      return (lambda: NodejsFunction): NodejsFunction => {
+        bucket.grantRead(lambda);
+        return lambda;
+      };
+    },
+    delete: (bucket: Bucket): ((lambda: NodejsFunction) => NodejsFunction) => {
+      return (lambda: NodejsFunction): NodejsFunction => {
+        bucket.grantDelete(lambda);
+        return lambda;
+      };
+    },
+  };
 
-  public useMod(variableName = 'BUCKET_NAME'): (lambda: NodejsFunction) => PrivateBucket {
-    return (lambda: NodejsFunction): PrivateBucket => {
+  public useMod(variableName = 'BUCKET_NAME', mods: ((bucket: Bucket) => any)[]): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
       lambda.addEnvironment(variableName, this.bucket.bucketName);
-      return this;
+      mods.map((fn) => fn(this.bucket));
     };
   }
 
