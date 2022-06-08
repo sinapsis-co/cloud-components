@@ -41,7 +41,7 @@ export class CustomQueue extends Construct {
     });
   }
 
-  public writerModifier(variableName = 'DEST_QUEUE'): (lambda: NodejsFunction) => void {
+  public queueWriterModifier(variableName = 'DEST_QUEUE'): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
       lambda.addEnvironment(variableName, this.queue.queueUrl);
       this.queue.grantSendMessages(lambda);

@@ -28,7 +28,7 @@ export class CustomTopic extends Construct {
     this.topic.addSubscription(new SqsSubscription(queue));
   }
 
-  public writerModifier(variableName = 'DEST_TOPIC'): (lambda: NodejsFunction) => void {
+  public topicWriterModifier(variableName = 'DEST_TOPIC'): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
       lambda.addEnvironment(variableName, this.topic.topicArn);
       this.topic.grantPublish(lambda);

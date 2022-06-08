@@ -40,7 +40,7 @@ export class ServiceTable extends Construct {
       this.table.grantReadData(lambda);
     };
   }
-  public writerModifier(variableName = 'TABLE'): (lambda: NodejsFunction) => void {
+  public dynamoWriterModifier(variableName = 'TABLE'): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
       lambda.addEnvironment(variableName, this.table.tableName);
       this.table.grantWriteData(lambda);
