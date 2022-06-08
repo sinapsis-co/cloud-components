@@ -26,6 +26,31 @@ export class RuntimeSecret extends Construct {
     });
   }
 
+  public useMod(mods: ((secret: CfnSecret) => any)[]): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda.addEnvironment(this.secretName, this.secret.ref);
+      mods.map((fn) => fn(this.secret)(lambda));
+    };
+  }
+
+  public useModReader(): (lambda: NodejsFunction) => void {
+    return this.useMod([RuntimeSecret.modifier.reader]);
+  }
+
+  public static modifier = {
+    reader: (secret: CfnSecret): ((lambda: NodejsFunction) => void) => {
+      return (lambda: NodejsFunction): void => {
+        lambda.addToRolePolicy(
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: ['secretsmanager:GetSecretValue', 'secretsmanager:DescribeSecret'],
+            resources: [secret.ref],
+          })
+        );
+      };
+    },
+  };
+
   public readerModifier(): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
       lambda.addToRolePolicy(
@@ -35,7 +60,6 @@ export class RuntimeSecret extends Construct {
           resources: [this.secret.ref],
         })
       );
-      lambda.addEnvironment(this.secretName, this.secret.ref);
     };
   }
 }

@@ -34,30 +34,43 @@ export class ServiceTable extends Construct {
     if (service.props.envName === 'prod') this.table.applyRemovalPolicy(RemovalPolicy.RETAIN);
   }
 
-  public readerModifier(variableName = 'TABLE'): (lambda: NodejsFunction) => void {
+  public useMod(variableName = 'TABLE', mods: ((table: Table) => any)[]): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
       lambda.addEnvironment(variableName, this.table.tableName);
-      this.table.grantReadData(lambda);
+      mods.map((fn) => fn(this.table)(lambda));
     };
   }
-  public dynamoWriterModifier(variableName = 'TABLE'): (lambda: NodejsFunction) => void {
+
+  public useModPermission(variableName = 'TABLE', tablePermission: TablePermission): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
       lambda.addEnvironment(variableName, this.table.tableName);
-      this.table.grantWriteData(lambda);
+      ServiceTable.modifier.permission(this.table, tablePermission)(lambda);
     };
   }
-  public tableModifier(tablePermission: TablePermission, variableName = 'TABLE'): (lambda: NodejsFunction) => void {
-    return (lambda: NodejsFunction): void => {
-      lambda.addEnvironment(variableName, this.table.tableName);
-      if (tablePermission === 'none') return;
-      const permissionMapper = {
-        read: () => this.table.grantReadData(lambda),
-        write: () => this.table.grantWriteData(lambda),
-        readWrite: () => this.table.grantReadWriteData(lambda),
+
+  public static modifier = {
+    permission: (table: Table, tablePermission: TablePermission): ((lambda: NodejsFunction) => void) => {
+      return (lambda: NodejsFunction): void => {
+        if (tablePermission === 'none') return;
+        const permissionMapper = {
+          read: () => table.grantReadData(lambda),
+          write: () => table.grantWriteData(lambda),
+          readWrite: () => table.grantReadWriteData(lambda),
+        };
+        permissionMapper[tablePermission]();
       };
-      permissionMapper[tablePermission]();
-    };
-  }
+    },
+    writer: (table: Table): ((lambda: NodejsFunction) => void) => {
+      return (lambda: NodejsFunction): void => {
+        table.grantWriteData(lambda);
+      };
+    },
+    reader: (table: Table): ((lambda: NodejsFunction) => void) => {
+      return (lambda: NodejsFunction): void => {
+        table.grantReadData(lambda);
+      };
+    },
+  };
 
   public static addTable(
     lambdaFunction: NodejsFunction,

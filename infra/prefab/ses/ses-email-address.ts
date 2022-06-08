@@ -40,13 +40,25 @@ export class SesEmailAddress extends Construct {
     });
   }
 
-  public static emailSenderModifier(): (lambda: NodejsFunction) => void {
+  public useMod(mods: (() => any)[]): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
-      lambda.addToRolePolicy(
-        new PolicyStatement({ effect: Effect.ALLOW, actions: ['ses:SendRawEmail'], resources: ['*'] })
-      );
+      mods.map((fn) => fn()(lambda));
     };
   }
+
+  public useModWriter(): (lambda: NodejsFunction) => void {
+    return this.useMod([SesEmailAddress.modifier.emailSender]);
+  }
+
+  public static modifier = {
+    emailSender: (): ((lambda: NodejsFunction) => void) => {
+      return (lambda: NodejsFunction): void => {
+        lambda.addToRolePolicy(
+          new PolicyStatement({ effect: Effect.ALLOW, actions: ['sns:Publish'], resources: ['*'] })
+        );
+      };
+    },
+  };
 
   public static getCognitoRef(props: BaseGlobalProps): CfnUserPool.EmailConfigurationProperty {
     return {

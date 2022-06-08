@@ -41,10 +41,23 @@ export class CustomQueue extends Construct {
     });
   }
 
-  public queueWriterModifier(variableName = 'DEST_QUEUE'): (lambda: NodejsFunction) => void {
+  public useMod(variableName = 'DEST_QUEUE', mods: ((queue: Queue) => any)[]): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
       lambda.addEnvironment(variableName, this.queue.queueUrl);
-      this.queue.grantSendMessages(lambda);
+      mods.map((fn) => fn(this.queue)(lambda));
     };
   }
+
+  public useModWriter(variableName = 'DEST_QUEUE'): (lambda: NodejsFunction) => void {
+    return this.useMod(variableName, [CustomQueue.modifier.writer]);
+  }
+
+  public static modifier = {
+    writer: (queue: Queue): ((lambda: NodejsFunction) => NodejsFunction) => {
+      return (lambda: NodejsFunction): NodejsFunction => {
+        queue.grantSendMessages(lambda);
+        return lambda;
+      };
+    },
+  };
 }

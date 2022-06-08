@@ -16,12 +16,25 @@ export class CustomEventBusConstruct extends Construct {
     this.bus = new EventBus(this, 'bus', { eventBusName: getResourceName('', service.props) });
   }
 
-  public busWriterModifier(variableName = 'EVENT_BUS'): (lambda: NodejsFunction) => void {
+  public useMod(variableName = 'EVENT_BUS', mods: ((bus: IEventBus) => any)[]): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
       lambda.addEnvironment(variableName, this.bus.eventBusName);
-      this.bus.grantPutEventsTo(lambda);
+      mods.map((fn) => fn(this.bus)(lambda));
     };
   }
+
+  public useModWriter(variableName = 'EVENT_BUS'): (lambda: NodejsFunction) => void {
+    return this.useMod(variableName, [CustomEventBusConstruct.modifier.writer]);
+  }
+
+  public static modifier = {
+    writer: (bus: IEventBus): ((lambda: NodejsFunction) => NodejsFunction) => {
+      return (lambda: NodejsFunction): NodejsFunction => {
+        bus.grantPutEventsTo(lambda);
+        return lambda;
+      };
+    },
+  };
 
   static addBus(lambdaFunction: NodejsFunction, eventBus?: CustomEventBusParams): void {
     if (eventBus instanceof EventBus) {

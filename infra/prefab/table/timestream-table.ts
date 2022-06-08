@@ -41,45 +41,42 @@ export class TimestreamTable extends Construct {
     if (service.props.envName === 'prod') this.table.applyRemovalPolicy(RemovalPolicy.RETAIN);
   }
 
-  public writerModifier(): (lambda: NodejsFunction) => void {
+  public useMod(mods: ((table: CfnTable) => any)[]): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
       lambda.addEnvironment('TIMESTREAM_TABLE', this.table.tableName!);
       lambda.addEnvironment('TIMESTREAM_DB', this.database.databaseName!);
-      lambda.addToRolePolicy(
-        new PolicyStatement({
-          effect: Effect.ALLOW,
-          actions: ['timestream:WriteRecords'],
-          resources: [this.table.attrArn],
-        })
-      );
-      lambda.addToRolePolicy(
-        new PolicyStatement({
-          effect: Effect.ALLOW,
-          actions: ['timestream:DescribeEndpoints'],
-          resources: ['*'],
-        })
-      );
+      mods.map((fn) => fn(this.table)(lambda));
     };
   }
 
-  public readerModifier(): (lambda: NodejsFunction) => void {
-    return (lambda: NodejsFunction): void => {
-      lambda.addEnvironment('TIMESTREAM_TABLE', this.table.tableName!);
-      lambda.addEnvironment('TIMESTREAM_DB', this.database.databaseName!);
-      lambda.addToRolePolicy(
-        new PolicyStatement({
-          effect: Effect.ALLOW,
-          actions: ['timestream:Select', 'timestream:SelectValues'],
-          resources: [this.table.attrArn],
-        })
-      );
-      lambda.addToRolePolicy(
-        new PolicyStatement({
-          effect: Effect.ALLOW,
-          actions: ['timestream:DescribeEndpoints'],
-          resources: ['*'],
-        })
-      );
-    };
-  }
+  public static modifier = {
+    writer: (table: CfnTable): ((lambda: NodejsFunction) => void) => {
+      return (lambda: NodejsFunction): void => {
+        lambda.addToRolePolicy(
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: ['timestream:WriteRecords'],
+            resources: [table.attrArn],
+          })
+        );
+        lambda.addToRolePolicy(
+          new PolicyStatement({ effect: Effect.ALLOW, actions: ['timestream:DescribeEndpoints'], resources: ['*'] })
+        );
+      };
+    },
+    reader: (table: CfnTable): ((lambda: NodejsFunction) => void) => {
+      return (lambda: NodejsFunction): void => {
+        lambda.addToRolePolicy(
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: ['timestream:Select', 'timestream:SelectValues'],
+            resources: [table.attrArn],
+          })
+        );
+        lambda.addToRolePolicy(
+          new PolicyStatement({ effect: Effect.ALLOW, actions: ['timestream:DescribeEndpoints'], resources: ['*'] })
+        );
+      };
+    },
+  };
 }

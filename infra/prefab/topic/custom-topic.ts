@@ -28,15 +28,29 @@ export class CustomTopic extends Construct {
     this.topic.addSubscription(new SqsSubscription(queue));
   }
 
-  public topicWriterModifier(variableName = 'DEST_TOPIC'): (lambda: NodejsFunction) => void {
+  public useMod(variableName = 'DEST_TOPIC', mods: ((topic: Topic) => any)[]): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
       lambda.addEnvironment(variableName, this.topic.topicArn);
-      this.topic.grantPublish(lambda);
+      mods.map((fn) => fn(this.topic)(lambda));
     };
   }
-  public static smsSenderModifier(): (lambda: NodejsFunction) => void {
-    return (lambda: NodejsFunction): void => {
-      lambda.addToRolePolicy(new PolicyStatement({ effect: Effect.ALLOW, actions: ['sns:Publish'], resources: ['*'] }));
-    };
+
+  public useModWriter(variableName = 'DEST_TOPIC'): (lambda: NodejsFunction) => void {
+    return this.useMod(variableName, [CustomTopic.modifier.writer]);
   }
+
+  public static modifier = {
+    writer: (topic: Topic): ((lambda: NodejsFunction) => void) => {
+      return (lambda: NodejsFunction): void => {
+        topic.grantPublish(lambda);
+      };
+    },
+    smsWriter: (): ((lambda: NodejsFunction) => void) => {
+      return (lambda: NodejsFunction): void => {
+        lambda.addToRolePolicy(
+          new PolicyStatement({ effect: Effect.ALLOW, actions: ['sns:Publish'], resources: ['*'] })
+        );
+      };
+    },
+  };
 }
