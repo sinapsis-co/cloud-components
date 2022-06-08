@@ -77,7 +77,7 @@ export class PrivateBucket extends Construct {
     },
     writer: (bucket: Bucket): ((lambda: NodejsFunction) => NodejsFunction) => {
       return (lambda: NodejsFunction): NodejsFunction => {
-        bucket.grantRead(lambda);
+        bucket.grantWrite(lambda);
         return lambda;
       };
     },
