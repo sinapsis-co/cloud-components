@@ -101,47 +101,44 @@ export class AuthPool extends Construct {
     };
   }
 
-  public static postConfirmationModifier(): (lambda: NodejsFunction) => void {
+  public useMod(mods: ((userPool: UserPool) => any)[]): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
-      lambda.role?.addToPrincipalPolicy(
-        new PolicyStatement({
-          actions: ['cognito-idp:AdminUpdateUserAttributes'],
-          resources: ['*'],
-        })
-      );
+      lambda.addEnvironment('USER_POOL_ID', this.userPool.userPoolId);
+      lambda.addEnvironment('USER_POOL_CLIENT_ID', this.userPoolClient.userPoolClientId);
+      mods.map((fn) => fn(this.userPool));
     };
   }
-  public userOpsAdminModifier(): (lambda: NodejsFunction) => void {
-    return (lambda: NodejsFunction): void => {
-      lambda
-        .addEnvironment('USER_POOL_ID', this.userPool.userPoolId)
-        .addEnvironment('USER_POOL_CLIENT_ID', this.userPoolClient.userPoolClientId)
-        .role?.addToPrincipalPolicy(
+
+  public static modifier = {
+    updateUserAtt: (): ((lambda: NodejsFunction) => void) => {
+      return (lambda: NodejsFunction): void => {
+        lambda.role?.addToPrincipalPolicy(
+          new PolicyStatement({
+            actions: ['cognito-idp:AdminUpdateUserAttributes'],
+            resources: ['*'],
+          })
+        );
+      };
+    },
+    deleteUser: (): ((lambda: NodejsFunction) => void) => {
+      return (lambda: NodejsFunction): void => {
+        lambda.role?.addToPrincipalPolicy(
+          new PolicyStatement({
+            actions: ['cognito-idp:AdminDeleteUser'],
+            resources: ['*'],
+          })
+        );
+      };
+    },
+    authUser: (): ((lambda: NodejsFunction) => void) => {
+      return (lambda: NodejsFunction): void => {
+        lambda.role?.addToPrincipalPolicy(
           new PolicyStatement({
             actions: ['cognito-idp:AdminConfirmSignUp', 'cognito-idp:SignUp', 'cognito-idp:InitiateAuth'],
             resources: ['*'],
           })
         );
-    };
-  }
-  public poolAdminDeleteModifier(): (lambda: NodejsFunction) => void {
-    return (lambda: NodejsFunction): void => {
-      lambda.addEnvironment('USER_POOL_ID', this.userPool.userPoolId).role?.addToPrincipalPolicy(
-        new PolicyStatement({
-          actions: ['cognito-idp:AdminDeleteUser'],
-          resources: ['*'],
-        })
-      );
-    };
-  }
-  public poolAdminUpdateModifier(): (lambda: NodejsFunction) => void {
-    return (lambda: NodejsFunction): void => {
-      lambda.addEnvironment('USER_POOL_ID', this.userPool.userPoolId).role?.addToPrincipalPolicy(
-        new PolicyStatement({
-          actions: ['cognito-idp:AdminUpdateUserAttributes'],
-          resources: ['*'],
-        })
-      );
-    };
-  }
+      };
+    },
+  };
 }

@@ -37,53 +37,6 @@ export class PrivateBucket extends Construct {
     });
   }
 
-  public static modifier = {
-    reader: (bucket: Bucket): ((lambda: NodejsFunction) => NodejsFunction) => {
-      return (lambda: NodejsFunction): NodejsFunction => {
-        bucket.grantRead(lambda);
-        return lambda;
-      };
-    },
-    writer: (bucket: Bucket): ((lambda: NodejsFunction) => NodejsFunction) => {
-      return (lambda: NodejsFunction): NodejsFunction => {
-        bucket.grantRead(lambda);
-        return lambda;
-      };
-    },
-    delete: (bucket: Bucket): ((lambda: NodejsFunction) => NodejsFunction) => {
-      return (lambda: NodejsFunction): NodejsFunction => {
-        bucket.grantDelete(lambda);
-        return lambda;
-      };
-    },
-  };
-
-  public useMod(variableName = 'BUCKET_NAME', mods: ((bucket: Bucket) => any)[]): (lambda: NodejsFunction) => void {
-    return (lambda: NodejsFunction): void => {
-      lambda.addEnvironment(variableName, this.bucket.bucketName);
-      mods.map((fn) => fn(this.bucket));
-    };
-  }
-
-  public readerModifier(): (lambda: NodejsFunction) => PrivateBucket {
-    return (lambda: NodejsFunction): PrivateBucket => {
-      this.bucket.grantRead(lambda);
-      return this;
-    };
-  }
-  public bucketWriterModifier(): (lambda: NodejsFunction) => PrivateBucket {
-    return (lambda: NodejsFunction): PrivateBucket => {
-      this.bucket.grantWrite(lambda);
-      return this;
-    };
-  }
-  public deleteModifier(): (lambda: NodejsFunction) => PrivateBucket {
-    return (lambda: NodejsFunction): PrivateBucket => {
-      this.bucket.grantDelete(lambda);
-      return this;
-    };
-  }
-
   public addTopicNotification(params: {
     topic: Topic;
     eventType?: EventType;
@@ -107,4 +60,32 @@ export class PrivateBucket extends Construct {
       ...(params.filters || [])
     );
   }
+
+  public useMod(variableName = 'BUCKET_NAME', mods: ((bucket: Bucket) => any)[]): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda.addEnvironment(variableName, this.bucket.bucketName);
+      mods.map((fn) => fn(this.bucket));
+    };
+  }
+
+  public static modifier = {
+    reader: (bucket: Bucket): ((lambda: NodejsFunction) => NodejsFunction) => {
+      return (lambda: NodejsFunction): NodejsFunction => {
+        bucket.grantRead(lambda);
+        return lambda;
+      };
+    },
+    writer: (bucket: Bucket): ((lambda: NodejsFunction) => NodejsFunction) => {
+      return (lambda: NodejsFunction): NodejsFunction => {
+        bucket.grantRead(lambda);
+        return lambda;
+      };
+    },
+    delete: (bucket: Bucket): ((lambda: NodejsFunction) => NodejsFunction) => {
+      return (lambda: NodejsFunction): NodejsFunction => {
+        bucket.grantDelete(lambda);
+        return lambda;
+      };
+    },
+  };
 }
