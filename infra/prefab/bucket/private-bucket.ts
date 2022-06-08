@@ -64,7 +64,7 @@ export class PrivateBucket extends Construct {
   public useMod(variableName = 'BUCKET_NAME', mods: ((bucket: Bucket) => any)[]): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
       lambda.addEnvironment(variableName, this.bucket.bucketName);
-      mods.map((fn) => fn(this.bucket));
+      mods.map((fn) => fn(this.bucket)(lambda));
     };
   }
 
