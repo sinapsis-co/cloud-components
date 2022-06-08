@@ -11,7 +11,10 @@ type PresignedPostParams = {
   ContentLengthRange?: { min: number; max: number };
 };
 
-export const createPutPresignedUrl = (params: PresignedPostParams): S3.PresignedPost => {
+export const createPutPresignedUrl = (
+  params: PresignedPostParams,
+  metadata: Record<string, string>
+): S3.PresignedPost => {
   const { Key, ContentType, ContentLengthRange, ...rest } = params;
 
   return s3.createPresignedPost({
@@ -20,6 +23,7 @@ export const createPutPresignedUrl = (params: PresignedPostParams): S3.Presigned
     Fields: {
       key: Key,
       'Content-Type': ContentType,
+      ...metadata,
     },
     Conditions: [['content-length-range', ContentLengthRange?.min ?? 0, ContentLengthRange?.max ?? DEFAULT_MAX_LENGTH]],
   });
