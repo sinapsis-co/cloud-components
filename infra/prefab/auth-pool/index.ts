@@ -105,7 +105,7 @@ export class AuthPool extends Construct {
     return (lambda: NodejsFunction): void => {
       lambda.addEnvironment('USER_POOL_ID', this.userPool.userPoolId);
       lambda.addEnvironment('USER_POOL_CLIENT_ID', this.userPoolClient.userPoolClientId);
-      mods.map((fn) => fn(this.userPool));
+      mods.map((fn) => fn(this.userPool)(lambda));
     };
   }
 
