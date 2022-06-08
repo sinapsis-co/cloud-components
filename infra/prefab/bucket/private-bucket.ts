@@ -65,7 +65,13 @@ export class PrivateBucket extends Construct {
   };
 
   public m(variableName = 'BUCKET_NAME') {
-    return (lambda: NodejsFunction): Record<string, () => NodejsFunction> => {
+    return (
+      lambda: NodejsFunction
+    ): {
+      reader: () => NodejsFunction;
+      writer: () => NodejsFunction;
+      delete: () => NodejsFunction;
+    } => {
       lambda.addEnvironment(variableName, this.bucket.bucketName);
       return {
         reader: () => {
