@@ -13,7 +13,7 @@ type PresignedPostParams = {
 
 export const createPutPresignedUrl = (
   params: PresignedPostParams,
-  metadata: Record<string, string>
+  metadata?: Record<string, string>
 ): S3.PresignedPost => {
   const { Key, ContentType, ContentLengthRange, ...rest } = params;
 
@@ -23,7 +23,7 @@ export const createPutPresignedUrl = (
     Fields: {
       key: Key,
       'Content-Type': ContentType,
-      ...metadata,
+      ...(metadata || {}),
     },
     Conditions: [['content-length-range', ContentLengthRange?.min ?? 0, ContentLengthRange?.max ?? DEFAULT_MAX_LENGTH]],
   });
