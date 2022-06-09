@@ -50,6 +50,13 @@ export class SesEmailAddress extends Construct {
     emailSender: (): ((lambda: NodejsFunction) => void) => {
       return (lambda: NodejsFunction): void => {
         lambda.addToRolePolicy(
+          new PolicyStatement({ effect: Effect.ALLOW, actions: ['ses:SendRawEmail'], resources: ['*'] })
+        );
+      };
+    },
+    smsSender: (): ((lambda: NodejsFunction) => void) => {
+      return (lambda: NodejsFunction): void => {
+        lambda.addToRolePolicy(
           new PolicyStatement({ effect: Effect.ALLOW, actions: ['sns:Publish'], resources: ['*'] })
         );
       };
