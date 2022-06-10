@@ -3,7 +3,7 @@ import { RemovalPolicy, CfnOutput } from 'aws-cdk-lib';
 import { Distribution, BehaviorOptions, CachePolicy, CacheQueryStringBehavior } from 'aws-cdk-lib/aws-cloudfront';
 import { OriginRequestPolicy, AllowedMethods, ViewerProtocolPolicy } from 'aws-cdk-lib/aws-cloudfront';
 import { HostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
-import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
+import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { HttpOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
@@ -16,7 +16,7 @@ import { Waf } from '../waf';
 
 export type CdnApiConstructProps = {
   subDomain: string;
-  certificate: Certificate;
+  certificate: ICertificate;
   waf?: Waf;
   skipRecord?: true;
 };
