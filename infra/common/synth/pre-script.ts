@@ -47,8 +47,8 @@ export const preScript = async <
       (
         await Promise.all(
           Object.keys(globalDeployTargetConfig[envName]).map(async (a) => {
-            const account = globalDeployTargetConfig[envName][a]['account'];
-            if (parseInt(account)) return `${a}=${account}`;
+            const account: string = globalDeployTargetConfig[envName][a]['account'];
+            if (parseInt(account) && account.length === 12) return `${a}=${account}`;
             const [env, ...project] = account.split('-').reverse();
             const composed = project.reverse();
             return `${a}=${await accountMapping(composed.join('-'), env)}`;
