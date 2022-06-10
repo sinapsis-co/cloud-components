@@ -24,6 +24,7 @@ export type WebappConstructParams = {
   distDir?: string;
   envVars?: DeploySecretProps;
   waf?: Waf;
+  skipRecord?: true;
 };
 
 export class WebappConstruct extends Construct {
@@ -91,13 +92,14 @@ export class WebappConstruct extends Construct {
       webAclId: params.waf?.webACL?.attrArn,
     });
 
-    const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', service.props) });
-
-    new ARecord(service, 'WebappRecords', {
-      zone: hostedZone,
-      target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
-      recordName: this.domain,
-    });
+    if (!params.skipRecord) {
+      const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', service.props) });
+      new ARecord(service, 'WebappRecords', {
+        zone: hostedZone,
+        target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
+        recordName: this.domain,
+      });
+    }
 
     new StringParameter(this, 'Config', {
       simpleName: true,

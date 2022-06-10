@@ -18,6 +18,7 @@ export type CdnApiConstructProps = {
   subDomain: string;
   certificate: Certificate;
   waf?: Waf;
+  skipRecord?: true;
 };
 
 export class CdnApiConstruct extends Construct {
@@ -74,12 +75,14 @@ export class CdnApiConstruct extends Construct {
       webAclId: params.waf?.webACL?.attrArn,
     });
 
-    const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', service.props) });
-    new ARecord(service, 'Record', {
-      zone: hostedZone,
-      target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
-      recordName: this.domain,
-    });
+    if (!params.skipRecord) {
+      const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', service.props) });
+      new ARecord(service, 'Record', {
+        zone: hostedZone,
+        target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
+        recordName: this.domain,
+      });
+    }
 
     new CfnOutput(this, 'Domain', { value: this.domain });
     new CfnOutput(this, 'BaseUrl', { value: this.baseUrl });
