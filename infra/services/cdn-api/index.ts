@@ -17,7 +17,6 @@ import { Waf } from '../waf';
 export type CdnApiConstructProps = {
   subDomain: string;
   certificate: ICertificate;
-  recordForRootPath: boolean;
   waf?: Waf;
   skipRecord?: true;
 };
@@ -64,13 +63,11 @@ export class CdnApiConstruct extends Construct {
       viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
     };
 
-    const domains = [this.domain];
-    if (params.recordForRootPath) domains.push(getDomain('', service.props));
     this.distribution = new Distribution(this, 'Distribution', {
       enabled: true,
       comment: getResourceName('cdn', service.props),
       certificate: params.certificate,
-      domainNames: domains,
+      domainNames: [this.domain],
       defaultBehavior: {
         origin: new HttpOrigin(bucket.bucketDomainName),
         ...this.behaviorOptions,
@@ -80,15 +77,12 @@ export class CdnApiConstruct extends Construct {
 
     if (!params.skipRecord) {
       const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', service.props) });
-      domains.map((d) => {
-        new ARecord(service, d.split('.')[0], {
-          zone: hostedZone,
-          target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
-          recordName: d,
-        });
+      new ARecord(service, 'Record', {
+        zone: hostedZone,
+        target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
+        recordName: this.domain,
       });
     }
-
     new CfnOutput(this, 'Domain', { value: this.domain });
     new CfnOutput(this, 'BaseUrl', { value: this.baseUrl });
   }

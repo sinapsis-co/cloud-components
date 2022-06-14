@@ -18,6 +18,7 @@ import { Waf } from '../waf';
 export type CdnAssetConstructProps = {
   subDomain: string;
   certificate: ICertificate;
+  recordForRootPath: boolean;
   assetBucketProps?: AssetBucketParams;
   waf?: Waf;
   skipRecord?: true;
@@ -58,11 +59,13 @@ export class CdnAssetConstruct extends Construct {
       viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
     };
 
+    const domains = [this.domain];
+    if (params.recordForRootPath) domains.push(getDomain('', service.props));
     this.distribution = new Distribution(this, 'Distribution', {
       enabled: true,
       comment: getResourceName('cdn', service.props),
       certificate: params.certificate,
-      domainNames: [this.domain],
+      domainNames: domains,
       defaultBehavior: {
         origin: new S3Origin(this.bucket.bucket),
         ...this.behaviorOptions,
@@ -72,10 +75,12 @@ export class CdnAssetConstruct extends Construct {
 
     if (!params.skipRecord) {
       const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', service.props) });
-      new ARecord(service, 'Record', {
-        zone: hostedZone,
-        target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
-        recordName: this.domain,
+      domains.map((d) => {
+        new ARecord(service, d.split('.')[0], {
+          zone: hostedZone,
+          target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
+          recordName: d,
+        });
       });
     }
 
