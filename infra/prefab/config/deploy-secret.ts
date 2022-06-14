@@ -28,7 +28,7 @@ export class DeploySecret extends Construct {
         StringParameter.valueFromLookup(this, getParameterNamePlain(secretName, service.props));
         value = StringParameter.valueForStringParameter(this, getParameterNamePlain(secretName, service.props));
       }
-      const parameter = new StringParameter(this, getLogicalName('Secret', params.name), {
+      const parameter = new StringParameter(this, getLogicalName('SecretKeys', params.name), {
         simpleName: false,
         parameterName: getParameterNamePlain(secretName, service.props),
         stringValue: value,
