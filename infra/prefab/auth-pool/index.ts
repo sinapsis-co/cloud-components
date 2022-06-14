@@ -75,8 +75,7 @@ export class AuthPool extends Construct {
 
     const userPoolDomain = new UserPoolDomain(this, 'UserPoolDomain', {
       userPool,
-      ...defaultUserPoolDomainProps,
-      ...params.userPoolDomain,
+      ...(params.userPoolDomain || defaultUserPoolDomainProps),
     });
 
     this.userPool = userPool;
