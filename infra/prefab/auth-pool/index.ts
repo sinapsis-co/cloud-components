@@ -84,7 +84,7 @@ export class AuthPool extends Construct {
       const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', service.props) });
       const record = new ARecord(service, 'Record', {
         zone: hostedZone,
-        target: RecordTarget.fromAlias(new UserPoolDomainTarget(this.userPoolDomain)),
+        target: RecordTarget.fromAlias(new UserPoolDomainTarget(userPoolDomain)),
         recordName: params.userPoolDomain.customDomain?.domainName,
       });
       record.node.addDependency(userPoolDomain);
