@@ -9,6 +9,8 @@ import { getResourceName } from '../../common/naming/get-resource-name';
 import { getLogicalName } from '../../common/naming/get-logical-name';
 import { getDomain } from '../../common/naming/get-domain';
 import { Service } from '../../common/service';
+import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
+import { UserPoolDomainTarget } from 'aws-cdk-lib/aws-route53-targets';
 
 export type AuthPoolParams = {
   userPool?: Partial<UserPoolProps>;
@@ -77,6 +79,15 @@ export class AuthPool extends Construct {
       userPool,
       ...(params.userPoolDomain || defaultUserPoolDomainProps),
     });
+
+    if (params.userPoolDomain) {
+      const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', service.props) });
+      new ARecord(service, 'Record', {
+        zone: hostedZone,
+        target: RecordTarget.fromAlias(new UserPoolDomainTarget(this.userPoolDomain)),
+        recordName: params.userPoolDomain.customDomain?.domainName,
+      });
+    }
 
     this.userPool = userPool;
     this.userPoolClient = userPoolClient;
