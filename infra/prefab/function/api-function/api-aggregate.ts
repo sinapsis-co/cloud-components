@@ -31,7 +31,7 @@ export type ApiAggregateParams<HandlerName extends string = string> = BaseFuncti
   handlers: Record<HandlerName, ApiHandlerParams>;
   cdnApi: ApiCdnApiParams;
   authPool?: ApiAuthPoolParams;
-  tableOptions?: ServiceTableParams;
+  tableOptions?: Omit<ServiceTableParams, 'tableName'>;
   skipTable?: true;
 };
 
