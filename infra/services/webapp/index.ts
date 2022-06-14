@@ -117,6 +117,6 @@ export class WebappConstruct extends Construct {
     new CfnOutput(this, 'Domain', { value: this.domain });
     new CfnOutput(this, 'BaseUrl', { value: this.baseUrl });
 
-    if (params.envVars) new DeploySecret(service, { ...params.envVars });
+    if (params.envVars) new DeploySecret(service, { ...params.envVars, name: params.subDomain });
   }
 }

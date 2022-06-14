@@ -6,6 +6,7 @@ import { getParameterName, getParameterNamePlain } from '../../common/naming/get
 import { Service } from '../../common/service';
 
 export type DeploySecretProps = {
+  name: string;
   calculatedSecrets?: Record<string, string>;
   secretsKeys?: string[];
   saveAsPlain?: boolean;
@@ -15,7 +16,7 @@ export class DeploySecret extends Construct {
   public readonly secrets: Record<string, StringParameter> = {};
 
   constructor(service: Service, params: DeploySecretProps) {
-    super(service, getLogicalName(DeploySecret.name));
+    super(service, getLogicalName(DeploySecret.name, params.name));
 
     params.secretsKeys?.map((secretKey) => {
       const secretName = `secret/${secretKey}`;
@@ -36,7 +37,7 @@ export class DeploySecret extends Construct {
     });
 
     if (params.calculatedSecrets && Object.keys(params.calculatedSecrets).length > 0)
-      new StringParameter(this, 'Secret', {
+      new StringParameter(this, getLogicalName('Secret', params.name), {
         simpleName: false,
         parameterName: getParameterName('secret/calculated', service.props),
         stringValue: JSON.stringify(params.calculatedSecrets),
