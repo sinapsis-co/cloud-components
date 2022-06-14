@@ -22,7 +22,7 @@ export type WebappConstructParams = {
   indexMaxAge?: string;
   baseDir?: string;
   distDir?: string;
-  envVars?: DeploySecretProps;
+  envVars?: Omit<DeploySecretProps, 'name'>;
   waf?: Waf;
   skipRecord?: true;
 };
