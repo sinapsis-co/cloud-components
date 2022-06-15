@@ -8,7 +8,6 @@ import { generateSesPolicyForCustomResource } from './ses-domain';
 import { PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { CfnUserPool } from 'aws-cdk-lib/aws-cognito';
-import { getDomain } from '../../common/naming/get-domain';
 import { Service } from '../../common/service';
 
 export type SesEmailAddressParams = {
