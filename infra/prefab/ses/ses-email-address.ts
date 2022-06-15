@@ -9,6 +9,7 @@ import { PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { CfnUserPool } from 'aws-cdk-lib/aws-cognito';
 import { Service } from '../../common/service';
+import { getDomain } from '../../common/naming/get-domain';
 
 export type SesEmailAddressParams = {
   emailSender: string;
@@ -66,7 +67,10 @@ export class SesEmailAddress extends Construct {
     return {
       emailSendingAccount: 'DEVELOPER',
       from: props.emailSender,
-      sourceArn: `arn:aws:ses:${props.regionName}:${props.deployTarget['services'].account}:identity/${props.emailSender}`,
+      sourceArn: `arn:aws:ses:${props.regionName}:${props.deployTarget['services'].account}:identity/${getDomain(
+        '',
+        props
+      )}`,
     };
   }
 }
