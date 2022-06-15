@@ -38,7 +38,7 @@ export const getGlobalProps = <
   });
 
   const emailSender = `${currentGlobalServiceEnv['emailSender']}@${getDomain('', {
-    envDomainName: envName,
+    envDomainName: currentGlobalServiceEnv['envDomainName'],
     ephemeralEnvName,
   })}`;
 
