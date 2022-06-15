@@ -50,7 +50,7 @@ export class ApiAggregate<HandlerName extends string = string> extends Construct
     this.authorizer = apiRest.authorizer;
 
     if (!params.skipTable) {
-      const serviceTable = new ServiceTable(service, { tableName: params.basePath, ...params });
+      const serviceTable = new ServiceTable(service, { ...params.tableOptions, tableName: params.basePath,  });
       this.table = serviceTable.table;
     }
 
