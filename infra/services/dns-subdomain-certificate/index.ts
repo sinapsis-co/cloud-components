@@ -13,10 +13,10 @@ export type DnsSubdomainCertificateConstructParams = {
 export class DnsSubdomainCertificateConstruct extends Construct {
   public readonly certificate: ICertificate;
 
-  constructor(service: Service, params: DnsSubdomainCertificateConstructParams) {
+  constructor(service: Service, params?: DnsSubdomainCertificateConstructParams) {
     super(service, getLogicalName(DnsSubdomainCertificateConstruct.name));
 
-    if (params.certificateArn) {
+    if (params?.certificateArn) {
       this.certificate = Certificate.fromCertificateArn(this, 'HostedZoneEnvDns', params.certificateArn);
     } else {
       const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', service.props) });
