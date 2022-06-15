@@ -67,10 +67,7 @@ export class SesEmailAddress extends Construct {
     return {
       emailSendingAccount: 'DEVELOPER',
       from: props.emailSender,
-      sourceArn: `arn:aws:ses:${props.regionName}:${props.deployTarget['services'].account}:identity/${getDomain(
-        '',
-        props
-      )}`,
+      sourceArn: `arn:aws:ses:${props.regionName}:${props.deployTarget['services'].account}:identity/${props.emailSender}`,
     };
   }
 }
