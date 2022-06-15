@@ -45,10 +45,10 @@ export const getGlobalProps = <
   return {
     envName,
     ephemeralEnvName,
-    emailSender,
     regionName: currentGlobalDeployTarget['services'].region,
     deployTarget: currentGlobalDeployTarget,
     ...globalConstConfig,
     ...currentGlobalServiceEnv,
+    emailSender,
   };
 };
