@@ -10,6 +10,7 @@ import {
   BaseGlobalEnvConfig,
   BaseGlobalProps,
 } from './props-types';
+import { getDomain } from '../naming/get-domain';
 
 export const getGlobalProps = <
   GlobalConstConfig extends BaseGlobalConstConfig,
@@ -36,10 +37,10 @@ export const getGlobalProps = <
     if (!currentGlobalDeployTarget[a]['account']) throw new SynthError(`Missing account mapping of ${a}`);
   });
 
-  const [preEmail, postEmail] = currentGlobalServiceEnv['emailSender'].split('@');
-  const emailSender = ephemeralEnvName
-    ? `${preEmail}+${ephemeralEnvName}@${postEmail}`
-    : currentGlobalServiceEnv['emailSender'];
+  const emailSender = `${currentGlobalServiceEnv['emailSender']}@${getDomain('', {
+    envDomainName: envName,
+    ephemeralEnvName,
+  })}`;
 
   return {
     envName,
