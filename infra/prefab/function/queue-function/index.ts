@@ -24,7 +24,7 @@ export class QueueFunction extends Construct {
   constructor(service: Service, params: QueueFunctionParams & QueueHandlerParams) {
     super(service, getLogicalName(QueueFunction.name, params.name));
 
-    this.customQueue = params.queue || new CustomQueue(service, { name: params.name });
+    this.customQueue = params.queue || new CustomQueue(service, { name: params.name, ...params.customQueueParams });
 
     this.lambdaFunction = new BaseFunction(service, params).lambdaFunction;
 
