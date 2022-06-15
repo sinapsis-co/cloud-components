@@ -36,9 +36,15 @@ export const getGlobalProps = <
     if (!currentGlobalDeployTarget[a]['account']) throw new SynthError(`Missing account mapping of ${a}`);
   });
 
+  const [preEmail, postEmail] = currentGlobalServiceEnv['emailSender'].split('@');
+  const emailSender = ephemeralEnvName
+    ? `${preEmail}+${ephemeralEnvName}@${postEmail}`
+    : currentGlobalServiceEnv['emailSender'];
+
   return {
     envName,
     ephemeralEnvName,
+    emailSender,
     regionName: currentGlobalDeployTarget['services'].region,
     deployTarget: currentGlobalDeployTarget,
     ...globalConstConfig,
