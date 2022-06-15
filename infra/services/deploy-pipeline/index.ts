@@ -42,6 +42,7 @@ export class DeployPipelineConstruct extends Construct {
 
     if (!service.props.useRepositoryDefaultConfig) {
       const secretBuilder = new DeploySecret(service, {
+        name: 'pipeline',
         saveAsPlain: true,
         secretsKeys: ['GITHUB_TOKEN'],
       });
