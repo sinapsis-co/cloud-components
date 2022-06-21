@@ -50,16 +50,4 @@ export class RuntimeSecret extends Construct {
       };
     },
   };
-
-  public readerModifier(): (lambda: NodejsFunction) => void {
-    return (lambda: NodejsFunction): void => {
-      lambda.addToRolePolicy(
-        new PolicyStatement({
-          effect: Effect.ALLOW,
-          actions: ['secretsmanager:GetSecretValue', 'secretsmanager:DescribeSecret'],
-          resources: [this.secret.ref],
-        })
-      );
-    };
-  }
 }
