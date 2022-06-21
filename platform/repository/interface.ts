@@ -42,7 +42,7 @@ export type EntityStore<Builder extends EntityBuilderKeys> = Builder['body'] &
 
 export type EntityRepositoryConfig<Builder extends EntityBuilder, Create = EntityCreate<Builder>> = {
   tableName: string;
-  eventsConfig: {
+  events: {
     created: { name: `app.${Builder['name']}.created`; source: 'app'; payload: Entity<Builder> };
     updated: { name: `app.${Builder['name']}.updated`; source: 'app'; payload: Entity<Builder> };
     deleted: { name: `app.${Builder['name']}.deleted`; source: 'app'; payload: Entity<Builder> };
@@ -115,17 +115,19 @@ export type ScanTableFunc<Builder extends EntityBuilder> = (
 ) => Promise<PaginatedResponse<Entity<Builder>>>;
 
 export type Repository<Builder extends EntityBuilder> = {
-  name: Builder['name'];
   events: {
     created: {
+      source: 'app';
       name: `app.${Builder['name']}.created`;
       payload: Entity<Builder>;
     };
     updated: {
+      source: 'app';
       name: `app.${Builder['name']}.updated`;
       payload: Entity<Builder>;
     };
     deleted: {
+      source: 'app';
       name: `app.${Builder['name']}.deleted`;
       payload: Entity<Builder>;
     };

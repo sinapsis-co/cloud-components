@@ -5,7 +5,6 @@ import { Distribution, BehaviorOptions } from 'aws-cdk-lib/aws-cloudfront';
 import { HttpUserPoolAuthorizer } from '@aws-cdk/aws-apigatewayv2-authorizers-alpha';
 import { UserPool, UserPoolClient } from 'aws-cdk-lib/aws-cognito';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
-import { EntityBuilder, Repository } from '@sinapsis-co/cc-platform-v2/repository/interface';
 
 import { getLogicalName } from '../../../common/naming/get-logical-name';
 import { ServiceTable, ServiceTableParams } from '../../table/dynamo-table';
@@ -27,11 +26,8 @@ export type ApiAuthPoolParams = {
   userPoolClient?: UserPoolClient;
 };
 
-export type ApiAggregateParams<
-  Repo extends Repository<EntityBuilder>,
-  HandlerName extends string = string
-> = BaseFunctionParams & {
-  basePath: Repo['name'];
+export type ApiAggregateParams<HandlerName extends string = string> = BaseFunctionParams & {
+  basePath: string;
   handlers: Record<HandlerName, ApiHandlerParams>;
   cdnApi: ApiCdnApiParams;
   authPool?: ApiAuthPoolParams;
@@ -40,16 +36,13 @@ export type ApiAggregateParams<
   skipTable?: true;
 };
 
-export class ApiAggregate<
-  Repo extends Repository<EntityBuilder>,
-  HandlerName extends string = string
-> extends Construct {
+export class ApiAggregate<HandlerName extends string = string> extends Construct {
   public readonly api: HttpApi;
   public readonly table?: Table;
   public readonly authorizer: HttpUserPoolAuthorizer;
   public readonly handlers: Record<HandlerName, NodejsFunction> = {} as Record<HandlerName, NodejsFunction>;
 
-  constructor(service: Service, params: ApiAggregateParams<Repo>) {
+  constructor(service: Service, params: ApiAggregateParams) {
     super(service, getLogicalName('ApiAggregate'));
 
     if (params.autoEventsEnabled && !params.eventBus)
@@ -79,7 +72,7 @@ export class ApiAggregate<
         authorizer: this.authorizer,
         modifiers: [...(params.modifiers || []), ...(params.handlers[handler].modifiers || [])],
         environment: {
-          ...(params.autoEventsEnabled ? { AUTO_EVENTS_ENTITY: params.basePath } : {}),
+          ...(params.autoEventsEnabled ? { AUTO_EVENTS: 'true' } : {}),
           ...params.environment,
           ...params.handlers[handler].environment,
         },

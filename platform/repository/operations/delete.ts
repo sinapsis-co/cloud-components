@@ -27,11 +27,8 @@ export const deleteItem = <Builder extends EntityBuilder>(
 
     const entity = repoConfig.entityDeserialize(Attributes);
 
-    if (process.env.AUTO_EVENTS_ENTITY) {
-      await dispatchEvent<EntityRepositoryConfig<Builder>['eventsConfig']['deleted']>(
-        repoConfig.eventsConfig.deleted,
-        entity
-      );
+    if (process.env.AUTO_EVENTS) {
+      await dispatchEvent<EntityRepositoryConfig<Builder>['events']['deleted']>(repoConfig.events.deleted, entity);
     }
 
     return entity;

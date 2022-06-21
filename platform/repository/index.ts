@@ -19,6 +19,7 @@ export const repository = <Builder extends EntityBuilder>(
   repoConfig: EntityRepositoryConfig<Builder>
 ): Repository<Builder> => {
   return {
+    events: repoConfig.events,
     entitySerialize: repoConfig.entitySerialize,
     entityDeserialize: repoConfig.entityDeserialize,
     createItem: createItem(repoConfig, dynamodb),
