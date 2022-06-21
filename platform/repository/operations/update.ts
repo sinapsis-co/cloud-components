@@ -1,5 +1,6 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import { ApiError } from '../../handler/api/api-error';
+import { dispatchEvent } from '../../integrations/event/dispatch-event';
 import { Entity, EntityBuilder, EntityRepositoryConfig, EntityUpdate, UpdateItemFunc } from '../interface';
 import { updateMapper } from '../update-mapper';
 
@@ -27,6 +28,16 @@ export const updateItem = <Builder extends EntityBuilder>(
       });
 
     if (!Attributes) throw new ApiError('NotFound', 404);
-    return repoConfig.entityDeserialize(Attributes);
+
+    const entity: Entity<Builder> = repoConfig.entityDeserialize(Attributes);
+
+    if (process.env.AUTO_EVENTS_ENTITY) {
+      await dispatchEvent<EntityRepositoryConfig<Builder>['eventsConfig']['updated']>(
+        repoConfig.eventsConfig.updated,
+        entity
+      );
+    }
+
+    return entity;
   };
 };

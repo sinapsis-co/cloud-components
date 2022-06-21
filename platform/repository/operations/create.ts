@@ -1,5 +1,6 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import { ApiError } from '../../handler/api/api-error';
+import { dispatchEvent } from '../../integrations/event/dispatch-event';
 import { CreateItemFunc, Entity, EntityBuilder, EntityCreate, EntityRepositoryConfig } from '../interface';
 
 export const createItem = <Builder extends EntityBuilder, Omitted extends keyof Builder['body'] = ''>(
@@ -23,6 +24,14 @@ export const createItem = <Builder extends EntityBuilder, Omitted extends keyof 
         throw new ApiError(e.code, 500, e.message);
       });
 
-    return repoConfig.entityDeserialize(item);
+    const entity = repoConfig.entityDeserialize(item);
+
+    if (process.env.AUTO_EVENTS_ENTITY) {
+      await dispatchEvent<EntityRepositoryConfig<Builder, EntityCreate<Builder, Omitted>>['eventsConfig']['created']>(
+        repoConfig.eventsConfig.created,
+        entity
+      );
+    }
+    return entity;
   };
 };

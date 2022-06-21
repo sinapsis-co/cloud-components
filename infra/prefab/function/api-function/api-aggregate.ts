@@ -5,6 +5,7 @@ import { Distribution, BehaviorOptions } from 'aws-cdk-lib/aws-cloudfront';
 import { HttpUserPoolAuthorizer } from '@aws-cdk/aws-apigatewayv2-authorizers-alpha';
 import { UserPool, UserPoolClient } from 'aws-cdk-lib/aws-cognito';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
+import { EntityBuilder, Repository } from '@sinapsis-co/cc-platform-v2/repository/interface';
 
 import { getLogicalName } from '../../../common/naming/get-logical-name';
 import { ServiceTable, ServiceTableParams } from '../../table/dynamo-table';
@@ -26,23 +27,33 @@ export type ApiAuthPoolParams = {
   userPoolClient?: UserPoolClient;
 };
 
-export type ApiAggregateParams<HandlerName extends string = string> = BaseFunctionParams & {
-  basePath: string;
+export type ApiAggregateParams<
+  Repo extends Repository<EntityBuilder>,
+  HandlerName extends string = string
+> = BaseFunctionParams & {
+  basePath: Repo['name'];
   handlers: Record<HandlerName, ApiHandlerParams>;
   cdnApi: ApiCdnApiParams;
   authPool?: ApiAuthPoolParams;
   tableOptions?: Omit<ServiceTableParams, 'tableName'>;
+  autoEventsEnabled?: true;
   skipTable?: true;
 };
 
-export class ApiAggregate<HandlerName extends string = string> extends Construct {
+export class ApiAggregate<
+  Repo extends Repository<EntityBuilder>,
+  HandlerName extends string = string
+> extends Construct {
   public readonly api: HttpApi;
   public readonly table?: Table;
   public readonly authorizer: HttpUserPoolAuthorizer;
   public readonly handlers: Record<HandlerName, NodejsFunction> = {} as Record<HandlerName, NodejsFunction>;
 
-  constructor(service: Service, params: ApiAggregateParams) {
+  constructor(service: Service, params: ApiAggregateParams<Repo>) {
     super(service, getLogicalName('ApiAggregate'));
+
+    if (params.autoEventsEnabled && !params.eventBus)
+      throw new SynthError('eventBus is needed when autoEventsEnabled is true', service.props);
 
     const apiRest = new ApiRest(service, { ...params, ...params.cdnApi, ...params.authPool });
 
@@ -50,7 +61,7 @@ export class ApiAggregate<HandlerName extends string = string> extends Construct
     this.authorizer = apiRest.authorizer;
 
     if (!params.skipTable) {
-      const serviceTable = new ServiceTable(service, { ...params.tableOptions, tableName: params.basePath,  });
+      const serviceTable = new ServiceTable(service, { ...params.tableOptions, tableName: params.basePath });
       this.table = serviceTable.table;
     }
 
@@ -67,7 +78,11 @@ export class ApiAggregate<HandlerName extends string = string> extends Construct
         api: this.api,
         authorizer: this.authorizer,
         modifiers: [...(params.modifiers || []), ...(params.handlers[handler].modifiers || [])],
-        environment: { ...params.environment, ...params.handlers[handler].environment },
+        environment: {
+          ...(params.autoEventsEnabled ? { AUTO_EVENTS_ENTITY: params.basePath } : {}),
+          ...params.environment,
+          ...params.handlers[handler].environment,
+        },
       }).lambdaFunction;
     });
   }

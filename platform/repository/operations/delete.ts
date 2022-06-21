@@ -1,5 +1,6 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import { ApiError } from '../../handler/api/api-error';
+import { dispatchEvent } from '../../integrations/event/dispatch-event';
 import { DeleteItemFunc, Entity, EntityBuilder, EntityRepositoryConfig } from '../interface';
 
 export const deleteItem = <Builder extends EntityBuilder>(
@@ -23,6 +24,16 @@ export const deleteItem = <Builder extends EntityBuilder>(
       });
 
     if (!Attributes) throw new ApiError('NotFound', 404);
-    return repoConfig.entityDeserialize(Attributes);
+
+    const entity = repoConfig.entityDeserialize(Attributes);
+
+    if (process.env.AUTO_EVENTS_ENTITY) {
+      await dispatchEvent<EntityRepositoryConfig<Builder>['eventsConfig']['deleted']>(
+        repoConfig.eventsConfig.deleted,
+        entity
+      );
+    }
+
+    return entity;
   };
 };

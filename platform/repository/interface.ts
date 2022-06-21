@@ -8,6 +8,7 @@ export type TimeToDelete = {
 };
 
 export type EntityBuilderKeys = {
+  name: string;
   body: Record<string, unknown>;
   key: Record<string, unknown>;
   timers: Record<string, Date>;
@@ -18,6 +19,7 @@ export type EntityBuilderKeys = {
 };
 
 export type EntityBuilder<Builder extends EntityBuilderKeys = EntityBuilderKeys> = {
+  name: Builder['name'];
   key: Builder['key'];
   body: Builder['body'];
   timers: Builder['timers'];
@@ -33,12 +35,18 @@ export type EntityCreate<Builder extends EntityBuilderKeys, Omitted extends keyo
   Partial<Pick<Builder, 'timers'>>;
 
 export type EntityUpdate<Builder extends EntityBuilderKeys> = Builder['body'];
+
 export type EntityStore<Builder extends EntityBuilderKeys> = Builder['body'] &
   Builder['storeMapping']['key'] &
   Builder['storeMapping']['timers'];
 
 export type EntityRepositoryConfig<Builder extends EntityBuilder, Create = EntityCreate<Builder>> = {
   tableName: string;
+  eventsConfig: {
+    created: { name: `app.${Builder['name']}.created`; source: 'app'; payload: Entity<Builder> };
+    updated: { name: `app.${Builder['name']}.updated`; source: 'app'; payload: Entity<Builder> };
+    deleted: { name: `app.${Builder['name']}.deleted`; source: 'app'; payload: Entity<Builder> };
+  };
   keySerialize: (key: EntityBuilder<Builder>['key']) => EntityBuilder<Builder>['storeMapping']['key'];
   entitySerialize: (key: EntityBuilder<Builder>['key'], entityCreate: Create) => EntityStore<Builder>;
   entityDeserialize: (entityStore: EntityStore<Builder>) => Entity<Builder>;
@@ -107,6 +115,21 @@ export type ScanTableFunc<Builder extends EntityBuilder> = (
 ) => Promise<PaginatedResponse<Entity<Builder>>>;
 
 export type Repository<Builder extends EntityBuilder> = {
+  name: Builder['name'];
+  events: {
+    created: {
+      name: `app.${Builder['name']}.created`;
+      payload: Entity<Builder>;
+    };
+    updated: {
+      name: `app.${Builder['name']}.updated`;
+      payload: Entity<Builder>;
+    };
+    deleted: {
+      name: `app.${Builder['name']}.deleted`;
+      payload: Entity<Builder>;
+    };
+  };
   entitySerialize: EntityRepositoryConfig<Builder>['entitySerialize'];
   entityDeserialize: EntityRepositoryConfig<Builder>['entityDeserialize'];
   createItem: CreateItemFunc<Builder>;
