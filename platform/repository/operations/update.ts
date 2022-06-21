@@ -1,7 +1,14 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import { ApiError } from '../../handler/api/api-error';
 import { dispatchEvent } from '../../integrations/event/dispatch-event';
-import { Entity, EntityBuilder, EntityRepositoryConfig, EntityUpdate, UpdateItemFunc } from '../interface';
+import {
+  Entity,
+  EntityBuilder,
+  EntityRepositoryConfig,
+  EntityUpdate,
+  RepositoryEvent,
+  UpdateItemFunc,
+} from '../interface';
 import { updateMapper } from '../update-mapper';
 
 export const updateItem = <Builder extends EntityBuilder>(
@@ -32,7 +39,10 @@ export const updateItem = <Builder extends EntityBuilder>(
     const entity: Entity<Builder> = repoConfig.entityDeserialize(Attributes);
 
     if (process.env.AUTO_EVENTS) {
-      await dispatchEvent({ name: `app.${repoConfig.repoName}.update`, source: 'app' }, entity);
+      await dispatchEvent<RepositoryEvent<Builder>['updated']>(
+        { name: `app.${repoConfig.repoName}.updated`, source: 'app' },
+        entity
+      );
     }
 
     return entity;

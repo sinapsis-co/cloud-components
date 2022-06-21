@@ -1,7 +1,7 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb';
 import { ApiError } from '../../handler/api/api-error';
 import { dispatchEvent } from '../../integrations/event/dispatch-event';
-import { DeleteItemFunc, Entity, EntityBuilder, EntityRepositoryConfig } from '../interface';
+import { DeleteItemFunc, Entity, EntityBuilder, EntityRepositoryConfig, RepositoryEvent } from '../interface';
 
 export const deleteItem = <Builder extends EntityBuilder>(
   repoConfig: EntityRepositoryConfig<Builder>,
@@ -28,7 +28,10 @@ export const deleteItem = <Builder extends EntityBuilder>(
     const entity = repoConfig.entityDeserialize(Attributes);
 
     if (process.env.AUTO_EVENTS) {
-      await dispatchEvent({ name: `app.${repoConfig.repoName}.delete`, source: 'app' }, entity);
+      await dispatchEvent<RepositoryEvent<Builder>['deleted']>(
+        { name: `app.${repoConfig.repoName}.deleted`, source: 'app' },
+        entity
+      );
     }
 
     return entity;

@@ -110,7 +110,20 @@ export type ScanTableFunc<Builder extends EntityBuilder> = (
   params?: Partial<DynamoDB.DocumentClient.QueryInput>
 ) => Promise<PaginatedResponse<Entity<Builder>>>;
 
-export type RepositoryEventPayload<Builder extends EntityBuilder> = Entity<Builder>;
+export type RepositoryEvent<Builder extends EntityBuilder> = {
+  created: {
+    name: `app.${Builder['name']}.created`;
+    payload: Entity<Builder>;
+  };
+  updated: {
+    name: `app.${Builder['name']}.updated`;
+    payload: Entity<Builder>;
+  };
+  deleted: {
+    name: `app.${Builder['name']}.deleted`;
+    payload: Entity<Builder>;
+  };
+};
 
 export type Repository<Builder extends EntityBuilder> = {
   events: {
