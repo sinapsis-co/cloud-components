@@ -27,10 +27,7 @@ export const createItem = <Builder extends EntityBuilder, Omitted extends keyof 
     const entity = repoConfig.entityDeserialize(item);
 
     if (process.env.AUTO_EVENTS) {
-      await dispatchEvent<EntityRepositoryConfig<Builder, EntityCreate<Builder, Omitted>>['events']['created']>(
-        repoConfig.events.created,
-        entity
-      );
+      await dispatchEvent({ name: `app.${repoConfig.repoName}.created`, source: 'app' }, entity);
     }
     return entity;
   };

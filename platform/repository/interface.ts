@@ -42,11 +42,7 @@ export type EntityStore<Builder extends EntityBuilderKeys> = Builder['body'] &
 
 export type EntityRepositoryConfig<Builder extends EntityBuilder, Create = EntityCreate<Builder>> = {
   tableName: string;
-  events: {
-    created: { name: `app.${Builder['name']}.created`; source: 'app'; payload: Entity<Builder> };
-    updated: { name: `app.${Builder['name']}.updated`; source: 'app'; payload: Entity<Builder> };
-    deleted: { name: `app.${Builder['name']}.deleted`; source: 'app'; payload: Entity<Builder> };
-  };
+  repoName: Builder['name'];
   keySerialize: (key: EntityBuilder<Builder>['key']) => EntityBuilder<Builder>['storeMapping']['key'];
   entitySerialize: (key: EntityBuilder<Builder>['key'], entityCreate: Create) => EntityStore<Builder>;
   entityDeserialize: (entityStore: EntityStore<Builder>) => Entity<Builder>;
@@ -119,17 +115,14 @@ export type Repository<Builder extends EntityBuilder> = {
     created: {
       source: 'app';
       name: `app.${Builder['name']}.created`;
-      payload: Entity<Builder>;
     };
     updated: {
       source: 'app';
       name: `app.${Builder['name']}.updated`;
-      payload: Entity<Builder>;
     };
     deleted: {
       source: 'app';
       name: `app.${Builder['name']}.deleted`;
-      payload: Entity<Builder>;
     };
   };
   entitySerialize: EntityRepositoryConfig<Builder>['entitySerialize'];

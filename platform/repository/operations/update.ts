@@ -32,7 +32,7 @@ export const updateItem = <Builder extends EntityBuilder>(
     const entity: Entity<Builder> = repoConfig.entityDeserialize(Attributes);
 
     if (process.env.AUTO_EVENTS) {
-      await dispatchEvent<EntityRepositoryConfig<Builder>['events']['updated']>(repoConfig.events.updated, entity);
+      await dispatchEvent({ name: `app.${repoConfig.repoName}.update`, source: 'app' }, entity);
     }
 
     return entity;
