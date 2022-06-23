@@ -13,12 +13,15 @@ import { DeploySecret } from '../../prefab/config/deploy-secret';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { DetailType, NotificationRule } from 'aws-cdk-lib/aws-codestarnotifications';
 import { TopicFunction } from '../../prefab/function/topic-function';
+import { SynthError } from '../../common/synth/synth-error';
 
 export type DeployPipelineProps = {
   repositoryOwner?: string;
   repositoryConnection?: string;
   preDeployCommands?: string[];
   postDeployCommands?: string[];
+  slackChannel?: string;
+  slackToken?: string;
 };
 
 export class DeployPipelineConstruct extends Construct {
@@ -133,28 +136,36 @@ export class DeployPipelineConstruct extends Construct {
         },
       ],
     });
+    if (params.slackChannel) {
+      const slackToken = service.props.useRepositoryDefaultConfig
+        ? StringParameter.valueFromLookup(this, 'pipeline-default-slack-token')
+        : (params.slackToken as string);
+      if (!slackToken) throw new SynthError('MissingSlackToken', service.props);
 
-    const topicFunction = new TopicFunction(service, {
-      name: 'send-to-slack',
-      baseFunctionFolder: __dirname,
-      compiled: true,
-      customTopicParams: {
-        name: 'pipeline-notifications',
-      },
-    });
+      const topicFunction = new TopicFunction(service, {
+        name: 'send-to-slack',
+        baseFunctionFolder: __dirname,
+        compiled: true,
+        environment: {
+          SLACK_CHANNEL: params.slackChannel,
+          SLACK_TOKEN: slackToken,
+        },
+        customTopicParams: {
+          name: 'pipeline-notifications',
+        },
+      });
 
-    const events = [
-      // 'codecommit-repository-pull-request-created',
-      'codepipeline-pipeline-pipeline-execution-failed',
-      'codepipeline-pipeline-pipeline-execution-succeeded',
-    ];
+      const events = [
+        'codepipeline-pipeline-pipeline-execution-failed',
+        'codepipeline-pipeline-pipeline-execution-succeeded',
+      ];
 
-    new NotificationRule(this, 'Notification', {
-      detailType: DetailType.FULL,
-      events: events,
-      source: pipeline,
-      targets: [topicFunction.customTopic.topic],
-    });
-    // notRule.addTarget(topicFunction.customTopic.topic);
+      new NotificationRule(this, 'Notification', {
+        detailType: DetailType.FULL,
+        events: events,
+        source: pipeline,
+        targets: [topicFunction.customTopic.topic],
+      });
+    }
   }
 }
