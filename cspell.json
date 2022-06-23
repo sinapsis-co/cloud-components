@@ -24,7 +24,8 @@
     "sinapsis",
     "spreedly",
     "timestream",
-    "wafv2"
+    "wafv2",
+    "codestarnotifications"
   ],
   "ignorePaths": ["*/node_modules/**", "*/cdk.out/**"]
 }

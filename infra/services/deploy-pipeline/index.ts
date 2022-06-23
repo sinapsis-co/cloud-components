@@ -11,6 +11,8 @@ import { getResourceName } from '../../common/naming/get-resource-name';
 import { Service } from '../../common/service';
 import { DeploySecret } from '../../prefab/config/deploy-secret';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import { DetailType, NotificationRule } from 'aws-cdk-lib/aws-codestarnotifications';
+import { TopicFunction } from '../../prefab/function/topic-function';
 
 export type DeployPipelineProps = {
   repositoryOwner?: string;
@@ -112,7 +114,7 @@ export class DeployPipelineConstruct extends Construct {
       project: codebuildProject,
     });
 
-    new Pipeline(this, 'Pipeline', {
+    const pipeline = new Pipeline(this, 'Pipeline', {
       artifactBucket: new Bucket(this, 'bucket', {
         bucketName: getResourceName('bucket', service.props),
         autoDeleteObjects: true,
@@ -130,6 +132,28 @@ export class DeployPipelineConstruct extends Construct {
           actions: [deployAction],
         },
       ],
+    });
+
+    const topicFunction = new TopicFunction(service, {
+      name: 'send-to-slack',
+      baseFunctionFolder: __dirname,
+      compiled: true,
+      customTopicParams: {
+        name: 'pipeline-notifications',
+      },
+    });
+
+    const events = [
+      'codecommit-repository-pull-request-created',
+      'codepipeline-pipeline-pipeline-execution-failed',
+      'codepipeline-pipeline-pipeline-execution-succeeded',
+    ];
+
+    new NotificationRule(this, 'Notification', {
+      detailType: DetailType.FULL,
+      events: events,
+      source: pipeline,
+      targets: [topicFunction.customTopic.topic],
     });
   }
 }
