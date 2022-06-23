@@ -16,11 +16,8 @@ import { TopicFunction } from '../../prefab/function/topic-function';
 import { SynthError } from '../../common/synth/synth-error';
 
 export type DeployPipelineProps = {
-  repositoryOwner?: string;
-  repositoryConnection?: string;
   preDeployCommands?: string[];
   postDeployCommands?: string[];
-  pipelineNotificationSlackChannel?: string;
   slackToken?: string;
 };
 
@@ -136,7 +133,7 @@ export class DeployPipelineConstruct extends Construct {
         },
       ],
     });
-    if (params.pipelineNotificationSlackChannel) {
+    if (service.props.pipelineNotificationSlackChannel) {
       const slackToken = service.props.useRepositoryDefaultConfig
         ? StringParameter.valueFromLookup(this, 'pipeline-default-slack-token')
         : (params.slackToken as string);
@@ -147,7 +144,7 @@ export class DeployPipelineConstruct extends Construct {
         baseFunctionFolder: __dirname,
         compiled: true,
         environment: {
-          SLACK_CHANNEL: params.pipelineNotificationSlackChannel,
+          SLACK_CHANNEL: service.props.pipelineNotificationSlackChannel,
           SLACK_TOKEN: slackToken,
         },
         customTopicParams: {

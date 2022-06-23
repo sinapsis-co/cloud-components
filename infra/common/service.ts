@@ -1,13 +1,9 @@
 import { Stack } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { getDeployConfig } from '@sinapsis-co/cc-infra-v2/common/naming/get-deploy-config';
-import { getServiceName } from '@sinapsis-co/cc-infra-v2/common/naming/get-service-name';
-import { getServiceProps } from '@sinapsis-co/cc-infra-v2/common/synth/get-service-props';
-import {
-  BaseGlobalProps,
-  BaseServiceDependencies,
-  BaseServiceProps,
-} from '@sinapsis-co/cc-infra-v2/common/synth/props-types';
+import { getDeployConfig } from './naming/get-deploy-config';
+import { getServiceName } from './naming/get-service-name';
+import { getServiceProps } from './synth/get-service-props';
+import { BaseServiceDependencies, BaseGlobalProps, BaseServiceProps } from './synth/props-types';
 
 export { Construct } from 'constructs';
 
