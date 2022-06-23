@@ -20,7 +20,7 @@ export type DeployPipelineProps = {
   repositoryConnection?: string;
   preDeployCommands?: string[];
   postDeployCommands?: string[];
-  slackChannel?: string;
+  pipelineNotificationSlackChannel?: string;
   slackToken?: string;
 };
 
@@ -136,7 +136,7 @@ export class DeployPipelineConstruct extends Construct {
         },
       ],
     });
-    if (params.slackChannel) {
+    if (params.pipelineNotificationSlackChannel) {
       const slackToken = service.props.useRepositoryDefaultConfig
         ? StringParameter.valueFromLookup(this, 'pipeline-default-slack-token')
         : (params.slackToken as string);
@@ -147,7 +147,7 @@ export class DeployPipelineConstruct extends Construct {
         baseFunctionFolder: __dirname,
         compiled: true,
         environment: {
-          SLACK_CHANNEL: params.slackChannel,
+          SLACK_CHANNEL: params.pipelineNotificationSlackChannel,
           SLACK_TOKEN: slackToken,
         },
         customTopicParams: {

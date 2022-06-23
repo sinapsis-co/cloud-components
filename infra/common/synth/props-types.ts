@@ -17,6 +17,7 @@ export type BaseGlobalConstConfig<ExtendedConst = {}> = {
   projectShortName: string;
   repositoryName: string;
   useRepositoryDefaultConfig: boolean;
+  pipelineNotificationSlackChannel?: string;
   repositoryOwner?: string;
   repositoryConnection?: string;
   bootstrappingServices?: string[];
@@ -30,6 +31,7 @@ export type BaseGlobalEnv<ExtendedEnv = {}> = {
   envDomainName?: string;
   emailSender: string;
   useRepositoryDefaultConfig?: boolean;
+  pipelineNotificationSlackChannel?: string;
   repositoryName?: string;
   repositoryOwner?: string;
   repositoryConnection?: string;
