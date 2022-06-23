@@ -144,7 +144,7 @@ export class DeployPipelineConstruct extends Construct {
     });
 
     const events = [
-      'codecommit-repository-pull-request-created',
+      // 'codecommit-repository-pull-request-created',
       'codepipeline-pipeline-pipeline-execution-failed',
       'codepipeline-pipeline-pipeline-execution-succeeded',
     ];
@@ -154,6 +154,6 @@ export class DeployPipelineConstruct extends Construct {
       events: events,
       source: pipeline,
     });
-    notRule.addTarget(topicFunction.customTopic.topic);
+    // notRule.addTarget(topicFunction.customTopic.topic);
   }
 }
