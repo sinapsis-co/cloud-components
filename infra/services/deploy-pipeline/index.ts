@@ -149,11 +149,11 @@ export class DeployPipelineConstruct extends Construct {
       'codepipeline-pipeline-pipeline-execution-succeeded',
     ];
 
-    new NotificationRule(this, 'Notification', {
+    const notRule = new NotificationRule(this, 'Notification', {
       detailType: DetailType.FULL,
       events: events,
       source: pipeline,
-      targets: [topicFunction.customTopic.topic],
     });
+    notRule.addTarget(topicFunction.customTopic.topic);
   }
 }
