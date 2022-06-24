@@ -22,7 +22,7 @@ export const handler: SNSHandler = async (event) => {
       const response: PipelineNotification = JSON.parse(v.Sns.Message);
       const url = `https://us-east-1.console.aws.amazon.com/codesuite/codepipeline/pipelines/${response.detail.pipeline}/view?region=us-east-1`;
       const fallback = `[Pipeline Failed] \n Details at: <${url}|AWS Console>`;
-      const color = response.detail.state === 'FAILED' ? 'D00000' : '#00d02d';
+      const color = response.detail.state === 'FAILED' ? '#D00000' : '#00d02d';
       const fields =
         response.detail.state === 'FAILED'
           ? [
