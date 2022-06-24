@@ -46,8 +46,12 @@ export const handler: SNSHandler = async (event) => {
 };
 
 const sendToSlack = async (fallback: string, color, fields) => {
-  await callApi<Slack.Interface>(Slack.config, {
-    pathParams: { token: process.env.SLACK_TOKEN! },
-    body: { attachments: [{ pretext: fallback, fallback, color, fields }], channel: process.env.SLACK_CHANNEL! },
-  });
+  await callApi<Slack.Interface>(
+    Slack.config,
+    {
+      pathParams: { token: process.env.SLACK_TOKEN! },
+      body: { attachments: [{ pretext: fallback, fallback, color, fields }], channel: process.env.SLACK_CHANNEL! },
+    },
+    { withoutResponse: true }
+  );
 };
