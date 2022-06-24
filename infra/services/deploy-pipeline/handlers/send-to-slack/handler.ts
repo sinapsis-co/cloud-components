@@ -19,30 +19,34 @@ export type PipelineNotification = {
 export const handler: SNSHandler = async (event) => {
   await Promise.all(
     event.Records.map(async (v) => {
+      // eslint-disable-next-line no-console
+      console.log(v.Sns.Message);
       const response: PipelineNotification = JSON.parse(v.Sns.Message);
+      const [envName, ...project] = response.detail.pipeline.split('-').reverse().slice(2);
+      const projectName = project.reverse().join('-');
       const url = `https://us-east-1.console.aws.amazon.com/codesuite/codepipeline/pipelines/${response.detail.pipeline}/view?region=us-east-1`;
-      const fallback = `[Pipeline Failed] \n Details at: <${url}|AWS Console>`;
+      const fallback = ':robot_face: *[Deploy Pipeline]* :robot_face:\n';
       const color = response.detail.state === 'FAILED' ? '#D00000' : '#00d02d';
       const fields =
         response.detail.state === 'FAILED'
           ? [
               {
-                title: 'Reason',
+                title: 'Status: [Pipeline Failed]',
                 short: false,
-                value: response.additionalAttributes.failedActions[0]['additionalInformation'],
+                value: `${response.additionalAttributes.failedActions[0]['additionalInformation']} \n For more details <${url}|Go to AWS Console> `,
               },
             ]
           : [
               {
-                title: 'Finished at:',
+                title: 'Status: [Pipeline Finished]',
                 short: false,
-                value: new Date().toDateString(),
+                value: `Deployed at: ${new Date().toDateString()}`,
               },
             ];
-
       await sendToSlack(fallback, color, [
+        { title: 'Project', short: false, value: `${projectName}` },
+        { title: 'Env', short: false, value: `${envName}` },
         ...fields,
-        { title: 'Go to Console', short: false, value: ` <${url}|AWS Console>` },
       ]);
     })
   );
