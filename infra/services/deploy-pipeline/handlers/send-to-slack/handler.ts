@@ -40,7 +40,10 @@ export const handler: SNSHandler = async (event) => {
               },
             ];
 
-      await sendToSlack(fallback, color, fields);
+      await sendToSlack(fallback, color, [
+        ...fields,
+        { title: 'Go to Console', short: false, value: ` <${url}|AWS Console>` },
+      ]);
     })
   );
 };

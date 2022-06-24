@@ -68,7 +68,7 @@ export class DeployPipelineConstruct extends Construct {
     const codebuildProject = new codebuild.Project(this, 'CodebuildProject', {
       projectName: getResourceName('', service.props),
       role: deploymentRole,
-      cache: codebuild.Cache.local(codebuild.LocalCacheMode.CUSTOM),
+      // cache: codebuild.Cache.local(codebuild.LocalCacheMode.CUSTOM),
       environment: {
         computeType: codebuild.ComputeType.X2_LARGE,
         buildImage: codebuild.LinuxBuildImage.STANDARD_5_0,
@@ -85,8 +85,8 @@ export class DeployPipelineConstruct extends Construct {
           pre_build: {
             commands: [
               ...(params.preDeployCommands || []),
-              'cp -rL cdk.out.cache cdk.out || true',
-              'cp -rL node_modules.cache node_modules || true',
+              // 'cp -rL cdk.out.cache cdk.out || true',
+              // 'cp -rL node_modules.cache node_modules || true',
               'npm set //npm.pkg.github.com/:_authToken $GITHUB_TOKEN',
               'yarn --prod',
             ],
@@ -96,17 +96,17 @@ export class DeployPipelineConstruct extends Construct {
           },
           post_build: {
             commands: [
-              ...(params.postDeployCommands || []),
-              'rm -r cdk.out.cache || true',
-              'cp -r cdk.out cdk.out.cache',
-              'rm -r node_modules.cache || true',
-              'cp -r node_modules node_modules.cache',
+              // ...(params.postDeployCommands || []),
+              // 'rm -r cdk.out.cache || true',
+              // 'cp -r cdk.out cdk.out.cache',
+              // 'rm -r node_modules.cache || true',
+              // 'cp -r node_modules node_modules.cache',
             ],
           },
         },
-        cache: {
-          paths: ['cdk.out.cache/**/*', 'node_modules.cache/**/*'],
-        },
+        // cache: {
+        //   paths: ['cdk.out.cache/**/*', 'node_modules.cache/**/*'],
+        // },
       }),
     });
     const deployAction = new CodeBuildAction({
