@@ -70,6 +70,7 @@ export class DeployPipelineConstruct extends Construct {
       role: deploymentRole,
       cache: codebuild.Cache.local(codebuild.LocalCacheMode.CUSTOM),
       environment: {
+        computeType: codebuild.ComputeType.X2_LARGE,
         buildImage: codebuild.LinuxBuildImage.STANDARD_5_0,
       },
       environmentVariables: {
