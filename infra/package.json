@@ -1,6 +1,6 @@
 {
   "name": "@sinapsis-co/cc-infra-v2",
-  "version": "0.1.109",
+  "version": "0.1.110",
   "author": "sinapsis.co",
   "license": "MIT",
   "repository": "git://github.com/sinapsis-co/co.sinapsis.cloud-components.git",
@@ -14,7 +14,7 @@
     "@aws-cdk/aws-apigatewayv2-alpha": "^2.24.1-alpha.0",
     "@aws-cdk/aws-apigatewayv2-authorizers-alpha": "^2.24.1-alpha.0",
     "@aws-cdk/aws-apigatewayv2-integrations-alpha": "^2.24.1-alpha.0",
-    "@sinapsis-co/cc-platform-v2": "^0.1.100",
+    "@sinapsis-co/cc-platform-v2": "^0.1.110",
     "aws-cdk": "^2.24.1",
     "aws-cdk-lib": "^2.24.1",
     "aws-lambda": "^1.0.6",
