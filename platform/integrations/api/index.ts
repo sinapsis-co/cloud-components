@@ -46,6 +46,8 @@ export const callApi = async <Api extends ApiInterfaceExtended>(
     },
     ...(!['GET', 'HEAD'].includes(method) ? { body: JSON.stringify(body) } : {}),
   });
+  // eslint-disable-next-line no-console
+  if (!response.ok) console.log(await response.text());
   if (extraParams?.withoutResponse) return;
   return (await response.json()) as Api['response'];
 };
