@@ -49,7 +49,8 @@ export const bootstrap = async <
       context,
       serviceName
     );
-    const role = await assumeRole({ account: deployAccount, region }, roleName);
+
+    const role = await assumeRole({ account: serviceAccount, region }, roleName);
     execSync(serviceCommand, {
       stdio: 'inherit',
       env: {
