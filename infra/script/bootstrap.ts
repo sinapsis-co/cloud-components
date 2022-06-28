@@ -38,7 +38,7 @@ export const bootstrap = async <
 
     const region = globalDeployTargetConfig[envName]['services']['region'];
 
-    await runBootstrap(
+    const serviceCommand = runBootstrap(
       deployAccount,
       serviceAccount,
       region,
@@ -49,9 +49,20 @@ export const bootstrap = async <
       context,
       serviceName
     );
+    const role = await assumeRole({ account: deployAccount, region }, roleName);
+    execSync(serviceCommand, {
+      stdio: 'inherit',
+      env: {
+        ...process.env,
+        AWS_ACCESS_KEY_ID: role.credentials.accessKeyId,
+        AWS_SECRET_ACCESS_KEY: role.credentials.secretAccessKey,
+        AWS_SESSION_TOKEN: role.credentials.sessionToken,
+        AWS_REGION: role.region,
+      },
+    });
 
-    if (dnsAccount !== serviceAccount)
-      await runBootstrap(
+    if (dnsAccount !== serviceAccount) {
+      const dnsCommand = runBootstrap(
         deployAccount,
         dnsAccount,
         region,
@@ -62,6 +73,18 @@ export const bootstrap = async <
         context,
         serviceName
       );
+      const role = await assumeRole({ account: dnsAccount, region }, roleName);
+      execSync(dnsCommand, {
+        stdio: 'inherit',
+        env: {
+          ...process.env,
+          AWS_ACCESS_KEY_ID: role.credentials.accessKeyId,
+          AWS_SECRET_ACCESS_KEY: role.credentials.secretAccessKey,
+          AWS_SESSION_TOKEN: role.credentials.sessionToken,
+          AWS_REGION: role.region,
+        },
+      });
+    }
 
     if (bootstrappingServices)
       deploy(globalConstConfig, globalEnvConfig, globalDeployTargetConfig, [
@@ -77,7 +100,7 @@ export const bootstrap = async <
   }
 };
 
-const runBootstrap = async (
+const runBootstrap = (
   deployAccount: string,
   account: string,
   region: BaseRegionName,
@@ -88,8 +111,6 @@ const runBootstrap = async (
   context: string,
   serviceName: string
 ) => {
-  const role = await assumeRole({ account, region }, roleName);
-
   const command = `npx cdk bootstrap ${account}/${region} \
     --require-approval='never' \
     --trust ${deployAccount} \
@@ -100,15 +121,5 @@ const runBootstrap = async (
     --context env=${envNameInput} \
     --outputs-file ${outputFile} \
     ${accountMap} ${context} ${serviceName}`;
-
-  execSync(command, {
-    stdio: 'inherit',
-    env: {
-      ...process.env,
-      AWS_ACCESS_KEY_ID: role.credentials.accessKeyId,
-      AWS_SECRET_ACCESS_KEY: role.credentials.secretAccessKey,
-      AWS_SESSION_TOKEN: role.credentials.sessionToken,
-      AWS_REGION: role.region,
-    },
-  });
+  return command;
 };
