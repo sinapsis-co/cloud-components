@@ -38,7 +38,7 @@ export const bootstrap = async <
 
     const region = globalDeployTargetConfig[envName]['services']['region'];
 
-    const serviceCommand = runBootstrap(
+    runBootstrap(
       deployAccount,
       serviceAccount,
       region,
@@ -50,20 +50,8 @@ export const bootstrap = async <
       serviceName
     );
 
-    const role = await assumeRole({ account: serviceAccount, region }, roleName);
-    execSync(serviceCommand, {
-      stdio: 'inherit',
-      env: {
-        ...process.env,
-        AWS_ACCESS_KEY_ID: role.credentials.accessKeyId,
-        AWS_SECRET_ACCESS_KEY: role.credentials.secretAccessKey,
-        AWS_SESSION_TOKEN: role.credentials.sessionToken,
-        AWS_REGION: role.region,
-      },
-    });
-
     if (dnsAccount !== serviceAccount) {
-      const dnsCommand = runBootstrap(
+      runBootstrap(
         deployAccount,
         dnsAccount,
         region,
@@ -74,17 +62,6 @@ export const bootstrap = async <
         context,
         serviceName
       );
-      const role = await assumeRole({ account: dnsAccount, region }, roleName);
-      execSync(dnsCommand, {
-        stdio: 'inherit',
-        env: {
-          ...process.env,
-          AWS_ACCESS_KEY_ID: role.credentials.accessKeyId,
-          AWS_SECRET_ACCESS_KEY: role.credentials.secretAccessKey,
-          AWS_SESSION_TOKEN: role.credentials.sessionToken,
-          AWS_REGION: role.region,
-        },
-      });
     }
 
     if (bootstrappingServices)
@@ -101,7 +78,7 @@ export const bootstrap = async <
   }
 };
 
-const runBootstrap = (
+const runBootstrap = async (
   deployAccount: string,
   account: string,
   region: BaseRegionName,
@@ -122,5 +99,18 @@ const runBootstrap = (
     --context env=${envNameInput} \
     --outputs-file ${outputFile} \
     ${accountMap} ${context} ${serviceName}`;
-  return command;
+  const role = await assumeRole({ account, region }, roleName).catch((e) => {
+    console.log(e);
+    throw e;
+  });
+  execSync(command, {
+    stdio: 'inherit',
+    env: {
+      ...process.env,
+      AWS_ACCESS_KEY_ID: role.credentials.accessKeyId,
+      AWS_SECRET_ACCESS_KEY: role.credentials.secretAccessKey,
+      AWS_SESSION_TOKEN: role.credentials.sessionToken,
+      AWS_REGION: role.region,
+    },
+  });
 };
