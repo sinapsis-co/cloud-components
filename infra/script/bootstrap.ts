@@ -9,6 +9,7 @@ import {
   BaseGlobalDeployTargetConfig,
   BaseGlobalEnv,
   BaseGlobalEnvConfig,
+  BaseRegionName,
 } from '../common/synth/props-types';
 import { deploy } from './deploy';
 
@@ -31,35 +32,36 @@ export const bootstrap = async <
 
     const accountArr = accountMap.split(' ');
 
+    const deployAccount: string = accountArr.find((a) => a.includes('deploy'))?.split('=')[1] || '';
     const serviceAccount: string = accountArr.find((a) => a.includes('services'))?.split('=')[1] || '';
-    const rootAccount: string = accountArr.find((a) => a.includes('deploy'))?.split('=')[1] || '';
+    const dnsAccount: string = accountArr.find((a) => a.includes('dnsShared'))?.split('=')[1] || '';
 
     const region = globalDeployTargetConfig[envName]['services']['region'];
-    const role = await assumeRole({ account: serviceAccount, region }, roleName);
 
-    const command = `npx cdk bootstrap ${serviceAccount}/${region} \
-      --require-approval='never' \
-      --trust ${rootAccount} \
-      --trust-for-lookup ${rootAccount} \
-      --no-bootstrap-customer-key \
-      --require-approval='never' \
-      --cloudformation-execution-policies=arn:aws:iam::aws:policy/AdministratorAccess \
-      --context env=${envNameInput} \
-      --context assume-role-credentials:writeIamRoleName=${roleName} \
-      --context assume-role-credentials:readIamRoleName=${roleName} \
-      --outputs-file ${outputFile} \
-      ${accountMap} ${context} ${serviceName}`;
+    await runBootstrap(
+      deployAccount,
+      serviceAccount,
+      region,
+      roleName,
+      envNameInput,
+      outputFile,
+      accountMap,
+      context,
+      serviceName
+    );
 
-    execSync(command, {
-      stdio: 'inherit',
-      env: {
-        ...process.env,
-        AWS_ACCESS_KEY_ID: role.credentials.accessKeyId,
-        AWS_SECRET_ACCESS_KEY: role.credentials.secretAccessKey,
-        AWS_SESSION_TOKEN: role.credentials.sessionToken,
-        AWS_REGION: role.region,
-      },
-    });
+    if (dnsAccount !== serviceAccount)
+      await runBootstrap(
+        deployAccount,
+        dnsAccount,
+        region,
+        roleName,
+        envNameInput,
+        outputFile,
+        accountMap,
+        context,
+        serviceName
+      );
 
     if (bootstrappingServices)
       deploy(globalConstConfig, globalEnvConfig, globalDeployTargetConfig, [
@@ -73,4 +75,40 @@ export const bootstrap = async <
   } catch (error) {
     process.exit(1);
   }
+};
+
+const runBootstrap = async (
+  deployAccount: string,
+  account: string,
+  region: BaseRegionName,
+  roleName: string,
+  envNameInput: string,
+  outputFile: string,
+  accountMap: string,
+  context: string,
+  serviceName: string
+) => {
+  const role = await assumeRole({ account, region }, roleName);
+
+  const command = `npx cdk bootstrap ${account}/${region} \
+    --require-approval='never' \
+    --trust ${deployAccount} \
+    --trust-for-lookup ${deployAccount} \
+    --no-bootstrap-customer-key \
+    --require-approval='never' \
+    --cloudformation-execution-policies=arn:aws:iam::aws:policy/AdministratorAccess \
+    --context env=${envNameInput} \
+    --outputs-file ${outputFile} \
+    ${accountMap} ${context} ${serviceName}`;
+
+  execSync(command, {
+    stdio: 'inherit',
+    env: {
+      ...process.env,
+      AWS_ACCESS_KEY_ID: role.credentials.accessKeyId,
+      AWS_SECRET_ACCESS_KEY: role.credentials.secretAccessKey,
+      AWS_SESSION_TOKEN: role.credentials.sessionToken,
+      AWS_REGION: role.region,
+    },
+  });
 };
