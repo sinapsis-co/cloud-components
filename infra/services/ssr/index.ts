@@ -2,7 +2,14 @@ import { Construct } from 'constructs';
 import { RemovalPolicy, Duration, CfnOutput } from 'aws-cdk-lib';
 import { HostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
-import { Bucket, BlockPublicAccess, BucketEncryption, HttpMethods } from 'aws-cdk-lib/aws-s3';
+import {
+  Bucket,
+  BlockPublicAccess,
+  BucketEncryption,
+  HttpMethods,
+  RedirectProtocol,
+  BucketAccessControl,
+} from 'aws-cdk-lib/aws-s3';
 import { Distribution, AllowedMethods, ViewerProtocolPolicy, OriginRequestPolicy } from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
@@ -25,6 +32,7 @@ export type SsrConstructParams = {
   envVars?: Omit<DeploySecretProps, 'name'>;
   waf?: Waf;
   skipRecord?: true;
+  wwwRedirectBucketEnabled?: true;
 };
 
 export class SsrConstruct extends Construct {
@@ -98,6 +106,16 @@ export class SsrConstruct extends Construct {
         zone: hostedZone,
         target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
         recordName: this.domain,
+      });
+    }
+
+    if (params.wwwRedirectBucketEnabled) {
+      new Bucket(this, getLogicalName('redirectBucket', params.subDomain), {
+        accessControl: BucketAccessControl.PUBLIC_READ,
+        websiteRedirect: {
+          hostName: this.domain,
+          protocol: RedirectProtocol.HTTPS,
+        },
       });
     }
 
