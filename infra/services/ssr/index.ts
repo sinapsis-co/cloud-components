@@ -2,14 +2,7 @@ import { Construct } from 'constructs';
 import { RemovalPolicy, Duration, CfnOutput } from 'aws-cdk-lib';
 import { HostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
-import {
-  Bucket,
-  BlockPublicAccess,
-  BucketEncryption,
-  HttpMethods,
-  RedirectProtocol,
-  BucketAccessControl,
-} from 'aws-cdk-lib/aws-s3';
+import { Bucket, BlockPublicAccess, BucketEncryption, HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { Distribution, AllowedMethods, ViewerProtocolPolicy, OriginRequestPolicy } from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
@@ -32,7 +25,7 @@ export type SsrConstructParams = {
   envVars?: Omit<DeploySecretProps, 'name'>;
   waf?: Waf;
   skipRecord?: true;
-  wwwRedirectBucketEnabled?: true;
+  wwwRedirectEnabled?: true;
 };
 
 export class SsrConstruct extends Construct {
@@ -69,11 +62,13 @@ export class SsrConstruct extends Construct {
       },
     });
 
+    const domains = [this.domain];
+    if (params.wwwRedirectEnabled) domains.push(`www.${this.domain}`);
     this.distribution = new Distribution(this, 'Distribution', {
       enabled: true,
       comment: getResourceName('cdn', service.props),
       certificate: params.certificate,
-      domainNames: [this.domain],
+      domainNames: domains,
       defaultRootObject: 'index.html',
       errorResponses: [
         {
@@ -102,21 +97,12 @@ export class SsrConstruct extends Construct {
 
     if (!params.skipRecord) {
       const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', service.props) });
-      new ARecord(service, 'WebappRecords', {
-        zone: hostedZone,
-        target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
-        recordName: this.domain,
-      });
-    }
-
-    if (params.wwwRedirectBucketEnabled) {
-      new Bucket(this, getLogicalName('redirectBucket', params.subDomain), {
-        accessControl: BucketAccessControl.PUBLIC_READ,
-        bucketName: `www.${this.domain}`,
-        websiteRedirect: {
-          hostName: this.domain,
-          protocol: RedirectProtocol.HTTPS,
-        },
+      domains.map((d) => {
+        new ARecord(service, d.split('.')[0], {
+          zone: hostedZone,
+          target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution)),
+          recordName: d,
+        });
       });
     }
 
