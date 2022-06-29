@@ -14,6 +14,7 @@ import { getLogicalName } from '../../common/naming/get-logical-name';
 import { getResourceName } from '../../common/naming/get-resource-name';
 import { DeploySecret, DeploySecretProps } from '../../prefab/config/deploy-secret';
 import { Waf } from '../waf';
+import { SynthError } from '../../common/synth/synth-error';
 
 export type WebappConstructParams = {
   subDomain: string;
@@ -62,7 +63,11 @@ export class WebappConstruct extends Construct {
       },
     });
     const domains = [this.domain];
-    if (params.wwwRedirectEnabled) domains.push(`www.${this.domain}`);
+    if (params.wwwRedirectEnabled) {
+      if (params.subDomain)
+        throw new SynthError('wwwRedirectEnabled is only allowed in the root domain', service.props);
+      domains.push(`www.${this.domain}`);
+    }
     this.distribution = new Distribution(this, 'Distribution', {
       enabled: true,
       comment: getResourceName('cdn', service.props),
