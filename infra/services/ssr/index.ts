@@ -112,6 +112,7 @@ export class SsrConstruct extends Construct {
     if (params.wwwRedirectBucketEnabled) {
       new Bucket(this, getLogicalName('redirectBucket', params.subDomain), {
         accessControl: BucketAccessControl.PUBLIC_READ,
+        bucketName: `www.${this.domain}`,
         websiteRedirect: {
           hostName: this.domain,
           protocol: RedirectProtocol.HTTPS,
