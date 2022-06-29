@@ -11,25 +11,30 @@ import {
   EntityStore,
 } from '../interface';
 
+export type BatchCreateItemParams = {
+  autoRetry?: true;
+  tableName?: string;
+};
+
 export const batchCreateItem = <Builder extends EntityBuilder>(
   repoConfig: EntityRepositoryConfig<Builder>,
   dynamodb: DynamoDB.DocumentClient,
-  autoRetry?: boolean
+  params?: BatchCreateItemParams
 ): BatchCreateItemFunc<Builder> => {
   return async (
     items: { key: EntityBuilder<Builder>['key']; entityCreate: EntityCreate<Builder> }[]
   ): Promise<Entity<Builder>[]> => {
     const entities: EntityStore<Builder>[] = items.map((e) => repoConfig.entitySerialize(e.key, e.entityCreate));
     const chunk = chunkArray(entities, 25);
+    const table = params?.tableName || repoConfig.tableName;
     await Promise.all(
       chunk.map(async (c): Promise<any> => {
-        const table = repoConfig.tableName;
         const RequestItems: DynamoDB.DocumentClient.BatchWriteItemRequestMap = {
           [table]: c.map((Item) => {
             return { PutRequest: { Item } };
           }),
         };
-        await call(dynamodb, RequestItems, table, autoRetry);
+        await call(dynamodb, RequestItems, table, params?.autoRetry);
       })
     );
 

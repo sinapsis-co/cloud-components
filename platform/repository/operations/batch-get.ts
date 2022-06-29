@@ -4,13 +4,18 @@ import { chunkArray } from '../../util/array/chunk-array';
 import { wait } from '../../util/executers';
 import { BatchGetItemFunc, Entity, EntityBuilder, EntityRepositoryConfig, EntityStore } from '../interface';
 
+export type BatchGetItemParams = {
+  autoRetry?: true;
+  tableName?: string;
+};
+
 export const batchGetItem = <Builder extends EntityBuilder>(
   repoConfig: EntityRepositoryConfig<Builder>,
   dynamodb: DynamoDB.DocumentClient,
-  autoRetry?: boolean
+  params?: BatchGetItemParams
 ): BatchGetItemFunc<Builder> => {
   return async (keys: EntityBuilder<Builder>['key'][]): Promise<Entity<Builder>[] | undefined[]> => {
-    const table = repoConfig.tableName;
+    const table = params?.tableName || repoConfig.tableName;
     const items = keys.map((k) => repoConfig.keySerialize(k));
     const chunk = chunkArray(items, 100);
 
@@ -21,7 +26,7 @@ export const batchGetItem = <Builder extends EntityBuilder>(
             Keys: c,
           },
         };
-        const response = await call(dynamodb, RequestItems, table, autoRetry);
+        const response = await call(dynamodb, RequestItems, table, params?.autoRetry);
 
         return response.map((item) => {
           return repoConfig.entityDeserialize(item as EntityStore<Builder>);
