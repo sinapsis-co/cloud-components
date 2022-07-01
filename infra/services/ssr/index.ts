@@ -43,7 +43,7 @@ export class SsrConstruct extends Construct {
     this.baseUrl = `https://${this.domain}/`;
 
     this.privateBucket = new PrivateBucket(service, {
-      bucketName: getResourceName('webapp', service.props),
+      bucketName: 'render-bucket',
       bucketProps: {
         removalPolicy: RemovalPolicy.DESTROY,
         cors: [
