@@ -2,7 +2,7 @@ import { Construct } from 'constructs';
 import { RemovalPolicy, Duration, CfnOutput } from 'aws-cdk-lib';
 import { HostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
-import { Bucket, BlockPublicAccess, BucketEncryption, HttpMethods } from 'aws-cdk-lib/aws-s3';
+import { HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { Distribution, AllowedMethods, ViewerProtocolPolicy, OriginRequestPolicy } from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
@@ -15,6 +15,7 @@ import { getResourceName } from '../../common/naming/get-resource-name';
 import { DeploySecret, DeploySecretProps } from '../../prefab/config/deploy-secret';
 import { Waf } from '../waf';
 import { SynthError } from '../../common/synth/synth-error';
+import { PrivateBucket } from '../../prefab/bucket/private-bucket';
 
 export type SsrConstructParams = {
   subDomain: string;
@@ -33,6 +34,7 @@ export class SsrConstruct extends Construct {
   public readonly domain: string;
   public readonly baseUrl: string;
   public readonly distribution: Distribution;
+  public readonly privateBucket: PrivateBucket;
 
   constructor(service: Service, params: SsrConstructParams) {
     super(service, getLogicalName(SsrConstruct.name, params.subDomain));
@@ -40,20 +42,19 @@ export class SsrConstruct extends Construct {
     this.domain = getDomain(params.subDomain, service.props);
     this.baseUrl = `https://${this.domain}/`;
 
-    const bucket = new Bucket(this, 'WebappBucket', {
+    this.privateBucket = new PrivateBucket(service, {
       bucketName: getResourceName('webapp', service.props),
-      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
-      publicReadAccess: false,
-      encryption: BucketEncryption.S3_MANAGED,
-      autoDeleteObjects: true,
-      removalPolicy: RemovalPolicy.DESTROY,
-      cors: [
-        {
-          allowedMethods: [HttpMethods.GET, HttpMethods.HEAD],
-          allowedOrigins: ['*'],
-          allowedHeaders: ['*'],
-        },
-      ],
+      bucketProps: {
+        removalPolicy: RemovalPolicy.DESTROY,
+        cors: [
+          {
+            allowedMethods: [HttpMethods.GET, HttpMethods.HEAD],
+            allowedOrigins: ['*'],
+            allowedHeaders: ['*'],
+          },
+        ],
+        autoDeleteObjects: true,
+      },
     });
 
     const originRequestPolicy = new OriginRequestPolicy(this, 'OriginRequestPolicy', {
@@ -90,7 +91,7 @@ export class SsrConstruct extends Construct {
         },
       ],
       defaultBehavior: {
-        origin: new S3Origin(bucket),
+        origin: new S3Origin(this.privateBucket.bucket),
         originRequestPolicy: originRequestPolicy,
         allowedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
         viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
@@ -116,7 +117,7 @@ export class SsrConstruct extends Construct {
       parameterName: getResourceName('config', service.props),
       stringValue: JSON.stringify({
         domain: this.domain,
-        bucketName: bucket.bucketName,
+        bucketName: this.privateBucket.bucket.bucketName,
         distributionId: this.distribution.distributionId,
         assetMaxAge: params.assetMaxAge || '604800',
         indexMaxAge: params.indexMaxAge || '1800',
