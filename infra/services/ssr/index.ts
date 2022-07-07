@@ -29,7 +29,7 @@ export type SsrConstructParams = {
   waf?: Waf;
   skipRecord?: true;
   wwwRedirectEnabled?: true;
-  deployTriggeredEventConfig: EventConfig;
+  deployTriggeredEventConfig: EventConfig & { bus: string };
 };
 
 export class SsrConstruct extends Construct {

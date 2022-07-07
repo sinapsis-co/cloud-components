@@ -61,8 +61,17 @@ export const deploySSR = async <
     const deployConfig = await ssm.getParameter({ Name: parameterName }).promise();
 
     if (!deployConfig.Parameter?.Value) throw new Error('Invalid Config');
-    const { domain, distributionBucket, recipeBucket, distributionId, assetMaxAge, indexMaxAge, baseDir, distDir } =
-      JSON.parse(deployConfig.Parameter?.Value);
+    const {
+      domain,
+      distributionBucket,
+      recipeBucket,
+      distributionId,
+      assetMaxAge,
+      indexMaxAge,
+      baseDir,
+      distDir,
+      deployTriggeredEventConfig,
+    } = JSON.parse(deployConfig.Parameter?.Value);
 
     const baseSecretName = getParameterName('secret', {
       projectName,
@@ -89,8 +98,19 @@ export const deploySSR = async <
     const command = `yarn && yarn build ${envNameInput}`;
     execSync(command, { stdio: 'inherit', cwd: `${process.cwd()}/${baseDir}` });
 
-    const cpDistributionBucket = `aws s3 cp ${distDir}/ s3://${distributionBucket}/ --recursive --cache-control "max-age=${assetMaxAge}" --exclude ".next"`;
-    const cpRecipeBucket = `aws s3 cp ${distDir}/ s3://${recipeBucket}/.next/ --recursive --cache-control "max-age=${indexMaxAge}"`;
+    const entries = [
+      {
+        Source: deployTriggeredEventConfig.source,
+        DetailType: deployTriggeredEventConfig.name,
+        EventBusName: deployTriggeredEventConfig.bus,
+        Detail: {},
+        Resources: [],
+      },
+    ];
+
+    const cpDistributionBucket = `aws s3 cp ${distDir}/ s3://${distributionBucket}/ --recursive --cache-control "max-age=${assetMaxAge}" --exclude "_next"`;
+    const cpRecipeBucket = `aws s3 cp ${distDir}/_next s3://${recipeBucket}/ --recursive --cache-control "max-age=${indexMaxAge}"`;
+    const cpEventTrigger = `aws aws events put-events --entries ${JSON.stringify(entries)}`;
 
     const execOptions: ExecSyncOptions = {
       stdio: 'inherit',
@@ -105,6 +125,7 @@ export const deploySSR = async <
     };
     execSync(cpDistributionBucket, execOptions);
     execSync(cpRecipeBucket, execOptions);
+    execSync(cpEventTrigger, execOptions);
 
     console.log('STEP: (4/4) => CREATING INVALIDATION');
     const cf = new CloudFront(role);
