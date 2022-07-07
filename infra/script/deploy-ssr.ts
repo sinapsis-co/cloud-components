@@ -27,7 +27,7 @@ export const deploySSR = async <
   args: string[]
 ): Promise<void> => {
   try {
-    console.log('<< Deploy SPA Started >>');
+    console.log('<< Deploy SSR Started >>');
 
     const { envName, ephemeralEnvName, serviceNameInput, envNameInput, roleName, accountMap } = await preScript(
       globalConstConfig,
@@ -90,7 +90,7 @@ export const deploySSR = async <
     execSync(command, { stdio: 'inherit', cwd: `${process.cwd()}/${baseDir}` });
 
     const cpDistributionBucket = `aws s3 cp ${distDir}/ s3://${distributionBucket}/ --recursive --cache-control "max-age=${assetMaxAge}" --exclude ".next"`;
-    const cpRecipeBucket = `aws s3 cp ${distDir}/index.html s3://${recipeBucket}/.next/ --recursive --cache-control "max-age=${indexMaxAge}"`;
+    const cpRecipeBucket = `aws s3 cp ${distDir}/ s3://${recipeBucket}/.next/ --recursive --cache-control "max-age=${indexMaxAge}"`;
 
     const execOptions: ExecSyncOptions = {
       stdio: 'inherit',

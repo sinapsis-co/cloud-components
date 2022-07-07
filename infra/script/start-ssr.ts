@@ -26,7 +26,7 @@ export const startSSR = async <
   args: string[]
 ): Promise<void> => {
   try {
-    console.log('<< Start SPA Script >>');
+    console.log('<< Start SSR Script >>');
 
     const { envName, ephemeralEnvName, serviceNameInput, envNameInput, roleName, accountMap } = await preScript(
       globalConstConfig,
