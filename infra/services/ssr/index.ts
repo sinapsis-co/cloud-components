@@ -34,7 +34,8 @@ export class SsrConstruct extends Construct {
   public readonly domain: string;
   public readonly baseUrl: string;
   public readonly distribution: Distribution;
-  public readonly privateBucket: PrivateBucket;
+  public readonly distributionBucket: PrivateBucket;
+  public readonly recipeBucket: PrivateBucket;
 
   constructor(service: Service, params: SsrConstructParams) {
     super(service, getLogicalName(SsrConstruct.name, params.subDomain));
@@ -42,8 +43,8 @@ export class SsrConstruct extends Construct {
     this.domain = getDomain(params.subDomain, service.props);
     this.baseUrl = `https://${this.domain}/`;
 
-    this.privateBucket = new PrivateBucket(service, {
-      bucketName: 'render-bucket',
+    this.distributionBucket = new PrivateBucket(service, {
+      bucketName: 'distribution',
       bucketProps: {
         removalPolicy: RemovalPolicy.DESTROY,
         cors: [
@@ -55,6 +56,10 @@ export class SsrConstruct extends Construct {
         ],
         autoDeleteObjects: true,
       },
+    });
+
+    this.recipeBucket = new PrivateBucket(service, {
+      bucketName: 'recipe',
     });
 
     const originRequestPolicy = new OriginRequestPolicy(this, 'OriginRequestPolicy', {
@@ -91,7 +96,7 @@ export class SsrConstruct extends Construct {
         },
       ],
       defaultBehavior: {
-        origin: new S3Origin(this.privateBucket.bucket),
+        origin: new S3Origin(this.distributionBucket.bucket),
         originRequestPolicy: originRequestPolicy,
         allowedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
         viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
@@ -117,9 +122,10 @@ export class SsrConstruct extends Construct {
       parameterName: getResourceName('config', service.props),
       stringValue: JSON.stringify({
         domain: this.domain,
-        bucketName: this.privateBucket.bucket.bucketName,
+        distributionBucket: this.distributionBucket.bucket.bucketName,
+        recipeBucket: this.recipeBucket.bucket.bucketName,
         distributionId: this.distribution.distributionId,
-        assetMaxAge: params.assetMaxAge || '604800',
+        assetMaxAge: params.assetMaxAge || '300',
         indexMaxAge: params.indexMaxAge || '1800',
         baseDir: params.baseDir || `frontend/${service.props.serviceName}`,
         distDir: params.distDir || 'build',
