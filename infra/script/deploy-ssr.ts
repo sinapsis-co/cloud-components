@@ -109,7 +109,7 @@ export const deploySSR = async <
     ];
 
     const cpDistributionBucket = `aws s3 cp ${distDir}/ s3://${distributionBucket}/ --recursive --cache-control "max-age=${assetMaxAge}" --exclude "_next"`;
-    const cpRecipeBucket = `aws s3 cp ${distDir}/_next s3://${recipeBucket}/ --recursive --cache-control "max-age=${indexMaxAge}"`;
+    const cpRecipeBucket = `aws s3 cp ${distDir}/_next s3://${recipeBucket}/ --recursive --cache-control "max-age=${indexMaxAge}" --exclude "_next/cache"  --exclude "_next/static"`;
     const cpEventTrigger = `aws events put-events --entries ${JSON.stringify(JSON.stringify(entries))} --no-cli-pager`;
 
     const execOptions: ExecSyncOptions = {
