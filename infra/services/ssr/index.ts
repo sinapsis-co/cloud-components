@@ -16,6 +16,7 @@ import { DeploySecret, DeploySecretProps } from '../../prefab/config/deploy-secr
 import { Waf } from '../waf';
 import { SynthError } from '../../common/synth/synth-error';
 import { PrivateBucket } from '../../prefab/bucket/private-bucket';
+import { EventConfig } from '@sinapsis-co/cc-platform-v2/catalog/event';
 
 export type SsrConstructParams = {
   subDomain: string;
@@ -28,6 +29,7 @@ export type SsrConstructParams = {
   waf?: Waf;
   skipRecord?: true;
   wwwRedirectEnabled?: true;
+  deployTriggeredEventConfig: EventConfig;
 };
 
 export class SsrConstruct extends Construct {
@@ -125,6 +127,7 @@ export class SsrConstruct extends Construct {
         distributionBucket: this.distributionBucket.bucket.bucketName,
         recipeBucket: this.recipeBucket.bucket.bucketName,
         distributionId: this.distribution.distributionId,
+        deployTriggeredEventConfig: params.deployTriggeredEventConfig,
         assetMaxAge: params.assetMaxAge || '300',
         indexMaxAge: params.indexMaxAge || '1800',
         baseDir: params.baseDir || `frontend/${service.props.serviceName}`,
