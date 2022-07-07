@@ -103,14 +103,14 @@ export const deploySSR = async <
         Source: deployTriggeredEventConfig.source,
         DetailType: deployTriggeredEventConfig.name,
         EventBusName: deployTriggeredEventConfig.bus,
-        Detail: {},
+        Detail: JSON.stringify({ any: 'value' }),
         Resources: [],
       },
     ];
 
     const cpDistributionBucket = `aws s3 cp ${distDir}/ s3://${distributionBucket}/ --recursive --cache-control "max-age=${assetMaxAge}" --exclude "_next"`;
     const cpRecipeBucket = `aws s3 cp ${distDir}/_next s3://${recipeBucket}/ --recursive --cache-control "max-age=${indexMaxAge}"`;
-    const cpEventTrigger = `aws aws events put-events --entries ${JSON.stringify(entries)}`;
+    const cpEventTrigger = `aws events put-events --entries ${JSON.stringify(JSON.stringify(entries))} --no-cli-pager`;
 
     const execOptions: ExecSyncOptions = {
       stdio: 'inherit',
