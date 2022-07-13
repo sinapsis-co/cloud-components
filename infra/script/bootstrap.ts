@@ -38,7 +38,7 @@ export const bootstrap = async <
 
     const region = globalDeployTargetConfig[envName]['services']['region'];
 
-    runBootstrap(
+    await runBootstrap(
       deployAccount,
       serviceAccount,
       region,
@@ -51,7 +51,7 @@ export const bootstrap = async <
     );
 
     if (dnsAccount !== serviceAccount) {
-      runBootstrap(
+      await runBootstrap(
         deployAccount,
         dnsAccount,
         region,
