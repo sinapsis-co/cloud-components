@@ -14,7 +14,6 @@ import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { DetailType, NotificationRule } from 'aws-cdk-lib/aws-codestarnotifications';
 import { TopicFunction } from '../../prefab/function/topic-function';
 import { SynthError } from '../../common/synth/synth-error';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
 
 export type DeployPipelineProps = {
   preDeployCommands?: string[];
