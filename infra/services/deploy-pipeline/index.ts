@@ -14,6 +14,7 @@ import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { DetailType, NotificationRule } from 'aws-cdk-lib/aws-codestarnotifications';
 import { TopicFunction } from '../../prefab/function/topic-function';
 import { SynthError } from '../../common/synth/synth-error';
+import { Runtime } from 'aws-cdk-lib/aws-lambda';
 
 export type DeployPipelineProps = {
   preDeployCommands?: string[];
@@ -82,6 +83,12 @@ export class DeployPipelineConstruct extends Construct {
       buildSpec: codebuild.BuildSpec.fromObject({
         version: '0.2',
         phases: {
+          install: {
+            'runtime-versions': {
+              nodejs: 14,
+            },
+            commands: ['n 16.14.0'],
+          },
           pre_build: {
             commands: [
               ...(params.preDeployCommands || []),
