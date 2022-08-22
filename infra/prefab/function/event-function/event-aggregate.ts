@@ -11,6 +11,7 @@ export type EventAggregateParams<HandlerName extends string = string> = BaseFunc
   name?: string;
   handlers: Record<HandlerName, EventHandlerParams>;
   eventBus: CustomEventBusParams;
+  autoEventsEnabled?: boolean;
 };
 
 export class EventAggregate<HandlerName extends string = string> extends Construct {
@@ -24,7 +25,11 @@ export class EventAggregate<HandlerName extends string = string> extends Constru
         ...params,
         ...params.handlers[handler],
         modifiers: [...(params.modifiers || []), ...(params.handlers[handler].modifiers || [])],
-        environment: { ...params.environment, ...params.handlers[handler].environment },
+        environment: {
+          ...params.environment,
+          ...params.handlers[handler].environment,
+          ...(params.autoEventsEnabled ? { AUTO_EVENTS: 'true' } : {}),
+        },
       }).lambdaFunction;
     });
   }
