@@ -19,7 +19,7 @@ export type DeployPipelineProps = {
   preDeployCommands?: string[];
   postDeployCommands?: string[];
   slackToken?: string;
-  deployBackend?: boolean;
+  buildCommand?: string[];
 };
 
 export class DeployPipelineConstruct extends Construct {
@@ -27,6 +27,10 @@ export class DeployPipelineConstruct extends Construct {
     super(service, getLogicalName(DeployPipelineConstruct.name));
 
     if (service.props.ephemeralEnvName) return;
+
+    if (!params.buildCommand) {
+      params.buildCommand = [`yarn deploy ${service.props.envName}`];
+    }
 
     if (
       !service.props.useRepositoryDefaultConfig &&
@@ -98,11 +102,9 @@ export class DeployPipelineConstruct extends Construct {
               'yarn --prod',
             ],
           },
-          build: params.deployBackend
-            ? {
-                commands: [`yarn deploy ${service.props.envName}`],
-              }
-            : {},
+          build: {
+            commands: [...(params.buildCommand || [])],
+          },
           post_build: {
             commands: [
               ...(params.postDeployCommands || []),
