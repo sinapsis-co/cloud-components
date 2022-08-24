@@ -19,6 +19,7 @@ export type DeployPipelineProps = {
   preDeployCommands?: string[];
   postDeployCommands?: string[];
   slackToken?: string;
+  deployBackend?: boolean;
 };
 
 export class DeployPipelineConstruct extends Construct {
@@ -97,12 +98,14 @@ export class DeployPipelineConstruct extends Construct {
               'yarn --prod',
             ],
           },
-          build: {
-            commands: [`yarn deploy ${service.props.envName}`],
-          },
+          build: params.deployBackend
+            ? {
+                commands: [`yarn deploy ${service.props.envName}`],
+              }
+            : {},
           post_build: {
             commands: [
-              // ...(params.postDeployCommands || []),
+              ...(params.postDeployCommands || []),
               // 'rm -r cdk.out.cache || true',
               // 'cp -r cdk.out cdk.out.cache',
               // 'rm -r node_modules.cache || true',
