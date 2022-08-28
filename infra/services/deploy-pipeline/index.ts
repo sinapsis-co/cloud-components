@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Construct } from 'constructs';
 import * as codebuild from 'aws-cdk-lib/aws-codebuild';
 import { RemovalPolicy } from 'aws-cdk-lib';
@@ -35,10 +36,10 @@ export class DeployPipelineConstruct extends Construct {
 
     const repositoryOwner = service.props.useRepositoryDefaultConfig
       ? StringParameter.valueFromLookup(this, 'pipeline-default-repository-owner')
-      : (service.props.repositoryOwner as string);
+      : service.props.repositoryOwner!;
     const repositoryConnection = service.props.useRepositoryDefaultConfig
       ? StringParameter.valueFromLookup(this, 'pipeline-default-repository-connection')
-      : (service.props.repositoryConnection as string);
+      : service.props.repositoryConnection!;
 
     let githubTokenParameterName = 'pipeline-default-repository-token';
 
@@ -143,7 +144,7 @@ export class DeployPipelineConstruct extends Construct {
       const topicFunction = new TopicFunction(service, {
         name: 'send-to-slack',
         baseFunctionFolder: __dirname,
-        compiled: true,
+        ...(service.props.isDemoProject ? {} : { compiled: true }),
         environment: {
           SLACK_CHANNEL: service.props.pipelineNotificationSlackChannel,
           SLACK_TOKEN: slackToken,

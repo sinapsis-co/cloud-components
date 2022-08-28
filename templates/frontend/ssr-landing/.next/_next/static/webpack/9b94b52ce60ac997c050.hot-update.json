@@ -1,0 +1,8 @@
+{
+  "h": "8d6c80c26333e130098c",
+  "c": {
+    "pages/merch/detail/[productId]": false,
+    "pages/merch/payment/confirmation": false,
+    "pages/merch/payment/secure-payment": false
+  }
+}

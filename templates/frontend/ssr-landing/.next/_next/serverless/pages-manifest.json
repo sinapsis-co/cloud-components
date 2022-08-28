@@ -1,0 +1,18 @@
+{
+  "/[traclink]": "pages/[traclink].js",
+  "/api/merch": "pages/api/merch.js",
+  "/api/traclink": "pages/api/traclink.js",
+  "/api/tracpage": "pages/api/tracpage.js",
+  "/": "pages/index.js",
+  "/link/[link]": "pages/link/[link].js",
+  "/merch/cart": "pages/merch/cart.js",
+  "/merch/detail/[productId]": "pages/merch/detail/[productId].js",
+  "/merch": "pages/merch.js",
+  "/merch/payment/billing": "pages/merch/payment/billing.js",
+  "/merch/payment/confirmation": "pages/merch/payment/confirmation.js",
+  "/merch/payment/secure-payment": "pages/merch/payment/secure-payment.js",
+  "/music": "pages/music.js",
+  "/video/[videoId]": "pages/video/[videoId].js",
+  "/_error": "pages/_error.js",
+  "/404": "pages/404.html"
+}

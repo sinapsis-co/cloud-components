@@ -1,0 +1,7 @@
+{
+  "/_app": "pages/_app.js",
+  "/_document": "pages/_document.js",
+  "/_error": "pages/_error.js",
+  "/merch/payment/secure-payment": "pages/merch/payment/secure-payment.js",
+  "/merch/detail/[productId]": "pages/merch/detail/[productId].js"
+}

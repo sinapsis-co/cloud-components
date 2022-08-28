@@ -1,0 +1,84 @@
+{
+  "version": 3,
+  "pages404": true,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "rewrites": [],
+  "headers": [],
+  "dynamicRoutes": [
+    {
+      "page": "/link/[link]",
+      "regex": "^/link/([^/]+?)(?:/)?$",
+      "routeKeys": { "link": "link" },
+      "namedRegex": "^/link/(?<link>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/merch/detail/[productId]",
+      "regex": "^/merch/detail/([^/]+?)(?:/)?$",
+      "routeKeys": { "productId": "productId" },
+      "namedRegex": "^/merch/detail/(?<productId>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/video/[videoId]",
+      "regex": "^/video/([^/]+?)(?:/)?$",
+      "routeKeys": { "videoId": "videoId" },
+      "namedRegex": "^/video/(?<videoId>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/[traclink]",
+      "regex": "^/([^/]+?)(?:/)?$",
+      "routeKeys": { "traclink": "traclink" },
+      "namedRegex": "^/(?<traclink>[^/]+?)(?:/)?$"
+    }
+  ],
+  "dataRoutes": [
+    { "page": "/", "dataRouteRegex": "^/_next/data/qeDY\\-bOQid891MDK7yxJJ/index.json$" },
+    {
+      "page": "/link/[link]",
+      "routeKeys": { "link": "link" },
+      "dataRouteRegex": "^/_next/data/qeDY\\-bOQid891MDK7yxJJ/link/([^/]+?)\\.json$",
+      "namedDataRouteRegex": "^/_next/data/qeDY\\-bOQid891MDK7yxJJ/link/(?<link>[^/]+?)\\.json$"
+    },
+    { "page": "/merch", "dataRouteRegex": "^/_next/data/qeDY\\-bOQid891MDK7yxJJ/merch.json$" },
+    { "page": "/merch/cart", "dataRouteRegex": "^/_next/data/qeDY\\-bOQid891MDK7yxJJ/merch/cart.json$" },
+    {
+      "page": "/merch/detail/[productId]",
+      "routeKeys": { "productId": "productId" },
+      "dataRouteRegex": "^/_next/data/qeDY\\-bOQid891MDK7yxJJ/merch/detail/([^/]+?)\\.json$",
+      "namedDataRouteRegex": "^/_next/data/qeDY\\-bOQid891MDK7yxJJ/merch/detail/(?<productId>[^/]+?)\\.json$"
+    },
+    {
+      "page": "/merch/payment/billing",
+      "dataRouteRegex": "^/_next/data/qeDY\\-bOQid891MDK7yxJJ/merch/payment/billing.json$"
+    },
+    {
+      "page": "/merch/payment/confirmation",
+      "dataRouteRegex": "^/_next/data/qeDY\\-bOQid891MDK7yxJJ/merch/payment/confirmation.json$"
+    },
+    {
+      "page": "/merch/payment/secure-payment",
+      "dataRouteRegex": "^/_next/data/qeDY\\-bOQid891MDK7yxJJ/merch/payment/secure-payment.json$"
+    },
+    { "page": "/music", "dataRouteRegex": "^/_next/data/qeDY\\-bOQid891MDK7yxJJ/music.json$" },
+    {
+      "page": "/video/[videoId]",
+      "routeKeys": { "videoId": "videoId" },
+      "dataRouteRegex": "^/_next/data/qeDY\\-bOQid891MDK7yxJJ/video/([^/]+?)\\.json$",
+      "namedDataRouteRegex": "^/_next/data/qeDY\\-bOQid891MDK7yxJJ/video/(?<videoId>[^/]+?)\\.json$"
+    },
+    {
+      "page": "/[traclink]",
+      "routeKeys": { "traclink": "traclink" },
+      "dataRouteRegex": "^/_next/data/qeDY\\-bOQid891MDK7yxJJ/([^/]+?)\\.json$",
+      "namedDataRouteRegex": "^/_next/data/qeDY\\-bOQid891MDK7yxJJ/(?<traclink>[^/]+?)\\.json$"
+    }
+  ]
+}
