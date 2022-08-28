@@ -33,6 +33,9 @@
     "husky": "^7.0.4",
     "lint-staged": ">=10",
     "prettier": "^2.3.2",
-    "typescript": "^4.3.5"
+    "typescript": "^4.3.5",
+    "ts-node": "^10.7.0",
+    "@types/aws-lambda": "^8.10.83",
+    "@types/node": "^16.7.13"
   }
 }
