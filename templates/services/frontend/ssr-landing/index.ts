@@ -21,6 +21,9 @@ export class SsrLanding extends Service<GlobalProps, SsrServiceDeps> {
   constructor(scope: Construct, globalProps: GlobalProps, params: SsrServiceDeps) {
     super(scope, SsrLanding.name, globalProps, { params });
 
+    // Dependency due domain in identity verification
+    params.identity.addDependency(this);
+
     this.ssr = new SsrConstruct(this, {
       subDomain: this.props.subdomain.landing,
       baseDir: 'frontend/ssr-landing',
@@ -35,7 +38,6 @@ export class SsrLanding extends Service<GlobalProps, SsrServiceDeps> {
         calculatedSecrets: {
           SKIP_PREFLIGHT_CHECK: 'true',
           REACT_APP_API_URL: params.cdnApi.baseUrl,
-          ...params.identity.authPool.frontendRefs,
         },
       },
     });

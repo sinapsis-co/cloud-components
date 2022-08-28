@@ -3,6 +3,7 @@ import { GlobalProps } from '../../config/config-type';
 
 // Services
 import { Webapp } from './webapp';
+import { SsrLanding } from './ssr-landing';
 
 // External Services
 import { GlobalServiceDependencies } from '../business/index';
@@ -13,8 +14,10 @@ export type FrontendGlobalServiceDeps = GlobalServiceDependencies & {
 };
 export class FrontendServices {
   public readonly webapp: Webapp;
+  public readonly ssrLanding: SsrLanding;
 
   constructor(scope: Construct, globalProps: GlobalProps, dependencies: FrontendGlobalServiceDeps) {
     this.webapp = new Webapp(scope, globalProps, dependencies);
+    this.ssrLanding = new SsrLanding(scope, globalProps, dependencies);
   }
 }

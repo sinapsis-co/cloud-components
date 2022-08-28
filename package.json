@@ -11,7 +11,8 @@
   ],
   "scripts": {
     "verify": "npx tsc --pretty --noEmit && npx eslint . --ext .ts && npx prettier -c . && npx cspell '**/*.ts'",
-    "release": "bash script/release.bash"
+    "release": "bash script/release.bash",
+    "deploy": "sh -c 'yarn --cwd templates deploy ${0}'"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.28.2",

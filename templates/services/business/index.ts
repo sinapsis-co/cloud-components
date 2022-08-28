@@ -11,7 +11,6 @@ import { Notifications } from 'services/support/notifications';
 import { Assets } from './assets';
 import { CdnMedia } from 'services/support/cdn-media';
 import { DnsSubdomainCertificate } from 'services/support/dns-subdomain-certificate';
-import { SsrLanding } from '../frontend/ssr-landing';
 import { BaseCrud } from './base-crud';
 import { BaseEvent } from './base-event';
 import { SearchService } from './search';
@@ -31,7 +30,6 @@ export class BusinessServices {
   public readonly baseEvent: BaseEvent;
   public readonly assets: Assets;
   public readonly searchService: SearchService;
-  public readonly ssrLanding: SsrLanding;
 
   constructor(scope: Construct, globalProps: GlobalProps, dependencies: Omit<GlobalServiceDependencies, 'identity'>) {
     this.identity = new Identity(scope, globalProps, dependencies);
@@ -42,6 +40,5 @@ export class BusinessServices {
     this.baseCrud = new BaseCrud(scope, globalProps, globalDeps);
     this.baseEvent = new BaseEvent(scope, globalProps, globalDeps);
     this.searchService = new SearchService(scope, globalProps, globalDeps);
-    this.ssrLanding = new SsrLanding(scope, globalProps, globalDeps);
   }
 }
