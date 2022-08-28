@@ -14,16 +14,6 @@
     "release": "bash script/release.bash",
     "deploy": "sh -c 'yarn --cwd templates deploy ${0}'"
   },
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.28.2",
-    "@typescript-eslint/parser": "^4.28.2",
-    "cspell": "^5.13.3",
-    "eslint": "^7.30.0",
-    "husky": "^7.0.4",
-    "lint-staged": ">=10",
-    "prettier": "^2.3.2",
-    "typescript": "^4.3.5"
-  },
   "lint-staged": {
     "*.ts": [
       "tsc --pretty --noEmit --esModuleInterop",
@@ -36,6 +26,13 @@
     "*.{js,css,md}": "prettier --write"
   },
   "dependencies": {
-    "@sinapsis-co/cc-infra-v2": "^0.1.87"
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.2",
+    "cspell": "^5.13.3",
+    "eslint": "^7.30.0",
+    "husky": "^7.0.4",
+    "lint-staged": ">=10",
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.5"
   }
 }
