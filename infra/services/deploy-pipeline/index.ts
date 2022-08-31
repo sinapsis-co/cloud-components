@@ -20,6 +20,7 @@ export type DeployPipelineProps = {
   preDeployCommands?: string[];
   postDeployCommands?: string[];
   slackToken?: string;
+  buildCommand?: string[];
 };
 
 export class DeployPipelineConstruct extends Construct {
@@ -27,6 +28,10 @@ export class DeployPipelineConstruct extends Construct {
     super(service, getLogicalName(DeployPipelineConstruct.name));
 
     if (service.props.ephemeralEnvName) return;
+
+    if (!params.buildCommand) {
+      params.buildCommand = [`yarn deploy ${service.props.envName}`];
+    }
 
     if (
       !service.props.useRepositoryDefaultConfig &&
@@ -83,6 +88,12 @@ export class DeployPipelineConstruct extends Construct {
       buildSpec: codebuild.BuildSpec.fromObject({
         version: '0.2',
         phases: {
+          install: {
+            'runtime-versions': {
+              nodejs: 14,
+            },
+            commands: ['n 16.14.0'],
+          },
           pre_build: {
             commands: [
               ...(params.preDeployCommands || []),
@@ -93,11 +104,11 @@ export class DeployPipelineConstruct extends Construct {
             ],
           },
           build: {
-            commands: [`yarn deploy ${service.props.envName}`],
+            commands: [...(params.buildCommand || [])],
           },
           post_build: {
             commands: [
-              // ...(params.postDeployCommands || []),
+              ...(params.postDeployCommands || []),
               // 'rm -r cdk.out.cache || true',
               // 'cp -r cdk.out cdk.out.cache',
               // 'rm -r node_modules.cache || true',
