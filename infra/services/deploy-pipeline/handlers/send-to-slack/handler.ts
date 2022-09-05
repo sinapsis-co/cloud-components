@@ -51,8 +51,7 @@ export const handler: SNSHandler = async (event) => {
             ];
       await sendToSlack(fallback, color, [
         { title: 'Pipeline', short: false, value: `${projectName}-${envName}` },
-        { title: 'Commit', short: false, value: `${commitUrl}` },
-        { title: 'Commit Message', short: false, value: `${commitMessage}` },
+        { title: 'Commit', short: false, value: `${commitMessage} \n For more details <${commitUrl}|Go to GitHub` },
         ...fields,
       ]);
     })
