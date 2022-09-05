@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { globalConstConfig, globalEnvConfig, globalDeployTargetConfig } from './config';
-import { invoke } from '@sinapsis-co/cc-infra-v2/script';
+import { invoke } from '../infra/script';
 
 (async () => {
   try {

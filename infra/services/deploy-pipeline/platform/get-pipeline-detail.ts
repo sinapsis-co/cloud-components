@@ -17,19 +17,15 @@ export const getPipelineDetail = async (pipelineName: string, executionId: strin
 
   if (!pipelineExecution) throw new Error('Missing pipelineExecution');
 
-  console.log(pipelineExecution);
-
   const detail = pipelineExecution.artifactRevisions
     ?.filter((a) => a.name === 'sourceCode')
     .map((a) => {
       return {
-        commitId: a.revisionId,
+        commitId: a.revisionId || '',
         commitMessage: JSON.parse(a.revisionSummary || '{}')['CommitMessage'],
       };
     });
 
-  console.log(detail);
-
-  if (!detail || detail[0]) throw new Error('Missing artifactRevision');
+  if (!detail || !detail[0]) throw new Error('Missing artifactRevision');
   return detail[0];
 };
