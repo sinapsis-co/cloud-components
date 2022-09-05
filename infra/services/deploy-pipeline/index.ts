@@ -5,7 +5,7 @@ import { RemovalPolicy } from 'aws-cdk-lib';
 import { Artifact, Pipeline } from 'aws-cdk-lib/aws-codepipeline';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { CodeStarConnectionsSourceAction, CodeBuildAction } from 'aws-cdk-lib/aws-codepipeline-actions';
-import { Role, ServicePrincipal, IManagedPolicy, ManagedPolicy } from 'aws-cdk-lib/aws-iam';
+import { Role, ServicePrincipal, IManagedPolicy, ManagedPolicy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 import { getLogicalName } from '../../common/naming/get-logical-name';
 import { getResourceName } from '../../common/naming/get-resource-name';
@@ -15,6 +15,7 @@ import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { DetailType, NotificationRule } from 'aws-cdk-lib/aws-codestarnotifications';
 import { TopicFunction } from '../../prefab/function/topic-function';
 import { SynthError } from '../../common/synth/synth-error';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs/lib';
 
 export type DeployPipelineProps = {
   preDeployCommands?: string[];
@@ -157,9 +158,12 @@ export class DeployPipelineConstruct extends Construct {
         baseFunctionFolder: __dirname,
         ...(service.props.isDemoProject ? {} : { compiled: true }),
         environment: {
+          REPOSITORY_OWNER: repositoryOwner,
+          REPOSITORY_NAME: service.props.repositoryName,
           SLACK_CHANNEL: service.props.pipelineNotificationSlackChannel,
           SLACK_TOKEN: slackToken,
         },
+        modifiers: [getPipelineExecution()],
         customTopicParams: {
           name: 'pipeline-notifications',
         },
@@ -179,3 +183,14 @@ export class DeployPipelineConstruct extends Construct {
     }
   }
 }
+
+const getPipelineExecution = (): ((lambda: NodejsFunction) => void) => {
+  return (lambda: NodejsFunction): void => {
+    lambda.role?.addToPrincipalPolicy(
+      new PolicyStatement({
+        actions: ['codepipeline:GetPipelineExecution'],
+        resources: ['*'],
+      })
+    );
+  };
+};
