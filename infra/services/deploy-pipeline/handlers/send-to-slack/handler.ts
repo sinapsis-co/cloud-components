@@ -39,7 +39,7 @@ export const handler: SNSHandler = async (event) => {
               {
                 title: 'Status: [Pipeline Failed]',
                 short: false,
-                value: `${response.additionalAttributes.failedActions[0]['additionalInformation']} \n _For more details <${url}|Go to AWS Console>_ `,
+                value: `_For more details <${url}|Go to AWS Console>_ `,
               },
             ]
           : [
@@ -51,7 +51,11 @@ export const handler: SNSHandler = async (event) => {
             ];
       await sendToSlack(fallback, color, [
         { title: 'Pipeline', short: false, value: `${projectName}-${envName}` },
-        { title: 'Commit', short: false, value: `${commitMessage} \n _For more details <${commitUrl}|Go to GitHub>_` },
+        {
+          title: 'Commit',
+          short: false,
+          value: `${commitMessage} \n\n _For more details <${commitUrl}|Go to GitHub>_`,
+        },
         ...fields,
       ]);
     })
