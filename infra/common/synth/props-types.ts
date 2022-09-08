@@ -18,7 +18,7 @@ export type BaseGlobalConstConfig<ExtendedConst = {}> = {
   repositoryName: string;
   useRepositoryDefaultConfig: boolean;
   pipelineNotificationSlackChannel?: string;
-  isDemoProject?: true;
+  isDemoProject?: boolean;
   repositoryOwner?: true;
   repositoryConnection?: string;
   bootstrappingServices?: string[];
