@@ -27,23 +27,6 @@ export const cognitoToProfileMapper = (userCognito: UserCognito): UserProfile =>
   };
 };
 
-// export const profileToCognitoMapper = (userProfile: UserProfile): UserCognito => {
-//   return {
-//     standard: {
-//       sub: userProfile.id,
-//       given_name: userProfile.givenName,
-//       family_name: userProfile.familyName,
-//       email: userProfile.email,
-//     },
-//     custom: {
-//       tenantId: userProfile.tenantId,
-//       role: userProfile.role,
-//       permission: userProfile.permission,
-//       companyName: userProfile.companyName,
-//     },
-//   };
-// };
-
 export const cognitoUpdateStandardMapper = (userProfile: Partial<UserProfile>): AttributeListType => {
   const mapper = {
     sub: userProfile.id,

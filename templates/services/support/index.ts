@@ -9,6 +9,7 @@ import { CdnApi } from './cdn-api';
 import { CustomEventBus } from './custom-event-bus';
 import { CdnMedia } from './cdn-media';
 import { Notifications } from './notifications';
+import { EventsAnalytics } from './events-analytics';
 
 export class SupportServices {
   public readonly deployPipeline: DeployPipeline;
@@ -19,6 +20,7 @@ export class SupportServices {
   public readonly cdnMedia: CdnMedia;
   public readonly customEventBus: CustomEventBus;
   public readonly notifications: Notifications;
+  public readonly eventsAnalytics: EventsAnalytics;
 
   constructor(scope: Construct, globalProps: GlobalProps) {
     this.deployPipeline = new DeployPipeline(scope, globalProps);
@@ -38,5 +40,6 @@ export class SupportServices {
       dnsSubdomainHostedZone: this.dnsSubdomainHostedZone,
       dnsBaseDomainRef: this.dnsBaseDomainRef,
     });
+    this.eventsAnalytics = new EventsAnalytics(scope, globalProps, { customEventBus: this.customEventBus });
   }
 }
