@@ -97,29 +97,18 @@ export class DeployPipelineConstruct extends Construct {
           },
           pre_build: {
             commands: [
-              ...(params.preDeployCommands || []),
-              // 'cp -rL cdk.out.cache cdk.out || true',
-              // 'cp -rL node_modules.cache node_modules || true',
               'npm set //npm.pkg.github.com/:_authToken $GITHUB_TOKEN',
               'yarn --prod',
+              ...(params.preDeployCommands || []),
             ],
           },
           build: {
             commands: [...(params.buildCommand || [])],
           },
           post_build: {
-            commands: [
-              ...(params.postDeployCommands || []),
-              // 'rm -r cdk.out.cache || true',
-              // 'cp -r cdk.out cdk.out.cache',
-              // 'rm -r node_modules.cache || true',
-              // 'cp -r node_modules node_modules.cache',
-            ],
+            commands: [...(params.postDeployCommands || [])],
           },
         },
-        // cache: {
-        //   paths: ['cdk.out.cache/**/*', 'node_modules.cache/**/*'],
-        // },
       }),
     });
     const deployAction = new CodeBuildAction({
