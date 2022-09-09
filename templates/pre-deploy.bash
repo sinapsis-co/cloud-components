@@ -24,8 +24,6 @@
 
 # git push origin dev
 
-cd templates
-
 # Changing the config to isDemoProject: false
 input=$(cat config/index.ts)
 patten="isDemoProject: true,"
