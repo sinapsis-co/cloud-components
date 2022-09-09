@@ -1,5 +1,12 @@
 # Deploy demo project
 
+msg=$(git log -1 --pretty=%B)
+
+if [[ $msg == *"infra-"* || $msg == *"platform-"* ]]; then
+  echo "Skip"
+  exit
+fi
+
 changes=$(git diff --dirstat=files,0 HEAD~1 | cut -d'%' -f2 | cut -d' ' -f2 | cut -d'/' -f1,2,3 | uniq)
 
 hasInfraChanges=$(node -p "console.log(process.argv.slice(1).map(e => e.split('/')[0]).includes('infra'))" $changes)
@@ -14,6 +21,8 @@ if [[ $hasInfraChanges == *"true"* ]]; then
   echo "Updating Platform package"
   yarn release platform
 fi
+
+git push origin dev
 
 cd templates
 
