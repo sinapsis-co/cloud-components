@@ -8,7 +8,7 @@ export class DeployPipeline extends Service<GlobalProps> {
     super(scope, DeployPipeline.name, globalProps, { deployConfigName: 'deploy' });
 
     new DeployPipelineConstruct(this, {
-      preDeployCommands: ['cd templates && bash pre-deploy.bash'],
+      preDeployCommands: ['bash pre-deploy.bash'],
       // postDeployCommands: [`yarn deploy-spa ${this.props.envName} webapp`],
     });
   }
