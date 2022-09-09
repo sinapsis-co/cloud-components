@@ -18,6 +18,7 @@ import { SynthError } from '../../common/synth/synth-error';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs/lib';
 
 export type DeployPipelineProps = {
+  fullClone?: true;
   preDeployCommands?: string[];
   postDeployCommands?: string[];
   slackToken?: string;
@@ -66,6 +67,7 @@ export class DeployPipelineConstruct extends Construct {
       output: sourceCodeArtifact,
       owner: repositoryOwner,
       connectionArn: repositoryConnection,
+      ...(params.fullClone ? { codeBuildCloneOutput: true } : {}),
     });
 
     const deploymentRole = new Role(this, 'DeployRole', { assumedBy: new ServicePrincipal('codebuild.amazonaws.com') });
@@ -75,7 +77,6 @@ export class DeployPipelineConstruct extends Construct {
     const codebuildProject = new codebuild.Project(this, 'CodebuildProject', {
       projectName: getResourceName('', service.props),
       role: deploymentRole,
-      // cache: codebuild.Cache.local(codebuild.LocalCacheMode.CUSTOM),
       environment: {
         computeType: codebuild.ComputeType.X2_LARGE,
         buildImage: codebuild.LinuxBuildImage.STANDARD_5_0,
