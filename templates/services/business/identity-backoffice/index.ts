@@ -18,7 +18,6 @@ import { identityApi } from './catalog';
 import { assetEvent } from '../assets/catalog';
 import { DnsSubdomainCertificate } from 'services/support/dns-subdomain-certificate';
 import { CdnMedia } from 'services/support/cdn-media';
-import { AttributeType } from 'aws-cdk-lib/aws-dynamodb';
 
 export type IdentityParams = {
   notifications: Notifications;
@@ -68,29 +67,11 @@ export class Identity extends Service<GlobalProps, IdentityParams> {
           ...identityApi.profileUpdate.config,
           modifiers: [this.authPool.useMod([AuthPool.modifier.updateUserAtt])],
         },
-        memberCreate: {
-          ...identityApi.memberCreate.config,
-          environment: {
-            PROJECT_NAME: this.props.projectName,
-            WEBAPP_URL: getDomain(this.props.subdomain.webapp, this.props),
-            MEDIA_URL: getDomain(this.props.subdomain.media, this.props),
-          },
-        },
-        memberList: identityApi.memberList.config,
-        memberRoleUpdate: {
-          ...identityApi.memberUpdateRole.config,
-          modifiers: [this.authPool.useMod([AuthPool.modifier.updateUserAtt])],
-        },
         profileDelete: {
-          ...identityApi.memberDelete.config,
+          ...identityApi.profileDelete.config,
           modifiers: [this.authPool.useMod([AuthPool.modifier.deleteUser])],
         },
       },
-    });
-
-    this.apiAggregate.table?.addGlobalSecondaryIndex({
-      indexName: 'byEmail',
-      partitionKey: { name: 'email', type: AttributeType.STRING },
     });
 
     this.cognitoAggregate = new CognitoAggregate(this, {

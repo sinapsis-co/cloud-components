@@ -1,7 +1,7 @@
 import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform-v2/catalog/api';
 import { UserProfile } from 'services/business/identity/entities/user-profile';
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
-import { authScope, authMdw } from '../../platform/authorization';
+import { authMdw, authScope } from '../../platform/authorization';
 
 export type Interface = ApiInterface<{
   response: UserProfile;
@@ -12,11 +12,11 @@ export type Interface = ApiInterface<{
 }>;
 
 export const config: ApiConfig<Interface> = {
-  name: 'api-profile-get',
-  method: 'GET',
+  name: 'api-member-delete',
+  method: 'DELETE',
   basePath: 'identity',
-  path: '/me',
-  tablePermission: 'read',
-  scope: authScope.member,
+  path: '/member/{id}',
+  tablePermission: 'write',
+  scope: authScope.owner,
   authorizationMdw: authMdw,
 };

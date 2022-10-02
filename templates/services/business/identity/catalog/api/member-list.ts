@@ -1,21 +1,27 @@
-import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform-v2/catalog/api';
-import { UserProfile } from 'services/business/identity/entities/user-profile';
+import {
+  ApiInterface,
+  EmptyObject,
+  ApiConfig,
+  PaginatedResponse,
+  PaginatedQueryParams,
+} from '@sinapsis-co/cc-platform-v2/catalog/api';
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
+import { UserProfile } from '../../entities/user-profile';
 import { authScope, authMdw } from '../../platform/authorization';
 
 export type Interface = ApiInterface<{
-  response: UserProfile;
+  response: PaginatedResponse<UserProfile>;
   pathParams: EmptyObject;
   body: EmptyObject;
   claims: UserClaims;
-  queryParams: EmptyObject;
+  queryParams: PaginatedQueryParams & { filter?: 'users' | 'pending' };
 }>;
 
 export const config: ApiConfig<Interface> = {
-  name: 'api-profile-get',
+  name: 'api-member-list',
   method: 'GET',
   basePath: 'identity',
-  path: '/me',
+  path: '/member',
   tablePermission: 'read',
   scope: authScope.member,
   authorizationMdw: authMdw,

@@ -13,7 +13,7 @@ export const userProfileRepository = repository<UserProfileBuilder>({
   entitySerialize: (key: UserProfileBuilder['key'], entityCreate: UserProfileCreate): UserProfileStore => {
     const mappedKey: UserProfileBuilder['storeMapping']['key'] = {
       pk: key.tenantId,
-      sk: entityCreate.isPending ? `pending#${key.id}` : `user#${key.id}`,
+      sk: key.id,
     };
     const timers: UserProfileBuilder['storeMapping']['timers'] = {
       createdAt: new Date().toISOString(),
@@ -23,12 +23,10 @@ export const userProfileRepository = repository<UserProfileBuilder>({
   },
   entityDeserialize: (entityStore: UserProfileStore): UserProfile => {
     const { pk, sk, createdAt, updatedAt, ...att } = entityStore;
-    const [type, id] = sk.split('#');
     return {
       ...att,
       tenantId: pk,
-      id,
-      ...(type === 'pending' ? { isPending: true } : {}),
+      id: sk,
       createdAt: new Date(createdAt),
       updatedAt: new Date(updatedAt),
     };

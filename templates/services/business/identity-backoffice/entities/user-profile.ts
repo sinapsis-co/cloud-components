@@ -14,13 +14,9 @@ export type UserProfileBuilder = EntityBuilder<{
     givenName: string;
     familyName: string;
     role: AuthScope;
-    companyName: string;
     avatar?: string;
-    isPending?: boolean;
-    inviteId?: string;
   };
   key: {
-    tenantId: string;
     id: string;
   };
   timers: {

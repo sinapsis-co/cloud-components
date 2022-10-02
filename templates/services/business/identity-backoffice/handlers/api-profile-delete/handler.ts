@@ -5,7 +5,7 @@ import { identityApi } from 'services/business/identity/catalog';
 import { assetEvent } from 'services/business/assets/catalog';
 import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
 
-export const handler = apiHandler<identityApi.profileDelete.Interface>(async (_, req) => {
+export const handler = apiHandler<identityApi.memberDelete.Interface>(async (_, req) => {
   const { tenantId, sub, email } = req.claims;
   const [profile] = await Promise.all([
     userProfileRepository.deleteItem({ tenantId, id: sub }),
@@ -17,4 +17,4 @@ export const handler = apiHandler<identityApi.profileDelete.Interface>(async (_,
       key: profile.avatar,
     });
   return profile;
-}, identityApi.profileDelete.config);
+}, identityApi.memberDelete.config);

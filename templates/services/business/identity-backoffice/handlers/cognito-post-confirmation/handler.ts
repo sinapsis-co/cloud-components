@@ -23,27 +23,10 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
     custom: {
       tenantId: uuid(),
       role: 'owner',
+      permission: 'admin',
       companyName: userAttributes['custom:companyName'],
     },
   };
-
-  // Check if the user has an invite
-  const [inviteTenantId, inviteId] = userAttributes['custom:companyName'].split('#');
-  const userWithInvite = await userProfileRepository
-    .deleteItem({
-      tenantId: inviteTenantId,
-      id: `pending#${inviteId}`,
-    })
-    .catch((e) => {
-      if (e.message === 'NotFound') return;
-      throw e;
-    });
-  if (userWithInvite) {
-    userCognito.custom.tenantId = userWithInvite.tenantId;
-    userCognito.custom.companyName = userWithInvite.companyName;
-    userCognito.custom.role = 'member';
-  }
-
   const { tenantId, id, ...att } = cognitoToProfileMapper(userCognito);
 
   // HINT: If you don't need to send the welcome email, it's just delete it from the array

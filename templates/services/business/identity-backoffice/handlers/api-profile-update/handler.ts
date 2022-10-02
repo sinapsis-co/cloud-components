@@ -7,7 +7,7 @@ import { identityApi } from 'services/business/identity/catalog';
 export const handler = apiHandler<identityApi.profileUpdate.Interface>(async (_, req) => {
   const { tenantId, sub, email } = req.claims;
   const [profile] = await Promise.all([
-    userProfileRepository.updateItem({ tenantId, id: `user#${sub}` }, req.body),
+    userProfileRepository.updateItem({ tenantId, id: sub }, req.body),
     updateCognitoUser(email, cognitoUpdateStandardMapper(req.body)),
   ]);
   return profile;

@@ -10,8 +10,6 @@ export type UserCognito = {
     family_name: string;
   };
   custom: {
-    tenantId: string;
-    companyName: string;
     role: AuthScope;
   };
 };
