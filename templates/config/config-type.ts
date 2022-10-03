@@ -12,6 +12,7 @@ export type Subdomain = {
   api: string;
   media: string;
   auth: string;
+  backofficeAuth: string;
 };
 
 export type GlobalConstConfig = BaseGlobalConstConfig<{

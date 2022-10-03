@@ -14,6 +14,7 @@ export const globalConstConfig: GlobalConstConfig = {
     api: 'api',
     media: 'media',
     auth: 'auth',
+    backofficeAuth: 'backoffice-auth',
   },
 };
 

@@ -7,8 +7,8 @@ import {
 } from '@sinapsis-co/cc-platform-v2/repository/interface';
 import { AuthScope } from '../platform/authorization';
 
-export type UserProfileBuilder = EntityBuilder<{
-  name: 'user-profile';
+export type UserProfileBackofficeBuilder = EntityBuilder<{
+  name: 'user-profile-backoffice';
   body: {
     email: string;
     givenName: string;
@@ -26,7 +26,6 @@ export type UserProfileBuilder = EntityBuilder<{
   storeMapping: {
     key: {
       pk: string;
-      sk: string;
     };
     timers: {
       createdAt: string;
@@ -35,10 +34,10 @@ export type UserProfileBuilder = EntityBuilder<{
   };
 }>;
 
-export type UserProfile = Entity<UserProfileBuilder>;
+export type UserProfileBackoffice = Entity<UserProfileBackofficeBuilder>;
 
-export type UserProfileStore = EntityStore<UserProfileBuilder>;
+export type UserProfileBackofficeStore = EntityStore<UserProfileBackofficeBuilder>;
 
-export type UserProfileCreate = EntityCreate<UserProfileBuilder>;
+export type UserProfileBackofficeCreate = EntityCreate<UserProfileBackofficeBuilder>;
 
-export type UserProfileUpdate = Pick<EntityUpdate<UserProfileBuilder>, 'givenName' | 'familyName'>;
+export type UserProfileBackofficeUpdate = Pick<EntityUpdate<UserProfileBackofficeBuilder>, 'givenName' | 'familyName'>;

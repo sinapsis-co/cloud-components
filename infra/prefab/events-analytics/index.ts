@@ -42,7 +42,7 @@ export class EventsAnalyticsPrefab extends Construct {
       publicReadAccess: false,
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       encryption: BucketEncryption.KMS_MANAGED,
-      removalPolicy: RemovalPolicy.RETAIN,
+      removalPolicy: RemovalPolicy.DESTROY,
       lifecycleRules: [
         {
           transitions: [
@@ -58,8 +58,9 @@ export class EventsAnalyticsPrefab extends Construct {
         },
       ],
     });
+    if (service.props.envName === 'prod') this.datalakeBucket.applyRemovalPolicy(RemovalPolicy.RETAIN);
 
-    const role = new Role(service, 'DataLakeDeliveryStringRole', {
+    const role = new Role(service, getLogicalName('DataLakeDeliveryStringRole'), {
       assumedBy: new ServicePrincipal('firehose.amazonaws.com'),
     });
 
@@ -150,10 +151,16 @@ export class EventsAnalyticsPrefab extends Construct {
       },
     });
 
-    new CfnOutput(service, 'CrawlerName', { exportName: 'CrawlerName', value: crawler.name as string });
-    new CfnOutput(service, 'DatabaseName', { exportName: 'DatabaseName', value: this.database.ref.toString() });
+    new CfnOutput(service, 'CrawlerName', {
+      exportName: getResourceName('CrawlerName', service.props),
+      value: crawler.name as string,
+    });
+    new CfnOutput(service, 'DatabaseName', {
+      exportName: getResourceName('DatabaseName', service.props),
+      value: this.database.ref.toString(),
+    });
     new CfnOutput(service, 'TableName', {
-      exportName: 'TableName',
+      exportName: getResourceName('TableName', service.props),
       value: getDatabaseName('datalake', service.props),
     });
 

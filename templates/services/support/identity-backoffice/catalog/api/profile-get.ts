@@ -13,7 +13,7 @@ export type Interface = ApiInterface<{
 export const config: ApiConfig<Interface> = {
   name: 'api-profile-get',
   method: 'GET',
-  basePath: 'identity',
+  basePath: 'identity-backoffice',
   path: '/me',
   tablePermission: 'read',
 };

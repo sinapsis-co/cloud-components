@@ -14,7 +14,7 @@ export type Interface = ApiInterface<{
 export const config: ApiConfig<Interface> = {
   name: 'api-profile-update',
   method: 'PUT',
-  basePath: 'identity',
+  basePath: 'identity-backoffice',
   path: '/me',
   tablePermission: 'write',
   schema: Schemy.schema<Interface['body']>({

@@ -57,6 +57,7 @@ export class Identity extends Service<GlobalProps, IdentityParams> {
       cdnApi: this.props.cdnApi,
       authPool: this.authPool,
       eventBus: this.props.customEventBus.bus,
+      autoEventsEnabled: true,
       handlers: {
         profileGet: {
           ...identityApi.profileGet.config,

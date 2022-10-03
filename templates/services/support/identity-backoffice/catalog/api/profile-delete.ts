@@ -13,7 +13,7 @@ export type Interface = ApiInterface<{
 export const config: ApiConfig<Interface> = {
   name: 'api-profile-delete',
   method: 'DELETE',
-  basePath: 'identity',
+  basePath: 'identity-backoffice',
   path: '/me',
   tablePermission: 'write',
 };

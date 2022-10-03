@@ -1,7 +1,7 @@
 import { StringAttribute } from 'aws-cdk-lib/aws-cognito';
 import { AttributeListType } from 'aws-sdk/clients/cognitoidentityserviceprovider';
 import { UserCognito } from '../entities/user-cognito';
-import { UserProfile } from '../entities/user-profile';
+import { UserProfileBackoffice } from '../entities/user-profile';
 
 export const buildCustomAttributes = (): Record<keyof UserCognito['custom'], StringAttribute> => {
   return {
@@ -9,7 +9,7 @@ export const buildCustomAttributes = (): Record<keyof UserCognito['custom'], Str
   };
 };
 
-export const cognitoToProfileMapper = (userCognito: UserCognito): UserProfile => {
+export const cognitoToProfileMapper = (userCognito: UserCognito): UserProfileBackoffice => {
   return {
     role: userCognito.custom.role,
     id: userCognito.standard.sub,
@@ -21,7 +21,7 @@ export const cognitoToProfileMapper = (userCognito: UserCognito): UserProfile =>
   };
 };
 
-export const cognitoUpdateStandardMapper = (userProfile: Partial<UserProfile>): AttributeListType => {
+export const cognitoUpdateStandardMapper = (userProfile: Partial<UserProfileBackoffice>): AttributeListType => {
   const mapper = {
     sub: userProfile.id,
     given_name: userProfile.givenName,

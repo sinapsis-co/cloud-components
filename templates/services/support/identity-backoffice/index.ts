@@ -15,11 +15,11 @@ import { CustomEventBus } from 'services/support/custom-event-bus';
 import { CdnApi } from 'services/support/cdn-api';
 import { GlobalProps } from '../../../config/config-type';
 import { identityApi } from './catalog';
-import { assetEvent } from '../assets/catalog';
+import { assetEvent } from '../../business/assets/catalog';
 import { DnsSubdomainCertificate } from 'services/support/dns-subdomain-certificate';
 import { CdnMedia } from 'services/support/cdn-media';
 
-export type IdentityParams = {
+export type IdentityOfficeParams = {
   notifications: Notifications;
   customEventBus: CustomEventBus;
   dnsSubdomainCertificate: DnsSubdomainCertificate;
@@ -27,13 +27,13 @@ export type IdentityParams = {
   cdnMedia: CdnMedia;
 };
 
-export class Identity extends Service<GlobalProps, IdentityParams> {
+export class IdentityBackoffice extends Service<GlobalProps, IdentityOfficeParams> {
   public readonly authPool: AuthPool;
   public readonly cognitoAggregate: CognitoAggregate;
   public readonly apiAggregate: ApiAggregate;
 
-  constructor(scope: Construct, globalProps: GlobalProps, params: IdentityParams) {
-    super(scope, Identity.name, globalProps, { params });
+  constructor(scope: Construct, globalProps: GlobalProps, params: IdentityOfficeParams) {
+    super(scope, IdentityBackoffice.name, globalProps, { params });
 
     this.addDependency(params.cdnMedia);
     this.addDependency(params.notifications);
@@ -44,7 +44,7 @@ export class Identity extends Service<GlobalProps, IdentityParams> {
       emailConfiguration: SesEmailAddress.getCognitoRef(this.props),
       userPoolDomain: {
         customDomain: {
-          domainName: getDomain(this.props.subdomain.auth, this.props),
+          domainName: getDomain(this.props.subdomain.backofficeAuth, this.props),
           certificate: params.dnsSubdomainCertificate.certificate,
         },
       },
@@ -52,10 +52,11 @@ export class Identity extends Service<GlobalProps, IdentityParams> {
 
     this.apiAggregate = new ApiAggregate(this, {
       baseFunctionFolder: __dirname,
-      basePath: 'identity',
+      basePath: 'identity-backoffice',
       cdnApi: this.props.cdnApi,
       authPool: this.authPool,
       eventBus: this.props.customEventBus.bus,
+      autoEventsEnabled: true,
       handlers: {
         profileGet: {
           ...identityApi.profileGet.config,
@@ -73,6 +74,7 @@ export class Identity extends Service<GlobalProps, IdentityParams> {
         },
       },
     });
+    this.apiAggregate.handlers;
 
     this.cognitoAggregate = new CognitoAggregate(this, {
       baseFunctionFolder: __dirname,
