@@ -15,11 +15,9 @@
     "@aws-cdk/aws-apigatewayv2-authorizers-alpha": "^2.24.1-alpha.0",
     "@aws-cdk/aws-apigatewayv2-integrations-alpha": "^2.24.1-alpha.0",
     "@sinapsis-co/cc-platform-v2": "^0.1.110",
-    "@types/aws-lambda": "^8.10.83",
     "aws-cdk": "^2.44.0",
     "aws-cdk-lib": "^2.24.1",
     "aws-lambda": "^1.0.6",
-    "aws-sdk": "^2.1209.0",
     "constructs": "^10.1.11",
     "esbuild": "0"
   }

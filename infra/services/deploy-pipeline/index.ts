@@ -19,7 +19,6 @@ import {
   BuildEnvironmentVariableType,
   BuildSpec,
   ComputeType,
-  LinuxArmBuildImage,
   LinuxBuildImage,
   Project,
 } from 'aws-cdk-lib/aws-codebuild';
