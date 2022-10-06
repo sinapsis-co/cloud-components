@@ -20,6 +20,7 @@ import {
   BuildSpec,
   ComputeType,
   LinuxArmBuildImage,
+  LinuxBuildImage,
   Project,
 } from 'aws-cdk-lib/aws-codebuild';
 
@@ -85,7 +86,7 @@ export class DeployPipelineConstruct extends Construct {
       role: deploymentRole,
       environment: {
         computeType: ComputeType.SMALL,
-        buildImage: LinuxArmBuildImage.AMAZON_LINUX_2_STANDARD_2_0,
+        buildImage: LinuxBuildImage.STANDARD_6_0,
       },
       environmentVariables: {
         GITHUB_TOKEN: {
