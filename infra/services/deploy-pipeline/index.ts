@@ -23,12 +23,15 @@ import {
   Project,
 } from 'aws-cdk-lib/aws-codebuild';
 
+export type InstanceSize = 'SMALL' | 'MEDIUM' | 'LARGE';
+
 export type DeployPipelineProps = {
   fullClone?: true;
   preDeployCommands?: string[];
   postDeployCommands?: string[];
   slackToken?: string;
   buildCommand?: string[];
+  instanceSize?: InstanceSize;
 };
 
 export class DeployPipelineConstruct extends Construct {
@@ -80,11 +83,26 @@ export class DeployPipelineConstruct extends Construct {
     const policy: IManagedPolicy = ManagedPolicy.fromAwsManagedPolicyName('AdministratorAccess');
     deploymentRole.addManagedPolicy(policy);
 
+    let instanceSize: ComputeType;
+    switch (params.instanceSize) {
+      case 'SMALL':
+        instanceSize = ComputeType.SMALL;
+        break;
+      case 'MEDIUM':
+        instanceSize = ComputeType.MEDIUM;
+        break;
+      case 'LARGE':
+        instanceSize = ComputeType.LARGE;
+        break;
+      default:
+        instanceSize = ComputeType.SMALL;
+        break;
+    }
     const codebuildProject = new Project(this, 'CodebuildProject', {
       projectName: getResourceName('', service.props),
       role: deploymentRole,
       environment: {
-        computeType: ComputeType.SMALL,
+        computeType: instanceSize,
         buildImage: LinuxBuildImage.STANDARD_6_0,
       },
       environmentVariables: {
