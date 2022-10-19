@@ -175,7 +175,7 @@ export class EventsAnalyticsPrefab extends Construct {
     });
 
     const workGroup = new CfnWorkGroup(service, 'DataLakeWorkGroup', {
-      name: 'datalake',
+      name: getResourceName('datalake', service.props),
       recursiveDeleteOption: true,
       workGroupConfiguration: {
         resultConfiguration: {
