@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Construct } from 'constructs';
-import * as codebuild from 'aws-cdk-lib/aws-codebuild';
 import { RemovalPolicy } from 'aws-cdk-lib';
 import { Artifact, Pipeline } from 'aws-cdk-lib/aws-codepipeline';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
@@ -16,6 +15,13 @@ import { DetailType, NotificationRule } from 'aws-cdk-lib/aws-codestarnotificati
 import { TopicFunction } from '../../prefab/function/topic-function';
 import { SynthError } from '../../common/synth/synth-error';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs/lib';
+import {
+  BuildEnvironmentVariableType,
+  BuildSpec,
+  ComputeType,
+  LinuxBuildImage,
+  Project,
+} from 'aws-cdk-lib/aws-codebuild';
 
 export type DeployPipelineProps = {
   fullClone?: true;
@@ -23,6 +29,7 @@ export type DeployPipelineProps = {
   postDeployCommands?: string[];
   slackToken?: string;
   buildCommand?: string[];
+  codeBuildProjectParams?: Partial<Project>;
 };
 
 export class DeployPipelineConstruct extends Construct {
@@ -74,27 +81,26 @@ export class DeployPipelineConstruct extends Construct {
     const policy: IManagedPolicy = ManagedPolicy.fromAwsManagedPolicyName('AdministratorAccess');
     deploymentRole.addManagedPolicy(policy);
 
-    const codebuildProject = new codebuild.Project(this, 'CodebuildProject', {
+    const codebuildProject = new Project(this, 'CodebuildProject', {
       projectName: getResourceName('', service.props),
       role: deploymentRole,
       environment: {
-        computeType: codebuild.ComputeType.X2_LARGE,
-        buildImage: codebuild.LinuxBuildImage.STANDARD_5_0,
+        computeType: ComputeType.SMALL,
+        buildImage: LinuxBuildImage.STANDARD_6_0,
       },
       environmentVariables: {
         GITHUB_TOKEN: {
-          type: codebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
+          type: BuildEnvironmentVariableType.PARAMETER_STORE,
           value: githubTokenParameterName,
         },
       },
-      buildSpec: codebuild.BuildSpec.fromObject({
+      buildSpec: BuildSpec.fromObject({
         version: '0.2',
         phases: {
           install: {
             'runtime-versions': {
-              nodejs: 14,
+              nodejs: 16,
             },
-            commands: ['n 16.14.0'],
           },
           pre_build: {
             commands: [
@@ -111,6 +117,7 @@ export class DeployPipelineConstruct extends Construct {
           },
         },
       }),
+      ...params.codeBuildProjectParams,
     });
     const deployAction = new CodeBuildAction({
       actionName: 'Deploy',
