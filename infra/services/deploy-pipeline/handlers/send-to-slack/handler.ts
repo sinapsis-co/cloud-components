@@ -3,6 +3,7 @@ import { SNSHandler } from 'aws-lambda';
 import { callApi } from '@sinapsis-co/cc-platform-v2/integrations/api';
 import { Slack } from '../../integrations';
 import { getPipelineDetail } from '../../platform/get-pipeline-detail';
+import { SlackObject } from '../..';
 
 export type PipelineNotification = {
   detail: {
@@ -49,25 +50,39 @@ export const handler: SNSHandler = async (event) => {
                 value: `Deployed at: ${new Date().toDateString()}`,
               },
             ];
-      await sendToSlack(fallback, color, [
-        { title: 'Pipeline', short: false, value: `${projectName}-${envName}` },
-        {
-          title: 'Commit',
-          short: false,
-          value: `${commitMessage} \n\n _For more details <${commitUrl}|Go to GitHub>_`,
-        },
-        ...fields,
-      ]);
+
+      const slackObjects: SlackObject[] = JSON.parse(process.env.SLACK_OBJECTS!);
+
+      await Promise.all(
+        slackObjects
+          .filter((so) => so.envs.includes(envName))
+          .map((so) => {
+            return sendToSlack(
+              fallback,
+              color,
+              [
+                { title: 'Pipeline', short: false, value: `${projectName}-${envName}` },
+                {
+                  title: 'Commit',
+                  short: false,
+                  value: `${commitMessage} \n\n _For more details <${commitUrl}|Go to GitHub>_`,
+                },
+                ...fields,
+              ],
+              so
+            );
+          })
+      );
     })
   );
 };
 
-const sendToSlack = async (fallback: string, color, fields) => {
+const sendToSlack = async (fallback: string, color, fields, slackObject: SlackObject) => {
   await callApi<Slack.Interface>(
     Slack.config,
     {
-      pathParams: { token: process.env.SLACK_TOKEN! },
-      body: { attachments: [{ pretext: fallback, fallback, color, fields }], channel: process.env.SLACK_CHANNEL! },
+      pathParams: { token: slackObject.token },
+      body: { attachments: [{ pretext: fallback, fallback, color, fields }], channel: slackObject.channel },
     },
     { withoutResponse: true }
   );
