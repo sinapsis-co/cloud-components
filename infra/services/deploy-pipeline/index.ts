@@ -23,11 +23,17 @@ import {
   Project,
 } from 'aws-cdk-lib/aws-codebuild';
 
+export type SlackObject = {
+  channel: string;
+  token: string;
+  envs: string[];
+};
+
 export type DeployPipelineProps = {
   fullClone?: true;
   preDeployCommands?: string[];
   postDeployCommands?: string[];
-  slackToken?: string;
+  slackTokens?: SlackObject[];
   buildCommand?: string[];
   codeBuildProjectParams?: Partial<Project>;
 };
@@ -144,11 +150,13 @@ export class DeployPipelineConstruct extends Construct {
         },
       ],
     });
-    if (service.props.pipelineNotificationSlackChannel) {
-      const slackToken = service.props.useRepositoryDefaultConfig
-        ? StringParameter.valueFromLookup(this, 'pipeline-default-slack-token')
-        : (params.slackToken as string);
-      if (!slackToken) throw new SynthError('MissingSlackToken', service.props);
+
+    if (service.props.enableSlackNotifications) {
+      const slackTokens: SlackObject[] = service.props.useRepositoryDefaultConfig
+        ? JSON.parse(StringParameter.valueFromLookup(this, 'pipeline-slack-objects'))
+        : (params.slackTokens as SlackObject[]);
+
+      if (slackTokens.length === 0) throw new SynthError('MissingSlackObjects', service.props);
 
       const topicFunction = new TopicFunction(service, {
         name: 'send-to-slack',
@@ -157,8 +165,7 @@ export class DeployPipelineConstruct extends Construct {
         environment: {
           REPOSITORY_OWNER: repositoryOwner,
           REPOSITORY_NAME: service.props.repositoryName,
-          SLACK_CHANNEL: service.props.pipelineNotificationSlackChannel,
-          SLACK_TOKEN: slackToken,
+          SLACK_OBJECTS: JSON.stringify(slackTokens),
         },
         modifiers: [getPipelineExecution()],
         customTopicParams: {

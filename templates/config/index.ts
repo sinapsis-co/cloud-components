@@ -5,7 +5,7 @@ export const globalConstConfig: GlobalConstConfig = {
   projectShortName: 'demo',
   useRepositoryDefaultConfig: true,
   repositoryName: 'v2.cloud-components',
-  pipelineNotificationSlackChannel: 'cloud-components',
+  enableSlackNotifications: true,
   bootstrappingServices: ['DeployPipeline', 'DnsSubdomainHostedZone'],
   isDemoProject: true,
   subdomain: {
