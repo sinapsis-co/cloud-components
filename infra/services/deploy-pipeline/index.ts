@@ -4,7 +4,7 @@ import { RemovalPolicy } from 'aws-cdk-lib';
 import { Artifact, Pipeline } from 'aws-cdk-lib/aws-codepipeline';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { CodeStarConnectionsSourceAction, CodeBuildAction } from 'aws-cdk-lib/aws-codepipeline-actions';
-import { Role, ServicePrincipal, IManagedPolicy, ManagedPolicy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { Role, ServicePrincipal, IManagedPolicy, ManagedPolicy, PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 
 import { getLogicalName } from '../../common/naming/get-logical-name';
 import { getResourceName } from '../../common/naming/get-resource-name';
@@ -22,6 +22,7 @@ import {
   LinuxBuildImage,
   Project,
 } from 'aws-cdk-lib/aws-codebuild';
+import { CfnSecret } from 'aws-cdk-lib/aws-secretsmanager';
 
 export type SlackObject = {
   channel: string;
@@ -33,7 +34,7 @@ export type DeployPipelineProps = {
   fullClone?: true;
   preDeployCommands?: string[];
   postDeployCommands?: string[];
-  slackTokens?: SlackObject[];
+  slackToken?: string;
   buildCommand?: string[];
   codeBuildProjectParams?: Partial<Project>;
 };
@@ -151,23 +152,37 @@ export class DeployPipelineConstruct extends Construct {
       ],
     });
 
-    if (service.props.enableSlackNotifications) {
-      const slackTokens: SlackObject[] = service.props.useRepositoryDefaultConfig
-        ? JSON.parse(StringParameter.valueFromLookup(this, 'pipeline-slack-objects'))
-        : (params.slackTokens as SlackObject[]);
+    if (service.props.pipelineNotificationSlackChannel) {
+      const slackToken = service.props.useRepositoryDefaultConfig
+        ? StringParameter.valueFromLookup(this, 'pipeline-default-slack-token')
+        : (params.slackToken as string);
+      if (!slackToken) throw new SynthError('MissingSlackToken', service.props);
 
-      if (slackTokens.length === 0) throw new SynthError('MissingSlackObjects', service.props);
+      const modifierTopicFunction = [getPipelineExecution()];
+      let environmentTopicFunction: Record<string, string> = {
+        REPOSITORY_OWNER: repositoryOwner,
+        REPOSITORY_NAME: service.props.repositoryName,
+        SLACK_CHANNEL: service.props.pipelineNotificationSlackChannel,
+        SLACK_TOKEN: slackToken,
+      };
+
+      if (service.props.clientNotificationSlack) {
+        const secret = new CfnSecret(this, 'Secret', {
+          name: getResourceName('slack-token', service.props),
+        });
+        modifierTopicFunction.push(getRuntimeSecret(secret));
+        environmentTopicFunction = {
+          ...environmentTopicFunction,
+          CLIENT_SLACK_SECRET: secret.name || ''
+        };
+      }
 
       const topicFunction = new TopicFunction(service, {
         name: 'send-to-slack',
         baseFunctionFolder: __dirname,
         ...(service.props.isDemoProject ? {} : { compiled: true }),
-        environment: {
-          REPOSITORY_OWNER: repositoryOwner,
-          REPOSITORY_NAME: service.props.repositoryName,
-          SLACK_OBJECTS: JSON.stringify(slackTokens),
-        },
-        modifiers: [getPipelineExecution()],
+        environment: environmentTopicFunction,
+        modifiers: modifierTopicFunction,
         customTopicParams: {
           name: 'pipeline-notifications',
         },
@@ -194,6 +209,18 @@ const getPipelineExecution = (): ((lambda: NodejsFunction) => void) => {
       new PolicyStatement({
         actions: ['codepipeline:GetPipelineExecution'],
         resources: ['*'],
+      })
+    );
+  };
+};
+
+const getRuntimeSecret = (secret: CfnSecret): ((lambda: NodejsFunction) => void) => {
+  return (lambda: NodejsFunction): void => {
+    lambda.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['secretsmanager:GetSecretValue', 'secretsmanager:DescribeSecret'],
+        resources: [secret.ref],
       })
     );
   };

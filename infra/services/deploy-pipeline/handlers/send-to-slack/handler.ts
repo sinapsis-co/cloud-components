@@ -3,7 +3,8 @@ import { SNSHandler } from 'aws-lambda';
 import { callApi } from '@sinapsis-co/cc-platform-v2/integrations/api';
 import { Slack } from '../../integrations';
 import { getPipelineDetail } from '../../platform/get-pipeline-detail';
-import { SlackObject } from '../..';
+import { SecretsManager } from 'aws-sdk';
+const sm = new SecretsManager();
 
 export type PipelineNotification = {
   detail: {
@@ -17,6 +18,11 @@ export type PipelineNotification = {
     failedStage: string;
   };
 };
+
+export type SlackObject = {
+  channel: string,
+  token: string
+}
 
 export const handler: SNSHandler = async (event) => {
   await Promise.all(
@@ -37,41 +43,49 @@ export const handler: SNSHandler = async (event) => {
       const fields =
         response.detail.state === 'FAILED'
           ? [
-              {
-                title: 'Status: [Pipeline Failed]',
-                short: false,
-                value: `_For more details <${url}|Go to AWS Console>_ `,
-              },
-            ]
+            {
+              title: 'Status: [Pipeline Failed]',
+              short: false,
+              value: `_For more details <${url}|Go to AWS Console>_ `,
+            },
+          ]
           : [
-              {
-                title: 'Status: [Pipeline Finished]',
-                short: false,
-                value: `Deployed at: ${new Date().toDateString()}`,
-              },
-            ];
+            {
+              title: 'Status: [Pipeline Finished]',
+              short: false,
+              value: `Deployed at: ${new Date().toDateString()}`,
+            },
+          ];
 
-      const slackObjects: SlackObject[] = JSON.parse(process.env.SLACK_OBJECTS!);
+      const slackObjects: SlackObject[] = [
+        {
+          channel: process.env.SLACK_CHANNEL!,
+          token: process.env.SLACK_TOKEN!
+        }
+      ];
+
+      if (process.env.CLIENT_SLACK_SECRET) {
+        const secrets = await sm.getSecretValue({ SecretId: process.env.CLIENT_SLACK_SECRET! }).promise();
+        // eslint-disable-next-line no-console
+        console.log(secrets);
+        const clientSecretSlackTokens: SlackObject[] = JSON.parse(secrets.SecretString || '');
+        slackObjects.push(...clientSecretSlackTokens);
+        // eslint-disable-next-line no-console
+        console.log(slackObjects);
+      }
 
       await Promise.all(
-        slackObjects
-          .filter((so) => so.envs.includes(envName))
-          .map((so) => {
-            return sendToSlack(
-              fallback,
-              color,
-              [
-                { title: 'Pipeline', short: false, value: `${projectName}-${envName}` },
-                {
-                  title: 'Commit',
-                  short: false,
-                  value: `${commitMessage} \n\n _For more details <${commitUrl}|Go to GitHub>_`,
-                },
-                ...fields,
-              ],
-              so
-            );
-          })
+        slackObjects.map(so => {
+          return sendToSlack(fallback, color, [
+            { title: 'Pipeline', short: false, value: `${projectName}-${envName}` },
+            {
+              title: 'Commit',
+              short: false,
+              value: `${commitMessage} \n\n _For more details <${commitUrl}|Go to GitHub>_`,
+            },
+            ...fields,
+          ], so);
+        })
       );
     })
   );
