@@ -4,7 +4,7 @@ import { RemovalPolicy } from 'aws-cdk-lib';
 import { Artifact, Pipeline } from 'aws-cdk-lib/aws-codepipeline';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { CodeStarConnectionsSourceAction, CodeBuildAction } from 'aws-cdk-lib/aws-codepipeline-actions';
-import { Role, ServicePrincipal, IManagedPolicy, ManagedPolicy, PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
+import { Role, ServicePrincipal, IManagedPolicy, ManagedPolicy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 import { getLogicalName } from '../../common/naming/get-logical-name';
 import { getResourceName } from '../../common/naming/get-resource-name';
@@ -22,12 +22,12 @@ import {
   LinuxBuildImage,
   Project,
 } from 'aws-cdk-lib/aws-codebuild';
-import { CfnSecret } from 'aws-cdk-lib/aws-secretsmanager';
+import { RuntimeSecret } from '../../prefab/config/runtime-secret';
+import { slackToken } from './catalog';
 
 export type SlackObject = {
   channel: string;
   token: string;
-  envs: string[];
 };
 
 export type DeployPipelineProps = {
@@ -152,28 +152,33 @@ export class DeployPipelineConstruct extends Construct {
       ],
     });
 
-    if (service.props.pipelineNotificationSlackChannel) {
-      const slackToken = service.props.useRepositoryDefaultConfig
-        ? StringParameter.valueFromLookup(this, 'pipeline-default-slack-token')
-        : (params.slackToken as string);
-      if (!slackToken) throw new SynthError('MissingSlackToken', service.props);
-
+    if (service.props.clientNotificationSlack || !service.props.defaultSlackDestinationDisabled) {
       const modifierTopicFunction = [getPipelineExecution()];
       let environmentTopicFunction: Record<string, string> = {
         REPOSITORY_OWNER: repositoryOwner,
         REPOSITORY_NAME: service.props.repositoryName,
-        SLACK_CHANNEL: service.props.pipelineNotificationSlackChannel,
-        SLACK_TOKEN: slackToken,
       };
 
-      if (service.props.clientNotificationSlack) {
-        const secret = new CfnSecret(this, 'Secret', {
-          name: getResourceName('slack-token', service.props),
-        });
-        modifierTopicFunction.push(getRuntimeSecret(secret));
+      if (!service.props.defaultSlackDestinationDisabled) {
+        const slackToken = service.props.useRepositoryDefaultConfig
+          ? StringParameter.valueFromLookup(this, 'pipeline-default-slack-token')
+          : (params.slackToken as string);
+        if (!slackToken) throw new SynthError('MissingSlackToken', service.props);
         environmentTopicFunction = {
           ...environmentTopicFunction,
-          CLIENT_SLACK_SECRET: secret.name || ''
+          SLACK_CHANNEL: service.props.pipelineNotificationSlackChannel || '',
+          SLACK_TOKEN: slackToken,
+        };
+      }
+
+      if (service.props.clientNotificationSlack) {
+        const secret = new RuntimeSecret(service, {
+          secretConfig: slackToken.secretConfig
+        });
+        modifierTopicFunction.push(secret.useModReader());
+        environmentTopicFunction = {
+          ...environmentTopicFunction,
+          CLIENT_SLACK_SECRET: secret.secret.name || ''
         };
       }
 
@@ -209,18 +214,6 @@ const getPipelineExecution = (): ((lambda: NodejsFunction) => void) => {
       new PolicyStatement({
         actions: ['codepipeline:GetPipelineExecution'],
         resources: ['*'],
-      })
-    );
-  };
-};
-
-const getRuntimeSecret = (secret: CfnSecret): ((lambda: NodejsFunction) => void) => {
-  return (lambda: NodejsFunction): void => {
-    lambda.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['secretsmanager:GetSecretValue', 'secretsmanager:DescribeSecret'],
-        resources: [secret.ref],
       })
     );
   };

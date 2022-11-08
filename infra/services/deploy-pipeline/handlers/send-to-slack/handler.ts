@@ -4,6 +4,7 @@ import { callApi } from '@sinapsis-co/cc-platform-v2/integrations/api';
 import { Slack } from '../../integrations';
 import { getPipelineDetail } from '../../platform/get-pipeline-detail';
 import { SecretsManager } from 'aws-sdk';
+import { SlackObject } from '../../index';
 const sm = new SecretsManager();
 
 export type PipelineNotification = {
@@ -18,11 +19,6 @@ export type PipelineNotification = {
     failedStage: string;
   };
 };
-
-export type SlackObject = {
-  channel: string,
-  token: string
-}
 
 export const handler: SNSHandler = async (event) => {
   await Promise.all(
@@ -57,12 +53,13 @@ export const handler: SNSHandler = async (event) => {
             },
           ];
 
-      const slackObjects: SlackObject[] = [
-        {
+      const slackObjects: SlackObject[] = [];
+      if (process.env.SLACK_CHANNEL && process.env.SLACK_TOKEN) {
+        slackObjects.push({
           channel: process.env.SLACK_CHANNEL!,
-          token: process.env.SLACK_TOKEN!
-        }
-      ];
+          token: process.env.SLACK_TOKEN!,
+        });
+      }
 
       if (process.env.CLIENT_SLACK_SECRET) {
         const secrets = await sm.getSecretValue({ SecretId: process.env.CLIENT_SLACK_SECRET! }).promise();
@@ -71,17 +68,18 @@ export const handler: SNSHandler = async (event) => {
       }
 
       await Promise.all(
-        slackObjects.map(so => {
-          return sendToSlack(fallback, color, [
-            { title: 'Pipeline', short: false, value: `${projectName}-${envName}` },
-            {
-              title: 'Commit',
-              short: false,
-              value: `${commitMessage} \n\n _For more details <${commitUrl}|Go to GitHub>_`,
-            },
-            ...fields,
-          ], so);
-        })
+        slackObjects
+          .map(so => {
+            return sendToSlack(fallback, color, [
+              { title: 'Pipeline', short: false, value: `${projectName}-${envName}` },
+              {
+                title: 'Commit',
+                short: false,
+                value: `${commitMessage} \n\n _For more details <${commitUrl}|Go to GitHub>_`,
+              },
+              ...fields,
+            ], so);
+          })
       );
     })
   );
