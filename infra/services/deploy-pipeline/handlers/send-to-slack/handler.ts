@@ -66,12 +66,8 @@ export const handler: SNSHandler = async (event) => {
 
       if (process.env.CLIENT_SLACK_SECRET) {
         const secrets = await sm.getSecretValue({ SecretId: process.env.CLIENT_SLACK_SECRET! }).promise();
-        // eslint-disable-next-line no-console
-        console.log(secrets);
         const clientSecretSlackTokens: SlackObject[] = JSON.parse(secrets.SecretString || '');
         slackObjects.push(...clientSecretSlackTokens);
-        // eslint-disable-next-line no-console
-        console.log(slackObjects);
       }
 
       await Promise.all(

@@ -10,7 +10,7 @@ export const updateMapper = <T>(itemToUpdate: T, extraAtt?: Record<string, unkno
   let UpdateExpression = 'SET #updatedAt = :updatedAt,';
   const ExpressionAttributeNames = { '#updatedAt': 'updatedAt' };
   const ExpressionAttributeValues = { ':updatedAt': new Date().toISOString() };
-  Object.keys(itemToUpdate).forEach((key) => {
+  Object.keys(new Object(itemToUpdate)).forEach((key) => {
     if (key !== 'updatedAt') {
       UpdateExpression += ` #${key} = :${key},`;
       ExpressionAttributeNames[`#${key}`] = key;
