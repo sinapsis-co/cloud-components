@@ -1,0 +1,1 @@
+export * as slackToken from './secrets/slack';

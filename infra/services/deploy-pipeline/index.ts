@@ -22,18 +22,19 @@ import {
   LinuxBuildImage,
   Project,
 } from 'aws-cdk-lib/aws-codebuild';
+import { RuntimeSecret } from '../../prefab/config/runtime-secret';
+import { slackToken } from './catalog';
 
 export type SlackObject = {
   channel: string;
   token: string;
-  envs: string[];
 };
 
 export type DeployPipelineProps = {
   fullClone?: true;
   preDeployCommands?: string[];
   postDeployCommands?: string[];
-  slackTokens?: SlackObject[];
+  slackToken?: string;
   buildCommand?: string[];
   codeBuildProjectParams?: Partial<Project>;
 };
@@ -151,23 +152,42 @@ export class DeployPipelineConstruct extends Construct {
       ],
     });
 
-    if (service.props.enableSlackNotifications) {
-      const slackTokens: SlackObject[] = service.props.useRepositoryDefaultConfig
-        ? JSON.parse(StringParameter.valueFromLookup(this, 'pipeline-slack-objects'))
-        : (params.slackTokens as SlackObject[]);
+    if (service.props.clientNotificationSlack || !service.props.defaultSlackDestinationDisabled) {
+      const modifierTopicFunction = [getPipelineExecution()];
+      let environmentTopicFunction: Record<string, string> = {
+        REPOSITORY_OWNER: repositoryOwner,
+        REPOSITORY_NAME: service.props.repositoryName,
+      };
 
-      if (slackTokens.length === 0) throw new SynthError('MissingSlackObjects', service.props);
+      if (!service.props.defaultSlackDestinationDisabled) {
+        const slackToken = service.props.useRepositoryDefaultConfig
+          ? StringParameter.valueFromLookup(this, 'pipeline-default-slack-token')
+          : (params.slackToken as string);
+        if (!slackToken) throw new SynthError('MissingSlackToken', service.props);
+        environmentTopicFunction = {
+          ...environmentTopicFunction,
+          SLACK_CHANNEL: service.props.pipelineNotificationSlackChannel || '',
+          SLACK_TOKEN: slackToken,
+        };
+      }
+
+      if (service.props.clientNotificationSlack) {
+        const secret = new RuntimeSecret(service, {
+          secretConfig: slackToken.secretConfig
+        });
+        modifierTopicFunction.push(secret.useModReader());
+        environmentTopicFunction = {
+          ...environmentTopicFunction,
+          CLIENT_SLACK_SECRET: secret.secret.name || ''
+        };
+      }
 
       const topicFunction = new TopicFunction(service, {
         name: 'send-to-slack',
         baseFunctionFolder: __dirname,
         ...(service.props.isDemoProject ? {} : { compiled: true }),
-        environment: {
-          REPOSITORY_OWNER: repositoryOwner,
-          REPOSITORY_NAME: service.props.repositoryName,
-          SLACK_OBJECTS: JSON.stringify(slackTokens),
-        },
-        modifiers: [getPipelineExecution()],
+        environment: environmentTopicFunction,
+        modifiers: modifierTopicFunction,
         customTopicParams: {
           name: 'pipeline-notifications',
         },

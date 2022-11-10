@@ -11,12 +11,12 @@
     "build": "rm -rf .dist && npx tsc"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.83",
-    "@types/node": "^16.7.13"
+    "@types/aws-lambda": "^8.10.108",
+    "@types/node": "^18.11.7"
   },
   "dependencies": {
     "@types/html-minifier-terser": "^6.1.0",
-    "aws-lambda": "^1.0.6",
+    "aws-lambda": "^1.0.7",
     "dayjs": "^1.11.0",
     "html-minifier-terser": "^7.0.0-alpha.1",
     "mustache": "^4.2.0",
