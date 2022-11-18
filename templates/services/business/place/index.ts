@@ -21,8 +21,12 @@ export class Place extends Service<GlobalProps, PlaceParams> {
       cdnApi: this.props.cdnApi,
       authPool: this.props.identity.authPool,
       autoEventsEnabled: true,
+      tableOptions: {
+        withoutSortKey: true
+      },
       handlers: {
         createPlace: placeApi.createPlace.config,
+        getPlace: placeApi.getPlace.config
       },
     });
   }

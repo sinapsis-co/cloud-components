@@ -15,5 +15,6 @@ export const config: ApiConfig<Interface> = {
   method: 'POST',
   basePath: 'places',
   path: '/',
-  tablePermission: 'none',
+  tablePermission: 'readWrite',
+  isPublic: true
 };

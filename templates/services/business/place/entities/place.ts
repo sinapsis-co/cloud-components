@@ -4,8 +4,12 @@ export type PlaceBuilder = EntityBuilder<{
   name: 'place';
   body: {
     name: string;
-    description: string;
-    address: string;
+    branchCode: string;
+    description?: string;
+    address?: string;
+    latitude?: string;
+    longitude?: string;
+    telephone?: string;
   };
   key: {
     id: string;
