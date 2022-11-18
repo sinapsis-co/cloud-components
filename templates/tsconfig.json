@@ -34,6 +34,6 @@
       "services/*": ["services/*"]
     }
   },
-  "include": ["./**/*.ts"],
+  "include": ["./**/*.ts", "jest.config.ts"],
   "exclude": ["cdk.out", "node_modules/**/*", "dist/**/*"]
 }

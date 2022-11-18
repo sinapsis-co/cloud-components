@@ -14,6 +14,8 @@ import { DnsSubdomainCertificate } from 'services/support/dns-subdomain-certific
 import { BaseCrud } from './base-crud';
 import { BaseEvent } from './base-event';
 import { SearchService } from './search';
+import { Category } from './category';
+import { Place } from './place';
 
 export type GlobalServiceDependencies = {
   notifications: Notifications;
@@ -30,6 +32,8 @@ export class BusinessServices {
   public readonly baseEvent: BaseEvent;
   public readonly assets: Assets;
   public readonly searchService: SearchService;
+  public readonly category: Category;
+  public readonly place: Place;
 
   constructor(scope: Construct, globalProps: GlobalProps, dependencies: Omit<GlobalServiceDependencies, 'identity'>) {
     this.identity = new Identity(scope, globalProps, dependencies);
@@ -40,5 +44,8 @@ export class BusinessServices {
     this.baseCrud = new BaseCrud(scope, globalProps, globalDeps);
     this.baseEvent = new BaseEvent(scope, globalProps, globalDeps);
     this.searchService = new SearchService(scope, globalProps, globalDeps);
+    this.category = new Category(scope, globalProps, globalDeps);
+    this.place = new Place(scope, globalProps, globalDeps);
+
   }
 }
