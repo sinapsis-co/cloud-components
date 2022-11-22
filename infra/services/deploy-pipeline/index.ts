@@ -21,6 +21,7 @@ import {
   ComputeType,
   LinuxBuildImage,
   Project,
+  ProjectProps,
 } from 'aws-cdk-lib/aws-codebuild';
 import { RuntimeSecret } from '../../prefab/config/runtime-secret';
 import { slackToken } from './catalog';
@@ -36,7 +37,7 @@ export type DeployPipelineProps = {
   postDeployCommands?: string[];
   slackToken?: string;
   buildCommand?: string[];
-  codeBuildProjectParams?: Partial<Project>;
+  codeBuildProjectParams?: Partial<ProjectProps>;
 };
 
 export class DeployPipelineConstruct extends Construct {
