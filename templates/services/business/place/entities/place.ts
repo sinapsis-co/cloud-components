@@ -12,6 +12,7 @@ export type PlaceBuilder = EntityBuilder<{
     telephone?: string;
   };
   key: {
+    tenantId: string;
     id: string;
   };
   timers: {
@@ -21,6 +22,7 @@ export type PlaceBuilder = EntityBuilder<{
   storeMapping: {
     key: {
       pk: string;
+      sk: string;
     };
     timers: {
       createdAt: string;

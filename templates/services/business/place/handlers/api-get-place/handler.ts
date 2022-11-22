@@ -4,6 +4,8 @@ import { placeRepo } from '../../repository/place';
 
 export const handler = apiHandler<placeApi.getPlace.Interface>(async (_, req) => {
 
-    return await placeRepo.getItem({ id: req.pathParams.id });
+    const tenant = req.claims.tenantId || '1234';
+
+    return await placeRepo.getItem({ id: req.pathParams.id, tenantId: tenant });
 
 }, placeApi.getPlace.config);

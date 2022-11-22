@@ -7,12 +7,14 @@ export const placeRepo = repository<PlaceBuilder>({
   repoName: 'place',
   keySerialize: (key: PlaceBuilder['key']): PlaceBuilder['storeMapping']['key'] => {
     return {
-      pk: key.id,
+      pk: key.tenantId,
+      sk: key.id
     };
   },
   entitySerialize: (key: PlaceBuilder['key'], entityCreate: PlaceCreate): PlaceStore => {
     const mappedKey: PlaceBuilder['storeMapping']['key'] = {
-      pk: key.id,
+      pk: key.tenantId,
+      sk: key.id
     };
     const timers: PlaceBuilder['storeMapping']['timers'] = {
       createdAt: new Date().toISOString(),
@@ -21,9 +23,10 @@ export const placeRepo = repository<PlaceBuilder>({
     return { ...mappedKey, ...entityCreate, ...timers };
   },
   entityDeserialize: (entityStore: PlaceStore): Place => {
-    const { pk, createdAt, updatedAt, ...att } = entityStore;
+    const { pk, sk, createdAt, updatedAt, ...att } = entityStore;
     return {
-      id: pk,
+      id: sk,
+      tenantId: pk,
       ...att,
       createdAt: new Date(createdAt),
       updatedAt: new Date(updatedAt),
