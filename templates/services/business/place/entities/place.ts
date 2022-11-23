@@ -7,8 +7,8 @@ export type PlaceBuilder = EntityBuilder<{
     branchCode: string;
     description?: string;
     address?: string;
-    latitude?: string;
-    longitude?: string;
+    latitude?: number;
+    longitude?: number;
     telephone?: string;
   };
   key: {
