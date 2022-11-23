@@ -4,7 +4,7 @@ export type PlaceBuilder = EntityBuilder<{
   name: 'place';
   body: {
     name: string;
-    branchCode: string;
+    branchCode?: string;
     description?: string;
     address?: string;
     latitude?: number;
