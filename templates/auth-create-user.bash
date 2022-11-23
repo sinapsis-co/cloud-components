@@ -11,6 +11,8 @@ ENV_NAME=${1}
 EMAIL_PREFIX=${2}
 PASS=${3}
 NAME=${4}
+LAST_NAME=${5}
+EMAIL_SUFFIX=${6}
 
 if [ -z "$NAME" ]; then
   echo 'name is required'
@@ -21,15 +23,14 @@ COMMON=$PROJECT_BASE_PATH/node_modules/@sinapsis-co/cdk/dist/common
 REGION=us-east-1
 EMAIL_POSTFIX=@sinapsis.co
 
-COGNITO_WEB_CLIENT_ID=4s0v7tp51fbmur5kt2gsps39g2
+COGNITO_WEB_CLIENT_ID=67lls0mjqen8jacoi5p85bh7bi
 
-EMAIL=$EMAIL_PREFIX+$NAME$EMAIL_POSTFIX
+EMAIL=$EMAIL_PREFIX+$EMAIL_SUFFIX$EMAIL_POSTFIX
 
 ATT_EMAIL=Name=email,Value=$EMAIL
 ATT_G_NAME=Name=given_name,Value=$NAME
-ATT_F_NAME=Name=family_name,Value=$NAME
+ATT_F_NAME=Name=family_name,Value=$LAST_NAME
 ATT_CM_NAME=Name=custom:companyName,Value=Sinapsis
-# ATT_CM_NAME=Name=custom:companyName,Value=d9a256dd-b601-49d2-8572-6382fe1400a6#acc1c350-6b51-4e6e-b86e-454b33ca85ff
 
 export AWS_DEFAULT_REGION=$REGION
 
