@@ -16,6 +16,7 @@ import { BaseEvent } from './base-event';
 import { SearchService } from './search';
 import { Category } from './category';
 import { Place } from './place';
+import { Product } from './product';
 
 export type GlobalServiceDependencies = {
   notifications: Notifications;
@@ -34,6 +35,7 @@ export class BusinessServices {
   public readonly searchService: SearchService;
   public readonly category: Category;
   public readonly place: Place;
+  public readonly product: Product;
 
   constructor(scope: Construct, globalProps: GlobalProps, dependencies: Omit<GlobalServiceDependencies, 'identity'>) {
     this.identity = new Identity(scope, globalProps, dependencies);
@@ -46,6 +48,7 @@ export class BusinessServices {
     this.searchService = new SearchService(scope, globalProps, globalDeps);
     this.category = new Category(scope, globalProps, globalDeps);
     this.place = new Place(scope, globalProps, globalDeps);
+    this.product = new Product(scope, globalProps, globalDeps);
 
   }
 }
