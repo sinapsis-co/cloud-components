@@ -7,6 +7,8 @@ export const handler = apiHandler<productApi.createProduct.Interface>(async (_, 
 
   const tenant = req.claims.tenantId || '1234';
 
+  // TODO: validate category with table.
+
   return await productRepo.createItem({ id: uuid(), tenantId: tenant }, req.body);
 
 }, productApi.createProduct.config);

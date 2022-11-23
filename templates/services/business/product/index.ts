@@ -22,8 +22,9 @@ export class Product extends Service<GlobalProps, ProductParams> {
       authPool: this.props.identity.authPool,
       autoEventsEnabled: true,
       handlers: {
-        createPlace: productApi.createProduct.config,
-        getPlace: productApi.getProduct.config
+        createProduct: productApi.createProduct.config,
+        getProduct: productApi.getProduct.config,
+        listProduct: productApi.listProduct.config
       },
     });
   }

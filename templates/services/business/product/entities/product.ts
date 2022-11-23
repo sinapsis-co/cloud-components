@@ -4,12 +4,13 @@ export type ProductBuilder = EntityBuilder<{
   name: 'product';
   body: {
     name: string;
-    branchCode: string;
-    categoryId: string;
+    category: string;
     description?: string;
+    price?: number;
     image?: string;
     brand?: string;
     color?: string;
+    material?: string;
     size?: string;
     width?: string;
     height?: string;
