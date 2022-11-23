@@ -3,7 +3,7 @@ import { categoryApi } from '../../catalog';
 import { categoryRepo } from '../../repository/category-repository';
 
 export const handler = apiHandler<categoryApi.update.Interface>(async (_, req) => {
-  const { tenantId } = req.claims;
+  const tenantId = req.claims.tenantId || '1234';
   const { id } = req.pathParams;
   const categoryId = req.body.categoryId!;
   return await categoryRepo.updateItem({ tenantId, id, categoryId }, req.body);

@@ -4,26 +4,33 @@ import { categoryApi } from '../../catalog';
 import { categoryRepo } from '../../repository/category-repository';
 
 export const handler = apiHandler<categoryApi.create.Interface>(async (_, req) => {
-  const { tenantId } = req.claims;
+  const tenantId = req.claims.tenantId || '1234';
+
   let categoryId = '';
   if (req.body.categoryId) {
-    const categories = await categoryRepo.listItem(
-      tenantId,
-      { limit: 100 },
-      {
-        KeyConditionExpression: '#pk = :pk AND begins_with(#sk, :sk)',
-        ExpressionAttributeNames: {
-          '#pk': 'pk',
-          '#sk': 'sk',
-        },
-        ExpressionAttributeValues: {
-          ':pk': tenantId,
-          ':sk': categoryId,
-        },
+    try {
+      const categories = await categoryRepo.listItem(
+        tenantId,
+        { limit: 100 },
+        {
+          KeyConditionExpression: '#pk = :pk AND begins_with(#sk, :sk)',
+          ExpressionAttributeNames: {
+            '#pk': 'pk',
+            '#sk': 'sk',
+          },
+          ExpressionAttributeValues: {
+            ':pk': tenantId,
+            ':sk': categoryId,
+          },
+        }
+      );
+
+      if (categories.items) {
+        categoryId = categories.items[0].id;
       }
-    );
-    if (categories.items) {
-      categoryId = categories.items[0].id;
+      // eslint-disable-next-line no-empty
+    } catch (error) {
+      return await categoryRepo.createItem({ tenantId, id: uuid(), categoryId }, req.body);
     }
   }
   return await categoryRepo.createItem({ tenantId, id: uuid(), categoryId }, req.body);

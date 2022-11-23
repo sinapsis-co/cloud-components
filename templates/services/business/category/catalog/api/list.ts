@@ -22,4 +22,5 @@ export const config: ApiConfig<Interface> = {
   basePath: 'categories',
   path: '/',
   tablePermission: 'read',
+  isPublic: true
 };

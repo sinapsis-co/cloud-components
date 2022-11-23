@@ -3,6 +3,6 @@ import { categoryApi } from '../../catalog';
 import { categoryRepo } from '../../repository/category-repository';
 
 export const handler = apiHandler<categoryApi.get.Interface>(async (_, req) => {
-  const { tenantId } = req.claims;
+  const tenantId = req.claims.tenantId || '1234';
   return await categoryRepo.getItem({ tenantId, id: req.pathParams.id, categoryId: req.queryParams.categoryId || '' });
 }, categoryApi.get.config);
