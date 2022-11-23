@@ -1,13 +1,14 @@
-import { ApiConfig, ApiInterface, EmptyObject, PaginatedQueryParams } from '@sinapsis-co/cc-platform-v2/catalog/api';
+import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform-v2/catalog/api';
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
-import { PlaceStore } from '../../entities';
+import { Place, PlaceCreate } from '../../entities';
+import { Schemy } from '@sinapsis-co/cc-platform-v2/lib/schemy';
 
 export type Interface = ApiInterface<{
-  response: Record<string, unknown>;
+  response: Place,
   pathParams: EmptyObject;
-  body: PlaceStore;
+  body: PlaceCreate;
   claims: UserClaims;
-  queryParams: PaginatedQueryParams;
+  queryParams: EmptyObject;
 }>;
 
 export const config: ApiConfig<Interface> = {
@@ -15,5 +16,15 @@ export const config: ApiConfig<Interface> = {
   method: 'POST',
   basePath: 'places',
   path: '/',
-  tablePermission: 'none',
+  tablePermission: 'write',
+  isPublic: true,
+  schema: Schemy.schema<Interface['body']>({
+    name: { type: String, required: true },
+    branchCode: { type: String, required: false },
+    description: { type: String, required: false },
+    address: { type: String, required: false },
+    latitude: { type: Number, required: false },
+    longitude: { type: Number, required: false },
+    telephone: { type: String, required: false },
+  }),
 };

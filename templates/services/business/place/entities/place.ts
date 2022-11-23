@@ -4,10 +4,15 @@ export type PlaceBuilder = EntityBuilder<{
   name: 'place';
   body: {
     name: string;
-    description: string;
-    address: string;
+    branchCode?: string;
+    description?: string;
+    address?: string;
+    latitude?: number;
+    longitude?: number;
+    telephone?: string;
   };
   key: {
+    tenantId: string;
     id: string;
   };
   timers: {
@@ -17,6 +22,7 @@ export type PlaceBuilder = EntityBuilder<{
   storeMapping: {
     key: {
       pk: string;
+      sk: string;
     };
     timers: {
       createdAt: string;
