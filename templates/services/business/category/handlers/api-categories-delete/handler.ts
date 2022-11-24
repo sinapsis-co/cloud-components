@@ -3,7 +3,7 @@ import { categoryApi } from '../../catalog';
 import { categoryRepo } from '../../repository/category-repository';
 
 export const handler = apiHandler<categoryApi.delete.Interface>(async (_, req) => {
-  const tenantId = req.claims.tenantId || '1234';
+  const tenantId = req.claims.tenantId;
   const { id } = req.pathParams;
   const categoryId = req.queryParams.categoryId || '';
   return await categoryRepo.deleteItem({ tenantId, id, categoryId });

@@ -17,11 +17,10 @@ export const config: ApiConfig<Interface> = {
   basePath: 'categories',
   path: '/{id}',
   tablePermission: 'write',
-  isPublic: true,
   schema: Schemy.schema<Interface['body']>({
     name: { type: String, required: true },
     description: { type: String, required: true },
+    categoryId: { type: String, required: true },
     codeValue: { type: String, required: false },
-    categoryId: { type: String, required: false },
   }),
 };

@@ -1,17 +1,18 @@
+import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
 import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
 import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
 import { categoryApi } from '../../catalog';
 import { categoryRepo } from '../../repository/category-repository';
 
 export const handler = apiHandler<categoryApi.create.Interface>(async (_, req) => {
-  const tenantId = req.claims.tenantId || '1234';
+  const tenantId = req.claims.tenantId;
 
   let categoryId = '';
   if (req.body.categoryId) {
     try {
       const categories = await categoryRepo.listItem(
         tenantId,
-        { limit: 100 },
+        { limit: 1 },
         {
           KeyConditionExpression: '#pk = :pk AND begins_with(#sk, :sk)',
           ExpressionAttributeNames: {
@@ -20,17 +21,16 @@ export const handler = apiHandler<categoryApi.create.Interface>(async (_, req) =
           },
           ExpressionAttributeValues: {
             ':pk': tenantId,
-            ':sk': categoryId,
+            ':sk': `${req.body.categoryId}#`,
           },
         }
       );
 
       if (categories.items) {
-        categoryId = categories.items[0].id;
+        categoryId = req.body.categoryId;
       }
-      // eslint-disable-next-line no-empty
     } catch (error) {
-      return await categoryRepo.createItem({ tenantId, id: uuid(), categoryId }, req.body);
+      throw new ApiError('CategoryId provided not found');
     }
   }
   return await categoryRepo.createItem({ tenantId, id: uuid(), categoryId }, req.body);

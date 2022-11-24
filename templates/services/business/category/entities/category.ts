@@ -41,4 +41,4 @@ export type CategoryStore = EntityStore<CategoryBuilder>;
 
 export type CategoryCreate = EntityCreate<CategoryBuilder>;
 
-export type CategoryUpdate = Pick<EntityUpdate<CategoryBuilder>, 'name' | 'description' | 'codeValue' | 'categoryId'>;
+export type CategoryUpdate = EntityUpdate<CategoryBuilder>;
