@@ -1,0 +1,1 @@
+export * as inventoryCreated from './inventory-created';
