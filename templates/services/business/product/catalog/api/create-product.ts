@@ -1,13 +1,14 @@
-import { ApiConfig, ApiInterface, EmptyObject, PaginatedQueryParams } from '@sinapsis-co/cc-platform-v2/catalog/api';
+import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform-v2/catalog/api';
+import { Schemy } from '@sinapsis-co/cc-platform-v2/lib/schemy';
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
-import { ProductStore } from '../../entities';
+import { Product, ProductCreate } from '../../entities';
 
 export type Interface = ApiInterface<{
-  response: Record<string, unknown>;
+  response: Product;
   pathParams: EmptyObject;
-  body: ProductStore;
+  body: ProductCreate;
   claims: UserClaims;
-  queryParams: PaginatedQueryParams;
+  queryParams: EmptyObject;
 }>;
 
 export const config: ApiConfig<Interface> = {
@@ -16,5 +17,20 @@ export const config: ApiConfig<Interface> = {
   basePath: 'products',
   path: '/',
   tablePermission: 'write',
-  isPublic: true
+  isPublic: true,
+  schema: Schemy.schema<Interface['body']>({
+    name: { type: String, required: true },
+    category: { type: String, required: true },
+    description: { type: String, required: false },
+    price: { type: Number, required: false },
+    image: { type: String, required: false },
+    brand: { type: String, required: false },
+    color: { type: String, required: false },
+    material: { type: String, required: false },
+    size: { type: String, required: false },
+    width: { type: String, required: false },
+    height: { type: String, required: false },
+    weight: { type: String, required: false },
+    countryOfOrigin: { type: String, required: false },
+  }),
 };

@@ -1,13 +1,13 @@
-import { ApiConfig, ApiInterface, PaginatedQueryParams } from '@sinapsis-co/cc-platform-v2/catalog/api';
+import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform-v2/catalog/api';
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
-import { ProductStore } from '../../entities';
+import { Product } from '../../entities';
 
 export type Interface = ApiInterface<{
-    response: Record<string, unknown>;
+    response: Product;
     pathParams: { id: string };
-    body: ProductStore;
+    body: EmptyObject;
     claims: UserClaims;
-    queryParams: PaginatedQueryParams;
+    queryParams: EmptyObject;
 }>;
 
 export const config: ApiConfig<Interface> = {
