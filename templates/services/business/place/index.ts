@@ -23,7 +23,8 @@ export class Place extends Service<GlobalProps, PlaceParams> {
       autoEventsEnabled: true,
       handlers: {
         createPlace: placeApi.createPlace.config,
-        getPlace: placeApi.getPlace.config
+        getPlace: placeApi.getPlace.config,
+        listPlace: placeApi.listPlace.config
       },
     });
   }
