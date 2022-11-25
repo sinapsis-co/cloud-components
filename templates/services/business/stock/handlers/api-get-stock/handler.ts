@@ -6,6 +6,20 @@ export const handler = apiHandler<stockApi.getStock.Interface>(async (_, req) =>
 
     const tenant = req.claims.tenantId || '1234';
 
-    return await stockRepo.getItem({ id: req.pathParams.id, tenantId: tenant });
+    return await stockRepo.listItem(
+        tenant,
+        { limit: 100 },
+        {
+            KeyConditionExpression: '#pk = :pk AND begins_with(#sk, :sk)',
+            ExpressionAttributeNames: {
+                '#pk': 'pk',
+                '#sk': 'sk',
+            },
+            ExpressionAttributeValues: {
+                ':pk': tenant,
+                ':sk': `${req.pathParams.id}#${req.queryParams.place || ''}`,
+            },
+        }
+    );
 
 }, stockApi.getStock.config);
