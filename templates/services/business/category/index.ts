@@ -1,6 +1,6 @@
 import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
-import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/event-function/event-aggregate';
+
 import { GlobalServiceDependencies } from '..';
 import { GlobalProps } from '../../../config/config-type';
 import { categoryApi } from './catalog';
@@ -9,7 +9,6 @@ export type CategoryParams = GlobalServiceDependencies;
 
 export class Category extends Service<GlobalProps, CategoryParams> {
   public readonly apiAggregate: ApiAggregate;
-  public readonly eventAggregate: EventAggregate;
 
   constructor(scope: Construct, globalProps: GlobalProps, params: CategoryParams) {
     super(scope, Category.name, globalProps, { params });
@@ -22,7 +21,11 @@ export class Category extends Service<GlobalProps, CategoryParams> {
       authPool: this.props.identity.authPool,
       autoEventsEnabled: true,
       handlers: {
-        createCategory: categoryApi.createCategory.config,
+        create: categoryApi.create.config,
+        get: categoryApi.get.config,
+        list: categoryApi.list.config,
+        delete: categoryApi.delete.config,
+        update: categoryApi.update.config,
       },
     });
   }
