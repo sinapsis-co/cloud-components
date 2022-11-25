@@ -93,7 +93,7 @@ export class DeployPipelineConstruct extends Construct {
       projectName: getResourceName('', service.props),
       role: deploymentRole,
       environment: {
-        computeType: ComputeType.SMALL,
+        computeType: ComputeType.MEDIUM,
         buildImage: LinuxBuildImage.STANDARD_6_0,
       },
       environmentVariables: {
