@@ -1,13 +1,23 @@
-import { Entity, EntityBuilder, EntityCreate, EntityStore } from '@sinapsis-co/cc-platform-v2/repository/interface';
+import {
+  Entity,
+  EntityBuilder,
+  EntityCreate,
+  EntityStore,
+  EntityUpdate,
+} from '@sinapsis-co/cc-platform-v2/repository/interface';
 
-export type PayoutBuilder = EntityBuilder<{
-  name: 'category';
+export type CategoryBuilder = EntityBuilder<{
+  name: 'categories';
   body: {
     name: string;
     description: string;
+    codeValue?: string;
+    categoryId?: string;
   };
   key: {
+    tenantId: string;
     id: string;
+    categoryId: string;
   };
   timers: {
     createdAt: Date;
@@ -16,6 +26,7 @@ export type PayoutBuilder = EntityBuilder<{
   storeMapping: {
     key: {
       pk: string;
+      sk: string;
     };
     timers: {
       createdAt: string;
@@ -24,8 +35,10 @@ export type PayoutBuilder = EntityBuilder<{
   };
 }>;
 
-export type Payout = Entity<PayoutBuilder>;
+export type Category = Entity<CategoryBuilder>;
 
-export type PayoutStore = EntityStore<PayoutBuilder>;
+export type CategoryStore = EntityStore<CategoryBuilder>;
 
-export type PayoutCreate = EntityCreate<PayoutBuilder>;
+export type CategoryCreate = EntityCreate<CategoryBuilder>;
+
+export type CategoryUpdate = EntityUpdate<CategoryBuilder>;
