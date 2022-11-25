@@ -1,11 +1,12 @@
 import { Entity, EntityBuilder, EntityCreate, EntityStore } from '@sinapsis-co/cc-platform-v2/repository/interface';
+import { Category } from 'services/business/category/entities/category';
 
 export type ProductBuilder = EntityBuilder<{
   name: 'product';
   body: {
     name: string;
     categoryId: string;
-    category?: { id: string, name: string };
+    category?: Omit<Category, 'createdAt' | 'updatedAt' | 'tenantId' | 'categoryId' | 'description'>
     description?: string;
     price?: number;
     image?: string;

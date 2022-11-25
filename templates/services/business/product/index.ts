@@ -1,11 +1,15 @@
 import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
 import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/event-function/event-aggregate';
+import { ServiceTable } from '@sinapsis-co/cc-infra-v2/prefab/table/dynamo-table';
 import { GlobalServiceDependencies } from '..';
 import { GlobalProps } from '../../../config/config-type';
+import { Category } from '../category';
 import { productApi } from './catalog';
 
-export type ProductParams = GlobalServiceDependencies;
+export type ProductParams = {
+  categoryService: Category
+} & GlobalServiceDependencies;
 
 export class Product extends Service<GlobalProps, ProductParams> {
   public readonly apiAggregate: ApiAggregate;
@@ -22,7 +26,12 @@ export class Product extends Service<GlobalProps, ProductParams> {
       authPool: this.props.identity.authPool,
       autoEventsEnabled: true,
       handlers: {
-        createProduct: productApi.createProduct.config,
+        createProduct: {
+          ...productApi.createProduct.config,
+          modifiers: [
+            (lambdaFunction) => ServiceTable.addTable(lambdaFunction, this.props.categoryService.apiAggregate.table, 'read', 'CATEGORY_TABLE'),
+          ]
+        },
         getProduct: productApi.getProduct.config,
         listProduct: productApi.listProduct.config
       },

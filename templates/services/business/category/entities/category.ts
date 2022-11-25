@@ -10,7 +10,7 @@ export type CategoryBuilder = EntityBuilder<{
   name: 'categories';
   body: {
     name: string;
-    description: string;
+    description?: string;
     codeValue?: string;
     categoryId?: string;
   };

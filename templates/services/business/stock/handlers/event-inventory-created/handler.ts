@@ -7,19 +7,18 @@ export const handler = eventHandler<inventoryEvent.inventoryCreated.Event>(async
     const inventory = event.detail;
 
     const isStock = await stockRepo.checkItemExists(
-        { id: `${inventory.product!.categoryId}#${inventory.placeId}`, tenantId: inventory.tenantId });
+        { id: `${inventory.product!.category!.id}#${inventory.placeId}`, tenantId: inventory.tenantId });
 
     if (isStock.exists) {
         // update
-        console.log(isStock.entity);
-        await stockRepo.updateItem({ id: `${inventory.product!.categoryId}#${inventory.placeId}`, tenantId: inventory.tenantId }, {
+        await stockRepo.updateItem({ id: `${inventory.product!.category!.id}#${inventory.placeId}`, tenantId: inventory.tenantId }, {
             amount: isStock.entity!.amount + 1,
         });
         return;
     } else {
         //create 
-        await stockRepo.createItem({ id: `${inventory.product!.categoryId}#${inventory.placeId}`, tenantId: inventory.tenantId },
-            { amount: 1, category: { id: inventory.product!.categoryId, name: '' }, place: inventory.place! });
+        await stockRepo.createItem({ id: `${inventory.product!.category!.id}#${inventory.placeId}`, tenantId: inventory.tenantId },
+            { amount: 1, category: { id: inventory.product!.category!.id, name: inventory.product!.category!.name }, place: inventory.place! });
         return;
     }
 });

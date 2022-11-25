@@ -52,7 +52,10 @@ export class BusinessServices {
     this.searchService = new SearchService(scope, globalProps, globalDeps);
     this.category = new Category(scope, globalProps, globalDeps);
     this.place = new Place(scope, globalProps, globalDeps);
-    this.product = new Product(scope, globalProps, globalDeps);
+    this.product = new Product(scope, globalProps, {
+      ...globalDeps,
+      categoryService: this.category
+    });
     this.inventory = new Inventory(scope, globalProps, {
       ...globalDeps,
       placeService: this.place,

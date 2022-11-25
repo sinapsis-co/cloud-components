@@ -17,7 +17,11 @@ export const handler = apiHandler<inventoryApi.createInventory.Interface>(async 
     {
       ...req.body,
       place: { id: placeBody.id, name: placeBody.name },
-      product: { id: productBody.id, name: productBody.name, categoryId: productBody.categoryId },
+      product: {
+        id: productBody.id,
+        name: productBody.name,
+        category: { id: productBody.category!.id, name: productBody.category!.name }
+      },
       status: 'AVAILABLE'
     });
 

@@ -1,10 +1,11 @@
 import { Entity, EntityBuilder, EntityCreate, EntityStore } from '@sinapsis-co/cc-platform-v2/repository/interface';
+import { Category } from 'services/business/category/entities/category';
 import { Place } from 'services/business/place/entities';
 
 export type StockBuilder = EntityBuilder<{
   name: 'stock';
   body: {
-    category: { id: string, name: string };
+    category: Omit<Category, 'createdAt' | 'updatedAt' | 'tenantId' | 'description' | 'categoryId'>
     place: Omit<Place, 'createdAt' | 'updatedAt' | 'tenantId'>;
     amount: number;
   };
