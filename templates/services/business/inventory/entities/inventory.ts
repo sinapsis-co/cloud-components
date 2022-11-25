@@ -1,11 +1,15 @@
 import { Entity, EntityBuilder, EntityCreate, EntityStore } from '@sinapsis-co/cc-platform-v2/repository/interface';
+import { Place } from 'services/business/place/entities';
+import { Product } from 'services/business/product/entities';
 
 export type InventoryBuilder = EntityBuilder<{
   name: 'inventory';
   body: {
     serialNumber?: string;
-    place: string;
-    product: string;
+    placeId: string;
+    place?: Omit<Place, 'createdAt' | 'updatedAt' | 'tenantId'>;
+    productId: string;
+    product?: Omit<Product, 'createdAt' | 'updatedAt' | 'tenantId' | 'category'>;
     status?: 'AVAILABLE' | 'NOT_AVAILABLE' | 'EXPIRED';
   };
   key: {

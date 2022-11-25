@@ -20,7 +20,7 @@ export const config: ApiConfig<Interface> = {
   isPublic: true,
   schema: Schemy.schema<Interface['body']>({
     name: { type: String, required: true },
-    category: { type: String, required: true },
+    categoryId: { type: String, required: true },
     description: { type: String, required: false },
     price: { type: Number, required: false },
     image: { type: String, required: false },

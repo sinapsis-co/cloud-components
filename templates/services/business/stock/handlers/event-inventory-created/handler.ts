@@ -4,10 +4,22 @@ import { stockRepo } from '../../repository/stock';
 
 export const handler = eventHandler<inventoryEvent.inventoryCreated.Event>(async (event) => {
 
-    //TODO: search product and validate if category exist (try to receive in body of event)
-    // If not exist, create new items
-    // If exist, update and increase amount
+    const inventory = event.detail;
 
-    await stockRepo.createItem({ id: event.detail.product, tenantId: event.detail.tenantId }, { amount: 0, category: '', place: ''});
-    return;
+    const isStock = await stockRepo.checkItemExists(
+        { id: `${inventory.product!.categoryId}#${inventory.placeId}`, tenantId: inventory.tenantId });
+
+    if (isStock.exists) {
+        // update
+        console.log(isStock.entity);
+        await stockRepo.updateItem({ id: `${inventory.product!.categoryId}#${inventory.placeId}`, tenantId: inventory.tenantId }, {
+            amount: isStock.entity!.amount + 1,
+        });
+        return;
+    } else {
+        //create 
+        await stockRepo.createItem({ id: `${inventory.product!.categoryId}#${inventory.placeId}`, tenantId: inventory.tenantId },
+            { amount: 1, category: { id: inventory.product!.categoryId, name: '' }, place: inventory.place! });
+        return;
+    }
 });

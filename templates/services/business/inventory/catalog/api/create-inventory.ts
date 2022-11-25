@@ -19,7 +19,7 @@ export const config: ApiConfig<Interface> = {
   tablePermission: 'readWrite',
   isPublic: true,
   schema: Schemy.schema<Interface['body']>({
-    place: { type: String, required: true },
-    product: { type: String, required: true },
+    placeId: { type: String, required: true },
+    productId: { type: String, required: true },
   }),
 };

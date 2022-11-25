@@ -4,7 +4,8 @@ export type ProductBuilder = EntityBuilder<{
   name: 'product';
   body: {
     name: string;
-    category: string;
+    categoryId: string;
+    category?: { id: string, name: string };
     description?: string;
     price?: number;
     image?: string;

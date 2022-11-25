@@ -18,6 +18,7 @@ import { Category } from './category';
 import { Place } from './place';
 import { Product } from './product';
 import { Inventory } from './inventory';
+import { Stock } from './stock';
 
 export type GlobalServiceDependencies = {
   notifications: Notifications;
@@ -38,6 +39,7 @@ export class BusinessServices {
   public readonly place: Place;
   public readonly product: Product;
   public readonly inventory: Inventory;
+  public readonly stock: Stock;
 
   constructor(scope: Construct, globalProps: GlobalProps, dependencies: Omit<GlobalServiceDependencies, 'identity'>) {
     this.identity = new Identity(scope, globalProps, dependencies);
@@ -56,6 +58,7 @@ export class BusinessServices {
       placeService: this.place,
       productService: this.product
     });
+    this.stock = new Stock(scope, globalProps, globalDeps);
 
   }
 }
