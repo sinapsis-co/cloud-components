@@ -1,8 +1,8 @@
 #!/bin/bash
 
 if [ "$1" = "help" ]; then
-  echo 'USAGE: yarn create-user {env} {EMAIL_PREFIX} {PASSWORD} {NAME}'
-  echo 'EXAMPLE: yarn env create-user andres new_password new_username'
+  echo 'USAGE: yarn create-user {env} {EMAIL_PREFIX} {PASSWORD} {NAME} {LAST_NAME} {EMAIL_SUFFIX} {COGNITO_WEB_CLIENT_ID}'
+  echo 'EXAMPLE: yarn create-user dev mauricio.paez Test1234 mauricio paez 1 67lls0mjqen8jacoi5p85bh7bi'
   exit 0
 fi
 
@@ -11,25 +11,40 @@ ENV_NAME=${1}
 EMAIL_PREFIX=${2}
 PASS=${3}
 NAME=${4}
+LAST_NAME=${5}
+EMAIL_SUFFIX=${6}
+COGNITO_WEB_CLIENT_ID=${7}
 
-if [ -z "$NAME" ]; then
-  echo 'name is required'
+if [ -z "$EMAIL_PREFIX" ]; then
+  echo 'email prefix is required'
   exit 1
 fi
 
-COMMON=$PROJECT_BASE_PATH/node_modules/@sinapsis-co/cdk/dist/common
+if [ -z "$PASS" ]; then
+  echo 'password is required'
+  exit 1
+fi
+
+if [ -z "$COGNITO_WEB_CLIENT_ID" ]; then
+  echo 'cognito web client id is required'
+  exit 1
+fi
+
+if [ -z "$EMAIL_SUFFIX" ]; then
+  EMAIL_SUFFIX=1
+fi
+
 REGION=us-east-1
 EMAIL_POSTFIX=@sinapsis.co
 
-COGNITO_WEB_CLIENT_ID=4s0v7tp51fbmur5kt2gsps39g2
+# COGNITO_WEB_CLIENT_ID=67lls0mjqen8jacoi5p85bh7bi
 
-EMAIL=$EMAIL_PREFIX+$NAME$EMAIL_POSTFIX
+EMAIL=$EMAIL_PREFIX+$EMAIL_SUFFIX$EMAIL_POSTFIX
 
 ATT_EMAIL=Name=email,Value=$EMAIL
 ATT_G_NAME=Name=given_name,Value=$NAME
-ATT_F_NAME=Name=family_name,Value=$NAME
+ATT_F_NAME=Name=family_name,Value=$LAST_NAME
 ATT_CM_NAME=Name=custom:companyName,Value=Sinapsis
-# ATT_CM_NAME=Name=custom:companyName,Value=d9a256dd-b601-49d2-8572-6382fe1400a6#acc1c350-6b51-4e6e-b86e-454b33ca85ff
 
 export AWS_DEFAULT_REGION=$REGION
 
