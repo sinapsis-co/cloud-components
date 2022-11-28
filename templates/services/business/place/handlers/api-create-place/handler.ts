@@ -5,7 +5,7 @@ import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
 
 export const handler = apiHandler<placeApi.createPlace.Interface>(async (_, req) => {
 
-  const tenant = req.claims.tenantId || '1234';
+  const tenant = req.claims.tenantId;
 
   return await placeRepo.createItem({ id: uuid(), tenantId: tenant }, req.body);
 

@@ -4,7 +4,7 @@ import { inventoryRepo } from '../../repository/inventory';
 
 export const handler = apiHandler<inventoryApi.listInventory.Interface>(async (_, req) => {
 
-    const tenant = req.claims.tenantId || '1234';
+    const tenant = req.claims.tenantId;
 
     return await inventoryRepo.listItem(tenant, { limit: 100 });
 

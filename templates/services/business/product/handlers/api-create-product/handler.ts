@@ -6,7 +6,7 @@ import { getCategory } from '../../platform/category';
 
 export const handler = apiHandler<productApi.createProduct.Interface>(async (_, req) => {
 
-  const tenant = req.claims.tenantId || '1234';
+  const tenant = req.claims.tenantId;
 
   const category = await getCategory(req.body.categoryId, tenant);
 

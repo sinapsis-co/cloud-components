@@ -4,7 +4,7 @@ import { stockRepo } from '../../repository/stock';
 
 export const handler = apiHandler<stockApi.listStock.Interface>(async (_, req) => {
 
-    const tenant = req.claims.tenantId || '1234';
+    const tenant = req.claims.tenantId;
 
     return await stockRepo.listItem(tenant, { limit: 100 });
 

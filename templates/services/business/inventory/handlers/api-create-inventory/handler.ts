@@ -8,7 +8,7 @@ import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/di
 
 export const handler = apiHandler<inventoryApi.createInventory.Interface>(async (_, req) => {
 
-  const tenant = req.claims.tenantId || '1234';
+  const tenant = req.claims.tenantId;
 
   const placeBody = await getPlace(req.body.placeId, tenant);
   const productBody = await getProduct(req.body.productId, tenant);

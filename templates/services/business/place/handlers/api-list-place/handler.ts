@@ -4,7 +4,7 @@ import { placeRepo } from '../../repository/place';
 
 export const handler = apiHandler<placeApi.listPlace.Interface>(async (_, req) => {
 
-    const tenant = req.claims.tenantId || '1234';
+    const tenant = req.claims.tenantId;
 
     return await placeRepo.listItem(tenant, { limit: 100 });
 
