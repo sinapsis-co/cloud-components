@@ -16,5 +16,4 @@ export const config: ApiConfig<Interface> = {
     basePath: 'products',
     path: '/',
     tablePermission: 'read',
-    isPublic: true
 };

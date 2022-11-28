@@ -16,5 +16,4 @@ export const config: ApiConfig<Interface> = {
     basePath: 'places',
     path: '/{id}',
     tablePermission: 'read',
-    isPublic: true
 };

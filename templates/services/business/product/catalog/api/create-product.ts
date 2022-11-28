@@ -17,7 +17,6 @@ export const config: ApiConfig<Interface> = {
   basePath: 'products',
   path: '/',
   tablePermission: 'readWrite',
-  isPublic: true,
   schema: Schemy.schema<Interface['body']>({
     name: { type: String, required: true },
     categoryId: { type: String, required: true },

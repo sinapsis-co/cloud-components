@@ -17,7 +17,6 @@ export const config: ApiConfig<Interface> = {
   basePath: 'places',
   path: '/',
   tablePermission: 'write',
-  isPublic: true,
   schema: Schemy.schema<Interface['body']>({
     name: { type: String, required: true },
     branchCode: { type: String, required: false },
