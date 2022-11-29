@@ -36,7 +36,9 @@ export class Inventory extends Service<GlobalProps, InventoryParams> {
           ]
         },
         getInventory: inventoryApi.getInventory.config,
-        listInventory: inventoryApi.listInventory.config
+        listInventory: inventoryApi.listInventory.config,
+        updateInventory: inventoryApi.updateInventory.config,
+        deleteInventory: inventoryApi.updateInventory.config
       },
     });
   }

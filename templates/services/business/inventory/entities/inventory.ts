@@ -1,4 +1,4 @@
-import { Entity, EntityBuilder, EntityCreate, EntityStore } from '@sinapsis-co/cc-platform-v2/repository/interface';
+import { Entity, EntityBuilder, EntityCreate, EntityStore, EntityUpdate } from '@sinapsis-co/cc-platform-v2/repository/interface';
 import { Place } from 'services/business/place/entities';
 import { Product } from 'services/business/product/entities';
 
@@ -10,7 +10,7 @@ export type InventoryBuilder = EntityBuilder<{
     place?: Omit<Place, 'createdAt' | 'updatedAt' | 'tenantId'>;
     productId: string;
     product?: Omit<Product, 'createdAt' | 'updatedAt' | 'tenantId' | 'categoryId'>;
-    status?: 'AVAILABLE' | 'NOT_AVAILABLE' | 'EXPIRED';
+    status?: 'AVAILABLE' | 'NOT_AVAILABLE' | 'EXPIRED' | 'DELETED';
   };
   key: {
     tenantId: string;
@@ -37,3 +37,5 @@ export type Inventory = Entity<InventoryBuilder>;
 export type InventoryStore = EntityStore<InventoryBuilder>;
 
 export type InventoryCreate = EntityCreate<InventoryBuilder>;
+
+export type InventoryUpdate = EntityUpdate<InventoryBuilder>;
