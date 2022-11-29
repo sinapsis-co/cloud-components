@@ -7,7 +7,7 @@ export type Interface = ApiInterface<{
     response: Inventory;
     pathParams: { id: string };
     body: {
-        status: 'AVAILABLE' | 'NOT_AVAILABLE' | 'EXPIRED' | 'DELETED',
+        status: 'AVAILABLE' | 'NOT_AVAILABLE' | 'EXPIRED',
         placeId: string
     };
     claims: UserClaims;
