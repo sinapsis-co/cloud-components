@@ -94,6 +94,11 @@ export type SoftDeleteItemFunc<Builder extends EntityBuilder> = (
   deleteAfter?: TimeToDelete
 ) => Promise<Entity<Builder>>;
 
+export type LogicalDeleteItemFunc<Builder extends EntityBuilder> = (
+  key: EntityBuilder<Builder>['key'],
+  params?: DynamoDB.DocumentClient.UpdateItemInput,
+) => Promise<Entity<Builder>>;
+
 export type UpdateItemFunc<Builder extends EntityBuilder> = (
   key: EntityBuilder<Builder>['key'],
   entityUpdate: Partial<EntityUpdate<Builder>>,
@@ -151,6 +156,7 @@ export type Repository<Builder extends EntityBuilder> = {
   batchCreateItem: BatchCreateItemFunc<Builder>;
   batchGetItem: BatchGetItemFunc<Builder>;
   softDeleteItem: SoftDeleteItemFunc<Builder>;
+  logicalDeleteItem: LogicalDeleteItemFunc<Builder>;
   recoverItem: RecoverItemFunc<Builder>;
   scanTable: ScanTableFunc<Builder>;
 };
