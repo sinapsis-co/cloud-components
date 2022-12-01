@@ -38,6 +38,16 @@ export class Stock extends Service<GlobalProps, StockParams> {
           name: 'event-inventory-created',
           eventConfig: [inventoryEvent.inventoryCreated.eventConfig],
           tablePermission: 'readWrite',
+        },
+        inventoryDeleted: {
+          name: 'event-inventory-deleted',
+          eventConfig: [inventoryEvent.inventoryDeleted.eventConfig],
+          tablePermission: 'readWrite',
+        },
+        inventoryUpdated: {
+          name: 'event-inventory-updated',
+          eventConfig: [inventoryEvent.inventoryUpdated.eventConfig],
+          tablePermission: 'readWrite',
         }
       },
     });

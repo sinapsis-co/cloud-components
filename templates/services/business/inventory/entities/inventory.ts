@@ -11,6 +11,7 @@ export type InventoryBuilder = EntityBuilder<{
     productId: string;
     product?: Omit<Product, 'createdAt' | 'updatedAt' | 'tenantId' | 'categoryId'>;
     status?: 'AVAILABLE' | 'NOT_AVAILABLE' | 'EXPIRED';
+    deleted?: boolean;
   };
   key: {
     tenantId: string;

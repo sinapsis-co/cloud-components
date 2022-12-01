@@ -17,18 +17,16 @@ export const stockRepo = repository<StockBuilder>({
       sk: key.id
     };
     const timers: StockBuilder['storeMapping']['timers'] = {
-      createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
     return { ...mappedKey, ...entityCreate, ...timers };
   },
   entityDeserialize: (entityStore: StockStore): Stock => {
-    const { pk, sk, createdAt, updatedAt, ...att } = entityStore;
+    const { pk, sk, updatedAt, ...att } = entityStore;
     return {
       id: sk,
       tenantId: pk,
       ...att,
-      createdAt: new Date(createdAt),
       updatedAt: new Date(updatedAt),
     };
   },
