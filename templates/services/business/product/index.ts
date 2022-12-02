@@ -33,7 +33,14 @@ export class Product extends Service<GlobalProps, ProductParams> {
           ]
         },
         getProduct: productApi.getProduct.config,
-        listProduct: productApi.listProduct.config
+        listProduct: productApi.listProduct.config,
+        updateProduct: {
+          ...productApi.updateProduct.config,
+          modifiers: [
+            (lambdaFunction) => ServiceTable.addTable(lambdaFunction, this.props.categoryService.apiAggregate.table, 'read', 'CATEGORY_TABLE'),
+          ]
+        },  
+        deleteProduct: productApi.deleteProduct.config
       },
     });
   }

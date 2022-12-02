@@ -1,11 +1,11 @@
-import { Entity, EntityBuilder, EntityCreate, EntityStore } from '@sinapsis-co/cc-platform-v2/repository/interface';
+import { Entity, EntityBuilder, EntityCreate, EntityStore, EntityUpdate } from '@sinapsis-co/cc-platform-v2/repository/interface';
 import { Category } from 'services/business/category/entities/category';
 
 export type ProductBuilder = EntityBuilder<{
   name: 'product';
   body: {
     name: string;
-    categoryId: string;
+    categoryId?: string;
     category?: Omit<Category, 'createdAt' | 'updatedAt' | 'tenantId' | 'categoryId' | 'description'>
     description?: string;
     price?: number;
@@ -18,6 +18,7 @@ export type ProductBuilder = EntityBuilder<{
     height?: string;
     weight?: string;
     countryOfOrigin?: string;
+    deleted?: boolean;
   };
   key: {
     tenantId: string;
@@ -44,3 +45,5 @@ export type Product = Entity<ProductBuilder>;
 export type ProductStore = EntityStore<ProductBuilder>;
 
 export type ProductCreate = EntityCreate<ProductBuilder>;
+
+export type ProductUpdate = EntityUpdate<ProductBuilder>;

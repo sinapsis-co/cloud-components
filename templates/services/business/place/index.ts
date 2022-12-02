@@ -24,7 +24,9 @@ export class Place extends Service<GlobalProps, PlaceParams> {
       handlers: {
         createPlace: placeApi.createPlace.config,
         getPlace: placeApi.getPlace.config,
-        listPlace: placeApi.listPlace.config
+        listPlace: placeApi.listPlace.config,
+        updatePlace: placeApi.updatePlace.config,
+        deletePlace: placeApi.deletePlace.config
       },
     });
   }

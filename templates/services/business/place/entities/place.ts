@@ -1,4 +1,4 @@
-import { Entity, EntityBuilder, EntityCreate, EntityStore } from '@sinapsis-co/cc-platform-v2/repository/interface';
+import { Entity, EntityBuilder, EntityCreate, EntityStore, EntityUpdate } from '@sinapsis-co/cc-platform-v2/repository/interface';
 
 export type PlaceBuilder = EntityBuilder<{
   name: 'place';
@@ -10,6 +10,7 @@ export type PlaceBuilder = EntityBuilder<{
     latitude?: number;
     longitude?: number;
     telephone?: string;
+    deleted?: boolean;
   };
   key: {
     tenantId: string;
@@ -36,3 +37,5 @@ export type Place = Entity<PlaceBuilder>;
 export type PlaceStore = EntityStore<PlaceBuilder>;
 
 export type PlaceCreate = EntityCreate<PlaceBuilder>;
+
+export type PlaceUpdate = EntityUpdate<PlaceBuilder>;
