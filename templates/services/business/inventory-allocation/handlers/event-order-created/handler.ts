@@ -1,0 +1,29 @@
+import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
+import { orderEvent } from 'services/business/order/catalog';
+import { getFirstInventoryByCategoryId } from '../../platform/list-inventories';
+import { inventoryAllocationRepo } from '../../repository/inventory-allocation-repository';
+import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
+import { inventoryAllocationEvent } from '../../catalog';
+
+export const handler = eventHandler<orderEvent.created.Event>(async (event) => {
+  const { tenantId, userId, id, category } = event.detail;
+  const categoryId = category?.id || '';
+  const inventory = await getFirstInventoryByCategoryId(categoryId, tenantId);
+  const inventoryAllocation = await inventoryAllocationRepo.createItem(
+    { tenantId, orderId: id },
+    {
+      userId,
+      orderId: id,
+      inventoryId: inventory.id,
+      inventory: { product: inventory.product!, place: inventory.place! },
+      status: 'RESERVED',
+    }
+  );
+
+  if (inventoryAllocation) {
+    await dispatchEvent<inventoryAllocationEvent.created.Event>(
+      inventoryAllocationEvent.created.eventConfig,
+      inventoryAllocation
+    );
+  }
+});

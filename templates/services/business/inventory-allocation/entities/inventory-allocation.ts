@@ -1,0 +1,47 @@
+import {
+  Entity,
+  EntityBuilder,
+  EntityCreate,
+  EntityStore,
+  EntityUpdate,
+} from '@sinapsis-co/cc-platform-v2/repository/interface';
+import { Inventory } from 'services/business/inventory/entities';
+
+export type InventoryAllocationStatus = 'RESERVED' | 'TO_BE_DELIVERED' | 'ASSIGNED' | 'EXPIRED' | 'DELETED';
+
+export type InventoryAllocationBuilder = EntityBuilder<{
+  name: 'inventory-allocation';
+  body: {
+    orderId: string;
+    userId: string;
+    inventoryId: string;
+    inventory: Pick<Inventory, 'product' | 'place'>;
+    status: InventoryAllocationStatus;
+  };
+  key: {
+    tenantId: string;
+    orderId: string;
+  };
+  timers: {
+    createdAt: Date;
+    updatedAt: Date;
+  };
+  storeMapping: {
+    key: {
+      pk: string;
+      sk: string;
+    };
+    timers: {
+      createdAt: string;
+      updatedAt: string;
+    };
+  };
+}>;
+
+export type InventoryAllocation = Entity<InventoryAllocationBuilder>;
+
+export type InventoryAllocationStore = EntityStore<InventoryAllocationBuilder>;
+
+export type InventoryAllocationCreate = EntityCreate<InventoryAllocationBuilder>;
+
+export type InventoryAllocationUpdate = Pick<EntityUpdate<InventoryAllocationBuilder>, 'status'>;
