@@ -7,7 +7,7 @@ export type Interface = ApiInterface<{
   pathParams: { id: string };
   body: EmptyObject;
   claims: UserClaims;
-  queryParams: { categoryId?: string };
+  queryParams: EmptyObject;
 }>;
 
 export const config: ApiConfig<Interface> = {

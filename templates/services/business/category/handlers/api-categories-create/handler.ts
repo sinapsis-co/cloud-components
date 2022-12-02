@@ -7,31 +7,16 @@ import { categoryRepo } from '../../repository/category-repository';
 export const handler = apiHandler<categoryApi.create.Interface>(async (_, req) => {
   const tenantId = req.claims.tenantId;
 
-  let categoryId = '';
   if (req.body.categoryId) {
-    try {
-      const categories = await categoryRepo.listItem(
-        tenantId,
-        { limit: 1 },
-        {
-          KeyConditionExpression: '#pk = :pk AND begins_with(#sk, :sk)',
-          ExpressionAttributeNames: {
-            '#pk': 'pk',
-            '#sk': 'sk',
-          },
-          ExpressionAttributeValues: {
-            ':pk': tenantId,
-            ':sk': `${req.body.categoryId}#`,
-          },
-        }
-      );
-
-      if (categories.items) {
-        categoryId = req.body.categoryId;
-      }
-    } catch (error) {
-      throw new ApiError('CategoryId provided not found');
-    }
+    const category = await categoryRepo.checkItemExists({ id: req.body.categoryId, tenantId });
+    if (!category.exists) throw new ApiError('CATEGORY_ID.NOT_FOUND', 404, `categoryId: ${req.body.categoryId}`);
+    if (category.entity?.deleted) throw new ApiError('CATEGORY_ID.DELETED', 400, `categoryId: ${req.body.categoryId}`);
+    return await categoryRepo.createItem({ tenantId, id: uuid() }, {
+      ...req.body,
+      category: { id: category.entity?.id || '', name: category.entity?.name || '' }
+    });
   }
-  return await categoryRepo.createItem({ tenantId, id: uuid(), categoryId }, req.body);
+
+  return await categoryRepo.createItem({ tenantId, id: uuid() }, req.body);
+
 }, categoryApi.create.config);

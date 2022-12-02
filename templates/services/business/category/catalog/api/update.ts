@@ -16,7 +16,7 @@ export const config: ApiConfig<Interface> = {
   method: 'PUT',
   basePath: 'categories',
   path: '/{id}',
-  tablePermission: 'write',
+  tablePermission: 'readWrite',
   schema: Schemy.schema<Interface['body']>({
     name: { type: String, required: true },
     description: { type: String, required: true },

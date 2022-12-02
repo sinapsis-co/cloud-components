@@ -13,11 +13,12 @@ export type CategoryBuilder = EntityBuilder<{
     description?: string;
     codeValue?: string;
     categoryId?: string;
+    category?: { id: string, name: string}
+    deleted?: boolean;
   };
   key: {
     tenantId: string;
     id: string;
-    categoryId: string;
   };
   timers: {
     createdAt: Date;

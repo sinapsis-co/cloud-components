@@ -8,13 +8,13 @@ export const categoryRepo = repository<CategoryBuilder>({
   keySerialize: (key: CategoryBuilder['key']): CategoryBuilder['storeMapping']['key'] => {
     return {
       pk: key.tenantId,
-      sk: `${key.id}#${key.categoryId}`,
+      sk: key.id
     };
   },
   entitySerialize: (key: CategoryBuilder['key'], entityCreate: CategoryCreate): CategoryStore => {
     const mappedKey: CategoryBuilder['storeMapping']['key'] = {
       pk: key.tenantId,
-      sk: `${key.id}#${key.categoryId}`,
+      sk: key.id
     };
     const timers: CategoryBuilder['storeMapping']['timers'] = {
       createdAt: new Date().toISOString(),
@@ -24,12 +24,10 @@ export const categoryRepo = repository<CategoryBuilder>({
   },
   entityDeserialize: (entityStore: CategoryStore): Category => {
     const { pk, sk, createdAt, updatedAt, ...att } = entityStore;
-    const [id, categoryId] = sk.split('#');
     return {
-      ...att,
+      id: sk,
       tenantId: pk,
-      id,
-      categoryId,
+      ...att,
       createdAt: new Date(createdAt),
       updatedAt: new Date(updatedAt),
     };
