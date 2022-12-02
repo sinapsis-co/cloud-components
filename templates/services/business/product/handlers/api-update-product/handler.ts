@@ -10,8 +10,8 @@ export const handler = apiHandler<productApi.updateProduct.Interface>(async (_, 
 
     const product = await productRepo.checkItemExists({ id: req.pathParams.id, tenantId: tenant });
 
-    if (!product.exists) throw new ApiError('PRODUCT_NOT_FOUND', 404);
-    if (product.entity?.deleted) throw new ApiError('PRODUCT_DELETED', 400);
+    if (!product.exists) throw new ApiError('PRODUCT_NOT_FOUND', 404, `productId: ${req.pathParams.id}`);
+    if (product.entity?.deleted) throw new ApiError('PRODUCT_DELETED', 400, `productId: ${req.pathParams.id}`);
 
     if (req.body.categoryId) {
         const category = await getCategory(req.body.categoryId, tenant);

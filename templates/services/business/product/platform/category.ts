@@ -4,23 +4,9 @@ import { categoryRepo } from 'services/business/category/repository/category-rep
 
 export const getCategory = async (id: string, tenant: string): Promise<Category> => {
 
-    const category = await categoryRepo.listItem(tenant,
-        { limit: 1 },
-        {
-            KeyConditionExpression: '#pk = :pk AND begins_with(#sk, :sk)',
-            ExpressionAttributeNames: {
-                '#pk': 'pk',
-                '#sk': 'sk',
-            },
-            ExpressionAttributeValues: {
-                ':pk': tenant,
-                ':sk': `${id}#`,
-            },
-            TableName: process.env.CATEGORY_TABLE
-        }
-    );
+    const category = await categoryRepo.checkItemExists({ tenantId: tenant, id }, { TableName: process.env.CATEGORY_TABLE });
 
-    if (!category.items.length) throw new ApiError('CATEGORY_NOT_FOUND', 404);
+    if (!category.exists) throw new ApiError('CATEGORY_NOT_FOUND', 404, `categoryId: ${id}`);
 
-    return category.items[0];
+    return category.entity!;
 };

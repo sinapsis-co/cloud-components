@@ -8,7 +8,7 @@ export const handler = apiHandler<productApi.createProduct.Interface>(async (_, 
 
   const tenant = req.claims.tenantId;
 
-  const category = await getCategory(req.body.categoryId, tenant);
+  const category = await getCategory(req.body.categoryId || '', tenant);
 
   return await productRepo.createItem({ id: uuid(), tenantId: tenant }, {
     ...req.body,

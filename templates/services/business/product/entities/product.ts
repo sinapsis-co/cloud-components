@@ -6,7 +6,7 @@ export type ProductBuilder = EntityBuilder<{
   body: {
     name: string;
     categoryId?: string;
-    category?: Omit<Category, 'createdAt' | 'updatedAt' | 'tenantId' | 'categoryId' | 'description'>
+    category?: Omit<Category, 'createdAt' | 'updatedAt' | 'tenantId' | 'categoryId' | 'description' | 'category'>
     description?: string;
     price?: number;
     image?: string;
