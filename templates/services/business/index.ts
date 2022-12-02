@@ -19,6 +19,7 @@ import { Place } from './place';
 import { Product } from './product';
 import { Inventory } from './inventory';
 import { Stock } from './stock';
+import { InventoryAllocation } from './inventory-allocation';
 
 export type GlobalServiceDependencies = {
   notifications: Notifications;
@@ -40,6 +41,7 @@ export class BusinessServices {
   public readonly product: Product;
   public readonly inventory: Inventory;
   public readonly stock: Stock;
+  public readonly inventoryAllocation: InventoryAllocation;
 
   constructor(scope: Construct, globalProps: GlobalProps, dependencies: Omit<GlobalServiceDependencies, 'identity'>) {
     this.identity = new Identity(scope, globalProps, dependencies);
@@ -54,14 +56,17 @@ export class BusinessServices {
     this.place = new Place(scope, globalProps, globalDeps);
     this.product = new Product(scope, globalProps, {
       ...globalDeps,
-      categoryService: this.category
+      categoryService: this.category,
     });
     this.inventory = new Inventory(scope, globalProps, {
       ...globalDeps,
       placeService: this.place,
-      productService: this.product
+      productService: this.product,
     });
     this.stock = new Stock(scope, globalProps, globalDeps);
-
+    this.inventoryAllocation = new InventoryAllocation(scope, globalProps, {
+      ...globalDeps,
+      inventoryService: this.inventory,
+    });
   }
 }
