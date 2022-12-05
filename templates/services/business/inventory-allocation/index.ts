@@ -2,12 +2,15 @@ import { Service, Construct } from '@sinapsis-co/cc-infra-v2/common/service';
 import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
 import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/event-function/event-aggregate';
 import { ServiceTable } from '@sinapsis-co/cc-infra-v2/prefab/table/dynamo-table';
+import { AttributeType, ProjectionType } from 'aws-cdk-lib/aws-dynamodb';
 
 import { GlobalServiceDependencies } from '..';
 import { GlobalProps } from '../../../config/config-type';
 import { Inventory } from '../inventory';
 import { orderEvent } from '../order/catalog';
 import { inventoryAllocationApi } from './catalog';
+
+export const BY_ORDER_ID_IDX_NAME = 'byOrderId';
 
 export type InventoryAllocationParams = { inventoryService: Inventory } & GlobalServiceDependencies;
 
@@ -30,6 +33,19 @@ export class InventoryAllocation extends Service<GlobalProps, InventoryAllocatio
       },
     });
 
+    this.apiAggregate.table!.addGlobalSecondaryIndex({
+      indexName: BY_ORDER_ID_IDX_NAME,
+      projectionType: ProjectionType.ALL,
+      partitionKey: {
+        name: 'pk',
+        type: AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'orderId',
+        type: AttributeType.STRING,
+      },
+    });
+
     this.eventAggregate = new EventAggregate(this, {
       eventBus: this.props.customEventBus.bus,
       baseFunctionFolder: __dirname,
@@ -39,19 +55,15 @@ export class InventoryAllocation extends Service<GlobalProps, InventoryAllocatio
         orderCreated: {
           tablePermission: 'readWrite',
           name: 'event-order-created',
-          eventConfig: [
-            {
-              ...orderEvent.created.eventConfig,
-              modifiers: [
-                (lambdaFunction) =>
-                  ServiceTable.addTable(
-                    lambdaFunction,
-                    this.props.inventoryService.apiAggregate.table,
-                    'read',
-                    'INVENTORY_TABLE'
-                  ),
-              ],
-            },
+          eventConfig: [orderEvent.created.eventConfig],
+          modifiers: [
+            (lambdaFunction) =>
+              ServiceTable.addTable(
+                lambdaFunction,
+                this.props.inventoryService.apiAggregate.table,
+                'read',
+                'INVENTORY_TABLE'
+              ),
           ],
         },
         orderUpdated: {

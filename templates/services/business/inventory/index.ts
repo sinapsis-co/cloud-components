@@ -59,6 +59,10 @@ export class Inventory extends Service<GlobalProps, InventoryParams> {
       indexName: BY_CATEGORY_ID_IDX_NAME,
       projectionType: ProjectionType.ALL,
       partitionKey: {
+        name: 'pk',
+        type: AttributeType.STRING,
+      },
+      sortKey: {
         name: 'categoryId',
         type: AttributeType.STRING,
       },

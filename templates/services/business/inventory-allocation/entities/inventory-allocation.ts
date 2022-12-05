@@ -13,14 +13,16 @@ export type InventoryAllocationBuilder = EntityBuilder<{
   name: 'inventory-allocation';
   body: {
     orderId: string;
+    orders: string[];
     userId: string;
     inventoryId: string;
     inventory: Pick<Inventory, 'product' | 'place'>;
     status: InventoryAllocationStatus;
+    subscriptionId?: string;
   };
   key: {
     tenantId: string;
-    orderId: string;
+    id: string;
   };
   timers: {
     createdAt: Date;

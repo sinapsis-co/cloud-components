@@ -5,15 +5,17 @@ import { inventoryRepo } from 'services/business/inventory/repository/inventory'
 
 export const getFirstInventoryByCategoryId = async (categoryId: string, tenantId: string): Promise<Inventory> => {
   const inventories = await inventoryRepo.listItem(
-    tenantId,
+    '',
     { limit: 1 },
     {
       IndexName: BY_CATEGORY_ID_IDX_NAME,
-      KeyConditionExpression: '#categoryId = :categoryId',
+      KeyConditionExpression: '#pk = :pk AND #categoryId = :categoryId',
       ExpressionAttributeNames: {
+        '#pk': 'pk',
         '#categoryId': 'categoryId',
       },
       ExpressionAttributeValues: {
+        ':pk': tenantId,
         ':categoryId': categoryId,
       },
       TableName: process.env.INVENTORY_TABLE,

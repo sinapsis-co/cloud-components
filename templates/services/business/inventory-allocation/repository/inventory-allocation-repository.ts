@@ -13,7 +13,7 @@ export const inventoryAllocationRepo = repository<InventoryAllocationBuilder>({
   keySerialize: (key: InventoryAllocationBuilder['key']): InventoryAllocationBuilder['storeMapping']['key'] => {
     return {
       pk: key.tenantId,
-      sk: key.orderId,
+      sk: key.id,
     };
   },
   entitySerialize: (
@@ -22,7 +22,7 @@ export const inventoryAllocationRepo = repository<InventoryAllocationBuilder>({
   ): InventoryAllocationStore => {
     const mappedKey: InventoryAllocationBuilder['storeMapping']['key'] = {
       pk: key.tenantId,
-      sk: key.orderId,
+      sk: key.id,
     };
     const timers: InventoryAllocationBuilder['storeMapping']['timers'] = {
       createdAt: new Date().toISOString(),
@@ -33,9 +33,9 @@ export const inventoryAllocationRepo = repository<InventoryAllocationBuilder>({
   entityDeserialize: (entityStore: InventoryAllocationStore): InventoryAllocation => {
     const { pk, sk, createdAt, updatedAt, ...att } = entityStore;
     return {
-      ...att,
+      id: sk,
       tenantId: pk,
-      orderId: sk,
+      ...att,
       createdAt: new Date(createdAt),
       updatedAt: new Date(updatedAt),
     };

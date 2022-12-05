@@ -22,6 +22,7 @@ export const handler = apiHandler<inventoryApi.createInventory.Interface>(async 
         name: productBody.name,
         category: { id: productBody.category!.id, name: productBody.category!.name }
       },
+      categoryId: productBody.category!.id,
       status: 'AVAILABLE'
     });
 

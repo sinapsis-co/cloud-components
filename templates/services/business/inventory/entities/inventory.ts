@@ -10,6 +10,7 @@ export type InventoryBuilder = EntityBuilder<{
     place?: Omit<Place, 'createdAt' | 'updatedAt' | 'tenantId'>;
     productId: string;
     product?: Omit<Product, 'createdAt' | 'updatedAt' | 'tenantId' | 'categoryId'>;
+    categoryId?: string;
     status?: 'AVAILABLE' | 'NOT_AVAILABLE' | 'EXPIRED';
     deleted?: boolean;
   };

@@ -3,7 +3,14 @@ import { EventConfig, EventInterface } from '@sinapsis-co/cc-platform-v2/catalog
 export type Event = EventInterface<{
   name: 'order.paid';
   payload: {
-    order: { tenantId: string; orderId: string; categoryId: string; userId: string; status: string };
+    order: {
+      tenantId: string;
+      id: string;
+      categoryId: string;
+      userId: string;
+      status: string;
+      subscriptionId: string
+    };
   };
 }>;
 
