@@ -20,10 +20,8 @@ export const handler = eventHandler<orderEvent.paid.Event>(async (event) => {
     }
   );
 
-  if (inventoryAllocation) {
-    await dispatchEvent<inventoryAllocationEvent.toBeDelivered.Event>(
-      inventoryAllocationEvent.toBeDelivered.eventConfig,
-      { inventoryAllocation }
-    );
-  }
+  await dispatchEvent<inventoryAllocationEvent.toBeDelivered.Event>(
+    inventoryAllocationEvent.toBeDelivered.eventConfig,
+    { inventoryAllocation }
+  );
 });

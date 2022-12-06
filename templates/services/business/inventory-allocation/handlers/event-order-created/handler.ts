@@ -25,10 +25,8 @@ export const handler = eventHandler<orderEvent.created.Event>(async (event) => {
     }
   );
 
-  if (inventoryAllocation) {
-    await dispatchEvent<inventoryAllocationEvent.created.Event>(
-      inventoryAllocationEvent.created.eventConfig,
-      inventoryAllocation
-    );
-  }
+  await dispatchEvent<inventoryAllocationEvent.created.Event>(
+    inventoryAllocationEvent.created.eventConfig,
+    inventoryAllocation
+  );
 });

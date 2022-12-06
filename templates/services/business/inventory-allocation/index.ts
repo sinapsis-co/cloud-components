@@ -71,6 +71,11 @@ export class InventoryAllocation extends Service<GlobalProps, InventoryAllocatio
           name: 'event-order-paid',
           eventConfig: [orderEvent.paid.eventConfig],
         },
+        orderExpired: {
+          tablePermission: 'readWrite',
+          name: 'event-order-expired',
+          eventConfig: [orderEvent.expired.eventConfig],
+        },
       },
     });
   }

@@ -7,7 +7,7 @@ import {
 } from '@sinapsis-co/cc-platform-v2/repository/interface';
 import { Inventory } from 'services/business/inventory/entities';
 
-export type InventoryAllocationStatus = 'RESERVED' | 'TO_BE_DELIVERED' | 'ASSIGNED' | 'EXPIRED' | 'DELETED';
+export type InventoryAllocationStatus = 'RESERVED' | 'TO_BE_DELIVERED' | 'ASSIGNED' | 'EXPIRED';
 
 export type InventoryAllocationBuilder = EntityBuilder<{
   name: 'inventory-allocation';
@@ -19,6 +19,7 @@ export type InventoryAllocationBuilder = EntityBuilder<{
     inventory: Pick<Inventory, 'product' | 'place'>;
     status: InventoryAllocationStatus;
     subscriptionId?: string;
+    deleted?: boolean;
   };
   key: {
     tenantId: string;

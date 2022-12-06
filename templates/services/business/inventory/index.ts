@@ -79,6 +79,11 @@ export class Inventory extends Service<GlobalProps, InventoryParams> {
           name: 'event-inventory-allocation-created',
           eventConfig: [inventoryAllocationEvent.created.eventConfig],
           tablePermission: 'readWrite',
+        },
+        inventoryAllocationExpired: {
+          name: 'event-inventory-allocation-expired',
+          eventConfig: [inventoryAllocationEvent.expired.eventConfig],
+          tablePermission: 'readWrite',
         }
       },
     });
