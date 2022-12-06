@@ -10,6 +10,7 @@ export const handler = eventHandler<orderEvent.created.Event>(async (event) => {
   const { tenantId, userId, id, category } = event.detail.order;
   const categoryId = category?.id || '';
 
+  //TODO: filter inventory not_available
   const inventory = await getFirstInventoryByCategoryId(categoryId, tenantId);
 
   const inventoryAllocation = await inventoryAllocationRepo.createItem(

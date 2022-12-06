@@ -5,6 +5,7 @@ import { ServiceTable } from '@sinapsis-co/cc-infra-v2/prefab/table/dynamo-table
 import { AttributeType, ProjectionType, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { GlobalServiceDependencies } from '..';
 import { GlobalProps } from '../../../config/config-type';
+import { inventoryAllocationEvent } from '../inventory-allocation/catalog';
 import { Place } from '../place';
 import { Product } from '../product';
 import { inventoryApi } from './catalog';
@@ -67,5 +68,20 @@ export class Inventory extends Service<GlobalProps, InventoryParams> {
         type: AttributeType.STRING,
       },
     });
+
+    this.eventAggregate = new EventAggregate(this, {
+      eventBus: this.props.customEventBus.bus,
+      baseFunctionFolder: __dirname,
+      table: this.apiAggregate.table,
+      autoEventsEnabled: true,
+      handlers: {
+        inventoryAllocationCreated: {
+          name: 'event-inventory-allocation-created',
+          eventConfig: [inventoryAllocationEvent.created.eventConfig],
+          tablePermission: 'readWrite',
+        }
+      },
+    });
+
   }
 }

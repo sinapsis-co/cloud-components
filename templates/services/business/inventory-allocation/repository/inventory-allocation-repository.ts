@@ -1,5 +1,4 @@
 import { repository } from '@sinapsis-co/cc-platform-v2/repository';
-import { RepositoryEvent } from '@sinapsis-co/cc-platform-v2/repository/interface';
 import {
   InventoryAllocation,
   InventoryAllocationBuilder,
@@ -42,9 +41,3 @@ export const inventoryAllocationRepo = repository<InventoryAllocationBuilder>({
   },
 });
 
-export type InventoryAllocationEvent = RepositoryEvent<InventoryAllocationBuilder> & {
-  toBeDelivered: {
-    name: `app.${InventoryAllocationBuilder['name']}.toBeDelivered`;
-    payload: InventoryAllocation;
-  };
-};

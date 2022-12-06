@@ -2,13 +2,13 @@ import { EventConfig, EventInterface } from '@sinapsis-co/cc-platform-v2/catalog
 import { InventoryAllocation } from '../../entities/inventory-allocation';
 
 export type Event = EventInterface<{
-  name: 'inventory-allocation.to-be-delivered';
+  name: 'cc.inventory-allocation:inventory-allocation.to-be-delivered';
   payload: {
     inventoryAllocation: InventoryAllocation;
   };
 }>;
 
 export const eventConfig: EventConfig<Event> = {
-  name: 'inventory-allocation.to-be-delivered',
-  source: 'app',
+  name: 'cc.inventory-allocation:inventory-allocation.to-be-delivered',
+  source: 'cc',
 };
