@@ -1,46 +1,72 @@
 import { Entity, EntityBuilder, EntityCreate, EntityStore } from '@sinapsis-co/cc-platform-v2/repository/interface';
-import { UserProfile } from 'services/business/identity/entities';
 import { OrderAcceptedCurrencies } from './order-currency';
-import { OrderItem } from './order-product';
+import { OrderCustomer } from './order-customer';
+import { OrderItem } from './order-item';
+import { OrderSeller } from './order-seller';
 
-export type OrderStatus = 'refund' | 'paid';
+export type OrderStatus = 'PENDING' | 'SUCCESS' | 'CANCELLED' | 'REFUNDED' | 'EXPIRED' | 'PROCESS' | 'FAILED';
 
-export type PaymentMethodDetails = {
-  card?: {
-    brand: string;
-    country: string;
-    last4: string;
+export type OrderType = 'INCOME' | 'WITHDRAWAL';
+
+export type OrderIncome = {
+  orderItem: OrderItem[];
+  orderTotal: number;
+  orderPlatformFee: number;
+  orderSubTotal: number;
+  orderTax: number;
+  seller?: OrderSeller;
+  priceCurrency: OrderAcceptedCurrencies;
+  paymentUrl?: string;
+  paymentMethod?: {
+    gateway: string;
+    paymentMethodDetails: {
+      card?: {
+        brand: string;
+        country: string;
+        last4: string;
+      };
+      type: 'card';
+    };
   };
-  type: 'card';
+  partOfInvoice?: {
+    invoiceId: string;
+  };
+  subscriptionId?: string;
+  hasReview?: boolean;
+  sellerId?: string;
+  sellerTransferred?: string;
+  sellerAvailableAt?: number;
+  sellerTransferredProcessedAt?: string;
+  partOfSeller: number;
+  partOfPlatform?: number;
+  partOfGateway?: number;
+  isProposal?: boolean;
+};
+
+export type OrderWithdrawal = {
+  orderAmount: number;
+  orderPayoutSettingId: string;
+  // TODO: add more types
+  orderPayoutSetting?: null;
+};
+
+export type OrderBodyTypeT<K = OrderType, V = void> = { orderType: K } & V;
+
+export type OrderBody = {
+  orderDate: string;
+  orderStatus: OrderStatus;
+  orderSuccessAt?: string;
+  customer: OrderCustomer;
+  customerId: string;
+  error?: any;
+  identifier?: Record<string, string>;
+  orderType: OrderType;
+  description?: string;
 };
 
 export type OrderBuilder = EntityBuilder<{
   name: 'order';
-  body: {
-    currency: OrderAcceptedCurrencies;
-    paymentMethod: {
-      gateway: string;
-      paymentMethodDetails: PaymentMethodDetails;
-    };
-    items: OrderItem[];
-    description?: string;
-    customer: Partial<UserProfile>;
-    data: {
-      approvedBy?: string;
-      authorizedDate?: Date;
-      cancelReason?: string;
-      cancelledBy?: string;
-      discountValue?: string;
-      invoiceUrl: string;
-    };
-    isCompleted: boolean;
-    status: OrderStatus;
-    tax: number;
-    subTotal: number;
-    total: number;
-    targetTransfer?: string;
-    metadata?: Record<string, string | number>;
-  };
+  body: OrderBody & (OrderBodyTypeT<'INCOME', OrderIncome> | OrderBodyTypeT<'WITHDRAWAL', OrderWithdrawal>);
   key: {
     tenantId: string;
     orderId: string;
@@ -60,6 +86,7 @@ export type OrderBuilder = EntityBuilder<{
     };
   };
 }>;
+
 export type Order = Entity<OrderBuilder>;
 export type OrderStore = EntityStore<OrderBuilder>;
 export type OrderCreate = EntityCreate<OrderBuilder>;

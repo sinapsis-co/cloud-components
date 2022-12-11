@@ -1,1 +1,1 @@
-export type OrderAcceptedCurrencies = 'USD';
+export type OrderAcceptedCurrencies = 'USD' | string;

@@ -1,9 +1,9 @@
 import { repository } from '@sinapsis-co/cc-platform-v2/repository';
 import { RepositoryEvent } from '@sinapsis-co/cc-platform-v2/repository/interface';
-import { Order, OrderBuilder, OrderCreate, OrderStore } from '../entities/order';
+import { Order, OrderBuilder, OrderCreate, OrderIncome, OrderStore, OrderWithdrawal } from '../entities/order';
 
 export const orderRepo = repository<OrderBuilder>({
-  tableName: process.env.TABLE!,
+  tableName: process.env.ORDER_TABLE! || process.env.TABLE!,
   repoName: 'order',
   keySerialize: (key: OrderBuilder['key']): OrderBuilder['storeMapping']['key'] => {
     return {
@@ -20,11 +20,12 @@ export const orderRepo = repository<OrderBuilder>({
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
+
     return {
       ...mappedKey,
       ...entityCreate,
       ...timers,
-    };
+    } as OrderStore & (OrderWithdrawal | OrderIncome);
   },
   entityDeserialize: (entityStore: OrderStore): Order => {
     const { sk, pk, createdAt, updatedAt, ...att } = entityStore;
