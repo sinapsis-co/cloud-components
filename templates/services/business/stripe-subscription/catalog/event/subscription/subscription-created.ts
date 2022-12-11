@@ -1,20 +1,15 @@
 import { EventConfig, EventInterface } from '@sinapsis-co/cc-platform-v2/catalog/event';
+import { Subscription } from '../../../entities/subscription';
 
 export type Event = EventInterface<{
-  name: 'order.paid';
+  name: 'stripe-connector:subscription:created';
   payload: {
-    order: {
-      tenantId: string;
-      id: string;
-      categoryId: string;
-      userId: string;
-      status: string;
-      subscriptionId: string
-    };
+    customerId: string;
+    subscription: Subscription;
   };
 }>;
 
 export const eventConfig: EventConfig<Event> = {
-  name: 'order.paid',
+  name: 'stripe-connector:subscription:created',
   source: 'app',
 };

@@ -20,6 +20,9 @@ import { Product } from './product';
 import { Inventory } from './inventory';
 import { Stock } from './stock';
 import { InventoryAllocation } from './inventory-allocation';
+import { StripeSupportService } from 'services/support/stripe';
+import { StripeCustomer } from './stripe-customer';
+import { StripeSubscription } from './stripe-subscription';
 
 export type GlobalServiceDependencies = {
   notifications: Notifications;
@@ -28,6 +31,7 @@ export type GlobalServiceDependencies = {
   customEventBus: CustomEventBus;
   dnsSubdomainCertificate: DnsSubdomainCertificate;
   identity: Identity;
+  stripeService: StripeSupportService;
 };
 
 export class BusinessServices {
@@ -42,6 +46,8 @@ export class BusinessServices {
   public readonly inventory: Inventory;
   public readonly stock: Stock;
   public readonly inventoryAllocation: InventoryAllocation;
+  public readonly stripeCustomer: StripeCustomer;
+  public readonly stripeSubscription: StripeSubscription;
 
   constructor(scope: Construct, globalProps: GlobalProps, dependencies: Omit<GlobalServiceDependencies, 'identity'>) {
     this.identity = new Identity(scope, globalProps, dependencies);
@@ -67,6 +73,11 @@ export class BusinessServices {
     this.inventoryAllocation = new InventoryAllocation(scope, globalProps, {
       ...globalDeps,
       inventoryService: this.inventory,
+    });
+    this.stripeCustomer = new StripeCustomer(scope, globalProps, { ...globalDeps });
+    this.stripeSubscription = new StripeSubscription(scope, globalProps, {
+      ...globalDeps,
+      stripeCustomer: this.stripeCustomer,
     });
   }
 }
