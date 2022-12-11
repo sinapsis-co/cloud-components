@@ -1,12 +1,10 @@
 import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
-import { Order, OrderIncome } from 'services/order/entities';
-import { updateQuantityTemporalStrategy } from 'services/order/platform/stripe-update-item-invoice';
-import { orderRepo } from 'services/order/repository';
-import { ERROR_INVALID_FREQUENCY_SERVICE, ERROR_NOT_IS_PENDING_INCOME } from 'services/order/utils/errors';
-import { userSkillRepository } from 'services/user-skill/repository/user-skill-repository';
-import { formatAmount } from 'support-service/stripe/utils/format-amount';
-import { errorApi } from 'support-service/utils/api-error';
+import { errorApi } from 'services/support/utils/api-error';
 import * as api from '../../catalog/api';
+import { Order, OrderIncome } from '../../entities';
+import { updateQuantityTemporalStrategy } from '../../platform/stripe-update-item-invoice';
+import { orderRepo } from '../../repository';
+import { ERROR_NOT_IS_PENDING_INCOME } from '../../utils/errors';
 
 export const handler = apiHandler<api.updateItemOrderIncome.Interface>(async (_, request) => {
   const { sub } = request.claims;
@@ -26,18 +24,7 @@ export const handler = apiHandler<api.updateItemOrderIncome.Interface>(async (_,
   const orderItem = await Promise.all(
     order.orderItem.map(async (data) => {
       if (data.orderItemNumber === orderItemNumber) {
-        const getSkill = await userSkillRepository.getItem({
-          userId: data?.identifier?.skillerId as string,
-          userSkillId: data?.identifier?.skillId as string,
-        });
-
-        const price = getSkill.prices.find((price) => price.description === service.orderFrequency);
-
-        if (!price) {
-          throw errorApi(ERROR_INVALID_FREQUENCY_SERVICE);
-        }
-
-        return { ...data, ...service, orderItemSubTotal: formatAmount(price.amount) };
+        return { ...data, ...service };
       }
       return data;
     })
