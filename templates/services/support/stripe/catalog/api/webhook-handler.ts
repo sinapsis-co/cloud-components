@@ -11,7 +11,7 @@ export type Interface = ApiInterface<{
 export const config: ApiConfig<Interface> = {
   name: 'api-webhook-handler',
   method: 'POST',
-  basePath: 'stripe',
+  basePath: 'stripe-support',
   path: '/webhook',
   tablePermission: 'read',
   isPublic: true,

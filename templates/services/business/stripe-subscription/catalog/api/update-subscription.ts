@@ -20,7 +20,7 @@ export type Interface = ApiInterface<{
 export const config: ApiConfig<Interface> = {
   name: 'api-update-subscription',
   method: 'PUT',
-  basePath: 'subscription',
+  basePath: 'stripe-subscription',
   path: '/',
   tablePermission: 'readWrite',
   schema: Schemy.schema<Interface['body']>({

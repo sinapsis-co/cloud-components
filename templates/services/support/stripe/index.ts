@@ -53,7 +53,7 @@ export class StripeSupportService extends Service<GlobalProps, StripeParams> {
     };
 
     this.apiAggregate = new ApiAggregate(this, {
-      basePath: 'stripe',
+      basePath: 'stripe-support',
       baseFunctionFolder: __dirname,
       eventBus: this.props.customEventBus.bus,
       cdnApi: { ...this.props.cdnApi, behaviorOptions },

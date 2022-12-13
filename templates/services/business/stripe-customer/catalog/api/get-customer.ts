@@ -13,7 +13,7 @@ export type Interface = ApiInterface<{
 export const config: ApiConfig<Interface> = {
   name: 'api-get-customer',
   method: 'GET',
-  basePath: 'customer',
+  basePath: 'stripe-customer',
   path: '/',
   tablePermission: 'read',
 };

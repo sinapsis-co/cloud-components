@@ -4,7 +4,8 @@ import { UserClaims } from 'services/business/identity/entities/user-cognito';
 import { Order } from '../../entities';
 
 export type BodyCreateIncome = {
- orderQuantity: number;
+  orderQuantity: number;
+  isSubscription?: boolean;
 };
 
 export type Interface = ApiInterface<{
@@ -22,6 +23,10 @@ export const config: ApiConfig<Interface> = {
   path: '/',
   tablePermission: 'readWrite',
   schema: Schemy.schema<Interface['body']>({
+    isSubscription: {
+      type: Boolean,
+      required: false,
+    },
     orderQuantity: {
       type: Number,
       required: true,

@@ -17,7 +17,7 @@ export type CustomerBuilder = EntityBuilder<{
   storeMapping: {
     key: {
       pk: string;
-      sk: 'CUSTOMER';
+      sk: 'stripe-customer';
     };
     timers: {
       createdAt: string;

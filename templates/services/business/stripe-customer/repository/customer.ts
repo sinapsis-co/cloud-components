@@ -6,13 +6,13 @@ export const customerRepository = repository<CustomerBuilder>({
   repoName: 'customer-stripe',
 
   keySerialize: (key: CustomerBuilder['key']): CustomerBuilder['storeMapping']['key'] => {
-    return { pk: key.tenantId, sk: 'CUSTOMER' };
+    return { pk: key.tenantId, sk: 'stripe-customer' };
   },
 
   entitySerialize: (key: CustomerBuilder['key'], entityCreate: CustomerCreate): CustomerStore => {
     const mappedKey: CustomerBuilder['storeMapping']['key'] = {
       pk: key.tenantId,
-      sk: 'CUSTOMER',
+      sk: 'stripe-customer',
     };
     const timers: CustomerBuilder['storeMapping']['timers'] = {
       createdAt: new Date().toISOString(),

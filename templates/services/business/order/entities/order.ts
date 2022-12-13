@@ -37,7 +37,7 @@ export type OrderIncome = {
   sellerTransferred?: string;
   sellerAvailableAt?: number;
   sellerTransferredProcessedAt?: string;
-  partOfSeller: number;
+  partOfSeller?: number;
   partOfPlatform?: number;
   partOfGateway?: number;
   isProposal?: boolean;

@@ -21,7 +21,7 @@ export class StripeCustomer extends Service<GlobalProps, CustomerStripeParams> {
     super(scope, StripeCustomer.name, globalProps, { params });
 
     this.apiAggregate = new ApiAggregate(this, {
-      basePath: 'customer',
+      basePath: 'stripe-customer',
       baseFunctionFolder: __dirname,
       eventBus: this.props.customEventBus.bus,
       cdnApi: this.props.cdnApi,

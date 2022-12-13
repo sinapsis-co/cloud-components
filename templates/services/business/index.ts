@@ -5,23 +5,24 @@ import { GlobalProps } from '../../config/config-type';
 import { Identity } from './identity';
 
 // External Services
-import { CdnApi } from '../support/cdn-api';
-import { CustomEventBus } from '../support/custom-event-bus';
-import { Notifications } from 'services/support/notifications';
-import { Assets } from './assets';
 import { CdnMedia } from 'services/support/cdn-media';
 import { DnsSubdomainCertificate } from 'services/support/dns-subdomain-certificate';
+import { Notifications } from 'services/support/notifications';
+import { StripeSupportService } from 'services/support/stripe';
+import { CdnApi } from '../support/cdn-api';
+import { CustomEventBus } from '../support/custom-event-bus';
+import { Assets } from './assets';
 import { BaseCrud } from './base-crud';
 import { BaseEvent } from './base-event';
-import { SearchService } from './search';
 import { Category } from './category';
+import { Inventory } from './inventory';
+import { InventoryAllocation } from './inventory-allocation';
 import { Place } from './place';
 import { Product } from './product';
-import { Inventory } from './inventory';
+import { SearchService } from './search';
 import { Stock } from './stock';
-import { InventoryAllocation } from './inventory-allocation';
-import { StripeSupportService } from 'services/support/stripe';
 import { StripeCustomer } from './stripe-customer';
+import { StripeProduct } from './stripe-product';
 import { StripeSubscription } from './stripe-subscription';
 
 export type GlobalServiceDependencies = {
@@ -48,6 +49,7 @@ export class BusinessServices {
   public readonly inventoryAllocation: InventoryAllocation;
   public readonly stripeCustomer: StripeCustomer;
   public readonly stripeSubscription: StripeSubscription;
+  public readonly stripeProduct: StripeProduct;
 
   constructor(scope: Construct, globalProps: GlobalProps, dependencies: Omit<GlobalServiceDependencies, 'identity'>) {
     this.identity = new Identity(scope, globalProps, dependencies);
@@ -79,5 +81,6 @@ export class BusinessServices {
       ...globalDeps,
       stripeCustomer: this.stripeCustomer,
     });
+    this.stripeProduct = new StripeProduct(scope, globalProps, { ...globalDeps });
   }
 }

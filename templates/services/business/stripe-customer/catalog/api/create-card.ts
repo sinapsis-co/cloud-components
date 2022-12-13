@@ -12,7 +12,7 @@ export type Interface = ApiInterface<{
 export const config: ApiConfig<Interface> = {
   name: 'api-create-card',
   method: 'POST',
-  basePath: 'customer',
+  basePath: 'stripe-customer',
   path: '/card/{cardId}',
   tablePermission: 'read',
 };

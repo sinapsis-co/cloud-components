@@ -12,7 +12,7 @@ export type Interface = ApiInterface<{
 export const config: ApiConfig<Interface> = {
   name: 'api-delete-card',
   method: 'DELETE',
-  basePath: 'customer',
+  basePath: 'stripe-customer',
   path: '/card/{cardId}',
   tablePermission: 'read',
 };

@@ -16,7 +16,7 @@ export class StripeProduct extends Service<GlobalProps, StripeProductParams> {
     super(scope, StripeProduct.name, globalProps, { params });
 
     this.apiAggregate = new ApiAggregate(this, {
-      basePath: 'product',
+      basePath: 'stripe-product',
       baseFunctionFolder: __dirname,
       eventBus: this.props.customEventBus.bus,
       cdnApi: { ...this.props.cdnApi },

@@ -12,7 +12,7 @@ export type Interface = ApiInterface<{
 export const config: ApiConfig<Interface> = {
   name: 'api-list-products',
   method: 'GET',
-  basePath: 'product',
+  basePath: 'stripe-product',
   path: '/',
   tablePermission: 'read',
 };

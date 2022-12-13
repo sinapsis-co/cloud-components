@@ -12,7 +12,7 @@ export type Interface = ApiInterface<{
 export const config: ApiConfig<Interface> = {
   name: 'api-get-subscription',
   method: 'GET',
-  basePath: 'subscription',
+  basePath: 'stripe-subscription',
   path: '/',
   tablePermission: 'read',
 };

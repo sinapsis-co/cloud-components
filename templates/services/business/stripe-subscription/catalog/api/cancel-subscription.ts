@@ -12,7 +12,7 @@ export type Interface = ApiInterface<{
 export const config: ApiConfig<Interface> = {
   name: 'api-cancel-subscription',
   method: 'DELETE',
-  basePath: 'subscription',
+  basePath: 'stripe-subscription',
   path: '/',
   tablePermission: 'readWrite',
 };
