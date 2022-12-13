@@ -11,7 +11,7 @@ export type OrderType = 'INCOME' | 'WITHDRAWAL';
 export type OrderIncome = {
   orderItem: OrderItem[];
   orderTotal: number;
-  orderPlatformFee: number;
+  orderPlatformFee?: number;
   orderSubTotal: number;
   orderTax: number;
   seller?: OrderSeller;

@@ -1,7 +1,6 @@
 import { getDomain } from '@sinapsis-co/cc-infra-v2/common/naming/get-domain';
 import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
-import { BaseFunction } from '@sinapsis-co/cc-infra-v2/prefab/function/base-function';
 import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/event-function/event-aggregate';
 import { ServiceTable } from '@sinapsis-co/cc-infra-v2/prefab/table/dynamo-table';
 import { Duration } from 'aws-cdk-lib';
@@ -64,47 +63,14 @@ export class Order extends Service<GlobalProps, OrderParams> {
       },
     });
 
-    this.internals.updateOrder = new BaseFunction(this, {
-      name: 'internal-update-order',
-      baseFunctionFolder: __dirname,
-      table: this.apiAggregate.table,
-      eventBus: this.props.customEventBus.bus,
-      tablePermission: 'write',
-      environment: {
-        AUTO_EVENTS: 'true',
-      },
-    }).lambdaFunction;
-
-    this.internals.updateSuccessOrderIncome = new BaseFunction(this, {
-      name: 'internal-update-success-order-income',
-      baseFunctionFolder: __dirname,
-      table: this.apiAggregate.table,
-      eventBus: this.props.customEventBus.bus,
-      tablePermission: 'readWrite',
-      environment: {
-        AUTO_EVENTS: 'true',
-      },
-    }).lambdaFunction;
-
-    this.internals.updateProcessOrder = new BaseFunction(this, {
-      name: 'internal-update-process-order',
-      baseFunctionFolder: __dirname,
-      table: this.apiAggregate.table,
-      eventBus: this.props.customEventBus.bus,
-      tablePermission: 'readWrite',
-      environment: {
-        AUTO_EVENTS: 'true',
-      },
-    }).lambdaFunction;
-
     this.eventAggregate = new EventAggregate(this, {
       eventBus: this.props.customEventBus.bus,
       baseFunctionFolder: __dirname,
       table: this.apiAggregate.table,
       handlers: {
-        eventOrderNotification: {
+        eventInvoiceSuccess: {
           tablePermission: 'none',
-          name: 'event-order-notification',
+          name: 'event-invoice-success',
           environment: {
             PROJECT_NAME: this.props.projectName,
             WEBAPP_URL: getDomain(this.props.subdomain.webapp, this.props),

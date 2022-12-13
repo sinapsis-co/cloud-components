@@ -1,13 +1,12 @@
-
 import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
 
-import { inventoryAllocationEvent } from '../../catalog';
-import { inventoryAllocationRepo } from '../../repository/inventory-allocation-repository';
 import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
+import { orderIncomePaid } from 'services/business/order/catalog/event/income';
+import { inventoryAllocationEvent } from '../../catalog';
 import { getAllocationInventoryByOrder } from '../../platform/allocation-inventory';
-import { orderIncomeExpired } from 'services/business/order/catalog/event/income';
+import { inventoryAllocationRepo } from '../../repository/inventory-allocation-repository';
 
-export const handler = eventHandler<orderIncomeExpired.Event>(async (event) => {
+export const handler = eventHandler<orderIncomePaid.Event>(async (event) => {
   const { tenantId, orderId, subscriptionId } = event.detail;
 
   const allocationInventory = await getAllocationInventoryByOrder(orderId, tenantId);

@@ -10,6 +10,8 @@ export type InvoiceBuilder = EntityBuilder<{
     description: string;
     url: string;
     amount: number;
+    orderId: string;
+    subscriptionId?: string;
   };
   key: {
     customerId: string;
