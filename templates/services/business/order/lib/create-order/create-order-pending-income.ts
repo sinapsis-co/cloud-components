@@ -8,7 +8,7 @@ import { orderTemporalStrategy } from '../../platform/stripe-create-invoice';
 export type CreateOrderIncomePending = {
   orderId: string;
   orderItem: OrderItem[];
-  orderFrequency: OrderFrequencyProduct;
+  orderFrequency?: OrderFrequencyProduct;
   orderQuantity: number;
   seller?: OrderSeller;
   billingAddress: FullLocation;

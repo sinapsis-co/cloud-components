@@ -5,7 +5,7 @@ import {
   PaginatedQueryParams,
   PaginatedResponse,
 } from '@sinapsis-co/cc-platform-v2/catalog/api';
-import { UserClaims } from 'services/identity/entities/user-cognito';
+import { UserClaims } from 'services/business/identity/entities/user-cognito';
 import { Order } from '../../entities';
 
 export type Interface = ApiInterface<{

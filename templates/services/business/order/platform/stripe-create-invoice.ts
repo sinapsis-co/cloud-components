@@ -64,13 +64,13 @@ export const orderTemporalStrategy = async (
     {
       metadata: {
         ...seller,
-        sellerId: seller?.id,
+        sellerId: seller?.id as string,
       },
     },
     {
       metadata: {
         ...seller,
-        sellerId: seller?.id,
+        sellerId: seller?.id as string,
       },
     }
   );

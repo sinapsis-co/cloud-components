@@ -1,6 +1,7 @@
 import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
-import { UserClaims } from 'services/identity/entities';
-import { getStripeClient, Stripe, StripeConfig } from 'support-service/stripe/platform';
+import { UserClaims } from 'services/business/identity/entities/user-cognito';
+import { getStripeClient, StripeConfig } from 'services/support/stripe/platform';
+import Stripe from 'stripe';
 import { Customer } from '../entities/customer';
 import { customerRepository } from '../repository';
 

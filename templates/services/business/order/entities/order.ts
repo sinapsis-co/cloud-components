@@ -41,6 +41,7 @@ export type OrderIncome = {
   partOfPlatform?: number;
   partOfGateway?: number;
   isProposal?: boolean;
+  categoryId?: string;
 };
 
 export type OrderWithdrawal = {

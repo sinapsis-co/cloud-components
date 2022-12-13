@@ -1,8 +1,8 @@
 import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
-import { createOrder } from 'services/order/lib';
-import { generateId } from 'services/order/utils/generate-id';
 import * as api from '../../catalog/api';
+import { createOrder } from '../../lib';
 import { orderRepo } from '../../repository';
+import { generateId } from '../../utils/generate-id';
 
 export const handler = apiHandler<api.createOrderIncome.Interface>(async (_, request) => {
   const { sub } = request.claims;
@@ -12,10 +12,9 @@ export const handler = apiHandler<api.createOrderIncome.Interface>(async (_, req
   const orderPending = await createOrder.income.pending(
     {
       orderId,
-      skillerId: request.body.skillerId!,
-      skillId: request.body.skillId!,
+      billingAddress: {},
+      orderItem: [],
       orderQuantity: request.body.orderQuantity!,
-      orderFrequency: request.body.orderFrequency!,
     },
     request.claims
   );

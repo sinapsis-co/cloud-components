@@ -10,7 +10,7 @@ import {
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { CfnSecret } from 'aws-cdk-lib/aws-secretsmanager';
 import { GlobalProps } from 'config/config-type';
-import { GlobalServiceDependencies } from '../../services';
+import { GlobalServiceDependencies } from '../../business';
 import { apiStripe, secretsStripe } from './catalog';
 
 export type StripeParams = Omit<GlobalServiceDependencies, 'identity'>;

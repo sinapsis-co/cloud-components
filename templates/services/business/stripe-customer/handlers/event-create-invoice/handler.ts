@@ -1,6 +1,6 @@
 import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
+import { Paid, PaymentFailed } from 'services/support/stripe/catalog/event/webhook';
 import Stripe from 'stripe';
-import { Paid, PaymentFailed } from 'support-service/stripe/catalog/event/webhook';
 import { getCustomerByExternal } from '../../platform/get-customer-by-external';
 import { invoiceRepository } from '../../repository';
 

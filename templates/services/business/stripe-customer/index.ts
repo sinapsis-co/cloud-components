@@ -4,7 +4,7 @@ import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/event-f
 import { Duration } from 'aws-cdk-lib';
 import { AttributeType, ProjectionType, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { GlobalServiceDependencies } from '..';
-import { GlobalProps } from '../../config/config-type';
+import { GlobalProps } from '../../../config/config-type';
 import { userProfileRepository } from '../identity/repository/user-profile-repository';
 import { api } from './catalog';
 

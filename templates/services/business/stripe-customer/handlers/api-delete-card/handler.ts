@@ -1,7 +1,7 @@
 import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
 import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
-import { secretsStripe } from 'support-service/stripe/catalog';
-import { getStripeClient } from 'support-service/stripe/platform';
+import { secretsStripe } from 'services/support/stripe/catalog';
+import { getStripeClient } from 'services/support/stripe/platform';
 import { deleteCard } from '../../catalog/api';
 import { customerRepository } from '../../repository';
 

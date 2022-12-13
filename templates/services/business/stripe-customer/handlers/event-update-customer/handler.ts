@@ -1,8 +1,8 @@
 import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
 import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
-import { UserProfileRepoEvent } from 'services/identity/repository/user-profile-repository';
-import { secretsStripe } from 'support-service/stripe/catalog';
-import { getStripeClient } from 'support-service/stripe/platform';
+import { UserProfileRepoEvent } from 'services/business/identity/repository/user-profile-repository';
+import { secretsStripe } from 'services/support/stripe/catalog';
+import { getStripeClient } from 'services/support/stripe/platform';
 
 import { customerRepository } from '../../repository';
 

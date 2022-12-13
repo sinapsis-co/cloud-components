@@ -1,4 +1,5 @@
 import { repository } from '@sinapsis-co/cc-platform-v2/repository';
+import { RepositoryEvent } from '@sinapsis-co/cc-platform-v2/repository/interface';
 import { UserProfile, UserProfileBuilder, UserProfileCreate, UserProfileStore } from '../entities/user-profile';
 
 export const userProfileRepository = repository<UserProfileBuilder>({
@@ -34,3 +35,4 @@ export const userProfileRepository = repository<UserProfileBuilder>({
     };
   },
 });
+export type UserProfileRepoEvent = RepositoryEvent<UserProfileBuilder>;

@@ -1,5 +1,7 @@
 import { EventConfig } from '@sinapsis-co/cc-platform-v2/catalog/event';
-import { Order, OrderWithdrawal } from 'services/order/entities';
+import { Order } from 'services/business/order';
+import { OrderWithdrawal } from 'services/business/order/entities';
+
 export type Event = {
   name: 'app.order:withdrawal.pending';
   payload: Order & OrderWithdrawal;

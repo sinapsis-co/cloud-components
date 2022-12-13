@@ -1,4 +1,4 @@
-import { UserClaims } from 'services/identity/entities/user-cognito';
+import { UserClaims } from 'services/business/identity/entities/user-cognito';
 import { Stripe, StripeRepo } from '.';
 import { AcceptedCurrencies, Product } from '../../entities';
 import { metaDataUser } from '../../utils/user-metadata';

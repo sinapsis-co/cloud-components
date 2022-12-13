@@ -1,8 +1,7 @@
 import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
-import { paymentSuccess } from 'services/business/payment/catalog/events';
 import { orderRepo } from '../../repository';
 
-export const handler = eventHandler<paymentSuccess.Event>(async (event) => {
+export const handler = eventHandler<any>(async (event) => {
   const { tenantId, orderId, ...body } = event.detail;
 
   await orderRepo.createItem(

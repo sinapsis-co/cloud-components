@@ -1,4 +1,4 @@
-import { UserClaims } from 'services/identity/entities';
+import { UserClaims } from 'services/business/identity/entities/user-cognito';
 
 export const metaDataUser = (user: UserClaims): Record<string, string> => {
   return {
@@ -6,5 +6,6 @@ export const metaDataUser = (user: UserClaims): Record<string, string> => {
     familyName: user.family_name,
     givenName: user.given_name,
     sub: user.sub,
+    tenantId: user.tenantId,
   };
 };
