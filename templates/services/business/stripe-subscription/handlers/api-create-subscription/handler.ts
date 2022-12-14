@@ -1,4 +1,5 @@
 import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
+import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
 import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
 import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
 import { OrderItem } from 'services/business/order/entities/order-item';
@@ -16,8 +17,13 @@ const TRIAL_DURATION_IN_DAYS = Number(process.env.TRIAL_DURATION_IN_DAYS || 0);
 export const handler = apiHandler<api.createSubscription.Interface>(async (_, request) => {
   const { tenantId, email } = request.claims;
   const order = await orderRepo.getItem({ tenantId, orderId: request.body.orderId });
+
   if (order.orderType !== 'INCOME') {
-    throw new Error('Order type is not income');
+    throw new ApiError('Order type is not income');
+  }
+
+  if (order.orderStatus !== 'SUCCESS') {
+    throw new ApiError('Order status is not pending');
   }
   const { identifier } = order.orderItem[0] as OrderItem;
   const { productId, priceId } = identifier?.externalRefs?.stripe || {};
@@ -73,17 +79,6 @@ export const handler = apiHandler<api.createSubscription.Interface>(async (_, re
       email,
     }
   );
-
-  // const orderPaid = await orderRepo.updateItem(
-  //   { tenantId, orderId: request.body.orderId },
-  //   {
-  //     subscriptionId: id,
-  //     orderStatus: 'SUCCESS',
-  //     orderType: 'INCOME',
-  //     orderSuccessAt: new Date().toISOString(),
-  //   }
-  // );
-  // dispatchEvent<orderIncomePaid.Event>(orderIncomePaid.eventConfig, orderPaid as orderIncomePaid.Event['payload']);
 
   await dispatchEvent<event.Subscription.Created.Event>(event.Subscription.Created.eventConfig, {
     customerId: tenantId,

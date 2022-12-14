@@ -69,7 +69,7 @@ export class Order extends Service<GlobalProps, OrderParams> {
       table: this.apiAggregate.table,
       handlers: {
         eventInvoiceSuccess: {
-          tablePermission: 'none',
+          tablePermission: 'readWrite',
           name: 'event-invoice-success',
           environment: {
             PROJECT_NAME: this.props.projectName,
