@@ -1,7 +1,7 @@
 import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
 import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
 import * as api from '../../catalog/api';
-import { orderIncomeExpired } from '../../catalog/event/income';
+import { orderIncomePending } from '../../catalog/event/income';
 import { createOrder } from '../../lib';
 import { orderRepo } from '../../repository';
 import { generateId } from '../../utils/generate-id';
@@ -28,9 +28,9 @@ export const handler = apiHandler<api.createOrderIncome.Interface>(async (_, req
       orderType: 'INCOME',
     }
   );
-  await dispatchEvent<orderIncomeExpired.Event>(
-    orderIncomeExpired.eventConfig,
-    order as orderIncomeExpired.Event['payload']
+  await dispatchEvent<orderIncomePending.Event>(
+    orderIncomePending.eventConfig,
+    order as orderIncomePending.Event['payload']
   );
   return order;
 }, api.createOrderIncome.config);

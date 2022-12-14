@@ -66,6 +66,7 @@ export const handler = eventHandler<PaymentFailed.Event | Paid.Event>(async (eve
           },
         },
       ],
+      expiredAt: null,
       tenantId: customer.tenantId,
       orderId: payload?.lines?.data?.[0].metadata.orderId || generateId(),
       createdAt: new Date(),

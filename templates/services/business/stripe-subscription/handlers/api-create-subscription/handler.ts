@@ -22,7 +22,7 @@ export const handler = apiHandler<api.createSubscription.Interface>(async (_, re
     throw new ApiError('Order type is not income');
   }
 
-  if (order.orderStatus !== 'SUCCESS' || new Date().getTime() >= (order.expiredAt as number)) {
+  if (order.orderStatus !== 'PENDING' || new Date().getTime() >= (order.expiredAt as number)) {
     throw new ApiError('Order status is not pending or expired');
   }
   const { identifier } = order.orderItem[0] as OrderItem;
