@@ -1,7 +1,7 @@
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
 import { FullLocation } from 'services/business/identity/entities/user-full-location';
 import { OrderCreate, OrderIncome } from '../../entities';
-import { OrderFrequencyProduct, OrderItem } from '../../entities/order-item';
+import { OrderItem } from '../../entities/order-item';
 import { OrderSeller } from '../../entities/order-seller';
 import { orderTemporalSubStrategy } from '../../platform/order-pending-sub';
 import { orderTemporalStrategy } from '../../platform/stripe-create-invoice';
@@ -9,10 +9,8 @@ import { orderTemporalStrategy } from '../../platform/stripe-create-invoice';
 export type CreateOrderIncomePending = {
   orderId: string;
   orderItem: OrderItem[];
-  orderFrequency?: OrderFrequencyProduct;
-  orderQuantity: number;
   seller?: OrderSeller;
-  billingAddress: FullLocation;
+  billingAddress?: FullLocation;
   isSubscription?: boolean;
 };
 export type CreateOrderIncomePendingResponse = Omit<
@@ -26,6 +24,7 @@ export const createOrderIncomePending = async (
   if (isSubscription) {
     return orderTemporalSubStrategy(
       {
+        orderId,
         billingAddress,
         seller,
         orderItem,

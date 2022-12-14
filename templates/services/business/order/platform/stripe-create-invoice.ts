@@ -17,17 +17,17 @@ export const orderTemporalStrategy = async (
     orderItem,
     seller,
     billingAddress,
-  }: { orderId: string; orderItem: OrderItem[]; seller?: OrderSeller; billingAddress: FullLocation },
+  }: { orderId: string; orderItem: OrderItem[]; seller?: OrderSeller; billingAddress?: FullLocation },
   claims: UserClaims
 ): Promise<CreateOrderIncomePendingResponse> => {
   const secrets = await getSecret<secretsStripe.stripe.Secret>(secretsStripe.stripe.secretConfig);
 
   const address = {
-    postal_code: billingAddress.zipCode,
-    line1: billingAddress.address,
-    city: billingAddress.city,
-    state: billingAddress.state,
-    country: billingAddress.countryCode,
+    postal_code: billingAddress?.zipCode,
+    line1: billingAddress?.address,
+    city: billingAddress?.city,
+    state: billingAddress?.state,
+    country: billingAddress?.countryCode,
   };
 
   const { stripeId } = await getOrCreateCustomer(

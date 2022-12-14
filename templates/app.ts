@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
-import { App } from 'aws-cdk-lib';
 import { getGlobalProps } from '@sinapsis-co/cc-infra-v2/common/synth/get-global-props';
-import { globalConstConfig, globalEnvConfig, globalDeployTargetConfig } from './config';
+import { App } from 'aws-cdk-lib';
+import { globalConstConfig, globalDeployTargetConfig, globalEnvConfig } from './config';
 
-import { SupportServices } from './services/support';
 import { BusinessServices } from './services/business';
 import { FrontendServices } from './services/frontend';
+import { SupportServices } from './services/support';
 
 try {
   const app = new App();
@@ -19,6 +19,7 @@ try {
 
   app.synth();
 } catch (error: any) {
+  console.log(error);
   console.log(`Synth Error: ${error.message}`);
   process.exit(1);
 }

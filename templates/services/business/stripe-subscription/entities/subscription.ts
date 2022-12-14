@@ -21,13 +21,14 @@ export type SubscriptionBuilder = EntityBuilder<{
     seats: number;
     trialDaysDuration?: number;
     coupon?: string;
-    product?: Product;
-    price?: Price;
+    product?: Partial<Product>;
+    price?: Partial<Price>;
     stripeId?: string;
     paymentMethodAttached?: string;
   };
   key: {
-    customerId: string;
+    tenantId: string;
+    subscriptionId: string;
   };
   timers: {
     createdAt: Date;
@@ -38,7 +39,7 @@ export type SubscriptionBuilder = EntityBuilder<{
   storeMapping: {
     key: {
       pk: string;
-      sk: 'SUBSCRIPTION';
+      sk: string;
     };
     timers: {
       createdAt: string;

@@ -6,13 +6,13 @@ export const subscriptionRepository = repository<SubscriptionBuilder>({
   repoName: 'subscription',
 
   keySerialize: (key: SubscriptionBuilder['key']): SubscriptionBuilder['storeMapping']['key'] => {
-    return { pk: key.customerId, sk: 'SUBSCRIPTION' };
+    return { pk: key.tenantId, sk: key.subscriptionId };
   },
 
   entitySerialize: (key: SubscriptionBuilder['key'], entityCreate: SubscriptionCreate): SubscriptionStore => {
     const mappedKey: SubscriptionBuilder['storeMapping']['key'] = {
-      pk: key.customerId,
-      sk: 'SUBSCRIPTION',
+      pk: key.tenantId,
+      sk: key.subscriptionId,
     };
     const timers: SubscriptionBuilder['storeMapping']['timers'] = {
       createdAt: new Date().toISOString(),
@@ -32,7 +32,8 @@ export const subscriptionRepository = repository<SubscriptionBuilder>({
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { pk, sk, createdAt, updatedAt, ...att } = entityStore;
     return {
-      customerId: pk,
+      tenantId: pk,
+      subscriptionId: sk,
       ...att,
       createdAt: new Date(createdAt),
       updatedAt: new Date(updatedAt),

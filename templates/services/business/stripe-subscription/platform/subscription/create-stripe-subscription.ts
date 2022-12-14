@@ -6,7 +6,7 @@ import { Stripe, StripeRepo } from 'services/support/stripe/platform';
 export interface ParamsCreateStripeSubscription {
   customer: Customer;
   email: string;
-  price: PriceCreate;
+  price: Pick<PriceCreate, 'externalRefs'>;
   trialDaysDuration?: number;
   paymentMethod?: string;
 }
@@ -41,9 +41,10 @@ export const createStripeSubscription =
     if (paymentMethod) {
       const { data } = await stripe.customers.listPaymentMethods(customer.stripeId!, { type: 'card' });
       if (!data.find((e) => e.id === paymentMethod)) {
-        await stripe.paymentMethods.attach(paymentMethod, {
+        const { id } = await stripe.paymentMethods.attach(paymentMethod, {
           customer: customer.stripeId,
         });
+        paymentMethod = id;
       }
     }
 

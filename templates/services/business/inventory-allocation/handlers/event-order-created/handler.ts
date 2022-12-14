@@ -8,24 +8,29 @@ import { inventoryAllocationRepo } from '../../repository/inventory-allocation-r
 
 export const handler = eventHandler<orderIncomePending.Event>(async (event) => {
   const { tenantId, orderId } = event.detail;
-  const categoryId = event.detail.orderItem[0].orderItemCategory || '';
+
   //TODO: filter inventory not_available
-  const inventory = await getFirstInventoryByCategoryId(categoryId, tenantId);
+  await Promise.all(
+    event.detail.orderItem.map(async (orderItem) => {
+      const categoryId = orderItem.orderItemCategory as string;
+      const inventory = await getFirstInventoryByCategoryId(categoryId, tenantId);
 
-  const inventoryAllocation = await inventoryAllocationRepo.createItem(
-    { tenantId, id: uuid() },
-    {
-      userId: tenantId,
-      orderId,
-      orders: [orderId],
-      inventoryId: inventory.id,
-      inventory: { product: inventory.product!, place: inventory.place! },
-      status: 'RESERVED',
-    }
-  );
+      const inventoryAllocation = await inventoryAllocationRepo.createItem(
+        { tenantId, id: uuid() },
+        {
+          userId: tenantId,
+          orderId,
+          orders: [orderId],
+          inventoryId: inventory.id,
+          inventory: { product: inventory.product!, place: inventory.place! },
+          status: 'RESERVED',
+        }
+      );
 
-  await dispatchEvent<inventoryAllocationEvent.created.Event>(
-    inventoryAllocationEvent.created.eventConfig,
-    inventoryAllocation
+      await dispatchEvent<inventoryAllocationEvent.created.Event>(
+        inventoryAllocationEvent.created.eventConfig,
+        inventoryAllocation
+      );
+    })
   );
 });

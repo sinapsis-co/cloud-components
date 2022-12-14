@@ -1,6 +1,8 @@
 import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
 import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
 import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
+import { OrderItem } from 'services/business/order/entities/order-item';
+import { orderRepo } from 'services/business/order/repository';
 import { getOrCreateCustomer } from 'services/business/stripe-customer/lib';
 import { secretsStripe } from 'services/support/stripe/catalog';
 import * as api from '../../catalog/api';
@@ -9,11 +11,16 @@ import { parseStripeDate } from '../../lib/parse-stripe-date';
 import { stripeSubscription } from '../../platform';
 import { subscriptionRepository } from '../../repository';
 
-const TRIAL_DURATION_IN_DAYS = Number(process.env.TRIAL_DURATION_IN_DAYS || 7);
+const TRIAL_DURATION_IN_DAYS = Number(process.env.TRIAL_DURATION_IN_DAYS || 0);
 
 export const handler = apiHandler<api.createSubscription.Interface>(async (_, request) => {
   const { tenantId, email } = request.claims;
-  const { product, price, paymentMethodId, coupon } = request.body;
+  const order = await orderRepo.getItem({ tenantId, orderId: request.body.orderId });
+  if (order.orderType !== 'INCOME') {
+    throw new Error('Order type is not income');
+  }
+  const { identifier } = order.orderItem[0] as OrderItem;
+  const { productId, priceId } = identifier?.externalRefs?.stripe || {};
 
   const secrets = await getSecret<secretsStripe.stripe.Secret>(secretsStripe.stripe.secretConfig);
   const customer = await getOrCreateCustomer({
@@ -24,30 +31,40 @@ export const handler = apiHandler<api.createSubscription.Interface>(async (_, re
 
   const { create, retrievePaymentMethod } = stripeSubscription({ secrets });
   let paymentMethodAttached: string | undefined;
-  if (paymentMethodId) {
-    const stripePaymentMethod = await retrievePaymentMethod(paymentMethodId);
+  if (request.body.paymentMethodId) {
+    const stripePaymentMethod = await retrievePaymentMethod(request.body.paymentMethodId);
     paymentMethodAttached = stripePaymentMethod.card?.last4;
   }
 
   const { status, current_period_end, id } = await create({
     customer,
-    price,
+    price: {
+      externalRefs: [
+        {
+          id: priceId as string,
+          provider: 'stripe',
+        },
+      ],
+    },
     email,
     trialDaysDuration: TRIAL_DURATION_IN_DAYS,
-    paymentMethod: paymentMethodId,
+    paymentMethod: request.body.paymentMethodId,
   });
 
   const subscription = await subscriptionRepository.createItem(
-    { customerId: tenantId },
+    { tenantId, subscriptionId: id },
     {
       cancelAtEnd: false,
       status: status,
       seats: 1,
       currentPeriodEnd: parseStripeDate(current_period_end),
       trialDaysDuration: TRIAL_DURATION_IN_DAYS,
-      coupon,
-      product,
-      price,
+      product: {
+        id: productId as string,
+      },
+      price: {
+        id: priceId as string,
+      },
       stripeId: id,
       paymentMethodAttached,
       email,

@@ -2,10 +2,11 @@ import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform-v
 import { Schemy } from '@sinapsis-co/cc-platform-v2/lib/schemy';
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
 import { Order } from '../../entities';
+import { OrderItem } from '../../entities/order-item';
 
 export type BodyCreateIncome = {
-  orderQuantity: number;
   isSubscription?: boolean;
+  orderItem: OrderItem[];
 };
 
 export type Interface = ApiInterface<{
@@ -27,16 +28,8 @@ export const config: ApiConfig<Interface> = {
       type: Boolean,
       required: false,
     },
-    orderQuantity: {
-      type: Number,
-      required: true,
-      min: 1,
-      custom: (value: string) => {
-        if (Number(value) % 1 !== 0) {
-          return 'OrderQuantity must be an integer or is negative';
-        }
-        return true;
-      },
+    orderItem: {
+      type: Array,
     },
   }),
 };

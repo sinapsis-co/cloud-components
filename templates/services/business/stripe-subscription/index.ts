@@ -6,11 +6,13 @@ import { Duration } from 'aws-cdk-lib';
 import { GlobalProps } from 'config/config-type';
 import { GlobalServiceDependencies } from '..';
 import { Webhook } from '../../support/stripe/catalog/event';
+import { Order } from '../order';
 import { StripeCustomer } from '../stripe-customer';
 import { api, event } from './catalog';
 
 export type StripeServiceParams = {
   stripeCustomer: StripeCustomer;
+  serviceOrder: Order;
 } & GlobalServiceDependencies;
 
 export class StripeSubscription extends Service<GlobalProps, StripeServiceParams> {
@@ -36,6 +38,13 @@ export class StripeSubscription extends Service<GlobalProps, StripeServiceParams
             this.props.stripeService.SecretReader(),
             (lambdaFunction) =>
               ServiceTable.addTable(lambdaFunction, this.props.stripeCustomer.table, 'readWrite', 'CUSTOMER_TABLE'),
+            (lambdaFunction) =>
+              ServiceTable.addTable(
+                lambdaFunction,
+                this.props.serviceOrder.apiAggregate.table,
+                'readWrite',
+                'ORDER_TABLE'
+              ),
           ],
         },
         updateSubscription: {

@@ -8,17 +8,29 @@ import { OrderSeller } from '../entities/order-seller';
 import { CreateOrderIncomePendingResponse } from '../lib/create-order/create-order-pending-income';
 
 export const orderTemporalSubStrategy = async (
-  { orderItem, seller, billingAddress }: { orderItem: OrderItem[]; seller?: OrderSeller; billingAddress: FullLocation },
+  {
+    orderItem: orderItems,
+    seller,
+    billingAddress,
+    orderId,
+  }: { orderItem: OrderItem[]; seller?: OrderSeller; billingAddress?: FullLocation; orderId: string },
   claims: UserClaims
 ): Promise<CreateOrderIncomePendingResponse> => {
   const secrets = await getSecret<secretsStripe.stripe.Secret>(secretsStripe.stripe.secretConfig);
-
+  const orderItem = orderItems.map((item, i) => {
+    return {
+      ...item,
+      orderItemNumber: item.orderItemNumber || `${orderId}-${i}`,
+      orderItemSubTotal: item.orderItemSubTotal || 0,
+      orderQuantity: item.orderQuantity || 0,
+    };
+  });
   const address = {
-    postal_code: billingAddress.zipCode,
-    line1: billingAddress.address,
-    city: billingAddress.city,
-    state: billingAddress.state,
-    country: billingAddress.countryCode,
+    postal_code: billingAddress?.zipCode,
+    line1: billingAddress?.address,
+    city: billingAddress?.city,
+    state: billingAddress?.state,
+    country: billingAddress?.countryCode,
   };
 
   const { stripeId } = await getOrCreateCustomer(
@@ -45,12 +57,9 @@ export const orderTemporalSubStrategy = async (
     orderPlatformFee: 0,
     customerId: claims.sub,
     priceCurrency: 'USD',
-    orderTotal: 0,
-    orderSubTotal: 0,
+    orderTotal: orderItem.reduce((acc, item) => acc + (item.orderItemSubTotal * item.orderQuantity || 0), 0),
+    orderSubTotal: orderItem.reduce((acc, item) => acc + (item.orderItemSubTotal * item.orderQuantity || 0), 0),
     orderTax: 0,
-    partOfInvoice: {
-      invoiceId: '',
-    },
     identifier: {
       stripeId,
     },

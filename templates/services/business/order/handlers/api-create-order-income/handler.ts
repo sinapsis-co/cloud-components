@@ -7,22 +7,20 @@ import { orderRepo } from '../../repository';
 import { generateId } from '../../utils/generate-id';
 
 export const handler = apiHandler<api.createOrderIncome.Interface>(async (_, request) => {
-  const { sub } = request.claims;
+  const { tenantId } = request.claims;
 
   const orderId = generateId();
 
   const orderPending = await createOrder.income.pending(
     {
       orderId,
-      billingAddress: {},
-      orderItem: [],
-      orderQuantity: request.body.orderQuantity!,
+      orderItem: request.body.orderItem,
       isSubscription: request.body.isSubscription,
     },
     request.claims
   );
   const order = await orderRepo.createItem(
-    { tenantId: sub, orderId },
+    { tenantId, orderId },
     {
       ...orderPending,
       orderStatus: 'PENDING',

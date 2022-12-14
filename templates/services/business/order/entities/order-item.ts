@@ -7,6 +7,12 @@ export type OrderItemIdentifier = {
     invoiceId: string;
     invoiceItemId: string;
   };
+  externalRefs: {
+    stripe: {
+      productId: string;
+      priceId: string;
+    };
+  };
 };
 
 export type OrderItem = {

@@ -17,6 +17,7 @@ import { BaseEvent } from './base-event';
 import { Category } from './category';
 import { Inventory } from './inventory';
 import { InventoryAllocation } from './inventory-allocation';
+import { Order } from './order';
 import { Place } from './place';
 import { Product } from './product';
 import { SearchService } from './search';
@@ -50,6 +51,7 @@ export class BusinessServices {
   public readonly stripeCustomer: StripeCustomer;
   public readonly stripeSubscription: StripeSubscription;
   public readonly stripeProduct: StripeProduct;
+  public readonly order: Order;
 
   constructor(scope: Construct, globalProps: GlobalProps, dependencies: Omit<GlobalServiceDependencies, 'identity'>) {
     this.identity = new Identity(scope, globalProps, dependencies);
@@ -76,10 +78,16 @@ export class BusinessServices {
       ...globalDeps,
       inventoryService: this.inventory,
     });
+
     this.stripeCustomer = new StripeCustomer(scope, globalProps, { ...globalDeps });
+    this.order = new Order(scope, globalProps, {
+      ...globalDeps,
+      stripeCustomer: this.stripeCustomer,
+    });
     this.stripeSubscription = new StripeSubscription(scope, globalProps, {
       ...globalDeps,
       stripeCustomer: this.stripeCustomer,
+      serviceOrder: this.order,
     });
     this.stripeProduct = new StripeProduct(scope, globalProps, { ...globalDeps });
   }
