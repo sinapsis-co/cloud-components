@@ -7,7 +7,6 @@ export type Interface = ApiInterface<{
     response: Inventory;
     pathParams: { id: string };
     body: {
-        status: 'AVAILABLE' | 'NOT_AVAILABLE' | 'EXPIRED',
         placeId: string
     };
     claims: UserClaims;
@@ -21,7 +20,6 @@ export const config: ApiConfig<Interface> = {
     path: '/{id}',
     tablePermission: 'readWrite',
     schema: Schemy.schema<Interface['body']>({
-        status: { type: String, required: false },
         placeId: { type: String, required: false }
     }),
 };

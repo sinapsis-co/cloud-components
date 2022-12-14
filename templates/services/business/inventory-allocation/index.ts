@@ -9,8 +9,7 @@ import { GlobalProps } from '../../../config/config-type';
 import { Inventory } from '../inventory';
 import { orderIncomeExpired, orderIncomePaid, orderIncomePending } from '../order/catalog/event/income';
 import { inventoryAllocationApi } from './catalog';
-
-export const BY_ORDER_ID_IDX_NAME = 'byOrderId';
+import { BY_ORDER_ID_IDX_NAME } from './repository/gsi';
 
 export type InventoryAllocationParams = { inventoryService: Inventory } & GlobalServiceDependencies;
 

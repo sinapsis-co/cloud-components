@@ -10,8 +10,9 @@ export const handler = apiHandler<inventoryApi.deleteInventory.Interface>(async 
 
     const inventory = await inventoryRepo.checkItemExists({ id: req.pathParams.id, tenantId: tenant });
 
-    if (!inventory.exists) throw new ApiError('INVENTORY_NOT_FOUND', 404);
-    if (inventory.entity?.deleted) throw new ApiError('INVENTORY_ALREADY_DELETED', 400);
+    if (!inventory.exists) throw new ApiError('INVENTORY_NOT_FOUND', 404, `inventoryId: ${req.pathParams.id}`);
+    if (inventory.entity?.deleted) throw new ApiError('INVENTORY_ALREADY_DELETED', 400, `inventoryId: ${req.pathParams.id}`);
+    if (inventory.entity?.status === 'NOT_AVAILABLE') throw new ApiError('INVENTORY_RESERVED', 400, `inventoryId: ${req.pathParams.id}`);
 
     const result = await inventoryRepo.logicalDeleteItem({ id: req.pathParams.id, tenantId: tenant });
 

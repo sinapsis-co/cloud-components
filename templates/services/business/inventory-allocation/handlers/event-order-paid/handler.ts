@@ -9,6 +9,8 @@ import { inventoryAllocationRepo } from '../../repository/inventory-allocation-r
 export const handler = eventHandler<orderIncomePaid.Event>(async (event) => {
   const { tenantId, orderId, subscriptionId } = event.detail;
 
+  //TODO: add logic when subscription is renovated
+
   const allocationInventory = await getAllocationInventoryByOrder(orderId, tenantId);
 
   const inventoryAllocation = await inventoryAllocationRepo.updateItem(

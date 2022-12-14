@@ -1,6 +1,6 @@
 import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
-import { BY_CATEGORY_ID_IDX_NAME } from 'services/business/inventory';
 import { Inventory } from 'services/business/inventory/entities';
+import { BY_CATEGORY_ID_IDX_NAME } from 'services/business/inventory/repository/gsi';
 import { inventoryRepo } from 'services/business/inventory/repository/inventory';
 
 export const getFirstInventoryByCategoryId = async (categoryId: string, tenantId: string): Promise<Inventory> => {
@@ -10,13 +10,16 @@ export const getFirstInventoryByCategoryId = async (categoryId: string, tenantId
     {
       IndexName: BY_CATEGORY_ID_IDX_NAME,
       KeyConditionExpression: '#pk = :pk AND #categoryId = :categoryId',
+      FilterExpression: '#status = :status',
       ExpressionAttributeNames: {
         '#pk': 'pk',
         '#categoryId': 'categoryId',
+        '#status': 'status',
       },
       ExpressionAttributeValues: {
         ':pk': tenantId,
         ':categoryId': categoryId,
+        ':status': 'AVAILABLE',
       },
       TableName: process.env.INVENTORY_TABLE,
     }

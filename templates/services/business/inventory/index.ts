@@ -9,8 +9,7 @@ import { inventoryAllocationEvent } from '../inventory-allocation/catalog';
 import { Place } from '../place';
 import { Product } from '../product';
 import { inventoryApi } from './catalog';
-
-export const BY_CATEGORY_ID_IDX_NAME = 'byCategoryId';
+import { BY_CATEGORY_ID_IDX_NAME } from './repository/gsi';
 
 export type InventoryParams = {
   productService: Product;
@@ -84,9 +83,8 @@ export class Inventory extends Service<GlobalProps, InventoryParams> {
           name: 'event-inventory-allocation-expired',
           eventConfig: [inventoryAllocationEvent.expired.eventConfig],
           tablePermission: 'readWrite',
-        }
+        },
       },
     });
-
   }
 }

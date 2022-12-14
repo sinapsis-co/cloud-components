@@ -12,9 +12,7 @@ export const handler = apiHandler<inventoryApi.updateInventory.Interface>(async 
 
     if (!inventory.exists) throw new ApiError('INVENTORY_NOT_FOUND', 404);
     if (inventory.entity?.deleted) throw new ApiError('INVENTORY_DELETED', 400);
-
-    //TODO: validate if the status is the same to avoid emit event
-    //TODO: validate if the inventory is assigned (circular dependency) or validate from the frontend?
+    if (inventory.entity?.status === 'NOT_AVAILABLE') throw new ApiError('INVENTORY_RESERVED', 400, `inventoryId: ${req.pathParams.id}`);
 
     const result = await inventoryRepo.updateItem({ id: req.pathParams.id, tenantId: tenant }, { ...req.body });
 
