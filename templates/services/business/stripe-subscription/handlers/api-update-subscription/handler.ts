@@ -17,7 +17,7 @@ export const handler = apiHandler<api.updateSubscription.Interface>(async (_, re
   const { update, paymentMethods } = stripeSubscription({ secrets });
 
   const [originalSubscription, customer] = await Promise.all([
-    subscriptionRepository.getItem({ customerId: tenantId }),
+    subscriptionRepository.getItem({ tenantId, subscriptionId: request.pathParams.subscriptionId }),
     customerRepository.getItem({ tenantId }),
   ]);
 
@@ -47,7 +47,10 @@ export const handler = apiHandler<api.updateSubscription.Interface>(async (_, re
     changes.paymentMethodAttached = stripePaymentMethod.card?.last4;
   }
 
-  const updatedSubscription = await subscriptionRepository.updateItem({ customerId: tenantId }, changes);
+  const updatedSubscription = await subscriptionRepository.updateItem(
+    { subscriptionId: request.pathParams.subscriptionId, tenantId },
+    changes
+  );
 
   await dispatchEvent<event.Subscription.Updated.Event>(event.Subscription.Updated.eventConfig, {
     customerId: tenantId,

@@ -54,6 +54,8 @@ export const handler = apiHandler<api.createSubscription.Interface>(async (_, re
   const subscription = await subscriptionRepository.createItem(
     { tenantId, subscriptionId: id },
     {
+      orderId: request.body.orderId,
+      order: { ...order, subscriptionId: id },
       cancelAtEnd: false,
       status: status,
       seats: 1,

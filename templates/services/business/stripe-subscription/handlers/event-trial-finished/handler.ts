@@ -11,11 +11,14 @@ import { subscriptionRepository } from '../../repository';
  * @param {string} event.detail.customerId - The customer ID (tenantId) of the subscription to cancel.
  */
 export const handler = eventHandler<eventCatalog.Subscription.TrialFinished.Event>(async (event) => {
-  const { customerId } = event.detail;
+  const { customerId, subscriptionId } = event.detail;
 
   const secrets = await getSecret<secretsStripe.stripe.Secret>(secretsStripe.stripe.secretConfig);
 
-  const subscription = await subscriptionRepository.updateItem({ customerId }, { cancelAtEnd: true });
+  const subscription = await subscriptionRepository.updateItem(
+    { tenantId: customerId, subscriptionId: subscriptionId },
+    { cancelAtEnd: true }
+  );
 
   if (subscription.stripeId) {
     // cancel subscription immediately

@@ -1,4 +1,5 @@
 import { Entity, EntityBuilder, EntityCreate, EntityStore } from '@sinapsis-co/cc-platform-v2/repository/interface';
+import { Order } from 'services/business/order/entities';
 import { Price, Product } from 'services/business/stripe-product/entities';
 
 export type SubscriptionStatus =
@@ -13,6 +14,8 @@ export type SubscriptionStatus =
 export type SubscriptionBuilder = EntityBuilder<{
   name: 'subscription';
   body: {
+    orderId?: string;
+    order?: Partial<Order>;
     deleteAt?: Date;
     currentPeriodEnd?: Date;
     cancelAtEnd: boolean;

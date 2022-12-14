@@ -4,10 +4,10 @@ export const frequencyTypes: OrderFrequencyProduct[] = ['hourly', 'daily', 'week
 export type OrderItemIdentifier = {
   // TODO: add more types
   partOfInvoice?: {
-    invoiceId: string;
-    invoiceItemId: string;
+    invoiceId?: string;
+    invoiceItemId?: string;
   };
-  externalRefs: {
+  externalRefs?: {
     stripe: {
       productId: string;
       priceId: string;

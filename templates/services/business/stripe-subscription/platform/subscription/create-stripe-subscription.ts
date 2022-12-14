@@ -1,4 +1,5 @@
 import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
+import { Order, OrderIncome } from 'services/business/order/entities';
 import { Customer } from 'services/business/stripe-customer/entities/customer';
 import { PriceCreate } from 'services/business/stripe-product/entities/price';
 import { Stripe, StripeRepo } from 'services/support/stripe/platform';
@@ -9,11 +10,13 @@ export interface ParamsCreateStripeSubscription {
   price: Pick<PriceCreate, 'externalRefs'>;
   trialDaysDuration?: number;
   paymentMethod?: string;
+  order?: Order & OrderIncome;
 }
 
 export const createStripeSubscription =
   (stripe: StripeRepo) =>
   async ({
+    order,
     customer,
     email,
     price,
@@ -54,6 +57,10 @@ export const createStripeSubscription =
       items: [{ price: stripePrice.id, quantity: 1 }],
       metadata: {
         customerId: customer.tenantId,
+        initialOrder: order?.orderId as string,
+        orderId: order?.orderId as string,
+        orderItemNumber: order?.orderItem[0].orderItemNumber as string,
+        orderItemCategory: order?.orderItem[0].orderItemCategory as string,
       },
       default_payment_method: paymentMethod,
     });

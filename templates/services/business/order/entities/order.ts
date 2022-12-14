@@ -60,7 +60,7 @@ export type OrderBody = {
   customer: OrderCustomer;
   customerId: string;
   error?: any;
-  identifier?: Record<string, string>;
+  identifier?: Record<string, any>;
   orderType: OrderType;
   description?: string;
 };

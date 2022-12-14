@@ -14,10 +14,11 @@ export const handler = eventHandler<Webhook.SubscriptionUpdated.Event>(async (ev
   const previousAtt = event.detail.data.previous_attributes;
 
   const customerId = subscription.metadata.customerId;
+  const tenantId = subscription.metadata.tenantId;
   const status: SubscriptionStatus = subscription.status;
 
   await subscriptionRepository.updateItem(
-    { customerId },
+    { tenantId, subscriptionId: subscription.id },
     {
       currentPeriodEnd: parseStripeDate(subscription.current_period_end),
       status: subscription.status,
@@ -40,6 +41,7 @@ export const handler = eventHandler<Webhook.SubscriptionUpdated.Event>(async (ev
     dispatcher.push(
       dispatchEvent<Event.Subscription.TrialFinished.Event>(Event.Subscription.TrialFinished.eventConfig, {
         customerId,
+        subscriptionId: subscription.id,
       })
     );
   }

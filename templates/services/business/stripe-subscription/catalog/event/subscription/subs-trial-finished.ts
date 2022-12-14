@@ -4,6 +4,7 @@ export type Event = EventInterface<{
   name: 'stripe-connector:subscription:trial-finished';
   payload: {
     customerId: string;
+    subscriptionId: string;
   };
 }>;
 

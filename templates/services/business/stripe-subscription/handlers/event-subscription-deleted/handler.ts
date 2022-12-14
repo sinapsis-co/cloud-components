@@ -12,10 +12,13 @@ import { subscriptionRepository } from '../../repository';
  */
 export const handler = eventHandler<Webhook.SubscriptionDeleted.Event>(async (event) => {
   const subscription: StripeClient.Subscription = event.detail.data.object as StripeClient.Subscription;
-  const customerId = subscription.metadata.customerId;
+  const customerId = subscription.metadata.tenantId;
 
   // when a subscription is deleted, the status goes from active to canceled
-  await subscriptionRepository.updateItem({ customerId }, { status: subscription.status });
+  await subscriptionRepository.updateItem(
+    { tenantId: customerId, subscriptionId: subscription.id },
+    { status: subscription.status }
+  );
 
   await dispatchEvent<Event.Subscription.StatusUpdated.Event>(Event.Subscription.StatusUpdated.eventConfig, {
     customerId,

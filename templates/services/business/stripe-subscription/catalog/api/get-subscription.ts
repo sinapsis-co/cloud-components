@@ -3,7 +3,9 @@ import { Subscription } from '../../entities/subscription';
 
 export type Interface = ApiInterface<{
   response: Subscription;
-  pathParams: EmptyObject;
+  pathParams: {
+    subscriptionId: string;
+  };
   body: EmptyObject;
   claims: { tenantId: string };
   queryParams: EmptyObject;
@@ -13,6 +15,6 @@ export const config: ApiConfig<Interface> = {
   name: 'api-get-subscription',
   method: 'GET',
   basePath: 'stripe-subscription',
-  path: '/',
+  path: '/{subscriptionId}',
   tablePermission: 'read',
 };

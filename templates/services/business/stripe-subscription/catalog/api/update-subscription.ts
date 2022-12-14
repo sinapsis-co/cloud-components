@@ -6,7 +6,9 @@ import { Subscription } from '../../entities/subscription';
 
 export type Interface = ApiInterface<{
   response: Subscription;
-  pathParams: EmptyObject;
+  pathParams: {
+    subscriptionId: string;
+  };
   body: {
     product: Omit<Product, 'prices'>;
     price: Price;

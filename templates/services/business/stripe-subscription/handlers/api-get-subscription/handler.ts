@@ -5,7 +5,10 @@ import { subscriptionRepository } from '../../repository';
 export const handler = apiHandler<api.getSubscription.Interface>(async (_, request) => {
   const { tenantId } = request.claims;
 
-  const subscription = await subscriptionRepository.getItem({ customerId: tenantId });
+  const subscription = await subscriptionRepository.getItem({
+    tenantId,
+    subscriptionId: request.pathParams.subscriptionId,
+  });
 
   return subscription;
 }, api.getSubscription.config);

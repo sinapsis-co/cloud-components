@@ -13,7 +13,7 @@ export const handler = apiHandler<api.cancelSubscription.Interface>(async (_, re
   const secrets = await getSecret<secretsStripe.stripe.Secret>(secretsStripe.stripe.secretConfig);
 
   const subscription = await subscriptionRepository.updateItem(
-    { customerId: tenantId },
+    { subscriptionId: request.pathParams.subscriptionId, tenantId },
     {
       cancelAtEnd: true,
     }
