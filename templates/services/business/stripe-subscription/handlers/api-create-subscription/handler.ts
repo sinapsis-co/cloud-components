@@ -49,6 +49,7 @@ export const handler = apiHandler<api.createSubscription.Interface>(async (_, re
     email,
     trialDaysDuration: TRIAL_DURATION_IN_DAYS,
     paymentMethod: request.body.paymentMethodId,
+    order,
   });
 
   const subscription = await subscriptionRepository.createItem(
@@ -72,6 +73,17 @@ export const handler = apiHandler<api.createSubscription.Interface>(async (_, re
       email,
     }
   );
+
+  // const orderPaid = await orderRepo.updateItem(
+  //   { tenantId, orderId: request.body.orderId },
+  //   {
+  //     subscriptionId: id,
+  //     orderStatus: 'SUCCESS',
+  //     orderType: 'INCOME',
+  //     orderSuccessAt: new Date().toISOString(),
+  //   }
+  // );
+  // dispatchEvent<orderIncomePaid.Event>(orderIncomePaid.eventConfig, orderPaid as orderIncomePaid.Event['payload']);
 
   await dispatchEvent<event.Subscription.Created.Event>(event.Subscription.Created.eventConfig, {
     customerId: tenantId,

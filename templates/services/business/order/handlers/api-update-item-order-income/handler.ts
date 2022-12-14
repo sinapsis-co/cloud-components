@@ -7,7 +7,7 @@ import { orderRepo } from '../../repository';
 import { ERROR_NOT_IS_PENDING_INCOME } from '../../utils/errors';
 
 export const handler = apiHandler<api.updateItemOrderIncome.Interface>(async (_, request) => {
-  const { sub } = request.claims;
+  const { tenantId: sub } = request.claims;
   const { orderId } = request.pathParams;
   const { orderItemNumber } = request.queryParams;
   const service = request.body;

@@ -18,6 +18,7 @@ export const handler = apiHandler<apiStripe.webhookHandler.Interface>(async (eve
   try {
     const stripeEvent = getStripeClient({ secrets }).constructEvent(payload, signature!);
 
+    console.log(eventsStripe.WebhookEvent.eventConfig(stripeEvent.type), JSON.stringify(stripeEvent));
     await dispatchEvent<eventsStripe.WebhookEvent.Event<string>>(
       eventsStripe.WebhookEvent.eventConfig(stripeEvent.type),
       stripeEvent

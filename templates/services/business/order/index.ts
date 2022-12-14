@@ -9,7 +9,7 @@ import { GlobalProps } from 'config/config-type';
 import { GlobalServiceDependencies } from '..';
 import { StripeCustomer } from '../stripe-customer';
 import { api } from './catalog';
-import { orderIncomePaid, orderProposalCreated } from './catalog/event/income';
+import { orderIncomeRegister } from './catalog/event/income';
 
 export type OrderParams = {
   stripeCustomer: StripeCustomer;
@@ -76,7 +76,7 @@ export class Order extends Service<GlobalProps, OrderParams> {
             WEBAPP_URL: getDomain(this.props.subdomain.webapp, this.props),
             MEDIA_URL: getDomain(this.props.subdomain.media, this.props),
           },
-          eventConfig: [orderIncomePaid.eventConfig, orderProposalCreated.eventConfig],
+          eventConfig: [orderIncomeRegister.eventConfig],
         },
       },
     });

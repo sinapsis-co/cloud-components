@@ -5,10 +5,11 @@ import { orderRepo } from '../../repository';
 import { generateId } from '../../utils/generate-id';
 
 export const handler = eventHandler<orderIncomeRegister.Event>(async (event) => {
+  console.log('event', JSON.stringify(event));
   const { tenantId, orderId, ...body } = event.detail;
   const checkOrder = await orderRepo.getItem({ tenantId, orderId }).catch(() => undefined);
   let order = checkOrder;
-  if (!checkOrder) {
+  if (!checkOrder || checkOrder.orderStatus === 'SUCCESS') {
     order = await orderRepo.createItem(
       { tenantId, orderId: generateId() },
       {

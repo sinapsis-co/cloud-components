@@ -3,7 +3,7 @@ import { listOrder } from '../../catalog/api';
 import { orderRepo } from '../../repository';
 
 export const handler = apiHandler<listOrder.Interface>(async (_, req) => {
-  const { sub: pk } = req.claims;
+  const { tenantId: pk } = req.claims;
   const { nextToken, type, from } = req.queryParams;
 
   const queryInput = {

@@ -1,5 +1,4 @@
 import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
-import { BY_STRIPE_ID_IDX_NAME } from '..';
 import { Customer } from '../entities/customer';
 import { customerRepository } from '../repository';
 
@@ -11,7 +10,7 @@ export const getCustomerByExternal = async (stripeId: string): Promise<Customer>
         limit: 1,
       },
       {
-        IndexName: BY_STRIPE_ID_IDX_NAME,
+        IndexName: 'byStripeId',
         KeyConditionExpression: '#stripeId = :stripeId',
         ExpressionAttributeNames: { '#stripeId': 'stripeId' },
         ExpressionAttributeValues: { ':stripeId': stripeId },

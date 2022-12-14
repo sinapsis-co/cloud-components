@@ -5,6 +5,7 @@ import { Duration } from 'aws-cdk-lib';
 import { AttributeType, ProjectionType, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { GlobalServiceDependencies } from '..';
 import { GlobalProps } from '../../../config/config-type';
+import { Paid, PaymentFailed } from '../.././support/stripe/catalog/event/webhook';
 import { userProfileRepository } from '../identity/repository/user-profile-repository';
 import { api } from './catalog';
 
@@ -48,6 +49,13 @@ export class StripeCustomer extends Service<GlobalProps, CustomerStripeParams> {
           timeout: Duration.seconds(5),
           modifiers: [this.props.stripeService.SecretReader()],
           eventConfig: [userProfileRepository.events.updated],
+        },
+        invoicePaid: {
+          tablePermission: 'readWrite',
+          name: 'event-invoice-paid',
+          timeout: Duration.seconds(30),
+          modifiers: [this.props.stripeService.SecretReader()],
+          eventConfig: [PaymentFailed.eventConfig, Paid.eventConfig],
         },
       },
     });
