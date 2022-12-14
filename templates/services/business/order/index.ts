@@ -1,9 +1,11 @@
 import { getDomain } from '@sinapsis-co/cc-infra-v2/common/naming/get-domain';
 import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
+import { CronAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/cron-function/cron-aggregate';
 import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/event-function/event-aggregate';
 import { ServiceTable } from '@sinapsis-co/cc-infra-v2/prefab/table/dynamo-table';
 import { Duration } from 'aws-cdk-lib';
+import { AttributeType, ProjectionType } from 'aws-cdk-lib/aws-dynamodb';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { GlobalProps } from 'config/config-type';
 import { GlobalServiceDependencies } from '..';
@@ -48,7 +50,6 @@ export class Order extends Service<GlobalProps, OrderParams> {
           ],
           timeout: Duration.seconds(10),
         },
-
         updateItemOrderIncome: {
           ...api.updateItemOrderIncome.config,
           timeout: Duration.seconds(5),
@@ -62,7 +63,26 @@ export class Order extends Service<GlobalProps, OrderParams> {
         },
       },
     });
-
+    this.apiAggregate?.table?.addGlobalSecondaryIndex({
+      indexName: 'orderStatus-index',
+      projectionType: ProjectionType.ALL,
+      partitionKey: {
+        name: 'orderStatus',
+        type: AttributeType.STRING,
+      },
+    });
+    new CronAggregate(this, {
+      baseFunctionFolder: __dirname,
+      eventBus: this.props.customEventBus.bus,
+      table: this.apiAggregate.table,
+      handlers: {
+        cronExpired: {
+          name: 'cron-order-expired',
+          cronOptions: { minute: '10', hour: '*/1', day: '*', month: '*', year: '*' },
+          tablePermission: 'readWrite',
+        },
+      },
+    });
     this.eventAggregate = new EventAggregate(this, {
       eventBus: this.props.customEventBus.bus,
       baseFunctionFolder: __dirname,

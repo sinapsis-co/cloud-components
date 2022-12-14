@@ -6,6 +6,7 @@ import { secretsStripe } from 'services/support/stripe/catalog';
 import { OrderItem } from '../entities/order-item';
 import { OrderSeller } from '../entities/order-seller';
 import { CreateOrderIncomePendingResponse } from '../lib/create-order/create-order-pending-income';
+import { addMinutes } from '../utils/add-days';
 
 export const orderTemporalSubStrategy = async (
   {
@@ -60,6 +61,7 @@ export const orderTemporalSubStrategy = async (
     orderTotal: orderItem.reduce((acc, item) => acc + (item.orderItemSubTotal * item.orderQuantity || 0), 0),
     orderSubTotal: orderItem.reduce((acc, item) => acc + (item.orderItemSubTotal * item.orderQuantity || 0), 0),
     orderTax: 0,
+    expiredAt: addMinutes(new Date(), Number(process.env.EXPIRED_MINUTES || 5)).getTime(),
     identifier: {
       stripeId,
     },

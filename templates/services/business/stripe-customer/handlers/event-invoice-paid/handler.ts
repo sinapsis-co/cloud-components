@@ -33,43 +33,7 @@ export const handler = eventHandler<PaymentFailed.Event | Paid.Event>(async (eve
         subscriptionId: payload.subscription as string,
       }
     );
-    console.log({
-      orderType: 'INCOME',
-      orderDate: new Date().toISOString(),
-      orderStatus: 'SUCCESS',
-      orderTotal: formatStripeToAmount(payload.total),
-      orderSubTotal: formatStripeToAmount(payload.subtotal),
-      orderTax: formatStripeToAmount(payload.tax || 0),
-      customerId: customer.tenantId,
-      priceCurrency: payload.currency.toUpperCase(),
-      subscriptionId: payload.subscription as string,
-      customer: {
-        id: customer.tenantId,
-        email: customer.email,
-        givenName: payload.customer_name?.split(' ')[0] || '',
-        familyName: payload.customer_name?.split(' ')[1] || '',
-      },
-      orderItem: [
-        {
-          orderItemNumber: payload.lines.data[0].metadata.orderItemNumber!,
-          orderItemCategory: payload.lines.data[0].metadata.orderItemCategory,
-          description: description,
-          name: payload.lines.data[0].description!,
-          orderItemSubTotal: formatStripeToAmount(payload.lines.data[0].amount || 0),
-          orderQuantity: payload.lines.data[0].quantity || 1,
-          metadata: payload.metadata || {},
-          identifier: {
-            partOfInvoice: {
-              invoiceId: payload.id!,
-            },
-          },
-        },
-      ],
-      tenantId: customer.tenantId,
-      orderId: payload?.lines?.data?.[0].metadata.orderId || generateId(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
+
     await dispatchEvent(orderIncomeRegister.eventConfig, {
       orderType: 'INCOME',
       orderDate: new Date().toISOString(),

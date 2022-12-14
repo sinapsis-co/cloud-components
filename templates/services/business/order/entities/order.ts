@@ -63,6 +63,7 @@ export type OrderBody = {
   identifier?: Record<string, any>;
   orderType: OrderType;
   description?: string;
+  expiredAt?: number;
 };
 
 export type OrderBuilder = EntityBuilder<{
