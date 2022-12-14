@@ -11,6 +11,7 @@ import { CdnMedia } from './cdn-media';
 import { Notifications } from './notifications';
 import { EventsAnalytics } from './events-analytics';
 import { IdentityBackoffice } from './identity-backoffice';
+import { StripeSupportService } from './stripe';
 
 export class SupportServices {
   public readonly deployPipeline: DeployPipeline;
@@ -22,7 +23,7 @@ export class SupportServices {
   public readonly customEventBus: CustomEventBus;
   public readonly notifications: Notifications;
   public readonly identityBackoffice: IdentityBackoffice;
-
+  public readonly stripeService: StripeSupportService;
   public readonly eventsAnalytics: EventsAnalytics;
 
   constructor(scope: Construct, globalProps: GlobalProps) {
@@ -51,5 +52,6 @@ export class SupportServices {
       dnsSubdomainCertificate: this.dnsSubdomainCertificate,
     });
     this.eventsAnalytics = new EventsAnalytics(scope, globalProps, { customEventBus: this.customEventBus });
+    this.stripeService = new StripeSupportService(scope, globalProps, this);
   }
 }

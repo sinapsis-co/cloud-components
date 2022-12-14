@@ -1,4 +1,4 @@
-import { Service, Construct } from '@sinapsis-co/cc-infra-v2/common/service';
+import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
 import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/event-function/event-aggregate';
 import { ServiceTable } from '@sinapsis-co/cc-infra-v2/prefab/table/dynamo-table';
@@ -7,7 +7,7 @@ import { AttributeType, ProjectionType } from 'aws-cdk-lib/aws-dynamodb';
 import { GlobalServiceDependencies } from '..';
 import { GlobalProps } from '../../../config/config-type';
 import { Inventory } from '../inventory';
-import { orderEvent } from '../order/catalog';
+import { orderIncomeExpired, orderIncomePaid, orderIncomePending } from '../order/catalog/event/income';
 import { inventoryAllocationApi } from './catalog';
 
 export const BY_ORDER_ID_IDX_NAME = 'byOrderId';
@@ -55,7 +55,7 @@ export class InventoryAllocation extends Service<GlobalProps, InventoryAllocatio
         orderCreated: {
           tablePermission: 'readWrite',
           name: 'event-order-created',
-          eventConfig: [orderEvent.created.eventConfig],
+          eventConfig: [orderIncomePending.eventConfig],
           modifiers: [
             (lambdaFunction) =>
               ServiceTable.addTable(
@@ -69,12 +69,12 @@ export class InventoryAllocation extends Service<GlobalProps, InventoryAllocatio
         orderUpdated: {
           tablePermission: 'readWrite',
           name: 'event-order-paid',
-          eventConfig: [orderEvent.paid.eventConfig],
+          eventConfig: [orderIncomePaid.eventConfig],
         },
         orderExpired: {
           tablePermission: 'readWrite',
           name: 'event-order-expired',
-          eventConfig: [orderEvent.expired.eventConfig],
+          eventConfig: [orderIncomeExpired.eventConfig],
         },
       },
     });

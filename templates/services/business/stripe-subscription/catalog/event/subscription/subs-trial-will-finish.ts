@@ -1,14 +1,14 @@
 import { EventConfig, EventInterface } from '@sinapsis-co/cc-platform-v2/catalog/event';
 
 export type Event = EventInterface<{
-  name: 'cc:order:order.expired';
+  name: 'stripe-connector:subscription:trial-will-finish';
   payload: {
-    orderId: string;
-    tenantId: string;
+    customerId: string;
+    leftDays: number;
   };
 }>;
 
 export const eventConfig: EventConfig<Event> = {
-  name: 'cc:order:order.expired',
-  source: 'cc',
+  name: 'stripe-connector:subscription:trial-will-finish',
+  source: 'app',
 };

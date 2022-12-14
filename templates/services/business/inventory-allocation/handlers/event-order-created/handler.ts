@@ -1,32 +1,36 @@
 import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
-import { orderEvent } from 'services/business/order/catalog';
+import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
+import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
+import { orderIncomePending } from 'services/business/order/catalog/event/income';
+import { inventoryAllocationEvent } from '../../catalog';
 import { getFirstInventoryByCategoryId } from '../../platform/list-inventories';
 import { inventoryAllocationRepo } from '../../repository/inventory-allocation-repository';
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
-import { inventoryAllocationEvent } from '../../catalog';
-import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
 
-export const handler = eventHandler<orderEvent.created.Event>(async (event) => {
-  const { tenantId, userId, id, category } = event.detail.order;
-  const categoryId = category?.id || '';
+export const handler = eventHandler<orderIncomePending.Event>(async (event) => {
+  const { tenantId, orderId } = event.detail;
 
   //TODO: filter inventory not_available
-  const inventory = await getFirstInventoryByCategoryId(categoryId, tenantId);
+  await Promise.all(
+    event.detail.orderItem.map(async (orderItem) => {
+      const categoryId = orderItem.orderItemCategory as string;
+      const inventory = await getFirstInventoryByCategoryId(categoryId, tenantId);
 
-  const inventoryAllocation = await inventoryAllocationRepo.createItem(
-    { tenantId, id: uuid() },
-    {
-      userId,
-      orderId: id,
-      orders: [id],
-      inventoryId: inventory.id,
-      inventory: { product: inventory.product!, place: inventory.place! },
-      status: 'RESERVED',
-    }
-  );
+      const inventoryAllocation = await inventoryAllocationRepo.createItem(
+        { tenantId, id: uuid() },
+        {
+          userId: tenantId,
+          orderId,
+          orders: [orderId],
+          inventoryId: inventory.id,
+          inventory: { product: inventory.product!, place: inventory.place! },
+          status: 'RESERVED',
+        }
+      );
 
-  await dispatchEvent<inventoryAllocationEvent.created.Event>(
-    inventoryAllocationEvent.created.eventConfig,
-    inventoryAllocation
+      await dispatchEvent<inventoryAllocationEvent.created.Event>(
+        inventoryAllocationEvent.created.eventConfig,
+        inventoryAllocation
+      );
+    })
   );
 });
