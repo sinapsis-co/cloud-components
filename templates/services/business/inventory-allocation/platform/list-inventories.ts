@@ -6,7 +6,7 @@ import { inventoryRepo } from 'services/business/inventory/repository/inventory'
 export const getFirstInventoryByCategoryId = async (categoryId: string, tenantId: string): Promise<Inventory> => {
   const inventories = await inventoryRepo.listItem(
     '',
-    { limit: 1 },
+    { limit: 10 },
     {
       IndexName: BY_CATEGORY_ID_IDX_NAME,
       KeyConditionExpression: '#pk = :pk AND #categoryId = :categoryId',
@@ -24,7 +24,6 @@ export const getFirstInventoryByCategoryId = async (categoryId: string, tenantId
       TableName: process.env.INVENTORY_TABLE,
     }
   );
-
   if (!inventories.items.length)
     throw new ApiError('INVENTORIES.NOT_FOUND.BY_CATEGORY', 404, `categoryId=${categoryId}`);
 

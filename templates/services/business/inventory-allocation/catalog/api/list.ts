@@ -1,9 +1,9 @@
 import {
+  ApiConfig,
   ApiInterface,
   EmptyObject,
-  ApiConfig,
-  PaginatedResponse,
   PaginatedQueryParams,
+  PaginatedResponse,
 } from '@sinapsis-co/cc-platform-v2/catalog/api';
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
 import { InventoryAllocation } from '../../entities/inventory-allocation';
@@ -13,7 +13,7 @@ export type Interface = ApiInterface<{
   pathParams: EmptyObject;
   body: EmptyObject;
   claims: UserClaims;
-  queryParams: PaginatedQueryParams;
+  queryParams: PaginatedQueryParams & { order?: string };
 }>;
 
 export const config: ApiConfig<Interface> = {
