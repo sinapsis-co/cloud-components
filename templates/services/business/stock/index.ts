@@ -23,8 +23,7 @@ export class Stock extends Service<GlobalProps, StockParams> {
       authPool: this.props.identity.authPool,
       autoEventsEnabled: true,
       handlers: {
-        getStock: stockApi.getStock.config,
-        listStock: stockApi.listStock.config
+        listStock: stockApi.listStock.config,
       },
     });
 
@@ -48,9 +47,8 @@ export class Stock extends Service<GlobalProps, StockParams> {
           name: 'event-inventory-updated',
           eventConfig: [inventoryEvent.inventoryUpdated.eventConfig],
           tablePermission: 'readWrite',
-        }
+        },
       },
     });
-
   }
 }
