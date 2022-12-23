@@ -1,13 +1,19 @@
+import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
 import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
 import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
 import * as api from '../../catalog/api';
 import { orderIncomePending } from '../../catalog/event/income';
 import { createOrder } from '../../lib';
+import { getOrderByCustomer } from '../../platform/order-by-customer';
 import { orderRepo } from '../../repository';
 import { generateId } from '../../utils/generate-id';
 
 export const handler = apiHandler<api.createOrderIncome.Interface>(async (_, request) => {
-  const { tenantId } = request.claims;
+  const { tenantId, sub } = request.claims;
+
+  const isOrderPending = await getOrderByCustomer(sub, 'PENDING');
+
+  if (isOrderPending.exist) throw new ApiError('ORDER.EXIST_ORDER_PENDING', 400, `customerId: ${sub}`);
 
   const orderId = generateId();
 

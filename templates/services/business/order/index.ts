@@ -12,6 +12,7 @@ import { GlobalServiceDependencies } from '..';
 import { StripeCustomer } from '../stripe-customer';
 import { api } from './catalog';
 import { orderIncomeRegister } from './catalog/event/income';
+import { BY_CUSTOMER_ID } from './repository/gsi';
 
 export type OrderParams = {
   stripeCustomer: StripeCustomer;
@@ -67,6 +68,18 @@ export class Order extends Service<GlobalProps, OrderParams> {
       indexName: 'orderStatus-index',
       projectionType: ProjectionType.ALL,
       partitionKey: {
+        name: 'orderStatus',
+        type: AttributeType.STRING,
+      },
+    });
+    this.apiAggregate?.table?.addGlobalSecondaryIndex({
+      indexName: BY_CUSTOMER_ID,
+      projectionType: ProjectionType.ALL,
+      partitionKey: {
+        name: 'customerId',
+        type: AttributeType.STRING,
+      },
+      sortKey: {
         name: 'orderStatus',
         type: AttributeType.STRING,
       },
