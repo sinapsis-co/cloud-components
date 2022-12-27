@@ -9,10 +9,11 @@ import { inventoryAllocationRepo } from '../../repository/inventory-allocation-r
 export const handler = eventHandler<orderIncomePending.Event>(async (event) => {
   const { tenantId, orderId } = event.detail;
 
-  //TODO: filter inventory not_available
   await Promise.all(
     event.detail.orderItem.map(async (orderItem) => {
       const categoryId = orderItem.orderItemCategory as string;
+
+      // add filter by place id
       const inventory = await getFirstInventoryByCategoryId(categoryId, tenantId);
 
       const inventoryAllocation = await inventoryAllocationRepo.createItem(
@@ -23,6 +24,8 @@ export const handler = eventHandler<orderIncomePending.Event>(async (event) => {
           orders: [orderId],
           inventoryId: inventory.id,
           inventory: { product: inventory.product!, place: inventory.place! },
+          categoryId,
+          placeId: inventory.placeId,
           status: 'RESERVED',
         }
       );

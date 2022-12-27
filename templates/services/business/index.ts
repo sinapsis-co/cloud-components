@@ -22,6 +22,7 @@ import { Place } from './place';
 import { Product } from './product';
 import { SearchService } from './search';
 import { Stock } from './stock';
+import { StockReport } from './stock-report';
 import { StripeCustomer } from './stripe-customer';
 import { StripeProduct } from './stripe-product';
 import { StripeSubscription } from './stripe-subscription';
@@ -48,6 +49,7 @@ export class BusinessServices {
   public readonly inventory: Inventory;
   public readonly stock: Stock;
   public readonly inventoryAllocation: InventoryAllocation;
+  public readonly stockReport: StockReport;
   public readonly stripeCustomer: StripeCustomer;
   public readonly stripeSubscription: StripeSubscription;
   public readonly stripeProduct: StripeProduct;
@@ -78,7 +80,11 @@ export class BusinessServices {
       ...globalDeps,
       inventoryService: this.inventory,
     });
-
+    this.stockReport = new StockReport(scope, globalProps, {
+      ...globalDeps,
+      stock: this.stock,
+      inventoryAllocation: this.inventoryAllocation,
+    });
     this.stripeCustomer = new StripeCustomer(scope, globalProps, { ...globalDeps });
     this.order = new Order(scope, globalProps, {
       ...globalDeps,

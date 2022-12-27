@@ -17,6 +17,8 @@ export type InventoryAllocationBuilder = EntityBuilder<{
     userId: string;
     inventoryId: string;
     inventory: Pick<Inventory, 'product' | 'place'>;
+    categoryId: string;
+    placeId: string;
     status: InventoryAllocationStatus;
     subscriptionId?: string;
     deleted?: boolean;
