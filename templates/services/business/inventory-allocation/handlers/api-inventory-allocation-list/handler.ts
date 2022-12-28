@@ -1,6 +1,6 @@
 import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
 import { inventoryAllocationApi } from '../../catalog';
-import { getAllocationInventoryByOrder } from '../../platform/allocation-inventory';
+import { getAllocationInventoryByOrder } from '../../platform/allocation-inventory-by-order';
 import { inventoryAllocationRepo } from '../../repository/inventory-allocation-repository';
 
 export const handler = apiHandler<inventoryAllocationApi.list.Interface>(async (_, req) => {

@@ -9,7 +9,7 @@ import { GlobalProps } from '../../../config/config-type';
 import { Inventory } from '../inventory';
 import { orderIncomeExpired, orderIncomePaid, orderIncomePending } from '../order/catalog/event/income';
 import { inventoryAllocationApi } from './catalog';
-import { BY_CATEGORY_ID, BY_ORDER_ID_IDX_NAME } from './repository/gsi';
+import { BY_CATEGORY_ID, BY_ORDER_ID_IDX_NAME, BY_SUBSCRIPTION_ID } from './repository/gsi';
 
 export type InventoryAllocationParams = { inventoryService: Inventory } & GlobalServiceDependencies;
 
@@ -54,6 +54,19 @@ export class InventoryAllocation extends Service<GlobalProps, InventoryAllocatio
       },
       sortKey: {
         name: 'categoryId',
+        type: AttributeType.STRING,
+      },
+    });
+
+    this.apiAggregate.table!.addGlobalSecondaryIndex({
+      indexName: BY_SUBSCRIPTION_ID,
+      projectionType: ProjectionType.ALL,
+      partitionKey: {
+        name: 'pk',
+        type: AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'subscriptionId',
         type: AttributeType.STRING,
       },
     });
