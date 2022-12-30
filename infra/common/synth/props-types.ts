@@ -19,7 +19,6 @@ export type BaseGlobalConstConfig<ExtendedConst = {}> = {
   useRepositoryDefaultConfig: boolean;
   pipelineNotificationSlackChannel?: string;
   defaultSlackDestinationDisabled?: boolean;
-  clientNotificationSlack?: boolean;
   isDemoProject?: boolean;
   repositoryOwner?: true;
   repositoryConnection?: string;
