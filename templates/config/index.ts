@@ -7,7 +7,6 @@ export const globalConstConfig: GlobalConstConfig = {
   repositoryName: 'v2.cloud-components',
   pipelineNotificationSlackChannel: 'cloud-components',
   defaultSlackDestinationDisabled: false,
-  clientNotificationSlack: false,
   bootstrappingServices: ['DeployPipeline', 'DnsSubdomainHostedZone'],
   isDemoProject: true,
   subdomain: {
@@ -29,6 +28,7 @@ export const globalEnvConfig: GlobalEnvConfig = {
     envDomainName: 'dev.demo.sinapsis.co',
     emailSender: 'no-reply',
     wafEnabled: false,
+    clientNotificationSlack: false
   },
   staging: {
     deployBranch: 'staging',
@@ -38,6 +38,7 @@ export const globalEnvConfig: GlobalEnvConfig = {
     envDomainName: 'staging.demo.sinapsis.co',
     emailSender: 'no-reply',
     wafEnabled: false,
+    clientNotificationSlack: false
   },
 };
 
