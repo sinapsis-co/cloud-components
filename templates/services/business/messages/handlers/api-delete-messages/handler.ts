@@ -6,20 +6,21 @@ import { message } from '../../platform/twilio';
 import { conversationsUserRepo } from '../../repository';
 
 export const handler = apiHandler<api.deleteMessage.Interface>(async (_, req) => {
-  const { sub } = req.claims;
+  const { tenantId, sub } = req.claims;
   const { userId } = req.body;
+  const tenantOwner = `${tenantId}#${sub}`;
 
   const [userOwner, userAssociated, twilioSecret] = await Promise.all([
-    conversationsUserRepo.getItem({ tenantId: sub, userId }),
-    conversationsUserRepo.getItem({ tenantId: userId, userId: sub }),
+    conversationsUserRepo.getItem({ tenantId: tenantOwner, userId }),
+    conversationsUserRepo.getItem({ tenantId: userId, userId: tenantOwner }),
     getSecret<messagesSecret.twilio.Secret>(messagesSecret.twilio.secretConfig),
   ]);
 
   const { deleteMessage } = message({ secret: twilioSecret });
 
   await Promise.all([
-    conversationsUserRepo.deleteItem({ tenantId: sub, userId }),
-    conversationsUserRepo.deleteItem({ tenantId: userAssociated.tenantId, userId: sub }),
+    conversationsUserRepo.deleteItem({ tenantId: tenantOwner, userId }),
+    conversationsUserRepo.deleteItem({ tenantId: userAssociated.tenantId, userId: tenantOwner }),
   ]);
 
   await deleteMessage({
