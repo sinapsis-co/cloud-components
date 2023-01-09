@@ -1,18 +1,20 @@
-import { Balance } from 'services/balance/entities';
-import { balanceRepo } from 'services/balance/repository';
+import { Balance } from '../../entities';
+import { balanceRepo } from '../../repository';
 
 export const handler = async ({
   tenantId,
   amount,
   type,
+  userId,
 }: {
+  userId: string;
   tenantId: string;
   amount: string;
   type: 'pending' | 'inTransitToBank' | 'rollback';
 }): Promise<Balance> => {
   const balance = await balanceRepo
     .getItem(
-      { tenantId },
+      { tenantId, userId },
       {
         ConsistentRead: true,
       }
@@ -39,6 +41,7 @@ export const handler = async ({
   return balanceRepo.updateItem(
     {
       tenantId,
+      userId,
     },
     {
       ...balance,

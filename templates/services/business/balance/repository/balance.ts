@@ -8,11 +8,13 @@ export const balanceRepo = repository<BalanceBuilder>({
   keySerialize: (key: BalanceBuilder['key']): BalanceBuilder['storeMapping']['key'] => {
     return {
       pk: key.tenantId,
+      sk: key.userId,
     };
   },
   entitySerialize: (key: BalanceBuilder['key'], entityCreate: BalanceCreate): BalanceStore => {
     const mappedKey: BalanceBuilder['storeMapping']['key'] = {
       pk: key.tenantId,
+      sk: key.userId,
     };
     const timers: BalanceBuilder['storeMapping']['timers'] = {
       updatedAt: new Date().toISOString(),
@@ -20,10 +22,11 @@ export const balanceRepo = repository<BalanceBuilder>({
     return { ...mappedKey, ...entityCreate, ...timers };
   },
   entityDeserialize: (entityStore: BalanceStore): Balance => {
-    const { pk, updatedAt, ...att } = entityStore;
+    const { pk, sk, updatedAt, ...att } = entityStore;
     return {
       ...att,
       tenantId: pk,
+      userId: sk,
       updatedAt: new Date(updatedAt),
     };
   },

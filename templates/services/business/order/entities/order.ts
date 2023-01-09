@@ -72,6 +72,7 @@ export type OrderBuilder = EntityBuilder<{
   key: {
     tenantId: string;
     orderId: string;
+    userId: string;
   };
   timers: {
     createdAt: Date;

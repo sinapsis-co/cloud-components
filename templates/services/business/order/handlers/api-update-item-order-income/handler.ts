@@ -7,13 +7,14 @@ import { orderRepo } from '../../repository';
 import { ERROR_NOT_IS_PENDING_INCOME } from '../../utils/errors';
 
 export const handler = apiHandler<api.updateItemOrderIncome.Interface>(async (_, request) => {
-  const { tenantId: sub } = request.claims;
+  const { tenantId, sub } = request.claims;
   const { orderId } = request.pathParams;
   const { orderItemNumber } = request.queryParams;
   const service = request.body;
 
   const order = (await orderRepo.getItem({
-    tenantId: sub,
+    tenantId,
+    userId: sub,
     orderId,
   })) as Order & OrderIncome;
 
@@ -36,6 +37,6 @@ export const handler = apiHandler<api.updateItemOrderIncome.Interface>(async (_,
     orderItem,
   });
 
-  const dataOrder = await orderRepo.updateItem({ tenantId: sub, orderId: orderId }, { ...data });
+  const dataOrder = await orderRepo.updateItem({ tenantId, orderId: orderId, userId: sub }, { ...data });
   return dataOrder as Order & OrderIncome;
 }, api.updateItemOrderIncome.config);

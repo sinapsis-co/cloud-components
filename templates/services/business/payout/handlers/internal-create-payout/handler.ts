@@ -1,8 +1,8 @@
 import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
-import { Order, OrderWithdrawal } from 'services/order/entities';
-import { PayoutUser } from 'services/payout-setting-user/entities';
-import { Payout } from 'services/payout/entities';
-import { payoutRepo } from 'services/payout/repository';
+import { Order, OrderWithdrawal } from 'services/business/order/entities';
+import { PayoutUser } from 'services/business/payout-setting-user/entities';
+import { Payout } from '../../entities';
+import { payoutRepo } from '../../repository';
 
 export const handler = async ({
   settingPayout,
@@ -15,6 +15,7 @@ export const handler = async ({
     {
       id: uuid(),
       tenantId: order.tenantId,
+      userId: order.userId,
     },
     {
       target: settingPayout,

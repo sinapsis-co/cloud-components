@@ -6,7 +6,10 @@ import { createCard } from '../../catalog/api';
 import { customerRepository } from '../../repository';
 
 export const handler = apiHandler<createCard.Interface>(async (_, request) => {
-  const { stripeId } = await customerRepository.getItem({ tenantId: request.claims.sub });
+  const { stripeId } = await customerRepository.getItem({
+    tenantId: request.claims.tenantId,
+    userId: request.claims.sub,
+  });
 
   if (!stripeId) {
     throw new Error('Customer not found');

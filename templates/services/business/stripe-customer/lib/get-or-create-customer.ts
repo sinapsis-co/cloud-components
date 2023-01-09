@@ -1,22 +1,23 @@
 import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
-import { getStripeClient, StripeConfig } from 'services/support/stripe/platform';
+import { StripeConfig, getStripeClient } from 'services/support/stripe/platform';
 import Stripe from 'stripe';
 import { Customer } from '../entities/customer';
 import { customerRepository } from '../repository';
 
 interface ParamsGetOrCreateCustomer {
   tenantId: string;
+  sub: string;
   secrets?: StripeConfig['secrets'];
   customer?: UserClaims;
 }
 export const getOrCreateCustomer = async (
-  { tenantId, secrets, customer: customerBody }: ParamsGetOrCreateCustomer,
+  { tenantId, secrets, customer: customerBody, sub }: ParamsGetOrCreateCustomer,
   customerCreateParams?: Partial<Stripe.CustomerCreateParams>
 ): Promise<Customer> => {
   let customer: Customer;
   try {
-    customer = await customerRepository.getItem({ tenantId });
+    customer = await customerRepository.getItem({ tenantId, userId: sub });
   } catch (error) {
     if (!secrets || !customerBody) {
       throw new ApiError('Missing secrets or customer body', 400);
@@ -30,7 +31,7 @@ export const getOrCreateCustomer = async (
       customerCreateParams
     );
 
-    customer = await customerRepository.createItem({ tenantId }, body);
+    customer = await customerRepository.createItem({ tenantId, userId: sub }, body);
   }
 
   return customer;

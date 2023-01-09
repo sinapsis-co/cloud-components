@@ -11,7 +11,7 @@ export const customerRepository = repository<CustomerBuilder>({
 
   entitySerialize: (key: CustomerBuilder['key'], entityCreate: CustomerCreate): CustomerStore => {
     const mappedKey: CustomerBuilder['storeMapping']['key'] = {
-      pk: key.tenantId,
+      pk: `${key.tenantId}#${key.userId}`,
       sk: 'stripe-customer',
     };
     const timers: CustomerBuilder['storeMapping']['timers'] = {
@@ -29,7 +29,8 @@ export const customerRepository = repository<CustomerBuilder>({
   entityDeserialize: (entityStore: CustomerStore): Customer => {
     const { pk, createdAt, updatedAt, ...att } = entityStore;
     return {
-      tenantId: pk,
+      tenantId: pk.split('#')[0],
+      userId: pk.split('#')[1],
       ...att,
       createdAt: new Date(createdAt),
       updatedAt: new Date(updatedAt),
