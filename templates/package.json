@@ -52,8 +52,8 @@
     "false": "^0.0.4",
     "require-from-string": "^2.0.2",
     "serverless-http": "^3.0.1",
-    "stripe": "^10.14.0",
-    "sharp": "^0.30.6"
+    "sharp": "^0.30.6",
+    "stripe": "^11.6.0"
   },
   "resolutions": {
     "@types/react": "17.0.2",
