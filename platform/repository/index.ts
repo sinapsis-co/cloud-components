@@ -10,6 +10,7 @@ import { softDeleteItem } from './operations/soft-delete';
 import { scanTable } from './operations/scan';
 import { updateItem } from './operations/update';
 import { checkItemExists } from './operations/check-item-exists';
+import { logicalDeleteItem } from './operations/logical-delete';
 
 import { EntityBuilder, EntityRepositoryConfig, Repository } from './interface';
 
@@ -35,6 +36,7 @@ export const repository = <Builder extends EntityBuilder>(
     batchCreateItem: batchCreateItem(repoConfig, dynamodb),
     batchGetItem: batchGetItem(repoConfig, dynamodb),
     softDeleteItem: softDeleteItem(repoConfig, dynamodb),
+    logicalDeleteItem: logicalDeleteItem(repoConfig, dynamodb),
     recoverItem: recoverItem(repoConfig, dynamodb),
     scanTable: scanTable(repoConfig, dynamodb),
   };
