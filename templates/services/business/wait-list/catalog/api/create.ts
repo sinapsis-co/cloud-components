@@ -1,6 +1,6 @@
 import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform-v2/catalog/api';
 import { Schemy } from '@sinapsis-co/cc-platform-v2/lib/schemy';
-import { WaitList } from '../../entities/prelaunch-user';
+import { WaitList } from '../../entities/wait-list-user';
 
 export type Interface = ApiInterface<{
   response: WaitList;
@@ -14,7 +14,7 @@ export const config: ApiConfig<Interface> = {
   isPublic: true,
   name: 'api-wait-list-create',
   method: 'POST',
-  basePath: 'prelaunch',
+  basePath: 'wait-list',
   path: '/',
   tablePermission: 'write',
   schema: Schemy.schema<Interface['body']>({

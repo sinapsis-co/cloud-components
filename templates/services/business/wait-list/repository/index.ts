@@ -1,23 +1,23 @@
 import { repository } from '@sinapsis-co/cc-platform-v2/repository';
-import { PrelaunchUserBuilder, PrelaunchUserCreate, PrelaunchUserStore, WaitList } from '../entities/prelaunch-user';
+import { WaitList, WaitListUserBuilder, WaitListUserCreate, WaitListUserStore } from '../entities/wait-list-user';
 
-export const waitListRepository = repository<PrelaunchUserBuilder>({
+export const waitListRepository = repository<WaitListUserBuilder>({
   tableName: process.env.TABLE!,
-  repoName: 'prelaunch',
-  keySerialize: (key: PrelaunchUserBuilder['key']): PrelaunchUserBuilder['storeMapping']['key'] => {
+  repoName: 'wait-list',
+  keySerialize: (key: WaitListUserBuilder['key']): WaitListUserBuilder['storeMapping']['key'] => {
     return { pk: key.email };
   },
-  entitySerialize: (key: PrelaunchUserBuilder['key'], entityCreate: PrelaunchUserCreate): PrelaunchUserStore => {
-    const mappedKey: PrelaunchUserBuilder['storeMapping']['key'] = {
+  entitySerialize: (key: WaitListUserBuilder['key'], entityCreate: WaitListUserCreate): WaitListUserStore => {
+    const mappedKey: WaitListUserBuilder['storeMapping']['key'] = {
       pk: key.email,
     };
-    const timers: PrelaunchUserBuilder['storeMapping']['timers'] = {
+    const timers: WaitListUserBuilder['storeMapping']['timers'] = {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
     return { ...mappedKey, ...entityCreate, ...timers };
   },
-  entityDeserialize: (entityStore: PrelaunchUserStore): WaitList => {
+  entityDeserialize: (entityStore: WaitListUserStore): WaitList => {
     const { pk, createdAt, updatedAt, ...att } = entityStore;
     return {
       email: pk,

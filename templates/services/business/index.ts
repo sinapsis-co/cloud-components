@@ -12,12 +12,14 @@ import { StripeSupportService } from 'services/support/stripe';
 import { CdnApi } from '../support/cdn-api';
 import { CustomEventBus } from '../support/custom-event-bus';
 import { Assets } from './assets';
+import { Balance } from './balance';
 import { BaseCrud } from './base-crud';
 import { BaseEvent } from './base-event';
 import { Category } from './category';
 import { Inventory } from './inventory';
 import { InventoryAllocation } from './inventory-allocation';
 import { Order } from './order';
+import { Payout } from './payout';
 import { Place } from './place';
 import { Product } from './product';
 import { SearchService } from './search';
@@ -26,6 +28,7 @@ import { StockReport } from './stock-report';
 import { StripeCustomer } from './stripe-customer';
 import { StripeProduct } from './stripe-product';
 import { StripeSubscription } from './stripe-subscription';
+import { WaitList } from './wait-list';
 
 export type GlobalServiceDependencies = {
   notifications: Notifications;
@@ -54,6 +57,9 @@ export class BusinessServices {
   public readonly stripeSubscription: StripeSubscription;
   public readonly stripeProduct: StripeProduct;
   public readonly order: Order;
+  public readonly waitList: WaitList;
+  public readonly balance: Balance;
+  public readonly payout: Payout;
 
   constructor(scope: Construct, globalProps: GlobalProps, dependencies: Omit<GlobalServiceDependencies, 'identity'>) {
     this.identity = new Identity(scope, globalProps, dependencies);
@@ -96,5 +102,8 @@ export class BusinessServices {
       serviceOrder: this.order,
     });
     this.stripeProduct = new StripeProduct(scope, globalProps, { ...globalDeps });
+    this.waitList = new WaitList(scope, globalProps, { ...globalDeps });
+    this.balance = new Balance(scope, globalProps, { ...globalDeps });
+    this.payout = new Payout(scope, globalProps, { ...globalDeps });
   }
 }

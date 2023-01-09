@@ -11,7 +11,7 @@ export type Interface = ApiInterface<{
 export const config: ApiConfig<Interface> = {
   name: 'api-wait-list',
   method: 'GET',
-  basePath: 'prelaunch',
+  basePath: 'wait-list',
   path: '/',
   tablePermission: 'read',
 };

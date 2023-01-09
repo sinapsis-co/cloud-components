@@ -1,7 +1,7 @@
 import { Entity, EntityBuilder, EntityCreate, EntityStore } from '@sinapsis-co/cc-platform-v2/repository/interface';
 
-export type PrelaunchUserBuilder = EntityBuilder<{
-  name: 'prelaunch';
+export type WaitListUserBuilder = EntityBuilder<{
+  name: 'wait-list';
   body: {
     id: string;
     givenName?: string;
@@ -24,8 +24,8 @@ export type PrelaunchUserBuilder = EntityBuilder<{
   };
 }>;
 
-export type WaitList = Entity<PrelaunchUserBuilder>;
+export type WaitList = Entity<WaitListUserBuilder>;
 
-export type PrelaunchUserStore = EntityStore<PrelaunchUserBuilder>;
+export type WaitListUserStore = EntityStore<WaitListUserBuilder>;
 
-export type PrelaunchUserCreate = EntityCreate<PrelaunchUserBuilder>;
+export type WaitListUserCreate = EntityCreate<WaitListUserBuilder>;

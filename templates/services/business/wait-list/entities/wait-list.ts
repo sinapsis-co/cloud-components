@@ -1,6 +1,6 @@
-import { WaitList } from './prelaunch-user';
+import { WaitList } from './wait-list-user';
 
-export type PrelaunchUserRow = Omit<WaitList, 'id'>;
-export type PrelaunchUsersReport = PrelaunchUserRow[];
+export type WaitListUserRow = Omit<WaitList, 'id'>;
+export type WaitListUsersReport = WaitListUserRow[];
 
 export const prelaunchListHeaders: string[] = ['Email', 'Name', 'Registration Date'];
