@@ -19,15 +19,20 @@ import { Category } from './category';
 import { Inventory } from './inventory';
 import { InventoryAllocation } from './inventory-allocation';
 import { Order } from './order';
+import { Payment } from './payment';
 import { Payout } from './payout';
+import { PayoutSettingUser } from './payout-setting-user';
 import { Place } from './place';
 import { Product } from './product';
 import { SearchService } from './search';
 import { Stock } from './stock';
 import { StockReport } from './stock-report';
+import { StripeConnect } from './stripe-connect';
 import { StripeCustomer } from './stripe-customer';
+import { StripePayout } from './stripe-payout';
 import { StripeProduct } from './stripe-product';
 import { StripeSubscription } from './stripe-subscription';
+import { Transaction } from './transaction';
 import { WaitList } from './wait-list';
 
 export type GlobalServiceDependencies = {
@@ -60,6 +65,11 @@ export class BusinessServices {
   public readonly waitList: WaitList;
   public readonly balance: Balance;
   public readonly payout: Payout;
+  public readonly payoutSettingUser: PayoutSettingUser;
+  public readonly payment: Payment;
+  public readonly stripeConnect: StripeConnect;
+  public readonly stripePayout: StripePayout;
+  public readonly transaction: Transaction;
 
   constructor(scope: Construct, globalProps: GlobalProps, dependencies: Omit<GlobalServiceDependencies, 'identity'>) {
     this.identity = new Identity(scope, globalProps, dependencies);
@@ -105,5 +115,20 @@ export class BusinessServices {
     this.waitList = new WaitList(scope, globalProps, { ...globalDeps });
     this.balance = new Balance(scope, globalProps, { ...globalDeps });
     this.payout = new Payout(scope, globalProps, { ...globalDeps });
+    this.payoutSettingUser = new PayoutSettingUser(scope, globalProps, { ...globalDeps });
+    this.payment = new Payment(scope, globalProps, {
+      ...globalDeps,
+      orderService: this.order,
+      stripeCustomer: this.stripeCustomer,
+    });
+    this.stripeConnect = new StripeConnect(scope, globalProps, {
+      ...globalDeps,
+    });
+    this.stripePayout = new StripePayout(scope, globalProps, {
+      ...globalDeps,
+    });
+    this.transaction = new Transaction(scope, globalProps, {
+      ...globalDeps,
+    });
   }
 }

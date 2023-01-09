@@ -16,6 +16,8 @@
     "sesv",
     "SIGNIN",
     "sinapsis",
+    "stepfunctions",
+    "Topup",
     "TTFB"
   ],
   "ignorePaths": [
