@@ -1,5 +1,5 @@
 import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform-v2/catalog/api';
-import { UserClaims } from 'services/identity/entities';
+import { UserClaims } from 'services/business/identity/entities/user-cognito';
 import { Payout } from '../../../entities/payout';
 
 export type Interface = ApiInterface<{

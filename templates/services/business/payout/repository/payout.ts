@@ -7,7 +7,7 @@ export const payoutRepo = repository<PayoutBuilder>({
   repoName: 'payout',
   keySerialize: (key: PayoutBuilder['key']): PayoutBuilder['storeMapping']['key'] => {
     return {
-      pk: key.tenantId,
+      pk: `${key.tenantId}#${key.userId}`,
       sk: `${key.id}`,
     };
   },
@@ -26,7 +26,8 @@ export const payoutRepo = repository<PayoutBuilder>({
     const { pk, sk, createdAt, updatedAt, ...att } = entityStore;
     return {
       ...att,
-      tenantId: pk,
+      tenantId: pk.split('#')[0],
+      userId: pk.split('#')[1],
       id: sk,
       createdAt: new Date(createdAt),
       updatedAt: new Date(updatedAt),

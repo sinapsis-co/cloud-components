@@ -8,7 +8,7 @@ export const orderRepo = repository<OrderBuilder>({
   keySerialize: (key: OrderBuilder['key']): OrderBuilder['storeMapping']['key'] => {
     return {
       sk: key.orderId,
-      pk: key.tenantId,
+      pk: `${key.tenantId}#${key.userId}`,
     };
   },
   entitySerialize: (key: OrderBuilder['key'], entityCreate: OrderCreate): OrderStore => {
@@ -32,7 +32,8 @@ export const orderRepo = repository<OrderBuilder>({
     return {
       ...att,
       orderId: sk,
-      tenantId: pk,
+      tenantId: pk.split('#')[0],
+      userId: pk.split('#')[1],
       createdAt: new Date(createdAt),
       updatedAt: new Date(updatedAt),
     };

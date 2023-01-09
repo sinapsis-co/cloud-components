@@ -1,14 +1,15 @@
 import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
-import { payoutSettingUserApi } from 'services/payout-setting-user/catalog';
+import { payoutSettingUserApi } from '../../catalog';
 import { payoutUserRepo } from '../../repository';
 
 export const handler = apiHandler<payoutSettingUserApi.updateSettingPayoutUser.Interface>(async (_, req) => {
-  const { sub } = req.claims;
+  const { sub, tenantId } = req.claims;
   const { id } = req.pathParams;
 
   const payoutUser = await payoutUserRepo.updateItem(
     {
-      tenantId: sub,
+      tenantId,
+      userId: sub,
       id,
     },
     {
@@ -26,7 +27,7 @@ export const handler = apiHandler<payoutSettingUserApi.updateSettingPayoutUser.I
         .map(async (a) =>
           payoutUserRepo
             .updateItem(
-              { tenantId: sub, id: a.id },
+              { tenantId: tenantId, id: a.id, userId: sub },
               { isDefault: false },
               {
                 ConditionExpression: 'attribute_exists(pk) AND attribute_exists(sk)',

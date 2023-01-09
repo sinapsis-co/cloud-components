@@ -15,8 +15,8 @@ import { subscriptionRepository } from '../../repository';
 const TRIAL_DURATION_IN_DAYS = Number(process.env.TRIAL_DURATION_IN_DAYS || 0);
 
 export const handler = apiHandler<api.createSubscription.Interface>(async (_, request) => {
-  const { tenantId, email } = request.claims;
-  const order = await orderRepo.getItem({ tenantId, orderId: request.body.orderId });
+  const { tenantId, email, sub } = request.claims;
+  const order = await orderRepo.getItem({ tenantId, orderId: request.body.orderId, userId: sub });
 
   if (order.orderType !== 'INCOME') {
     throw new ApiError('Order type is not income');
@@ -33,6 +33,7 @@ export const handler = apiHandler<api.createSubscription.Interface>(async (_, re
     secrets,
     tenantId,
     customer: request.claims,
+    sub: request.claims.sub,
   });
 
   const { create, retrievePaymentMethod } = stripeSubscription({ secrets });

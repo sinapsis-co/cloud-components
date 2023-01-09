@@ -1,6 +1,6 @@
 import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
 import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
-import { payoutFailed, payoutGatewayExternal, payoutSuccess } from 'services/payout/catalog/event/payout';
+import { payoutFailed, payoutGatewayExternal, payoutSuccess } from '../../catalog/event/payout';
 import { payoutRepo } from '../../repository/payout';
 
 export const handler = eventHandler<payoutGatewayExternal.Event>(async (event) => {
@@ -9,13 +9,14 @@ export const handler = eventHandler<payoutGatewayExternal.Event>(async (event) =
     completedAt,
     error,
     identifier,
-    payout: { id, tenantId },
+    payout: { id, tenantId, userId },
   } = event.detail;
 
   const item = await payoutRepo.updateItem(
     {
       tenantId,
       id,
+      userId,
     },
     {
       status,

@@ -14,6 +14,7 @@ export type Event = {
     payout: {
       id: Payout['id'];
       tenantId: Payout['tenantId'];
+      userId: Payout['userId'];
     };
   };
 };

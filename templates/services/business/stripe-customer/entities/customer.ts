@@ -9,6 +9,7 @@ export type CustomerBuilder = EntityBuilder<{
   };
   key: {
     tenantId: string;
+    userId: string;
   };
   timers: {
     createdAt: Date;

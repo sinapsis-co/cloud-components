@@ -3,8 +3,8 @@ import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-funct
 import { BaseFunction } from '@sinapsis-co/cc-infra-v2/prefab/function/base-function';
 import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/event-function/event-aggregate';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { GlobalProps } from 'config/config-type';
 import { GlobalServiceDependencies } from '..';
-import { GlobalProps } from '../../config/config-type';
 import { payoutSuccess } from '../payout/catalog/event/payout';
 import { balanceApi } from './catalog';
 

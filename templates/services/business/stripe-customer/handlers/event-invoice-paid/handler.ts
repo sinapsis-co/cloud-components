@@ -35,6 +35,7 @@ export const handler = eventHandler<PaymentFailed.Event | Paid.Event>(async (eve
     );
 
     await dispatchEvent(orderIncomeRegister.eventConfig, {
+      userId: customer.userId,
       orderType: 'INCOME',
       orderDate: new Date().toISOString(),
       orderStatus: 'SUCCESS',

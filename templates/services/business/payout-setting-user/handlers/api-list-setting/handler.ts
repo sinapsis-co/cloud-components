@@ -3,8 +3,8 @@ import { payoutSettingUserApi } from '../../catalog';
 import { payoutUserRepo } from '../../repository';
 
 export const handler = apiHandler<payoutSettingUserApi.listSettingPayoutUser.Interface>(async (_, req) => {
-  const { sub } = req.claims;
+  const { sub, tenantId } = req.claims;
   const { limit, nextToken } = req.queryParams;
 
-  return await payoutUserRepo.listItem(sub, { limit: Number(limit || 50), nextToken });
+  return await payoutUserRepo.listItem(`${tenantId}#${sub}`, { limit: Number(limit || 50), nextToken });
 }, payoutSettingUserApi.listSettingPayoutUser.config);

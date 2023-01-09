@@ -25,8 +25,11 @@ export const handler = async (): Promise<void> => {
   ) as (Order & OrderIncome)[];
 
   await Promise.all(
-    itemsToUpdate.map(async ({ tenantId, orderId }) => {
-      const orderExpired = await orderRepo.updateItem({ tenantId, orderId: orderId }, { orderStatus: 'EXPIRED' });
+    itemsToUpdate.map(async ({ tenantId, orderId, userId }) => {
+      const orderExpired = await orderRepo.updateItem(
+        { tenantId, orderId: orderId, userId },
+        { orderStatus: 'EXPIRED' }
+      );
       await dispatchEvent<orderIncomeExpired.Event>(
         orderIncomeExpired.eventConfig,
         orderExpired as orderIncomeExpired.Event['payload']

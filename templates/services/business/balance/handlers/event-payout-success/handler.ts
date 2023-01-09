@@ -1,11 +1,12 @@
 import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
-import { balanceRepo } from 'services/balance/repository';
-import { payoutSuccess } from 'services/payout/catalog/event/payout';
+import { payoutSuccess } from 'services/business/payout/catalog/event/payout';
+import { balanceRepo } from '../../repository';
 
 export const handler = eventHandler<payoutSuccess.Event>(async (event) => {
   await balanceRepo.updateItem(
     {
       tenantId: event.detail.tenantId,
+      userId: event.detail.userId,
     },
     {},
     {
