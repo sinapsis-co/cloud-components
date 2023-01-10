@@ -1,6 +1,9 @@
 import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
 import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
+import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
 import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
+import { WaitListTemplate } from 'notifications/templates/wait-list';
+import { notificationEvent } from 'services/support/notifications/catalog';
 import * as catalog from '../../catalog';
 import { waitListRepository } from '../../repository';
 
@@ -33,6 +36,19 @@ export const handler = apiHandler<catalog.api.create.Interface>(async (_, reques
       throw new ApiError('INTERNAL_SERVER_ERROR', 500, error.message);
     });
 
+  await dispatchEvent<notificationEvent.dispatch.Event<WaitListTemplate>>(notificationEvent.dispatch.eventConfig, {
+    via: 'email',
+    addressTo: email,
+    template: {
+      templateName: 'wait-list',
+      payload: {
+        currentYear: new Date().getFullYear().toString(),
+        siteUrl: process.env.WEBAPP_URL!,
+        baseAssetUrl: process.env.MEDIA_URL!,
+        projectName: process.env.PROJECT_NAME!,
+      },
+    },
+  });
   return prelaunchUser;
 }, catalog.api.create.config);
 
