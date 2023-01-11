@@ -86,7 +86,7 @@ export const startSPA = async <
 
     console.log('>> STEP: (3/3) => STARTING');
 
-    const command = `yarn start ${envNameInput}`;
+    const command = `yarn dev ${envNameInput}`;
     execSync(command, { stdio: 'inherit', cwd: `${process.cwd()}/${baseDir}` });
   } catch (error: any) {
     console.log(error);

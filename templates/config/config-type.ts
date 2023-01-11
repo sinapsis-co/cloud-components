@@ -9,6 +9,7 @@ import {
 export type Subdomain = {
   landing: string;
   webapp: string;
+  webappVite: string;
   api: string;
   media: string;
   auth: string;

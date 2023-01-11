@@ -12,6 +12,7 @@ export const globalConstConfig: GlobalConstConfig = {
   subdomain: {
     landing: '',
     webapp: 'app',
+    webappVite: 'vite-app',
     api: 'api',
     media: 'media',
     auth: 'auth',
