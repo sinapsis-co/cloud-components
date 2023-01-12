@@ -1,9 +1,0 @@
-{
-  "h": "4d3045e2033bfb85b0ee",
-  "c": {
-    "pages/index": false,
-    "pages/merch": false,
-    "pages/merch/detail/[productId]": false,
-    "pages/merch/payment/secure-payment": false
-  }
-}
