@@ -51,6 +51,7 @@
     "aws-sdk": "^2.1243.0",
     "esbuild": "^0.14.43",
     "false": "^0.0.4",
+    "messages": "^0.1.0",
     "require-from-string": "^2.0.2",
     "serverless-http": "^3.0.1",
     "sharp": "^0.30.6",
