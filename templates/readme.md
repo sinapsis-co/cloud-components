@@ -10,4 +10,4 @@ In the /templates directory you can run the project you want using the following
 
 - If you are using vite-based template you should use "yarn start-spa dev webapp-vite", 
 - if you are using pure react and webpack-based template you should use "yarn start-spa dev webapp" 
-//add scripts here
+---------------------------------------------add scripts here--------------------------------------------
