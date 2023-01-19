@@ -1,9 +1,0 @@
-{
-  "contents": {
-    "home": ["/"],
-    "pricing": ["/pricing"],
-    "faq": ["/faq"],
-    "header": ["/", "/pricing", "/faq"],
-    "footer": ["/", "/pricing", "/faq"]
-  }
-}
