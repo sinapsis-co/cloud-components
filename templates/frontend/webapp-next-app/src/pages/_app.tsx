@@ -1,11 +1,24 @@
 import Head from 'next/head';
 import Router from 'next/router';
 import type { AppProps } from 'next/app';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { CacheProvider, EmotionCache } from '@emotion/react';
+import theme from '../MUI-config/theme';
+import createEmotionCache from '../MUI-config/createEmotionCache';
 
 import { useEffect } from 'react';
-import { GlobalStyle } from '@frontend/theme/global-style';
 
-function MyApp({ Component, pageProps }: AppProps): JSX.Element {
+// Client-side cache, shared for the whole session of the user in the browser.
+const clientSideEmotionCache = createEmotionCache();
+
+interface MyAppProps extends AppProps {
+  emotionCache?: EmotionCache;
+}
+
+function MyApp(props: MyAppProps): JSX.Element {
+  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+
   useEffect(() => {
     const handleHashChange = () => {
       if (location.hash) {
@@ -31,8 +44,9 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   }, []);
 
   return (
-    <>
+    <CacheProvider value={emotionCache}>
       <Head>
+        <meta name="viewport" content="initial-scale=1, width=device-width" />
         <meta name="msapplication-TileColor" content="#ffffff" />
         <meta name="msapplication-TileImage" content="favicon/ms-icon-144x144.png" />
         <meta name="theme-color" content="#ffffff" />
@@ -66,9 +80,11 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
           content="We empower independent artists with the tools needed to launch &amp; grow their career."
         />
       </Head>
-      <GlobalStyle />
-      <Component {...pageProps} />
-    </>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </CacheProvider>
   );
 }
 

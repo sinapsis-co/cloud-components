@@ -1,10 +1,11 @@
 import React from 'react';
 import Head from 'next/head';
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, NextPage } from 'next';
 
 import styled from 'styled-components';
+import { Button } from '@mui/material';
 
-const HomePage = (): JSX.Element => {
+const HomePage: NextPage = () => {
   return (
     <>
       <Head>
