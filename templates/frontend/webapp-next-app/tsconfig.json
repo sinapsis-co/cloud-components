@@ -20,7 +20,7 @@
     "noEmit": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "isolatedModules": true,
+    "isolatedModules": true
     // "jsxImportSource": "@emotion/react"
   },
   "exclude": ["node_modules"],
