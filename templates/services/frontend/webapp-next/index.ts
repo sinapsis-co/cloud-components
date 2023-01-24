@@ -11,22 +11,22 @@ import { ssrLandingEvent } from './catalog';
 import { baseRepo } from '../../business/base-crud/repository/base';
 import { otherRepo } from '../../business/base-event/repository/other';
 
-export type SsrServiceDeps = GlobalServiceDependencies;
+export type WebappNextServiceDeps = GlobalServiceDependencies;
 
-export class SsrLanding extends Service<GlobalProps, SsrServiceDeps> {
+export class WebappNext extends Service<GlobalProps, WebappNextServiceDeps> {
   public readonly ssr: SsrConstruct;
   public readonly eventAggregate: EventAggregate;
   public readonly queueFunction: QueueFunction;
 
-  constructor(scope: Construct, globalProps: GlobalProps, params: SsrServiceDeps) {
-    super(scope, SsrLanding.name, globalProps, { params });
+  constructor(scope: Construct, globalProps: GlobalProps, params: WebappNextServiceDeps) {
+    super(scope, WebappNext.name, globalProps, { params });
 
     // Dependency due domain in identity verification
     params.identity.addDependency(this);
 
     this.ssr = new SsrConstruct(this, {
-      subDomain: this.props.subdomain.landing,
-      baseDir: 'frontend/ssr-landing',
+      subDomain: this.props.subdomain.webappNext,
+      baseDir: 'frontend/webapp',
       distDir: '.next',
       deployTriggeredEventConfig: {
         ...ssrLandingEvent.renderGenerator.eventConfig,

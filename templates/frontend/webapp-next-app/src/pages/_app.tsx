@@ -8,6 +8,7 @@ import theme from '../MUI-config/theme';
 import createEmotionCache from '../MUI-config/createEmotionCache';
 
 import { useEffect } from 'react';
+import TagManager from 'react-gtm-module';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -16,10 +17,16 @@ interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
 }
 
+const tagManagerArgs = {
+  gtmId: process.env.NEXT_APP_GOOGLE_GTM || '',
+};
+
 function MyApp(props: MyAppProps): JSX.Element {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
   useEffect(() => {
+    TagManager.initialize(tagManagerArgs);
+
     const handleHashChange = () => {
       if (location.hash) {
         const element = document.querySelector(`#scroll-${location.hash.slice(1)}`);

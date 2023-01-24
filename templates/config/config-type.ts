@@ -7,7 +7,7 @@ import {
 } from '@sinapsis-co/cc-infra-v2/common/synth/props-types';
 
 export type Subdomain = {
-  landing: string;
+  webappNext: string;
   webapp: string;
   webappVite: string;
   api: string;
