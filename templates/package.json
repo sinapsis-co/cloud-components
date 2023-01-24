@@ -22,7 +22,8 @@
     "destroy": "npx ts-node script-manager.ts destroy",
     "prepare": "npx husky install",
     "verify": "npx tsc --pretty --noEmit && npx eslint . --ext .ts && npx prettier -c . && npx cspell '**/*.ts'",
-    "test": "jest"
+    "test": "jest",
+    "create-user": "./auth-create-user.bash"
   },
   "private": true,
   "workspaces": [

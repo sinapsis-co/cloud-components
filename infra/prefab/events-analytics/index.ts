@@ -6,7 +6,7 @@ import { getLogicalName } from '../../common/naming/get-logical-name';
 import { Service } from '../../common/service';
 import { getDeployConfig } from '../../common/naming/get-deploy-config';
 
-import { CfnCrawler, CfnDatabase } from 'aws-cdk-lib/aws-glue';
+import { CfnCrawler, CfnDatabase, CfnCrawlerProps } from 'aws-cdk-lib/aws-glue';
 import { BlockPublicAccess, Bucket, BucketEncryption, StorageClass } from 'aws-cdk-lib/aws-s3';
 import { Rule } from 'aws-cdk-lib/aws-events';
 import { Effect, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
@@ -19,6 +19,7 @@ import { CfnWorkGroup } from 'aws-cdk-lib/aws-athena';
 export type EventsAnalyticsParams = {
   eventBus: CustomEventBusParams;
   eventSource?: string;
+  paramsCrawlerProps?: Partial<CfnCrawlerProps>;
   lifecycleDurations?: {
     infrequentDays: number;
     glacierDays: number;
@@ -32,6 +33,9 @@ export type EventsAnalyticsParams = {
 export class EventsAnalyticsPrefab extends Construct {
   public readonly datalakeBucket: Bucket;
   public readonly database: CfnDatabase;
+  public readonly crawler: CfnCrawler;
+  public readonly athenaOutputBucket: Bucket;
+  public readonly workGroup: CfnWorkGroup;
 
   constructor(service: Service, params: EventsAnalyticsParams) {
     super(service, getLogicalName(EventsAnalyticsPrefab.name));
@@ -132,7 +136,7 @@ export class EventsAnalyticsPrefab extends Construct {
 
     this.datalakeBucket.grantReadWrite(crawlerRole);
 
-    const crawler = new CfnCrawler(this, 'DatalakeTableCrawler', {
+    this.crawler = new CfnCrawler(this, 'DatalakeTableCrawler', {
       name: getResourceName('crawler', service.props),
       databaseName: this.database.ref.toString(),
       role: crawlerRole.roleArn,
@@ -149,11 +153,12 @@ export class EventsAnalyticsPrefab extends Construct {
         deleteBehavior: 'DELETE_FROM_DATABASE',
         updateBehavior: 'UPDATE_IN_DATABASE',
       },
+      ...params.paramsCrawlerProps,
     });
 
     new CfnOutput(service, 'CrawlerName', {
       exportName: getResourceName('CrawlerName', service.props),
-      value: crawler.name as string,
+      value: this.crawler.name as string,
     });
     new CfnOutput(service, 'DatabaseName', {
       exportName: getResourceName('DatabaseName', service.props),
@@ -164,7 +169,7 @@ export class EventsAnalyticsPrefab extends Construct {
       value: getDatabaseName('datalake', service.props),
     });
 
-    const athenaOutputBucket = new Bucket(service, 'QueryOutputsBucket', {
+    this.athenaOutputBucket = new Bucket(service, 'QueryOutputsBucket', {
       bucketName: getResourceName('query-outputs', service.props),
       versioned: false,
       publicReadAccess: false,
@@ -174,15 +179,15 @@ export class EventsAnalyticsPrefab extends Construct {
       autoDeleteObjects: true,
     });
 
-    const workGroup = new CfnWorkGroup(service, 'DataLakeWorkGroup', {
+    this.workGroup = new CfnWorkGroup(service, 'DataLakeWorkGroup', {
       name: getResourceName('datalake', service.props),
       recursiveDeleteOption: true,
       workGroupConfiguration: {
         resultConfiguration: {
-          outputLocation: athenaOutputBucket.s3UrlForObject(),
+          outputLocation: this.athenaOutputBucket.s3UrlForObject(),
         },
       },
     });
-    workGroup.applyRemovalPolicy(RemovalPolicy.DESTROY);
+    this.workGroup.applyRemovalPolicy(RemovalPolicy.DESTROY);
   }
 }
