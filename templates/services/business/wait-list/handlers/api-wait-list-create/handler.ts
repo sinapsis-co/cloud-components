@@ -6,12 +6,19 @@ import { WaitListTemplate } from 'notifications/templates/wait-list';
 import { notificationEvent } from 'services/support/notifications/catalog';
 import * as catalog from '../../catalog';
 import { waitListRepository } from '../../repository';
+import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
+import { googleReCaptcha as googleReCaptchaSecret } from '../../catalog/secret';
+import { googleApiRequestValidate } from '../../platform/google-recaptcha';
 
 export const handler = apiHandler<catalog.api.create.Interface>(async (_, request) => {
-  const { email, givenName } = request.body;
+  const { email, givenName, googleReCaptcha } = request.body;
 
-  if (!validateEmail(email)) {
-    throw new ApiError('INVALID_EMAIL', 400, 'The email address you provided is invalid. Please verify it!');
+  const secrets = await getSecret<googleReCaptchaSecret.Secret>(googleReCaptchaSecret.secretConfig);
+
+  const { success } = await googleApiRequestValidate(googleReCaptcha, secrets.API_SECRET);
+
+  if (!success) {
+    throw new ApiError('INVALID_RECAPTCHA', 400, 'The captcha is invalid');
   }
 
   const prelaunchUser = await waitListRepository
@@ -52,10 +59,3 @@ export const handler = apiHandler<catalog.api.create.Interface>(async (_, reques
   return prelaunchUser;
 }, catalog.api.create.config);
 
-const validateEmail = (email: any) => {
-  return String(email)
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
-};

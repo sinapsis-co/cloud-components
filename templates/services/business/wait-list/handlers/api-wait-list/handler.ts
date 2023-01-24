@@ -4,8 +4,8 @@ import { checkObject } from '../../platform/check-object';
 import { createWaitListUsersList } from '../../platform/get-prelaunch-report';
 import { createPresignedGet } from '../../platform/get-presigned-get';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const handler = apiHandler<catalog.api.list.Interface>(async (event, request) => {
+
+export const handler = apiHandler<catalog.api.list.Interface>(async () => {
   const key = await createWaitListUsersList();
   await checkObject(key);
   return { url: createPresignedGet(key) };
