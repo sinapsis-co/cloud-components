@@ -1,10 +1,10 @@
-import { PostConfirmationTriggerHandler } from 'aws-lambda';
-import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
 import { updateCognitoUser } from '@sinapsis-co/cc-platform-v2/integrations/cognito/admin-ops/update-user-att';
 import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
-import { userProfileRepository } from 'services/business/identity/repository/user-profile-repository';
+import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
+import { PostConfirmationTriggerHandler } from 'aws-lambda';
 import { UserCognito } from 'services/business/identity/entities/user-cognito';
 import { cognitoToProfileMapper, cognitoUpdateCustomMapper } from 'services/business/identity/platform/cognito-mapper';
+import { userProfileRepository } from 'services/business/identity/repository/user-profile-repository';
 
 import { WelcomeTemplate } from 'notifications/templates/welcome';
 import { notificationEvent } from 'services/support/notifications/catalog';
@@ -23,7 +23,6 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
     custom: {
       tenantId: uuid(),
       role: 'owner',
-      permission: 'admin',
       companyName: userAttributes['custom:companyName'],
     },
   };

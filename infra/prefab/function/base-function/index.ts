@@ -1,16 +1,16 @@
-import { Construct } from 'constructs';
-import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Architecture, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
+import { Architecture, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { Construct } from 'constructs';
 
-import { ApiInterface, ApiConfig, TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api';
+import { ApiConfig, ApiInterface, TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api';
 
-import { getShortResourceName } from '../../../common/naming/get-resource-name';
+import { getFunctionEntry } from '../../../common/naming/get-function-entry';
 import { getLogicalName } from '../../../common/naming/get-logical-name';
+import { getShortResourceName } from '../../../common/naming/get-resource-name';
+import { Service } from '../../../common/service';
 import { CustomEventBusConstruct, CustomEventBusParams } from '../../../services/custom-event-bus';
 import { ServiceTable } from '../../table/dynamo-table';
-import { getFunctionEntry } from '../../../common/naming/get-function-entry';
-import { Service } from '../../../common/service';
 
 export type BaseHandlerParams = NodejsFunctionProps & {
   name: ApiConfig<ApiInterface>['name'];
