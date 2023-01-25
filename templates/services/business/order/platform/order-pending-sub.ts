@@ -37,7 +37,8 @@ export const orderTemporalSubStrategy = async (
   const { stripeId } = await getOrCreateCustomer(
     {
       secrets,
-      tenantId: claims.sub,
+      tenantId: claims.tenantId,
+      sub: claims.sub,
       customer: claims,
     },
     {

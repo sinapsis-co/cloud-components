@@ -10,7 +10,7 @@ export const handler = eventHandler<UserProfileRepoEvent['updated']>(async (even
   const user = event.detail;
   const secrets = await getSecret<secretsStripe.stripe.Secret>(secretsStripe.stripe.secretConfig);
 
-  const customer = await customerRepository.getItem({ tenantId: user.id });
+  const customer = await customerRepository.getItem({ tenantId: user.tenantId, userId: user.id });
 
   const { customers } = getStripeClient({ secrets });
 

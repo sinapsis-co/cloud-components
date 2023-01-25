@@ -5,12 +5,12 @@ import { orderRepo } from '../../repository';
 import { generateId } from '../../utils/generate-id';
 
 export const handler = eventHandler<orderIncomeRegister.Event>(async (event) => {
-  const { tenantId, orderId, ...body } = event.detail;
-  const checkOrder = await orderRepo.getItem({ tenantId, orderId }).catch(() => undefined);
+  const { tenantId, orderId, userId, ...body } = event.detail;
+  const checkOrder = await orderRepo.getItem({ tenantId, orderId, userId }).catch(() => undefined);
   let order = checkOrder;
   if (!checkOrder || checkOrder.orderStatus === 'SUCCESS') {
     order = await orderRepo.createItem(
-      { tenantId, orderId: generateId() },
+      { tenantId, orderId: generateId(), userId },
       {
         ...(checkOrder || {}),
         ...body,
@@ -18,7 +18,7 @@ export const handler = eventHandler<orderIncomeRegister.Event>(async (event) => 
     );
   }
   order = await orderRepo.createItem(
-    { tenantId, orderId },
+    { tenantId, orderId, userId },
     {
       ...checkOrder,
       ...body,

@@ -26,7 +26,7 @@ export const handler = apiHandler<api.createOrderIncome.Interface>(async (_, req
     request.claims
   );
   const order = await orderRepo.createItem(
-    { tenantId, orderId },
+    { tenantId, orderId, userId: sub },
     {
       ...orderPending,
       orderStatus: 'PENDING',

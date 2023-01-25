@@ -3,8 +3,8 @@ import * as api from '../../catalog/api';
 import { orderRepo } from '../../repository';
 
 export const handler = apiHandler<api.getOrder.Interface>(async (_, request) => {
-  const { tenantId } = request.claims;
+  const { tenantId, sub } = request.claims;
   const { orderId } = request.pathParams;
 
-  return orderRepo.getItem({ tenantId, orderId });
+  return orderRepo.getItem({ tenantId, orderId, userId: sub });
 }, api.getOrder.config);

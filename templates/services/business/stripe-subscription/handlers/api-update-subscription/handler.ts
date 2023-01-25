@@ -10,7 +10,7 @@ import { stripeSubscription } from '../../platform';
 import { subscriptionRepository } from '../../repository';
 
 export const handler = apiHandler<api.updateSubscription.Interface>(async (_, request) => {
-  const { tenantId, email } = request.claims;
+  const { tenantId, email, sub } = request.claims;
   const { product, price, paymentMethodId, coupon } = request.body;
 
   const secrets = await getSecret<secretsStripe.stripe.Secret>(secretsStripe.stripe.secretConfig);
@@ -18,7 +18,7 @@ export const handler = apiHandler<api.updateSubscription.Interface>(async (_, re
 
   const [originalSubscription, customer] = await Promise.all([
     subscriptionRepository.getItem({ tenantId, subscriptionId: request.pathParams.subscriptionId }),
-    customerRepository.getItem({ tenantId }),
+    customerRepository.getItem({ tenantId, userId: sub }),
   ]);
 
   const priceId = price?.externalRefs?.find((e) => e.provider === 'stripe')?.id;
