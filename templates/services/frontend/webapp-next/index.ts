@@ -46,6 +46,9 @@ export class WebappNext extends Service<GlobalProps, WebappNextServiceDeps> {
       name: 'process-render-generator',
       baseFunctionFolder: __dirname,
       customQueueParams: { name: 'render-generator' },
+      environment: {
+        ENV_NAME: this.props.envName
+      },
       modifiers: [
         this.ssr.distributionBucket.useMod('DISTRO_BUCKET_NAME', [PrivateBucket.modifier.writer]),
         this.ssr.recipeBucket.useMod('RECIPE_BUCKET_NAME', [PrivateBucket.modifier.reader]),
