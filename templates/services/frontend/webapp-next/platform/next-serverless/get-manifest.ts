@@ -7,6 +7,7 @@ const s3 = new S3();
 let manifestMemo: RegExpManifest;
 
 export const getManifest = async (NEXT_MANIFEST_KEY: string, RECIPE_BUCKET_NAME: string): Promise<RegExpManifest> => {
+  console.log('GET MANIFEST');
   if (!manifestMemo) {
     const response = await s3
       .getObject({

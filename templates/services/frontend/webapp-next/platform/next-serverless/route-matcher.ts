@@ -1,6 +1,7 @@
 import { RegExpManifest, RegExpManifestEntry } from '../../entities/next-serverless';
 
 export const routeMatcher = (manifest: RegExpManifest, path: string): RegExpManifestEntry | undefined => {
+  console.log('ROUTER MATCHER');
   const containsParams = (path: string) => path.includes('[');
   const key = Object.keys(manifest)
     .sort((a, b) => {
