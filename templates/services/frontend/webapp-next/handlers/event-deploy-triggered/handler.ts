@@ -12,7 +12,7 @@ export const handler = eventHandler(async () => {
       return getKeys(pageType.entity);
     })
   );
-  await sendMessages<ssrLandingMessage.renderGenerator.Message>(uris.flat(), process.env.QUEUE!);
+  await sendMessages<ssrLandingMessage.renderGenerator.Message>(uris.flat(), process.env.DEST_QUEUE!);
 });
 
 const getKeys = async (Prefix: string, ContinuationToken?: string): Promise<{ uri: string }[]> => {

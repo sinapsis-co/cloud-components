@@ -26,7 +26,7 @@ export class WebappNext extends Service<GlobalProps, WebappNextServiceDeps> {
 
     this.ssr = new SsrConstruct(this, {
       subDomain: this.props.subdomain.webappNext,
-      baseDir: 'frontend/webapp',
+      baseDir: 'frontend/webapp-next-app',
       distDir: '.next',
       deployTriggeredEventConfig: {
         ...ssrLandingEvent.renderGenerator.eventConfig,
@@ -65,7 +65,7 @@ export class WebappNext extends Service<GlobalProps, WebappNextServiceDeps> {
           name: 'event-deploy-triggered',
           eventConfig: [ssrLandingEvent.renderGenerator.eventConfig],
           modifiers: [
-            this.ssr.distributionBucket.useMod('DISTRO_BUCKET_NAME', [PrivateBucket.modifier.writer]),
+            this.ssr.distributionBucket.useMod('DISTRO_BUCKET_NAME', [PrivateBucket.modifier.reader]),
             this.queueFunction.customQueue.useModWriter(),
           ],
         },
