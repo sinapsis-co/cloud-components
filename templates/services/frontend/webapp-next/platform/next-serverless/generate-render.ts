@@ -35,7 +35,7 @@ export const generateRenderer = async (
     .putObject({
       Bucket: DISTRO_BUCKET_NAME,
       Key: uri,
-      Body: response,
+      Body: (response as any).body,
       ContentType: 'text/html',
       CacheControl: `max-age=${CF_CACHE_MAX_AGE}`,
     })
