@@ -16,8 +16,20 @@ export const generateRenderer = async (
 ): Promise<void> => {
   await getEnvVars(NEXT_ENV_KEY, RECIPE_BUCKET_NAME);
   const rendererRecipe = await getRecipe(handler, RECIPE_BUCKET_NAME);
-  const renderer = requireFromString(rendererRecipe, `_next/serverless/${uri}`).render;
-  const response = await serverlessHttp(renderer)({}, {});
+  const renderer = requireFromString(rendererRecipe, uri).render;
+  const response = await serverlessHttp(renderer)({
+    body: '',
+    httpMethod: 'GET',
+    path: uri,
+    pathParameters: { username: uri.split('/')[1] },
+    queryStringParameters: {},
+    multiValueHeaders: {},
+    isBase64Encoded: false,
+    multiValueQueryStringParameters: {},
+    stageVariables: {},
+    requestContext: {} as any,
+    resource: '',
+  }, {});
 
   await s3
     .putObject({

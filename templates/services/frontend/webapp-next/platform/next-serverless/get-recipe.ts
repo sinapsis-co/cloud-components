@@ -9,7 +9,7 @@ export const getRecipe = async (path: string, RECIPE_BUCKET_NAME: string): Promi
   if (!recipeMemo.path) {
     const response = await s3
       .getObject({
-        Key: path,
+        Key: `_next/serverless/${path}`,
         Bucket: RECIPE_BUCKET_NAME,
       })
       .promise();
