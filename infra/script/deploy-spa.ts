@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import SSM from 'aws-sdk/clients/ssm';
 import CloudFront from 'aws-sdk/clients/cloudfront';
+import SSM from 'aws-sdk/clients/ssm';
 import { execSync, ExecSyncOptions } from 'child_process';
 import { writeFileSync } from 'fs';
 import { getParameterName, getResourceName } from '../common/naming/get-resource-name';
@@ -87,7 +87,8 @@ export const deploySPA = async <
 
     console.log('>> STEP: (3/4) => BUILDING');
 
-    const command = `yarn && yarn build ${envNameInput}`;
+    const command = args[5] === 'vite' ? 'yarn && yarn build' : `yarn && yarn build ${envName}`;
+
     execSync(command, { stdio: 'inherit', cwd: `${process.cwd()}/${baseDir}` });
 
     const copyFolderCmd = `aws s3 cp ${distDir}/ s3://${bucketName}/ --recursive --cache-control "max-age=${assetMaxAge}" --exclude "index.html"`;
