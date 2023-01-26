@@ -6,7 +6,6 @@ const s3 = new S3();
 const recipeMemo: Record<string, string> = {};
 
 export const getRecipe = async (path: string, RECIPE_BUCKET_NAME: string): Promise<string> => {
-  console.log('GET RECIPE', path);
   if (!recipeMemo.path) {
     const response = await s3
       .getObject({

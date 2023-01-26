@@ -12,7 +12,6 @@ const CF_CACHE_MAX_AGE = '300';
 export const nextServerlessRender = async (uri: string): Promise<void> => {
   const manifest = await getManifest(NEXT_MANIFEST_KEY, RECIPE_BUCKET_NAME);
   const match = routeMatcher(manifest, uri);
-  console.log(manifest, match);
   if (!match) {
     console.log({ type: 'ERROR_NO_MATCH', uri });
     return;
