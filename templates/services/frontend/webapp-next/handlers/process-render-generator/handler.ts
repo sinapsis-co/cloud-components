@@ -5,6 +5,6 @@ import { nextServerlessRender } from '../../platform/next-serverless';
 
 export const handler = queueBatchHandler<ssrLandingMessage.renderGenerator.Message>(
   async (_event, _record, payload) => {
-    await nextServerlessRender(payload.uri);
+    await nextServerlessRender(payload.uri, payload.querystring);
   }
 );
