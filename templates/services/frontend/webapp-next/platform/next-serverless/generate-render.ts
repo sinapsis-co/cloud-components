@@ -8,6 +8,7 @@ const s3 = new S3();
 
 export const generateRenderer = async (
   uri: string,
+  querystring: string,
   handler: string,
   DISTRO_BUCKET_NAME: string,
   RECIPE_BUCKET_NAME: string,
@@ -34,7 +35,7 @@ export const generateRenderer = async (
   await s3
     .putObject({
       Bucket: DISTRO_BUCKET_NAME,
-      Key: uri,
+      Key: querystring,
       Body: (response as any).body,
       ContentType: 'text/html',
       CacheControl: `max-age=${CF_CACHE_MAX_AGE}`,
