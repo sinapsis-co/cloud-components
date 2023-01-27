@@ -46,6 +46,7 @@ export class WebappNext extends Service<GlobalProps, WebappNextServiceDeps> {
       name: 'process-render-generator',
       baseFunctionFolder: __dirname,
       customQueueParams: { name: 'render-generator' },
+      memorySize: 512,
       environment: {
         ENV_NAME: this.props.envName
       },
