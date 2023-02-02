@@ -55,7 +55,8 @@
     "require-from-string": "^2.0.2",
     "serverless-http": "^3.0.1",
     "sharp": "^0.30.6",
-    "stripe": "^11.6.0"
+    "stripe": "^11.6.0",
+    "twilio": "^3.84.1"
   },
   "resolutions": {
     "@types/react": "17.0.2",

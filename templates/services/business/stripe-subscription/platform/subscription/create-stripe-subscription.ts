@@ -1,6 +1,6 @@
 import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
+import { Customer } from 'services/business/customer-gateway/entities';
 import { Order, OrderIncome } from 'services/business/order/entities';
-import { Customer } from 'services/business/stripe-customer/entities/customer';
 import { PriceCreate } from 'services/business/stripe-product/entities/price';
 import { Stripe, StripeRepo } from 'services/support/stripe/platform';
 
@@ -56,8 +56,9 @@ export const createStripeSubscription =
       trial_period_days: trialDaysDuration,
       items: [{ price: stripePrice.id, quantity: 1 }],
       metadata: {
-        customerId: customer.tenantId,
-        initialOrder: order?.orderId as string,
+        tenantId: customer.tenantId,
+        userId: customer.userId,
+        orderInitial: order?.orderId as string,
         orderId: order?.orderId as string,
         orderItemNumber: order?.orderItem[0].orderItemNumber as string,
         orderItemCategory: order?.orderItem[0].orderItemCategory as string,

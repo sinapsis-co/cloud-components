@@ -7,14 +7,14 @@ export const payoutUserRepo = repository<PayoutUserBuilder>({
   repoName: 'setting-payout-user',
   keySerialize: (key: PayoutUserBuilder['key']): PayoutUserBuilder['storeMapping']['key'] => {
     return {
-      pk: `${key.tenantId}#${key.userId}`,
-      sk: key.id,
+      pk: key.tenantId,
+      sk: `${key.userId}#${key.id}`,
     };
   },
   entitySerialize: (key: PayoutUserBuilder['key'], entityCreate: PayoutUserCreate): PayoutUserStore => {
     const mappedKey: PayoutUserBuilder['storeMapping']['key'] = {
       pk: key.tenantId,
-      sk: key.id,
+      sk: `${key.userId}#${key.id}`,
     };
     const timers: PayoutUserBuilder['storeMapping']['timers'] = {
       createdAt: new Date().toISOString(),
@@ -26,9 +26,9 @@ export const payoutUserRepo = repository<PayoutUserBuilder>({
     const { pk, sk, createdAt, updatedAt, ...att } = entityStore;
     return {
       ...att,
-      tenantId: pk.split('#')[0],
-      userId: pk.split('#')[1],
-      id: sk,
+      tenantId: pk,
+      userId: sk.split('#')[0],
+      id: sk.split('#')[1],
       createdAt: new Date(createdAt),
       updatedAt: new Date(updatedAt),
     };

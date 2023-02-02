@@ -1,5 +1,7 @@
-export * as Paid from './invoice-paid';
+export * as InvoiceCreated from './invoice-created';
+export * as InvoicePaid from './invoice-paid';
 export * as PaymentFailed from './invoice-payment-failed';
+export * as InvoicePaymentRequired from './invoice-payment_action_required';
 export * as PayoutPaid from './payout-paid';
 export * as PriceCreated from './price-created';
 export * as PriceUpdated from './price-updated';

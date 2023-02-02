@@ -21,7 +21,7 @@ export const handler = eventHandler<Webhook.TrialWillEnd.Event>(async (event) =>
   const leftDays: number = dateDiffInDays(today, endTime);
 
   if (!subscription.default_payment_method && leftDays > 0) {
-    await dispatchEvent<Event.Subscription.TrialWillFinish.Event>(Event.Subscription.TrialWillFinish.eventConfig, {
+    await dispatchEvent<Event.TrialWillFinish.Event>(Event.TrialWillFinish.eventConfig, {
       customerId,
       leftDays,
     });

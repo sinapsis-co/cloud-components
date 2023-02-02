@@ -6,12 +6,13 @@ import { Duration } from 'aws-cdk-lib';
 import { GlobalProps } from 'config/config-type';
 import { GlobalServiceDependencies } from '..';
 import { Webhook } from '../../support/stripe/catalog/event';
+import { InvoicePaid, InvoicePaymentRequired, PaymentFailed } from '../../support/stripe/catalog/event/webhook';
+import { CustomerGateway } from '../customer-gateway';
 import { Order } from '../order';
-import { StripeCustomer } from '../stripe-customer';
 import { api, event } from './catalog';
 
 export type StripeServiceParams = {
-  stripeCustomer: StripeCustomer;
+  customerGateway: CustomerGateway;
   serviceOrder: Order;
 } & GlobalServiceDependencies;
 
@@ -37,7 +38,7 @@ export class StripeSubscription extends Service<GlobalProps, StripeServiceParams
           modifiers: [
             this.props.stripeService.SecretReader(),
             (lambdaFunction) =>
-              ServiceTable.addTable(lambdaFunction, this.props.stripeCustomer.table, 'readWrite', 'CUSTOMER_TABLE'),
+              ServiceTable.addTable(lambdaFunction, this.props.customerGateway.table, 'readWrite', 'CUSTOMER_TABLE'),
             (lambdaFunction) =>
               ServiceTable.addTable(
                 lambdaFunction,
@@ -53,10 +54,11 @@ export class StripeSubscription extends Service<GlobalProps, StripeServiceParams
           modifiers: [
             this.props.stripeService.SecretReader(),
             (lambdaFunction) =>
-              ServiceTable.addTable(lambdaFunction, this.props.stripeCustomer.table, 'read', 'CUSTOMER_TABLE'),
+              ServiceTable.addTable(lambdaFunction, this.props.customerGateway.table, 'read', 'CUSTOMER_TABLE'),
           ],
         },
         cancelSubscription: { ...api.cancelSubscription.config, modifiers: [this.props.stripeService.SecretReader()] },
+        listSubscription: api.listSubscription.config,
       },
     });
 
@@ -78,7 +80,7 @@ export class StripeSubscription extends Service<GlobalProps, StripeServiceParams
         },
         quantityUpdate: {
           name: 'event-update-quantity',
-          eventConfig: [event.Subscription.Seats.Added.eventConfig, event.Subscription.Seats.Deleted.eventConfig],
+          eventConfig: [event.Seats.Added.eventConfig, event.Seats.Deleted.eventConfig],
           tablePermission: 'read',
           modifiers: [this.props.stripeService.SecretReader()],
         },
@@ -89,8 +91,27 @@ export class StripeSubscription extends Service<GlobalProps, StripeServiceParams
         },
         trialFinished: {
           name: 'event-trial-finished',
-          eventConfig: [event.Subscription.TrialFinished.eventConfig],
+          eventConfig: [event.TrialFinished.eventConfig],
           tablePermission: 'write',
+        },
+        eventPaymentFailed: {
+          name: 'event-payment-failed',
+          eventConfig: [PaymentFailed.eventConfig, InvoicePaymentRequired.eventConfig],
+          tablePermission: 'write',
+          modifiers: [
+            this.props.stripeService.SecretReader(),
+            (lambdaFunction) =>
+              ServiceTable.addTable(lambdaFunction, this.props.serviceOrder.apiAggregate.table, 'read', 'ORDER_TABLE'),
+          ],
+        },
+        eventPaymentRenewed: {
+          name: 'event-payment-renewed',
+          eventConfig: [InvoicePaid.eventConfig],
+          tablePermission: 'readWrite',
+          modifiers: [
+            (lambdaFunction) =>
+              ServiceTable.addTable(lambdaFunction, this.props.serviceOrder.apiAggregate.table, 'read', 'ORDER_TABLE'),
+          ],
         },
       },
     });

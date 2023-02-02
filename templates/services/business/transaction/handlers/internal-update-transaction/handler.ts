@@ -18,8 +18,8 @@ export const handler = async ({
     {
       id,
       tenantId,
-      userId,
+      orderId: transaction.orderId as string,
     },
-    { ...transaction, status }
+    { ...transaction, status, userId }
   );
 };

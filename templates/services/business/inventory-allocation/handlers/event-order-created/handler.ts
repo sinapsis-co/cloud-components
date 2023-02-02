@@ -7,7 +7,9 @@ import { getFirstInventoryByCategoryId } from '../../platform/list-inventories';
 import { inventoryAllocationRepo } from '../../repository/inventory-allocation-repository';
 
 export const handler = eventHandler<orderIncomePending.Event>(async (event) => {
-  const { tenantId, orderId } = event.detail;
+  const { tenantId, orderId, billingReason } = event.detail;
+
+  if (billingReason === 'SUBSCRIPTION_CYCLE') return;
 
   await Promise.all(
     event.detail.orderItem.map(async (orderItem) => {

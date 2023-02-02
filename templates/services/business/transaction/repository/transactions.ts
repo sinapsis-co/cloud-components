@@ -7,14 +7,14 @@ export const transactionRepo = repository<TransactionBuilder>({
   repoName: 'transaction',
   keySerialize: (key: TransactionBuilder['key']): TransactionBuilder['storeMapping']['key'] => {
     return {
-      pk: `${key.tenantId}#${key.userId}}`,
-      sk: `${key.id}`,
+      pk: key.tenantId,
+      sk: `${key.orderId}#${key.id}`,
     };
   },
   entitySerialize: (key: TransactionBuilder['key'], entityCreate: TransactionCreate): any => {
     const mappedKey: TransactionBuilder['storeMapping']['key'] = {
       pk: key.tenantId,
-      sk: `${key.id}`,
+      sk: `${key.orderId}#${key.id}`,
     };
     const timers: TransactionBuilder['storeMapping']['timers'] = {
       createdAt: new Date().toISOString(),
@@ -26,9 +26,9 @@ export const transactionRepo = repository<TransactionBuilder>({
     const { pk, sk, createdAt, updatedAt, ...att } = entityStore;
     return {
       ...att,
-      tenantId: pk.split('#')[0],
-      userId: pk.split('#')[1],
-      id: sk,
+      tenantId: pk,
+      orderId: sk.split('#')[0],
+      id: sk.split('#')[1],
       createdAt: new Date(createdAt),
       updatedAt: new Date(updatedAt),
     };

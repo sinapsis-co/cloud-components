@@ -28,8 +28,10 @@ export type SubscriptionBuilder = EntityBuilder<{
     price?: Partial<Price>;
     stripeId?: string;
     paymentMethodAttached?: string;
+    warningMessage?: string | null;
   };
   key: {
+    userId: string;
     tenantId: string;
     subscriptionId: string;
   };

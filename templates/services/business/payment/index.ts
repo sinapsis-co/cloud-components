@@ -4,12 +4,12 @@ import { ServiceTable } from '@sinapsis-co/cc-infra-v2/prefab/table/dynamo-table
 import { Duration } from 'aws-cdk-lib';
 import { GlobalProps } from 'config/config-type';
 import { GlobalServiceDependencies } from '..';
+import { CustomerGateway } from '../customer-gateway';
 import { Order } from '../order';
-import { StripeCustomer } from '../stripe-customer';
 import { api } from './catalog';
 
 export type PaymentParams = {
-  stripeCustomer: StripeCustomer;
+  customerGateway: CustomerGateway;
   orderService: Order;
 } & GlobalServiceDependencies;
 
@@ -33,7 +33,7 @@ export class Payment extends Service<GlobalProps, PaymentParams> {
           modifiers: [
             this.props.stripeService.SecretReader(),
             (lambdaFunction) =>
-              ServiceTable.addTable(lambdaFunction, this.props.stripeCustomer.table, 'readWrite', 'CUSTOMER_TABLE'),
+              ServiceTable.addTable(lambdaFunction, this.props.customerGateway.table, 'readWrite', 'CUSTOMER_TABLE'),
             (lambdaFunction) =>
               ServiceTable.addTable(
                 lambdaFunction,

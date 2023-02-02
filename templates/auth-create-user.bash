@@ -2,7 +2,7 @@
 
 if [ "$1" = "help" ]; then
   echo 'USAGE: yarn create-user {env} {EMAIL_PREFIX} {PASSWORD} {NAME} {LAST_NAME} {EMAIL_SUFFIX} {COGNITO_WEB_CLIENT_ID}'
-  echo 'EXAMPLE: yarn create-user dev mauricio.paez Test1234 mauricio paez 1 67lls0mjqen8jacoi5p85bh7bi'
+  echo 'EXAMPLE: yarn create-user dev david Test1234 david lara 1 62mh1esoop465skp9mt4d1eu3v'
   exit 0
 fi
 
@@ -44,7 +44,7 @@ EMAIL=$EMAIL_PREFIX+$EMAIL_SUFFIX$EMAIL_POSTFIX
 ATT_EMAIL=Name=email,Value=$EMAIL
 ATT_G_NAME=Name=given_name,Value=$NAME
 ATT_F_NAME=Name=family_name,Value=$LAST_NAME
-ATT_CM_NAME=Name=custom:companyName,Value=Sinapsis
+# ATT_CM_NAME=Name=custom:companyName,Value=Sinapsis
 
 export AWS_DEFAULT_REGION=$REGION
 

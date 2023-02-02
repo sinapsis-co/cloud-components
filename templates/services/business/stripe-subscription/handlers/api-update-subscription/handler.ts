@@ -1,10 +1,10 @@
 import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
 import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
 import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
-import { customerRepository } from 'services/business/stripe-customer/repository';
+import { customerRepository } from 'services/business/customer-gateway/repository';
 import { secretsStripe } from 'services/support/stripe/catalog';
 import * as api from '../../catalog/api';
-import * as event from '../../catalog/event';
+import * as Event from '../../catalog/event';
 import { SubscriptionBuilder } from '../../entities/subscription';
 import { stripeSubscription } from '../../platform';
 import { subscriptionRepository } from '../../repository';
@@ -17,7 +17,7 @@ export const handler = apiHandler<api.updateSubscription.Interface>(async (_, re
   const { update, paymentMethods } = stripeSubscription({ secrets });
 
   const [originalSubscription, customer] = await Promise.all([
-    subscriptionRepository.getItem({ tenantId, subscriptionId: request.pathParams.subscriptionId }),
+    subscriptionRepository.getItem({ tenantId, subscriptionId: request.pathParams.subscriptionId, userId: sub }),
     customerRepository.getItem({ tenantId, userId: sub }),
   ]);
 
@@ -48,11 +48,11 @@ export const handler = apiHandler<api.updateSubscription.Interface>(async (_, re
   }
 
   const updatedSubscription = await subscriptionRepository.updateItem(
-    { subscriptionId: request.pathParams.subscriptionId, tenantId },
+    { subscriptionId: request.pathParams.subscriptionId, tenantId, userId: sub },
     changes
   );
 
-  await dispatchEvent<event.Subscription.Updated.Event>(event.Subscription.Updated.eventConfig, {
+  await dispatchEvent<Event.Updated.Event>(Event.Updated.eventConfig, {
     customerId: tenantId,
     subscription: updatedSubscription,
     paymentMethodId,

@@ -9,8 +9,8 @@ export const handler = async ({ payment, order }: { payment?: Payment; order: Or
   const transactions = await transactionRepo.createItem(
     {
       tenantId: order.tenantId,
+      orderId: order.orderId,
       id: uuid(),
-      userId: order.userId,
     },
     {
       order: {
@@ -21,6 +21,7 @@ export const handler = async ({ payment, order }: { payment?: Payment; order: Or
       status: status as TransactionStatus,
       payment: payment,
       paymentId: payment?.paymentIntentId,
+      userId: order.userId,
     }
   );
 

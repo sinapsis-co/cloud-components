@@ -13,22 +13,24 @@ export const handler = eventHandler<Webhook.SubscriptionUpdated.Event>(async (ev
 
   const previousAtt = event.detail.data.previous_attributes;
 
-  const customerId = subscription.metadata.customerId;
   const tenantId = subscription.metadata.tenantId;
+  const userId = subscription.metadata.userId;
   const status: SubscriptionStatus = subscription.status;
 
-  await subscriptionRepository.updateItem(
-    { tenantId, subscriptionId: subscription.id },
+  const sub = await subscriptionRepository.updateItem(
+    { tenantId, userId, subscriptionId: subscription.id },
     {
       currentPeriodEnd: parseStripeDate(subscription.current_period_end),
       status: subscription.status,
       trialDaysDuration: calculateTrialDaysDuration(subscription),
+      warningMessage: subscription.status === 'past_due' ? 'Payment failed' : null,
     }
   );
 
   const dispatcher = [
-    dispatchEvent<Event.Subscription.StatusUpdated.Event>(Event.Subscription.StatusUpdated.eventConfig, {
-      customerId,
+    dispatchEvent<Event.StatusUpdated.Event>(Event.StatusUpdated.eventConfig, {
+      userId,
+      tenantId,
       subscription: {
         status,
         currentPeriodEnd: parseStripeDate(subscription.current_period_end),
@@ -36,11 +38,22 @@ export const handler = eventHandler<Webhook.SubscriptionUpdated.Event>(async (ev
     }),
   ];
 
+  if (subscription.canceled_at && new Date(subscription.canceled_at * 1000) < new Date()) {
+    dispatcher.push(
+      dispatchEvent<Event.Canceled.Event>(Event.Canceled.eventConfig, {
+        userId,
+        tenantId,
+        subscription: sub,
+      })
+    );
+  }
+
   // when trial ends, the status goes from trialing to active
   if (previousAtt && previousAtt['status'] === 'trialing' && !subscription.default_payment_method) {
     dispatcher.push(
-      dispatchEvent<Event.Subscription.TrialFinished.Event>(Event.Subscription.TrialFinished.eventConfig, {
-        customerId,
+      dispatchEvent<Event.TrialFinished.Event>(Event.TrialFinished.eventConfig, {
+        userId: subscription.metadata.userId,
+        tenantId,
         subscriptionId: subscription.id,
       })
     );

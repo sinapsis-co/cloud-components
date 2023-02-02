@@ -7,15 +7,15 @@ import { ServiceTable } from '@sinapsis-co/cc-infra-v2/prefab/table/dynamo-table
 import { Duration } from 'aws-cdk-lib';
 import { AttributeType, ProjectionType } from 'aws-cdk-lib/aws-dynamodb';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { GlobalProps } from 'config/config-type';
 import { GlobalServiceDependencies } from '..';
-import { StripeCustomer } from '../stripe-customer';
+import { GlobalProps } from '../../../config/config-type';
+import { InvoiceCreated, InvoicePaid } from '../../support/stripe/catalog/event/webhook';
+import { CustomerGateway } from '../customer-gateway';
 import { api } from './catalog';
-import { orderIncomeRegister } from './catalog/event/income';
 import { BY_CUSTOMER_ID } from './repository/gsi';
 
 export type OrderParams = {
-  stripeCustomer: StripeCustomer;
+  customerGateway: CustomerGateway;
 } & GlobalServiceDependencies;
 
 export class Order extends Service<GlobalProps, OrderParams> {
@@ -40,7 +40,7 @@ export class Order extends Service<GlobalProps, OrderParams> {
           modifiers: [
             this.props.stripeService.SecretReader(),
             (lambdaFunction) =>
-              ServiceTable.addTable(lambdaFunction, this.props.stripeCustomer.table, 'readWrite', 'CUSTOMER_TABLE'),
+              ServiceTable.addTable(lambdaFunction, this.props.customerGateway.table, 'readWrite', 'CUSTOMER_TABLE'),
             (lambdaFunction) =>
               ServiceTable.addTable(
                 lambdaFunction,
@@ -91,7 +91,7 @@ export class Order extends Service<GlobalProps, OrderParams> {
       handlers: {
         cronExpired: {
           name: 'cron-order-expired',
-          cronOptions: { minute: '10', hour: '*/1', day: '*', month: '*', year: '*' },
+          cronOptions: { minute: '*/10', hour: '*', day: '*', month: '*', year: '*' },
           tablePermission: 'readWrite',
         },
       },
@@ -101,15 +101,17 @@ export class Order extends Service<GlobalProps, OrderParams> {
       baseFunctionFolder: __dirname,
       table: this.apiAggregate.table,
       handlers: {
-        eventInvoiceSuccess: {
+        eventInvoiceCreated: {
           tablePermission: 'readWrite',
-          name: 'event-invoice-success',
-          environment: {
-            PROJECT_NAME: this.props.projectName,
-            WEBAPP_URL: getDomain(this.props.subdomain.webapp, this.props),
-            MEDIA_URL: getDomain(this.props.subdomain.media, this.props),
-          },
-          eventConfig: [orderIncomeRegister.eventConfig],
+          name: 'event-invoice-created',
+          eventConfig: [InvoiceCreated.eventConfig],
+          modifiers: [this.props.stripeService.SecretReader()],
+        },
+        eventInvoicePaid: {
+          tablePermission: 'readWrite',
+          name: 'event-invoice-paid',
+          eventConfig: [InvoicePaid.eventConfig],
+          modifiers: [this.props.stripeService.SecretReader()],
         },
       },
     });

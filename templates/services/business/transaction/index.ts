@@ -6,6 +6,7 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { GlobalProps } from 'config/config-type';
 import { GlobalServiceDependencies } from '..';
 import { transactionApi } from './catalog';
+import { transactionCreate } from './catalog/event';
 
 export type TransactionCrudParams = GlobalServiceDependencies;
 
@@ -22,11 +23,14 @@ export class Transaction extends Service<GlobalProps, TransactionCrudParams> {
       baseFunctionFolder: __dirname,
       eventBus: this.props.customEventBus.bus,
       cdnApi: this.props.cdnApi,
-      authPool: this.props.identity.authPool,
+      authPool: this.props.identityBackoffice.authPool,
       autoEventsEnabled: true,
       handlers: {
         listTransactionsOrder: {
           ...transactionApi.listTransactionOrder.config,
+        },
+        listTransaction: {
+          ...transactionApi.listTransaction.config,
         },
       },
     });
@@ -51,5 +55,18 @@ export class Transaction extends Service<GlobalProps, TransactionCrudParams> {
         AUTO_EVENTS: 'true',
       },
     }).lambdaFunction;
+
+    this.eventAggregate = new EventAggregate(this, {
+      eventBus: this.props.customEventBus.bus,
+      baseFunctionFolder: __dirname,
+      table: this.apiAggregate.table,
+      handlers: {
+        eventCreateTransaction: {
+          tablePermission: 'readWrite',
+          name: 'event-create-transaction',
+          eventConfig: [transactionCreate.eventConfig],
+        },
+      },
+    });
   }
 }

@@ -8,6 +8,7 @@ import { GlobalServiceDependencies } from '..';
 import { GlobalProps } from '../../../config/config-type';
 import { Inventory } from '../inventory';
 import { orderIncomeExpired, orderIncomePaid, orderIncomePending } from '../order/catalog/event/income';
+import { Canceled } from '../stripe-subscription/catalog/event';
 import { inventoryAllocationApi } from './catalog';
 import { BY_CATEGORY_ID, BY_ORDER_ID_IDX_NAME, BY_SUBSCRIPTION_ID } from './repository/gsi';
 
@@ -100,6 +101,11 @@ export class InventoryAllocation extends Service<GlobalProps, InventoryAllocatio
           tablePermission: 'readWrite',
           name: 'event-order-expired',
           eventConfig: [orderIncomeExpired.eventConfig],
+        },
+        eventSubscriptionCancelled: {
+          tablePermission: 'readWrite',
+          name: 'event-subscription-cancelled',
+          eventConfig: [Canceled.eventConfig],
         },
       },
     });

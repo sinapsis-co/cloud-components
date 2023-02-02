@@ -1,7 +1,7 @@
 import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
+import { getOrCreateCustomer } from 'services/business/customer-gateway/lib';
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
 import { FullLocation } from 'services/business/identity/entities/user-full-location';
-import { getOrCreateCustomer } from 'services/business/stripe-customer/lib';
 import { secretsStripe } from 'services/support/stripe/catalog';
 import { getStripeClient } from 'services/support/stripe/platform';
 import { buildInvoice } from 'services/support/stripe/platform/stripe/invoice-stripe';

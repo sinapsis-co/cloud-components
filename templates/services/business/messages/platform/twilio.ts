@@ -1,4 +1,4 @@
-import { UserProfile } from 'services/identity/entities';
+import { UserProfile } from 'services/business/identity/entities/user-profile';
 import twilio from 'twilio';
 import { ChatGrant } from 'twilio/lib/jwt/AccessToken';
 import { ConversationInstance } from 'twilio/lib/rest/conversations/v1/conversation';

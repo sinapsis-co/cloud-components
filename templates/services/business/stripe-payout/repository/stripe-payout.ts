@@ -7,14 +7,14 @@ export const stripePayoutRepo = repository<StripePayoutBuilder>({
   repoName: 'stripe-payout',
   keySerialize: (key: StripePayoutBuilder['key']): StripePayoutBuilder['storeMapping']['key'] => {
     return {
-      pk: `${key.tenantId}#${key.userId}`,
-      sk: `${key.id}`,
+      sk: `${key.userId}#${key.id}`,
+      pk: `${key.tenantId}`,
     };
   },
   entitySerialize: (key: StripePayoutBuilder['key'], entityCreate: StripePayoutCreate): StripePayoutStore => {
     const mappedKey: StripePayoutBuilder['storeMapping']['key'] = {
-      pk: `${key.tenantId}#${key.userId}`,
-      sk: `${key.id}`,
+      sk: `${key.userId}#${key.id}`,
+      pk: `${key.tenantId}`,
     };
     const timers: StripePayoutBuilder['storeMapping']['timers'] = {
       createdAt: new Date().toISOString(),
@@ -26,9 +26,9 @@ export const stripePayoutRepo = repository<StripePayoutBuilder>({
     const { pk, sk, createdAt, updatedAt, ...att } = entityStore;
     return {
       ...att,
-      tenantId: pk.split('#')[0],
-      userId: pk.split('#')[1],
-      id: sk,
+      tenantId: pk,
+      userId: sk.split('#')[0],
+      id: sk.split('#')[1],
       createdAt: new Date(createdAt),
       updatedAt: new Date(updatedAt),
     };

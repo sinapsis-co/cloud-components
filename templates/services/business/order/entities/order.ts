@@ -42,6 +42,7 @@ export type OrderIncome = {
   partOfGateway?: number;
   isProposal?: boolean;
   categoryId?: string;
+  billingReason?: string | null;
 };
 
 export type OrderWithdrawal = {
@@ -91,5 +92,9 @@ export type OrderBuilder = EntityBuilder<{
 }>;
 
 export type Order = Entity<OrderBuilder>;
-export type OrderStore = EntityStore<OrderBuilder>;
+export type OrderStore = EntityStore<
+  OrderBuilder & {
+    orderId: string;
+  }
+>;
 export type OrderCreate = EntityCreate<OrderBuilder>;

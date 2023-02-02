@@ -2,12 +2,12 @@ import { Construct } from '@sinapsis-co/cc-infra-v2/common/service';
 import { GlobalProps } from '../../config/config-type';
 
 // Services
-import { Webapp } from './webapp';
 import { SsrLanding } from './ssr-landing';
+import { Webapp } from './webapp';
 
 // External Services
-import { GlobalServiceDependencies } from '../business/index';
 import { DnsSubdomainCertificate } from 'services/support/dns-subdomain-certificate';
+import { GlobalServiceDependencies } from '../business/index';
 
 export type FrontendGlobalServiceDeps = GlobalServiceDependencies & {
   dnsSubdomainCertificate: DnsSubdomainCertificate;

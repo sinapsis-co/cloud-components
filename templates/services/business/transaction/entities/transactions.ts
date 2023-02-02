@@ -12,11 +12,15 @@ export type TransactionBuilder = EntityBuilder<{
     payment?: Payment;
     paymentId?: string;
     transaction?: Transaction;
-    status: TransactionStatus;
+    payload?: any;
+    status?: TransactionStatus;
+    errorMessage?: any;
+    errorPayment?: any;
+    userId: string;
   };
   key: {
-    userId: string;
     tenantId: string;
+    orderId: string;
     id: string;
   };
   timers: {

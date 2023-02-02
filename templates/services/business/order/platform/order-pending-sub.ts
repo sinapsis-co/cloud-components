@@ -1,7 +1,7 @@
 import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
+import { getOrCreateCustomer } from 'services/business/customer-gateway/lib';
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
 import { FullLocation } from 'services/business/identity/entities/user-full-location';
-import { getOrCreateCustomer } from 'services/business/stripe-customer/lib';
 import { secretsStripe } from 'services/support/stripe/catalog';
 import { OrderItem } from '../entities/order-item';
 import { OrderSeller } from '../entities/order-seller';
@@ -15,7 +15,7 @@ export const orderTemporalSubStrategy = async (
     billingAddress,
     orderId,
   }: { orderItem: OrderItem[]; seller?: OrderSeller; billingAddress?: FullLocation; orderId: string },
-  claims: UserClaims
+  claims: Omit<UserClaims, 'company' | 'role'>
 ): Promise<CreateOrderIncomePendingResponse> => {
   const secrets = await getSecret<secretsStripe.stripe.Secret>(secretsStripe.stripe.secretConfig);
   const orderItem = orderItems.map((item, i) => {

@@ -10,13 +10,13 @@ import { subscriptionRepository } from '../../repository';
  * Handles the event of a trial ending and cancels the subscription to avoid Stripe grace period of 30 days.
  * @param {string} event.detail.customerId - The customer ID (tenantId) of the subscription to cancel.
  */
-export const handler = eventHandler<eventCatalog.Subscription.TrialFinished.Event>(async (event) => {
-  const { customerId, subscriptionId } = event.detail;
+export const handler = eventHandler<eventCatalog.TrialFinished.Event>(async (event) => {
+  const { userId, subscriptionId, tenantId } = event.detail;
 
   const secrets = await getSecret<secretsStripe.stripe.Secret>(secretsStripe.stripe.secretConfig);
 
   const subscription = await subscriptionRepository.updateItem(
-    { tenantId: customerId, subscriptionId: subscriptionId },
+    { tenantId, subscriptionId: subscriptionId, userId },
     { cancelAtEnd: true }
   );
 
@@ -25,8 +25,9 @@ export const handler = eventHandler<eventCatalog.Subscription.TrialFinished.Even
     await stripeSubscription({ secrets }).cancel(subscription.stripeId, true);
   }
 
-  await dispatchEvent<eventCatalog.Subscription.Canceled.Event>(eventCatalog.Subscription.Canceled.eventConfig, {
-    customerId,
+  await dispatchEvent<eventCatalog.Canceled.Event>(eventCatalog.Canceled.eventConfig, {
+    userId,
+    tenantId,
     subscription,
   });
 });

@@ -1,4 +1,5 @@
 import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform-v2/catalog/api';
+import { UserClaims } from 'services/business/identity/entities/user-cognito';
 import { Subscription } from '../../entities/subscription';
 
 export type Interface = ApiInterface<{
@@ -7,7 +8,7 @@ export type Interface = ApiInterface<{
     subscriptionId: string;
   };
   body: EmptyObject;
-  claims: { tenantId: string };
+  claims: UserClaims;
   queryParams: EmptyObject;
 }>;
 

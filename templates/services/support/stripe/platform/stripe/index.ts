@@ -1,6 +1,6 @@
 import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
 import StripeClient from 'stripe';
-import { attachStripePaymentMethod, ParamsAttachPaymentMethod } from './attach-stripe-payment-method';
+import { ParamsAttachPaymentMethod, attachStripePaymentMethod } from './attach-stripe-payment-method';
 import { CreateCustomer, createStripeCustomer } from './create-stripe-customer';
 import { getStripe } from './get-stripe-client';
 

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { getGlobalProps } from '@sinapsis-co/cc-infra-v2/common/synth/get-global-props';
 import * as cdk from 'aws-cdk-lib';
 import { globalConstConfig, globalDeployTargetConfig, globalEnvConfig } from '../../../config/index';

@@ -3,10 +3,11 @@ import * as api from '../../catalog/api';
 import { subscriptionRepository } from '../../repository';
 
 export const handler = apiHandler<api.getSubscription.Interface>(async (_, request) => {
-  const { tenantId } = request.claims;
+  const { tenantId, sub } = request.claims;
 
   const subscription = await subscriptionRepository.getItem({
     tenantId,
+    userId: sub,
     subscriptionId: request.pathParams.subscriptionId,
   });
 

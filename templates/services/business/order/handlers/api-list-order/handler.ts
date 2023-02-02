@@ -3,16 +3,18 @@ import { listOrder } from '../../catalog/api';
 import { orderRepo } from '../../repository';
 
 export const handler = apiHandler<listOrder.Interface>(async (_, req) => {
-  const { tenantId: pk } = req.claims;
+  const { tenantId: pk, sub } = req.claims;
   const { nextToken, type, from } = req.queryParams;
 
   const queryInput = {
+    KeyConditionExpression: '#pk = :pk AND begins_with(#sk, :sk)',
     FilterExpression: 'orderType = :type',
     ExpressionAttributeValues: {
       ':pk': pk,
       ':type': type,
+      ':sk': `${sub}`,
     },
-    ExpressionAttributeNames: { '#pk': 'pk' },
+    ExpressionAttributeNames: { '#pk': 'pk', '#sk': 'sk' },
   };
 
   if (from) {

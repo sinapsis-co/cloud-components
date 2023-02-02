@@ -1,6 +1,6 @@
 import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform-v2/catalog/api';
 import { Schemy } from '@sinapsis-co/cc-platform-v2/lib/schemy';
-import { UserClaims } from 'services/identity/entities';
+import { UserClaims } from 'services/business/identity/entities/user-cognito';
 
 export type Interface = ApiInterface<{
   response: EmptyObject;
