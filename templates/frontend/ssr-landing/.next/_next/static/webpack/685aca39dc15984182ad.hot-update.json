@@ -1,9 +1,0 @@
-{
-  "h": "af830a557af9f026d63d",
-  "c": {
-    "pages/index": true,
-    "pages/merch/payment/billing": true,
-    "pages/merch/payment/confirmation": true,
-    "pages/merch/payment/secure-payment": true
-  }
-}

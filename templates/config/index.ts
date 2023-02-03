@@ -10,8 +10,9 @@ export const globalConstConfig: GlobalConstConfig = {
   bootstrappingServices: ['DeployPipeline', 'DnsSubdomainHostedZone'],
   isDemoProject: true,
   subdomain: {
-    landing: '',
+    webappNext: '',
     webapp: 'app',
+    webappVite: 'vite-app',
     api: 'api',
     media: 'media',
     auth: 'auth',

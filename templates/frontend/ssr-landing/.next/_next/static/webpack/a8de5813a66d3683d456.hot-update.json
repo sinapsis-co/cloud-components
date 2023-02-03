@@ -1,9 +1,0 @@
-{
-  "h": "47ee1ae4e29137414f14",
-  "c": {
-    "pages/merch/cart": false,
-    "pages/merch/detail/[productId]": false,
-    "pages/merch/payment/billing": false,
-    "pages/merch/payment/secure-payment": false
-  }
-}
