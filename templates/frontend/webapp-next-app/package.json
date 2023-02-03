@@ -6,7 +6,7 @@
     "update-secrets": "bash ../scripts/update-secret.bash ssr-landing",
     "start": "bash ../scripts/get-secret.bash ssr-landing development && dotenv -e .env.development next start",
     "start-prod": "dotenv -e .env.prod next",
-    "build": "next build",
+    "build": "sh -c 'env-cmd -f .env.${0} next build'",
     "development": "next",
     "type-check": "tsc --pretty --noEmit",
     "format": "prettier --write .",
