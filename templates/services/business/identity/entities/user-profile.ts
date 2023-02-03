@@ -6,6 +6,7 @@ import {
   EntityUpdate,
 } from '@sinapsis-co/cc-platform-v2/repository/interface';
 import { AuthScope } from '../platform/authorization';
+import { FullLocation } from './user-full-location';
 
 export type UserProfileBuilder = EntityBuilder<{
   name: 'user-profile';
@@ -18,6 +19,7 @@ export type UserProfileBuilder = EntityBuilder<{
     avatar?: string;
     isPending?: boolean;
     inviteId?: string;
+    location?: FullLocation;
   };
   key: {
     tenantId: string;

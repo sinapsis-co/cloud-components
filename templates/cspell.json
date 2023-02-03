@@ -16,10 +16,10 @@
     "sesv",
     "SIGNIN",
     "sinapsis",
+    "siteverify",
+    "stepfunctions",
+    "Topup",
     "TTFB"
   ],
-  "ignorePaths": [
-    "**/node_modules/**",
-    "cdk.out/**"
-  ]
+  "ignorePaths": ["**/node_modules/**", "cdk.out/**"]
 }

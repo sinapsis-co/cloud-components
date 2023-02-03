@@ -7,8 +7,8 @@ import { WebappVite } from './webapp-vite';
 import { WebappNext } from './webapp-next';
 
 // External Services
-import { GlobalServiceDependencies } from '../business/index';
 import { DnsSubdomainCertificate } from 'services/support/dns-subdomain-certificate';
+import { GlobalServiceDependencies } from '../business/index';
 
 export type FrontendGlobalServiceDeps = GlobalServiceDependencies & {
   dnsSubdomainCertificate: DnsSubdomainCertificate;
