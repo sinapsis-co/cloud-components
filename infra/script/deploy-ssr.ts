@@ -95,7 +95,7 @@ export const deploySSR = async <
 
     console.log('>> STEP: (3/4) => BUILDING');
 
-    const command = `yarn && yarn build`;
+    const command = `yarn && yarn build ${envNameInput}`;
     execSync(command, { stdio: 'inherit', cwd: `${process.cwd()}/${baseDir}` });
 
     const entries = [
@@ -108,10 +108,10 @@ export const deploySSR = async <
       },
     ];
 
-    const cpDistributionBucket = `aws s3 cp ${distDir}/ s3://${distributionBucket}/ --recursive --cache-control "max-age=${assetMaxAge}" --exclude '_next/*' --exclude '.DS_Store' `;
-    const cpRecipeBucket = `aws s3 cp ${distDir}/_next s3://${recipeBucket}/ --recursive --cache-control "max-age=${indexMaxAge}" --exclude 'cache/*'  --exclude 'static/*'`;
+    const cpDistributionBucket = `aws s3 cp ${distDir} s3://${distributionBucket}/_next --cache-control "max-age=${assetMaxAge}" --exclude '*' --include 'cache/*' --include 'static/*' --recursive`;
+    const cpRecipeBucket = `aws s3 cp ${distDir} s3://${recipeBucket}/_next --cache-control "max-age=${indexMaxAge}" --exclude 'cache/*'  --exclude 'static/*' --recursive`;
     const cpEventTrigger = `aws events put-events --entries ${JSON.stringify(JSON.stringify(entries))} --no-cli-pager`;
-
+    
     const execOptions: ExecSyncOptions = {
       stdio: 'inherit',
       cwd: `${process.cwd()}/${baseDir}`,
