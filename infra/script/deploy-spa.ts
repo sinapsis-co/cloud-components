@@ -29,7 +29,7 @@ export const deploySPA = async <
   try {
     console.log('<< Deploy SPA Started >>');
 
-    const { envName, ephemeralEnvName, serviceNameInput, envNameInput, roleName, accountMap } = await preScript(
+    const { envName, ephemeralEnvName, servicesNamesInput, envNameInput, roleName, accountMap } = await preScript(
       globalConstConfig,
       globalEnvConfig,
       globalDeployTargetConfig,
@@ -52,7 +52,7 @@ export const deploySPA = async <
       projectName,
       envName,
       ephemeralEnvName,
-      serviceName: serviceNameInput,
+      serviceName: servicesNamesInput[0],
     });
 
     console.log('>> STEP: (2/4) => RENDERING ENV');
@@ -69,7 +69,7 @@ export const deploySPA = async <
       projectName,
       envName,
       ephemeralEnvName,
-      serviceName: serviceNameInput,
+      serviceName: servicesNamesInput[0],
     });
     const { Parameters } = await ssm.getParametersByPath({ Path: baseSecretName, Recursive: true }).promise();
     if (!Parameters) throw new Error('Invalid secret');

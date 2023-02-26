@@ -1,13 +1,13 @@
-import { Construct } from 'constructs';
-import { Fn, CfnOutput, Duration } from 'aws-cdk-lib';
 import { CorsHttpMethod, HttpApi } from '@aws-cdk/aws-apigatewayv2-alpha';
 import { HttpUserPoolAuthorizer } from '@aws-cdk/aws-apigatewayv2-authorizers-alpha';
-import { Distribution, BehaviorOptions } from 'aws-cdk-lib/aws-cloudfront';
+import { CfnOutput, Duration, Fn } from 'aws-cdk-lib';
+import { BehaviorOptions, Distribution } from 'aws-cdk-lib/aws-cloudfront';
 import { HttpOrigin, HttpOriginProps } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { UserPool, UserPoolClient } from 'aws-cdk-lib/aws-cognito';
+import { Construct } from 'constructs';
 
-import { getResourceName } from '../../common/naming/get-resource-name';
 import { getLogicalName } from '../../common/naming/get-logical-name';
+import { getResourceName } from '../../common/naming/get-resource-name';
 import { Service } from '../../common/service';
 
 export type ApiRestParams = {

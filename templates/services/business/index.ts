@@ -38,6 +38,9 @@ import { Notifications } from 'services/support/notifications';
 import { StripeSupportService } from 'services/support/stripe';
 import { CdnApi } from '../support/cdn-api';
 import { CustomEventBus } from '../support/custom-event-bus';
+import { EnvAlb } from '../support/env-alb';
+import { EnvVpc } from '../support/env-vpc';
+import { ContainerService } from './base-container';
 
 export type GlobalServiceDependencies = {
   notifications: Notifications;
@@ -48,6 +51,8 @@ export type GlobalServiceDependencies = {
   identity: Identity;
   identityBackoffice: IdentityBackoffice;
   stripeService: StripeSupportService;
+  envVpc: EnvVpc;
+  envAlb: EnvAlb;
 };
 
 export class BusinessServices {
@@ -78,11 +83,14 @@ export class BusinessServices {
   public readonly paymentClaim: PaymentClaim;
   public readonly recoverySubscriptionReport: RecoverySubscriptionReport;
   public readonly invoice: Invoice;
+  public readonly containerService: ContainerService;
 
   constructor(scope: Construct, globalProps: GlobalProps, dependencies: Omit<GlobalServiceDependencies, 'identity'>) {
     this.identity = new Identity(scope, globalProps, dependencies);
 
     const globalDeps: GlobalServiceDependencies = { ...dependencies, identity: this.identity };
+
+    this.containerService = new ContainerService(scope, globalProps, globalDeps);
 
     this.assets = new Assets(scope, globalProps, globalDeps);
     this.baseCrud = new BaseCrud(scope, globalProps, globalDeps);

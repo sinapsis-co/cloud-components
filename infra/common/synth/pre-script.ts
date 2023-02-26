@@ -1,15 +1,16 @@
 /* eslint-disable no-console */
 
 import { getServiceName } from '../naming/get-service-name';
-import { parseContext } from './parse-context';
 import { accountMapping } from './account-mapping';
+import { parseContext } from './parse-context';
 import {
-  BaseEnvName,
-  BaseGlobalEnv,
-  BaseGlobalConstConfig,
-  BaseGlobalEnvConfig,
-  BaseGlobalDeployTargetConfig,
   BaseDeployTargetName,
+  BaseEnvName,
+  BaseGlobalConstConfig,
+  BaseGlobalDeployTargetConfig,
+  BaseGlobalEnv,
+  BaseGlobalEnvConfig,
+  BaseGlobalProps,
 } from './props-types';
 
 export const preScript = async <
@@ -23,25 +24,23 @@ export const preScript = async <
   globalDeployTargetConfig: BaseGlobalDeployTargetConfig<AllowedEnv, DeployTargetName>,
   args: string[]
 ): Promise<{
-  serviceNameInput: string;
+  servicesNamesInput: string[];
   envNameInput: string;
   ephemeralEnvName: string;
   envName: string;
   roleName: string;
   outputFile: string;
-  context: string;
-  serviceName: string;
+  servicesNames: string;
   bootstrappingServices: string;
   accountMap: string;
 }> => {
   try {
-    const envNameInput = args[3];
-    const serviceNameInput = args[4];
-    const stringContext = args[5];
+    const envNameInput: string = args[3];
+    const servicesNamesInput: string[] = args.slice(4);
 
     const envName = envNameInput.includes('-') ? envNameInput.split('-')[0] : envNameInput;
     const ephemeralEnvName = envNameInput.includes('-') ? envNameInput.split('-')[1] : '';
-    const props = { ...globalConstConfig, ...globalEnvConfig[envName], envName, ephemeralEnvName };
+    const props: BaseGlobalProps = { ...globalConstConfig, ...globalEnvConfig[envName], envName, ephemeralEnvName };
 
     const accountMap = parseContext(
       (
@@ -58,25 +57,20 @@ export const preScript = async <
     );
     const outputFile = `cdk.out/output/${envName}.json`;
     const roleName = globalEnvConfig[envName].roleName;
-    const serviceName = !serviceNameInput
-      ? '--all'
-      : `${serviceNameInput.split('&').reduce((acc, s) => {
-          acc += `${getServiceName(s, props)} `;
-          return acc;
-        }, '')} --exclusively`;
-    const context = parseContext(stringContext);
+    const servicesNames = parseServicesNames(servicesNamesInput, props);
 
-    const bootstrappingServices = globalConstConfig.bootstrappingServices?.join('&') || '';
+    const bootstrappingServices = globalConstConfig.bootstrappingServices
+      ? parseServicesNames(globalConstConfig.bootstrappingServices, props)
+      : '';
 
     return {
-      serviceNameInput,
+      servicesNamesInput,
       envName,
       envNameInput,
       ephemeralEnvName,
       roleName,
       outputFile,
-      context,
-      serviceName,
+      servicesNames,
       bootstrappingServices,
       accountMap,
     };
@@ -84,4 +78,13 @@ export const preScript = async <
     console.log(`PreScript Error: ${error.message}`);
     process.exit(1);
   }
+};
+
+const parseServicesNames = (servicesNamesInput: string[], props: BaseGlobalProps): string => {
+  return servicesNamesInput.length < 1
+    ? '--all'
+    : `${servicesNamesInput.reduce((acc, s) => {
+        acc += `${getServiceName(s, props)} `;
+        return acc;
+      }, '')}--exclusively`;
 };

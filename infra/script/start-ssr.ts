@@ -28,7 +28,7 @@ export const startSSR = async <
   try {
     console.log('<< Start SSR Script >>');
 
-    const { envName, ephemeralEnvName, serviceNameInput, envNameInput, roleName, accountMap } = await preScript(
+    const { envName, ephemeralEnvName, servicesNamesInput, envNameInput, roleName, accountMap } = await preScript(
       globalConstConfig,
       globalEnvConfig,
       globalDeployTargetConfig,
@@ -51,7 +51,7 @@ export const startSSR = async <
       projectName,
       envName,
       ephemeralEnvName,
-      serviceName: serviceNameInput,
+      serviceName: servicesNamesInput[0],
     });
 
     console.log('>> STEP: (2/3) => RENDERING ENV');
@@ -66,7 +66,7 @@ export const startSSR = async <
       projectName,
       envName,
       ephemeralEnvName,
-      serviceName: serviceNameInput,
+      serviceName: servicesNamesInput[0],
     });
     const { Parameters } = await ssm.getParametersByPath({ Path: baseSecretName, Recursive: true }).promise();
     if (!Parameters) throw new Error('Invalid secret');

@@ -24,7 +24,7 @@ export const deploy = async <
   try {
     console.log('<< Deploy Started >>');
 
-    const { envNameInput, roleName, outputFile, context, serviceName, accountMap } = await preScript(
+    const { envNameInput, roleName, outputFile, servicesNames, accountMap } = await preScript(
       globalConstConfig,
       globalEnvConfig,
       globalDeployTargetConfig,
@@ -38,7 +38,7 @@ export const deploy = async <
     --context assume-role-credentials:writeIamRoleName=${roleName} \
     --context assume-role-credentials:readIamRoleName=${roleName} \
     --outputs-file ${outputFile} \
-    ${accountMap} ${context} ${serviceName}`;
+    ${accountMap} ${servicesNames}`;
 
     execSync(command, { stdio: 'inherit', env: process.env });
   } catch (error: any) {

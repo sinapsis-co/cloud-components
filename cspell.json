@@ -8,11 +8,14 @@
     "apigatewayv2",
     "barcodes",
     "certificatemanager",
+    "codestarnotifications",
     "cognitoidentityserviceprovider",
     "datalake",
     "domainkey",
+    "elasticloadbalancingv",
     "esbuild",
     "eventbridge",
+    "Fargate",
     "fullname",
     "ingestions",
     "invisipay",
@@ -24,8 +27,10 @@
     "sinapsis",
     "spreedly",
     "timestream",
-    "wafv2",
-    "codestarnotifications"
+    "wafv2"
   ],
-  "ignorePaths": ["*/node_modules/**", "*/cdk.out/**"]
+  "ignorePaths": [
+    "*/node_modules/**",
+    "*/cdk.out/**"
+  ]
 }

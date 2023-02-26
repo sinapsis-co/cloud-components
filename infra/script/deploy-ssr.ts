@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import SSM from 'aws-sdk/clients/ssm';
 import CloudFront from 'aws-sdk/clients/cloudfront';
+import SSM from 'aws-sdk/clients/ssm';
 import { execSync, ExecSyncOptions } from 'child_process';
 import { writeFileSync } from 'fs';
 import { getParameterName, getResourceName } from '../common/naming/get-resource-name';
@@ -29,7 +29,7 @@ export const deploySSR = async <
   try {
     console.log('<< Deploy SSR Started >>');
 
-    const { envName, ephemeralEnvName, serviceNameInput, envNameInput, roleName, accountMap } = await preScript(
+    const { envName, ephemeralEnvName, servicesNamesInput, envNameInput, roleName, accountMap } = await preScript(
       globalConstConfig,
       globalEnvConfig,
       globalDeployTargetConfig,
@@ -52,7 +52,7 @@ export const deploySSR = async <
       projectName,
       envName,
       ephemeralEnvName,
-      serviceName: serviceNameInput,
+      serviceName: servicesNamesInput[0],
     });
 
     console.log('>> STEP: (2/4) => RENDERING ENV');
@@ -77,7 +77,7 @@ export const deploySSR = async <
       projectName,
       envName,
       ephemeralEnvName,
-      serviceName: serviceNameInput,
+      serviceName: servicesNamesInput[0],
     });
     const { Parameters } = await ssm.getParametersByPath({ Path: baseSecretName, Recursive: true }).promise();
     if (!Parameters) throw new Error('Invalid secret');
@@ -111,7 +111,7 @@ export const deploySSR = async <
     const cpDistributionBucket = `aws s3 cp ${distDir} s3://${distributionBucket}/_next --cache-control "max-age=${assetMaxAge}" --exclude '*' --include 'cache/*' --include 'static/*' --recursive`;
     const cpRecipeBucket = `aws s3 cp ${distDir} s3://${recipeBucket}/_next --cache-control "max-age=${indexMaxAge}" --exclude 'cache/*'  --exclude 'static/*' --recursive`;
     const cpEventTrigger = `aws events put-events --entries ${JSON.stringify(JSON.stringify(entries))} --no-cli-pager`;
-    
+
     const execOptions: ExecSyncOptions = {
       stdio: 'inherit',
       cwd: `${process.cwd()}/${baseDir}`,

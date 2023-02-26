@@ -10,6 +10,7 @@
     "cognitoidentityserviceprovider",
     "DISTRO",
     "esbuild",
+    "fargate",
     "fullname",
     "passwordless",
     "schemy",
@@ -21,5 +22,8 @@
     "Topup",
     "TTFB"
   ],
-  "ignorePaths": ["**/node_modules/**", "cdk.out/**"]
+  "ignorePaths": [
+    "**/node_modules/**",
+    "cdk.out/**"
+  ]
 }

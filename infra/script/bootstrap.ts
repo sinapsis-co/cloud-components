@@ -11,7 +11,6 @@ import {
   BaseGlobalEnvConfig,
   BaseRegionName,
 } from '../common/synth/props-types';
-import { deploy } from './deploy';
 
 export const bootstrap = async <
   GlobalConst,
@@ -27,7 +26,7 @@ export const bootstrap = async <
   try {
     console.log('<< Bootstrap Started >>');
 
-    const { envName, envNameInput, roleName, outputFile, serviceName, context, accountMap, bootstrappingServices } =
+    const { envName, envNameInput, roleName, outputFile, servicesNames, accountMap, bootstrappingServices } =
       await preScript(globalConstConfig, globalEnvConfig, globalDeployTargetConfig, args);
 
     const accountArr = accountMap.split(' ');
@@ -46,8 +45,7 @@ export const bootstrap = async <
       envNameInput,
       outputFile,
       accountMap,
-      context,
-      serviceName
+      servicesNames
     );
 
     if (dnsAccount !== serviceAccount) {
@@ -59,20 +57,22 @@ export const bootstrap = async <
         envNameInput,
         outputFile,
         accountMap,
-        context,
-        serviceName
+        servicesNames
       );
     }
 
-    if (bootstrappingServices)
-      deploy(globalConstConfig, globalEnvConfig, globalDeployTargetConfig, [
-        '',
-        '',
-        '',
-        envNameInput,
-        bootstrappingServices,
-        'isBootstrapping=true',
-      ]);
+    if (bootstrappingServices) {
+      const command = `npx cdk deploy \
+      --require-approval='never' \
+      --cloudformation-execution-policies=arn:aws:iam::aws:policy/AdministratorAccess \
+      --context env=${envNameInput} \
+      --context assume-role-credentials:writeIamRoleName=${roleName} \
+      --context assume-role-credentials:readIamRoleName=${roleName} \
+      --outputs-file ${outputFile} \
+      ${accountMap} ${bootstrappingServices} --context isBootstrapping=true,`;
+
+      execSync(command, { stdio: 'inherit', env: process.env });
+    }
   } catch (error) {
     process.exit(1);
   }
@@ -86,7 +86,6 @@ const runBootstrap = async (
   envNameInput: string,
   outputFile: string,
   accountMap: string,
-  context: string,
   serviceName: string
 ) => {
   const command = `npx cdk bootstrap ${account}/${region} \
@@ -98,7 +97,7 @@ const runBootstrap = async (
     --cloudformation-execution-policies=arn:aws:iam::aws:policy/AdministratorAccess \
     --context env=${envNameInput} \
     --outputs-file ${outputFile} \
-    ${accountMap} ${context} ${serviceName}`;
+    ${accountMap} ${serviceName}`;
   const role = await assumeRole({ account, region }, roleName).catch((e) => {
     console.log(e);
     throw e;
