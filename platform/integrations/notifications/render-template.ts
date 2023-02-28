@@ -1,6 +1,6 @@
-import mustache from 'mustache';
-import { minify } from 'html-minifier-terser';
 import { S3 } from 'aws-sdk';
+import { minify } from 'html-minifier-terser';
+import mustache from 'mustache';
 import { NotificationTemplate } from '../../catalog/notifications';
 const s3 = new S3();
 
@@ -16,8 +16,17 @@ export const renderEmailTemplate = async <Template extends NotificationTemplate 
     fetchTemplate(bucketName, 'email', attributes.templateName, 'body', 'html'),
   ]);
 
-  const subject = mustache.render(subjectTemplate, attributes.payload);
-  const body = await minify(mustache.render(bodyTemplate, attributes.payload));
+  let payload = attributes.payload;
+  if (attributes.payload['language']) {
+    const translation = await fetchTemplate(bucketName, 'email', attributes.templateName, 'body', 'json');
+    const language = Object.keys(JSON.parse(translation)[attributes.payload['language']])
+      ? attributes.payload['language']
+      : attributes.payload['defaultLanguage'];
+    payload = JSON.parse(mustache.render(translation, attributes.payload))[language];
+  }
+
+  const subject = mustache.render(subjectTemplate, payload);
+  const body = await minify(mustache.render(bodyTemplate, payload));
 
   return { subject, body };
 };
