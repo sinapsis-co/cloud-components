@@ -13,12 +13,12 @@ export type EnvAlbParams = {
 };
 
 export class EnvAlb extends Service<GlobalProps, EnvAlbParams> {
-  public readonly albService: PublicAlbConstruct;
+  public readonly albConstruct: PublicAlbConstruct;
 
   constructor(scope: Construct, globalProps: GlobalProps, params: EnvAlbParams) {
     super(scope, EnvAlb.name, globalProps, { params });
 
-    this.albService = new PublicAlbConstruct(this, {
+    this.albConstruct = new PublicAlbConstruct(this, {
       name: 'global-alb',
       vpc: params.vpcService.vpc,
       certificate: params.certificateService.certificate,

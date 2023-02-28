@@ -44,7 +44,7 @@ export class ContainerServiceTwo extends Service<GlobalProps, ContainerServiceTw
       name: 'serviceTwo',
       basePath: 'container/two',
       vpcConstruct: params.envVpc.vpcConstruct,
-      albConstruct: params.envAlb.albService,
+      albConstruct: params.envAlb.albConstruct,
       certificate: params.dnsSubdomainCertificate.certificate,
       containerHealthCheck: {
         startPeriod: Duration.seconds(2),
