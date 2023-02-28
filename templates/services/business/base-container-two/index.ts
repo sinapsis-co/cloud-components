@@ -11,13 +11,13 @@ import { Secret } from 'aws-cdk-lib/aws-ecs';
 import { GlobalServiceDependencies } from '..';
 import { AllowedEnvName, GlobalProps } from '../../../config/config-type';
 
-export type ContainerServiceParams = GlobalServiceDependencies;
+export type ContainerServiceTwoParams = GlobalServiceDependencies;
 
-export class ContainerService extends Service<GlobalProps, ContainerServiceParams> {
+export class ContainerServiceTwo extends Service<GlobalProps, ContainerServiceTwoParams> {
   public readonly apiAggregate: ApiAggregate;
 
-  constructor(scope: Construct, globalProps: GlobalProps, params: ContainerServiceParams) {
-    super(scope, ContainerService.name, globalProps, { params });
+  constructor(scope: Construct, globalProps: GlobalProps, params: ContainerServiceTwoParams) {
+    super(scope, ContainerServiceTwo.name, globalProps, { params });
 
     const performanceTunningMapper: Record<AllowedEnvName, FargatePerformanceTunning> = {
       dev: {
@@ -41,8 +41,8 @@ export class ContainerService extends Service<GlobalProps, ContainerServiceParam
     };
 
     new FargateContainerConstruct(this, {
-      name: 'serviceOne',
-      basePath: 'container/one',
+      name: 'serviceTwo',
+      basePath: 'container/two',
       vpcConstruct: params.envVpc.vpcConstruct,
       albConstruct: params.envAlb.albService,
       certificate: params.dnsSubdomainCertificate.certificate,

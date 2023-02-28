@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + TS</title>
+  </head>
+  <body>
+    <h1>CCv2 Dependencies Generator</h1>
+    <!-- TREE -->
+    <script type="module" src="./src/dependentree.ts"></script>
+
+    <h4>Deployment Stages</h4>
+    <div id="deployOrder" style="display: flex"></div>
+
+    <label id="serviceOrder"></label>
+
+    <h4>Service Dependency Tree</h4>
+    <div class="dropdown">
+      <select id="serviceSelector"></select>
+    </div>
+
+    <div id="tree"></div>
+  </body>
+</html>
+
+<!DOCTYPE html>

@@ -41,6 +41,7 @@ import { CustomEventBus } from '../support/custom-event-bus';
 import { EnvAlb } from '../support/env-alb';
 import { EnvVpc } from '../support/env-vpc';
 import { ContainerService } from './base-container';
+import { ContainerServiceTwo } from './base-container-two';
 
 export type GlobalServiceDependencies = {
   notifications: Notifications;
@@ -84,6 +85,7 @@ export class BusinessServices {
   public readonly recoverySubscriptionReport: RecoverySubscriptionReport;
   public readonly invoice: Invoice;
   public readonly containerService: ContainerService;
+  public readonly containerServiceTwo: ContainerServiceTwo;
 
   constructor(scope: Construct, globalProps: GlobalProps, dependencies: Omit<GlobalServiceDependencies, 'identity'>) {
     this.identity = new Identity(scope, globalProps, dependencies);
@@ -91,6 +93,7 @@ export class BusinessServices {
     const globalDeps: GlobalServiceDependencies = { ...dependencies, identity: this.identity };
 
     this.containerService = new ContainerService(scope, globalProps, globalDeps);
+    this.containerServiceTwo = new ContainerServiceTwo(scope, globalProps, globalDeps);
 
     this.assets = new Assets(scope, globalProps, globalDeps);
     this.baseCrud = new BaseCrud(scope, globalProps, globalDeps);

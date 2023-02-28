@@ -26,8 +26,8 @@ export type FargatePerformanceTunning = {
 
 export type FargateContainerConstructParams = {
   name: string;
-  vpcService: VpcConstruct;
-  albService: PublicAlbConstruct;
+  vpcConstruct: VpcConstruct;
+  albConstruct: PublicAlbConstruct;
   mappingPort: number;
   basePath: string;
   healthCheckPath: string;
@@ -59,7 +59,7 @@ export class FargateContainerConstruct extends Construct {
     const cluster = new awsECS.Cluster(this, getLogicalName(params.name, 'cluster'), {
       containerInsights: true,
       clusterName: getResourceName('cluster', { ...service.props, serviceName: params.name }),
-      vpc: params.vpcService.vpc,
+      vpc: params.vpcConstruct.vpc,
     });
 
     // CONTAINER TASK DEFINITION
@@ -91,7 +91,7 @@ export class FargateContainerConstruct extends Construct {
       cluster,
       desiredCount: params.performanceTunning.containerDesiredCount,
       taskDefinition,
-      securityGroups: [params.albService.albToClusterSG],
+      securityGroups: [params.albConstruct.getAlbToClusterSG()],
       assignPublicIp: true,
       circuitBreaker: { rollback: true },
     });
@@ -109,6 +109,6 @@ export class FargateContainerConstruct extends Construct {
     });
 
     // CONNECT TO ALB
-    params.albService.appendTargetGroup({ ...params, fargateService });
+    params.albConstruct.appendTargetGroup({ ...params, fargateService });
   }
 }

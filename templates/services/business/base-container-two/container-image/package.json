@@ -1,0 +1,12 @@
+{
+  "name": "@sinapsis-co/container-example",
+  "version": "0.1.160",
+  "author": "sinapsis.co",
+  "license": "MIT",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
