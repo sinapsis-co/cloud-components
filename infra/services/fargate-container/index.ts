@@ -30,6 +30,7 @@ export type FargateContainerConstructParams = {
   albConstruct: PublicAlbConstruct;
   mappingPort: number;
   basePath: string;
+  fixedPriority?: number;
   healthCheckPath: string;
   certificate: ICertificate;
   containerHealthCheck?: FargateContainerHealthCheck;

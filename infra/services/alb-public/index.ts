@@ -5,7 +5,6 @@ import { ISecurityGroup, IVpc, Peer, Port, SecurityGroup } from 'aws-cdk-lib/aws
 import { FargateService } from 'aws-cdk-lib/aws-ecs';
 import * as awsALB from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { ApplicationListener, ListenerAction, ListenerCondition } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import { Tags } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
 
 import { getLogicalName } from '../../common/naming/get-logical-name';
@@ -78,7 +77,7 @@ export class PublicAlbConstruct extends Construct {
       vpc: params.vpc,
       allowAllOutbound: true,
     });
-    Tags.of(this.sg).add('Name', getResourceName('upstream', service.props));
+    // Tags.of(this.sg).add('Name', getResourceName('upstream', service.props));
     this.sg.addIngressRule(Peer.anyIpv4(), Port.tcp(443), 'Allow https traffic');
     this.alb.addSecurityGroup(this.sg), getResourceName('upstream', service.props);
 
@@ -88,7 +87,7 @@ export class PublicAlbConstruct extends Construct {
       allowAllOutbound: true,
     });
     this.albToClusterSG.connections.allowFrom(this.sg, Port.allTcp(), 'Outbound traffic from ALB to Cluster');
-    Tags.of(this.albToClusterSG).add('Name', getResourceName('downstream', service.props));
+    // Tags.of(this.albToClusterSG).add('Name', getResourceName('downstream', service.props));
 
     // ADD PATH TO CDN DISTRO
     if (params.cdnApi) {
