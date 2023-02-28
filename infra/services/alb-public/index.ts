@@ -1,7 +1,7 @@
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { OriginRequestPolicy } from 'aws-cdk-lib/aws-cloudfront';
 import { LoadBalancerV2Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
-import { ISecurityGroup, Peer, Port, SecurityGroup, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { ISecurityGroup, IVpc, Peer, Port, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { FargateService } from 'aws-cdk-lib/aws-ecs';
 import * as awsALB from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { ApplicationListener, ListenerAction, ListenerCondition } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
@@ -15,7 +15,7 @@ import { ApiCdnApiParams } from '../../prefab/function/api-function/api-aggregat
 
 export type PublicAlbConstructParams = {
   name: string;
-  vpc: Vpc;
+  vpc: IVpc;
   certificate: ICertificate;
   basePath?: string;
   cdnApi?: ApiCdnApiParams;
@@ -31,7 +31,7 @@ export class PublicAlbConstruct extends Construct {
   private readonly alb: awsALB.ApplicationLoadBalancer;
   private readonly listener: awsALB.IApplicationListener;
   private readonly sg: ISecurityGroup;
-  private readonly vpc: Vpc;
+  private readonly vpc: IVpc;
   private priorityIndex: number;
   private service: Service;
 
