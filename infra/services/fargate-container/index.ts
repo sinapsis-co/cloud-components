@@ -90,6 +90,7 @@ export class FargateContainerConstruct extends Construct {
       logging: awsECS.LogDriver.awsLogs({ streamPrefix: params.name }),
       portMappings: [{ containerPort: params.mappingPort }],
     });
+    this.repository.grantPull(taskDefinition.taskRole);
 
     // FARGATE
     const fargateService = new awsECS.FargateService(this, getLogicalName(params.name, 'fargateService'), {
