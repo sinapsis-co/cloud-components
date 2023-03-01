@@ -7,7 +7,7 @@ export type WelcomeTemplate = NotificationTemplate<{
     baseAssetUrl: string;
     currentYear: string;
     projectName: string;
-    language: 'ES' | 'EN' | 'ITA';
-    defaultLanguage: 'ITA';
+    language: 'es' | 'en' | 'de' | 'it';
+    defaultLanguage: 'en';
   };
 }>;
