@@ -25,8 +25,8 @@ export const renderEmailTemplate = async <Template extends NotificationTemplate 
     payload = JSON.parse(mustache.render(translation, attributes.payload))[language];
   }
 
-  const subject = mustache.render(subjectTemplate, payload);
-  const body = await minify(mustache.render(bodyTemplate, payload));
+  const subject = mustache.render(subjectTemplate, { ...payload, ...attributes.payload });
+  const body = await minify(mustache.render(bodyTemplate, { ...payload, ...attributes.payload }));
 
   return { subject, body };
 };
