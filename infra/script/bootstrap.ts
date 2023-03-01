@@ -66,10 +66,11 @@ export const bootstrap = async <
       --require-approval='never' \
       --cloudformation-execution-policies=arn:aws:iam::aws:policy/AdministratorAccess \
       --context env=${envNameInput} \
+      --context isBootstrapping=true \
       --context assume-role-credentials:writeIamRoleName=${roleName} \
       --context assume-role-credentials:readIamRoleName=${roleName} \
       --outputs-file ${outputFile} \
-      ${accountMap} ${bootstrappingServices} --context isBootstrapping=true,`;
+      ${accountMap} ${bootstrappingServices}`;
 
       execSync(command, { stdio: 'inherit', env: process.env });
     }

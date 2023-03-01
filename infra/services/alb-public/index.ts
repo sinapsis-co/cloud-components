@@ -28,9 +28,9 @@ export type PublicAlbConstructParams = {
 };
 
 export class PublicAlbConstruct extends Construct {
-  private readonly albToClusterSG: ISecurityGroup;
-  private readonly alb: awsALB.ApplicationLoadBalancer;
+  public readonly alb: awsALB.ApplicationLoadBalancer;
   private readonly listener: awsALB.IApplicationListener;
+  private readonly albToClusterSG: ISecurityGroup;
   private readonly upstreamSG: ISecurityGroup;
   private readonly vpc: IVpc;
   private priorityIndex: number;
@@ -97,7 +97,7 @@ export class PublicAlbConstruct extends Construct {
       if (!params.basePath) throw new SynthError('basePath is required when cdnApi is enabled');
       params.cdnApi.distribution?.addBehavior(`/${params.basePath}/*`, new LoadBalancerV2Origin(this.alb), {
         ...params.cdnApi.behaviorOptions,
-        originRequestPolicy: OriginRequestPolicy.ALL_VIEWER_AND_CLOUDFRONT_2022,
+        originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
       });
     }
   }

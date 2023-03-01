@@ -1,0 +1,31 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "ignorePatterns": ["dist", "cdk.out", "*.js"],
+  "rules": {
+    "no-console": "warn",
+    "semi": ["error", "always"],
+    "quotes": ["error", "single"],
+    "no-tabs": "error",
+    "array-bracket-newline": ["error", "consistent"],
+    "array-bracket-spacing": ["error", "never"],
+    "object-curly-newline": "error",
+    "object-property-newline": ["error", { "allowAllPropertiesOnSameLine": true }],
+    "keyword-spacing": ["error", { "before": true, "after": true }],
+    "key-spacing": ["error", { "beforeColon": false, "mode": "strict" }],
+    "comma-spacing": ["error", { "before": false, "after": true }],
+    "space-in-parens": ["error", "never"],
+    "space-infix-ops": ["error"],
+    "semi-spacing": ["error", { "before": false, "after": true }],
+    "newline-per-chained-call": ["error", { "ignoreChainWithDepth": 3 }],
+    "@typescript-eslint/no-empty-interface": ["warn", { "allowSingleExtends": true }],
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-non-null-assertion": "off"
+  }
+}
