@@ -46,7 +46,6 @@
     "@types/aws-lambda": "^8.10.108",
     "@types/node": "^18.11.7",
     "algoliasearch": "^4.13.1",
-    "aws-cdk-lib": "^2.49.0",
     "aws-lambda": "^1.0.7",
     "aws-sdk": "^2.1243.0",
     "esbuild": "^0.14.43",
