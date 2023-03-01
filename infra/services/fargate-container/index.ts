@@ -1,5 +1,5 @@
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
-import { Repository } from 'aws-cdk-lib/aws-ecr';
+import { IRepository, Repository } from 'aws-cdk-lib/aws-ecr';
 import * as awsECS from 'aws-cdk-lib/aws-ecs';
 import { FargatePlatformVersion, HealthCheck, Secret } from 'aws-cdk-lib/aws-ecs';
 import * as awsALB from 'aws-cdk-lib/aws-elasticloadbalancingv2';
@@ -37,24 +37,30 @@ export type FargateContainerConstructParams = {
   containerEnv?: Record<string, string>;
   containerSecrets?: Record<string, Secret>;
   dockerBuildFolder?: string;
-  dockerImageName?: string;
+  externalRepository?: {
+    repositoryName: string;
+    tag?: string;
+  };
   performanceTunning: FargatePerformanceTunning;
 };
 
 export class FargateContainerConstruct extends Construct {
-  public readonly repository: Repository;
+  public readonly repository: IRepository;
   public readonly targetGroup: awsALB.ApplicationTargetGroup;
 
   constructor(service: Service, params: FargateContainerConstructParams) {
     super(service, getLogicalName(params.name, FargateContainerConstruct.name));
 
-    if (!params.dockerBuildFolder && !params.dockerImageName)
-      throw new SynthError('dockerBuildFolder or dockerRepositoryName should exist');
+    if (!params.dockerBuildFolder && !params.externalRepository)
+      throw new SynthError('dockerBuildFolder or externalRepository should exist');
 
-    if (params.dockerImageName && !params.dockerBuildFolder)
-      this.repository = new Repository(this, getLogicalName(params.name, 'repo'), {
-        repositoryName: params.dockerImageName,
-      });
+    if (params.externalRepository) {
+      this.repository = Repository.fromRepositoryName(
+        this,
+        getLogicalName(params.name, 'repo'),
+        params.externalRepository.repositoryName
+      );
+    }
 
     // CLUSTER
     const cluster = new awsECS.Cluster(this, getLogicalName(params.name, 'cluster'), {
@@ -72,11 +78,12 @@ export class FargateContainerConstruct extends Construct {
       memoryMiB: params.performanceTunning.taskMemory || '512',
     });
 
+    // const repo = awsECS.ContainerImage.fromAsset(params.dockerBuildFolder!, {});
     taskDefinition.addContainer(getLogicalName(params.name, 'container'), {
       containerName: params.name,
       image: params.dockerBuildFolder
         ? awsECS.ContainerImage.fromAsset(params.dockerBuildFolder)
-        : awsECS.RepositoryImage.fromEcrRepository(this.repository, 'latest'),
+        : awsECS.ContainerImage.fromEcrRepository(this.repository, params.externalRepository?.tag || 'latest'),
       memoryLimitMiB: params.performanceTunning.containerMaxMemory || 512,
       secrets: params.containerSecrets,
       healthCheck: params.containerHealthCheck,

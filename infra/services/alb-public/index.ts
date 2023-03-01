@@ -1,3 +1,4 @@
+import { Tags } from 'aws-cdk-lib';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { OriginRequestPolicy } from 'aws-cdk-lib/aws-cloudfront';
 import { LoadBalancerV2Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
@@ -30,7 +31,7 @@ export class PublicAlbConstruct extends Construct {
   private readonly albToClusterSG: ISecurityGroup;
   private readonly alb: awsALB.ApplicationLoadBalancer;
   private readonly listener: awsALB.IApplicationListener;
-  private readonly sg: ISecurityGroup;
+  private readonly upstreamSG: ISecurityGroup;
   private readonly vpc: IVpc;
   private priorityIndex: number;
   private service: Service;
@@ -54,12 +55,23 @@ export class PublicAlbConstruct extends Construct {
       this.albToClusterSG = SecurityGroup.fromSecurityGroupId(this, 'escSG', params.existingResource.albToClusterSG);
       return this;
     }
+
+    // UPSTREAM SECURITY GROUP
+    this.upstreamSG = new SecurityGroup(this, getLogicalName(params.name, 'sg'), {
+      securityGroupName: getResourceName('upstream', service.props),
+      vpc: params.vpc,
+      allowAllOutbound: true,
+    });
+    Tags.of(this.upstreamSG).add('Name', getResourceName('upstream', service.props));
+    this.upstreamSG.addIngressRule(Peer.anyIpv4(), Port.tcp(443), 'Allow https traffic');
+
     // ALB
     this.alb = new awsALB.ApplicationLoadBalancer(this, getLogicalName(params.name, 'alb'), {
       loadBalancerName: getResourceName('', { ...this.service.props, serviceName: params.name }),
       vpc: params.vpc,
       vpcSubnets: { subnets: params.vpc.publicSubnets },
       internetFacing: true,
+      securityGroup: this.upstreamSG,
     });
 
     // INBOUND
@@ -70,24 +82,15 @@ export class PublicAlbConstruct extends Construct {
       certificates: [params.certificate],
       defaultAction: ListenerAction.fixedResponse(404, { messageBody: 'MissingPath' }),
     });
-
-    // SECURITY GROUP
-    this.sg = new SecurityGroup(this, getLogicalName(params.name, 'sg'), {
-      securityGroupName: getResourceName('upstream', service.props),
-      vpc: params.vpc,
-      allowAllOutbound: true,
-    });
-    // Tags.of(this.sg).add('Name', getResourceName('upstream', service.props));
-    this.sg.addIngressRule(Peer.anyIpv4(), Port.tcp(443), 'Allow https traffic');
-    this.alb.addSecurityGroup(this.sg), getResourceName('upstream', service.props);
+    // this.alb.addSecurityGroup(this.sg), getResourceName('upstream', service.props);
 
     this.albToClusterSG = new SecurityGroup(this, getLogicalName(params.name, 'escSG'), {
       securityGroupName: getResourceName('downstream', service.props),
       vpc: params.vpc,
       allowAllOutbound: true,
     });
-    this.albToClusterSG.connections.allowFrom(this.sg, Port.allTcp(), 'Outbound traffic from ALB to Cluster');
-    // Tags.of(this.albToClusterSG).add('Name', getResourceName('downstream', service.props));
+    this.albToClusterSG.connections.allowFrom(this.upstreamSG, Port.allTcp(), 'Outbound traffic from ALB to Cluster');
+    Tags.of(this.albToClusterSG).add('Name', getResourceName('downstream', service.props));
 
     // ADD PATH TO CDN DISTRO
     if (params.cdnApi) {

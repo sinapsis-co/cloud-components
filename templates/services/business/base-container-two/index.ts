@@ -53,10 +53,13 @@ export class ContainerServiceTwo extends Service<GlobalProps, ContainerServiceTw
       },
       containerSecrets: { aSecret: Secret.fromSsmParameter(new ParameterSecret(this, { name: 'aSecret' }).secret) },
       containerEnv: { ENV_NAME: this.props.envName },
-      dockerBuildFolder: `${__dirname}/container-image`,
       mappingPort: 8080,
       healthCheckPath: '/api/status',
       performanceTunning: performanceTunningMapper[this.props.envName],
+      externalRepository: {
+        repositoryName: 'container-two-image',
+        tag: 'latest',
+      },
     });
   }
 }
