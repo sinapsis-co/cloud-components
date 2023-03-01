@@ -83,7 +83,7 @@ export class FargateContainerConstruct extends Construct {
       image: params.dockerBuildFolder
         ? awsECS.ContainerImage.fromAsset(params.dockerBuildFolder)
         : awsECS.ContainerImage.fromEcrRepository(this.repository, params.externalRepository?.tag || 'latest'),
-      memoryLimitMiB: params.performanceTunning.containerMaxMemory,
+      // memoryLimitMiB: params.performanceTunning.containerMaxMemory,
       secrets: params.containerSecrets,
       healthCheck: params.containerHealthCheck,
       environment: { BASE_PATH: params.basePath, ...params.containerEnv },
