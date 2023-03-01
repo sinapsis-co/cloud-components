@@ -42,7 +42,7 @@ export class ContainerServiceTwo extends Service<GlobalProps, ContainerServiceTw
 
     new FargateContainerConstruct(this, {
       name: 'serviceTwo',
-      basePath: 'container/two',
+      basePath: '/container/two',
       vpcConstruct: params.envVpc.vpcConstruct,
       albConstruct: params.envAlb.albConstruct,
       certificate: params.dnsSubdomainCertificate.certificate,
