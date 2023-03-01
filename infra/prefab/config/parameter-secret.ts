@@ -17,10 +17,14 @@ export class ParameterSecret extends Construct {
   constructor(service: Service, params: ParameterSecretProps) {
     super(service, getLogicalName(ParameterSecret.name, params.name));
 
-    if (params.existingName || params.name) throw new SynthError('name or existingName are required');
+    if (!params.existingName && !params.name) throw new SynthError('name or existingName are required');
 
     if (params.existingName) {
-      this.secret = StringParameter.fromStringParameterName(this, getLogicalName('param', params.name), params.name);
+      this.secret = StringParameter.fromStringParameterName(
+        this,
+        getLogicalName('param', params.name),
+        params.existingName
+      );
     }
 
     if (params.name) {
