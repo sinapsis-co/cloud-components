@@ -19,7 +19,7 @@ export const renderEmailTemplate = async <Template extends NotificationTemplate 
   let payload = attributes.payload;
   if (attributes.payload['language']) {
     const translation = await fetchTemplate(bucketName, 'email', attributes.templateName, 'body', 'json');
-    const language = Object.keys(JSON.parse(translation)[attributes.payload['language']])
+    const language = Object.keys(JSON.parse(translation)[attributes.payload['language']]).length
       ? attributes.payload['language']
       : attributes.payload['defaultLanguage'];
     payload = JSON.parse(mustache.render(translation, attributes.payload))[language];
