@@ -87,7 +87,7 @@ export class FargateContainerConstruct extends Construct {
       memoryLimitMiB: params.performanceTunning.containerMaxMemory || 512,
       secrets: params.containerSecrets,
       healthCheck: params.containerHealthCheck,
-      environment: { BASE_PATH: `/${params.basePath}`, ...params.containerEnv },
+      environment: { BASE_PATH: params.basePath, ...params.containerEnv },
       logging: awsECS.LogDriver.awsLogs({ streamPrefix: params.name }),
       portMappings: [{ containerPort: params.mappingPort }],
     });

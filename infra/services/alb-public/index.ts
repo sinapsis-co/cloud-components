@@ -126,7 +126,7 @@ export class PublicAlbConstruct extends Construct {
 
     this.listener.addTargetGroups(getLogicalName(name, 'listenerTG'), {
       targetGroups: [targetGroup],
-      conditions: [ListenerCondition.pathPatterns([`/${basePath}*`])],
+      conditions: [ListenerCondition.pathPatterns([`${basePath}*`])],
       priority: fixedPriority || this.getNextPriorityIndex(),
     });
   }
