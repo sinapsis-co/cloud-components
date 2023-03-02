@@ -1,5 +1,5 @@
 {
-  "name": "@sinapsis-co/cc-platform-template-ecs",
+  "name": "@sinapsis-co/cc-platform-template-base",
   "version": "0.1.0",
   "license": "MIT",
   "cpu": [

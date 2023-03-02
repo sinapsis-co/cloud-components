@@ -9,9 +9,7 @@ import { DnsBaseDomainRef } from './dns-base-domain-ref';
 import { DnsSubdomainCertificate } from './dns-subdomain-certificate';
 import { DnsSubdomainHostedZone } from './dns-subdomain-hosted-zone';
 import { EventsAnalytics } from './events-analytics';
-import { IdentityBackoffice } from './identity-backoffice';
 import { Notifications } from './notifications';
-import { StripeSupportService } from './stripe';
 
 export class SupportServices {
   public readonly deployPipeline: DeployPipeline;
@@ -22,8 +20,6 @@ export class SupportServices {
   public readonly cdnMedia: CdnMedia;
   public readonly customEventBus: CustomEventBus;
   public readonly notifications: Notifications;
-  public readonly identityBackoffice: IdentityBackoffice;
-  public readonly stripeService: StripeSupportService;
   public readonly eventsAnalytics: EventsAnalytics;
 
   constructor(scope: Construct, globalProps: GlobalProps) {
@@ -44,14 +40,6 @@ export class SupportServices {
       dnsSubdomainHostedZone: this.dnsSubdomainHostedZone,
       dnsBaseDomainRef: this.dnsBaseDomainRef,
     });
-    this.identityBackoffice = new IdentityBackoffice(scope, globalProps, {
-      customEventBus: this.customEventBus,
-      cdnApi: this.cdnApi,
-      cdnMedia: this.cdnMedia,
-      notifications: this.notifications,
-      dnsSubdomainCertificate: this.dnsSubdomainCertificate,
-    });
     this.eventsAnalytics = new EventsAnalytics(scope, globalProps, { customEventBus: this.customEventBus });
-    this.stripeService = new StripeSupportService(scope, globalProps, this);
   }
 }

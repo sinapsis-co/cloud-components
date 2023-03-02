@@ -35,6 +35,9 @@ export class SupportServices {
       cdnApi: this.cdnApi,
       vpcService: this.envVpc.vpcConstruct,
     });
-    this.cdnApi = new CdnApi(scope, globalProps, { certificateService: this.dnsSubdomainCertificate });
+    this.cdnApi = new CdnApi(scope, globalProps, {
+      certificateService: this.dnsSubdomainCertificate,
+      albDefaultBehavior: this.envAlb.albConstruct,
+    });
   }
 }

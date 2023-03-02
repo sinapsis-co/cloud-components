@@ -1,19 +1,17 @@
 import {
-  BaseGlobalProps,
   BaseGlobalConstConfig,
+  BaseGlobalDeployTargetConfig,
   BaseGlobalEnv,
   BaseGlobalEnvConfig,
-  BaseGlobalDeployTargetConfig,
+  BaseGlobalProps,
 } from '@sinapsis-co/cc-infra-v2/common/synth/props-types';
 
 export type Subdomain = {
-  webappNext: string;
-  webapp: string;
-  webappVite: string;
+  ssrLanding: string;
+  spaWebapp: string;
   api: string;
   media: string;
   auth: string;
-  backofficeAuth: string;
 };
 
 export type GlobalConstConfig = BaseGlobalConstConfig<{

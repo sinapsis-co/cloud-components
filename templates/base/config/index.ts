@@ -1,8 +1,8 @@
-import { GlobalDeployTargetConfig, GlobalConstConfig, GlobalEnvConfig } from './config-type';
+import { GlobalConstConfig, GlobalDeployTargetConfig, GlobalEnvConfig } from './config-type';
 
 export const globalConstConfig: GlobalConstConfig = {
-  projectName: 'demo',
-  projectShortName: 'demo',
+  projectName: 'baseTemplate',
+  projectShortName: 'base',
   useRepositoryDefaultConfig: true,
   repositoryName: 'v2.cloud-components',
   pipelineNotificationSlackChannel: 'cloud-components',
@@ -10,13 +10,11 @@ export const globalConstConfig: GlobalConstConfig = {
   bootstrappingServices: ['DeployPipeline', 'DnsSubdomainHostedZone'],
   isDemoProject: true,
   subdomain: {
-    webappNext: '',
-    webapp: 'app',
-    webappVite: 'vite-app',
+    ssrLanding: '',
+    spaWebapp: 'app',
     api: 'api',
     media: 'media',
     auth: 'auth',
-    backofficeAuth: 'backoffice-auth',
   },
 };
 
@@ -25,21 +23,21 @@ export const globalEnvConfig: GlobalEnvConfig = {
     deployBranch: 'dev',
     roleName: 'SinapsisDevRole',
     hostedZoneName: 'sinapsis.co',
-    baseDomainName: 'demo.sinapsis.co',
-    envDomainName: 'dev.demo.sinapsis.co',
+    baseDomainName: 'base.sinapsis.co',
+    envDomainName: 'dev.base.sinapsis.co',
     emailSender: 'no-reply',
     wafEnabled: false,
-    clientNotificationSlack: false
+    clientNotificationSlack: false,
   },
   staging: {
     deployBranch: 'staging',
     roleName: 'SinapsisDevRole',
     hostedZoneName: 'sinapsis.co',
-    baseDomainName: 'demo.sinapsis.co',
-    envDomainName: 'staging.demo.sinapsis.co',
+    baseDomainName: 'base.sinapsis.co',
+    envDomainName: 'staging.base.sinapsis.co',
     emailSender: 'no-reply',
     wafEnabled: false,
-    clientNotificationSlack: false
+    clientNotificationSlack: false,
   },
 };
 

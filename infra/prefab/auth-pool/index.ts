@@ -1,16 +1,25 @@
-import { Construct } from 'constructs';
 import { CfnOutput, Fn } from 'aws-cdk-lib';
-import { UserPoolProps, UserPoolClientProps, UserPoolDomainProps, CfnUserPool } from 'aws-cdk-lib/aws-cognito';
-import { PasswordPolicy, UserPool, UserPoolClient, UserPoolDomain, AccountRecovery } from 'aws-cdk-lib/aws-cognito';
-import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import {
+  AccountRecovery,
+  CfnUserPool,
+  PasswordPolicy,
+  UserPool,
+  UserPoolClient,
+  UserPoolClientProps,
+  UserPoolDomain,
+  UserPoolDomainProps,
+  UserPoolProps,
+} from 'aws-cdk-lib/aws-cognito';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { Construct } from 'constructs';
 
-import { getResourceName } from '../../common/naming/get-resource-name';
-import { getLogicalName } from '../../common/naming/get-logical-name';
-import { getDomain } from '../../common/naming/get-domain';
-import { Service } from '../../common/service';
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { UserPoolDomainTarget } from 'aws-cdk-lib/aws-route53-targets';
+import { getDomain } from '../../common/naming/get-domain';
+import { getLogicalName } from '../../common/naming/get-logical-name';
+import { getResourceName } from '../../common/naming/get-resource-name';
+import { Service } from '../../common/service';
 
 export type AuthPoolParams = {
   userPool?: Partial<UserPoolProps>;
@@ -77,7 +86,9 @@ export class AuthPool extends Construct {
 
     const userPoolDomain = new UserPoolDomain(this, 'UserPoolDomain', {
       userPool,
-      ...(params.userPoolDomain || defaultUserPoolDomainProps),
+      ...(!service.props.ephemeralEnvName && params.userPoolDomain
+        ? params.userPoolDomain
+        : defaultUserPoolDomainProps),
     });
 
     if (params.userPoolDomain) {

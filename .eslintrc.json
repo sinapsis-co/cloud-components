@@ -7,9 +7,9 @@
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended"
   ],
-  "ignorePatterns": ["dist", "code-gen"],
+  "ignorePatterns": ["dist", "cdk.out", "*.js"],
   "rules": {
-    "no-console": "error",
+    "no-console": "warn",
     "semi": ["error", "always"],
     "quotes": ["error", "single"],
     "no-tabs": "error",
@@ -24,6 +24,8 @@
     "space-infix-ops": ["error"],
     "semi-spacing": ["error", { "before": false, "after": true }],
     "newline-per-chained-call": ["error", { "ignoreChainWithDepth": 3 }],
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-empty-interface": ["warn", { "allowSingleExtends": true }],
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-non-null-assertion": "off"
   }
 }
