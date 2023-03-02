@@ -11,7 +11,7 @@ export const apiParser = async <T extends ApiInterfaceKeys>(
   const body = await bodyParser<T['body']>(event.body, schema);
   const pathParams = paramsParser<T['pathParams']>(event.pathParameters);
   const queryParams = paramsParser<T['queryParams']>(event.queryStringParameters);
-  const claims = paramsParser<T['claims']>(event.requestContext.authorizer?.jwt.claims);
+  const claims = paramsParser<T['claims']>(event.requestContext.authorizer?.jwt?.claims);
 
   return {
     body,

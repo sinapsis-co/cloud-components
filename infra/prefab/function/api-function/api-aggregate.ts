@@ -1,20 +1,20 @@
-import { Construct } from 'constructs';
-import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { HttpApi } from '@aws-cdk/aws-apigatewayv2-alpha';
-import { Distribution, BehaviorOptions } from 'aws-cdk-lib/aws-cloudfront';
-import { HttpUserPoolAuthorizer } from '@aws-cdk/aws-apigatewayv2-authorizers-alpha';
+import { HttpApi, IHttpRouteAuthorizer } from '@aws-cdk/aws-apigatewayv2-alpha';
+import { BehaviorOptions, Distribution } from 'aws-cdk-lib/aws-cloudfront';
 import { UserPool, UserPoolClient } from 'aws-cdk-lib/aws-cognito';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { Construct } from 'constructs';
 
 import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { ServiceTable, ServiceTableParams } from '../../table/dynamo-table';
 import { ApiRest } from '../../api/api-rest';
+import { ServiceTable, ServiceTableParams } from '../../table/dynamo-table';
 
-import { ApiFunction, ApiHandlerParams } from './api-function';
-import { SynthError } from '../../../common/synth/synth-error';
 import { HttpOriginProps } from 'aws-cdk-lib/aws-cloudfront-origins';
-import { BaseFunctionParams } from '../base-function';
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { Service } from '../../../common/service';
+import { SynthError } from '../../../common/synth/synth-error';
+import { BaseFunctionParams } from '../base-function';
+import { ApiFunction, ApiHandlerParams } from './api-function';
 
 export type ApiCdnApiParams = {
   distribution: Distribution;
@@ -33,13 +33,14 @@ export type ApiAggregateParams<HandlerName extends string = string> = BaseFuncti
   authPool?: ApiAuthPoolParams;
   tableOptions?: Omit<ServiceTableParams, 'tableName'>;
   autoEventsEnabled?: true;
+  customAuthorizerHandler?: IFunction;
   skipTable?: true;
 };
 
 export class ApiAggregate<HandlerName extends string = string> extends Construct {
   public readonly api: HttpApi;
   public readonly table?: Table;
-  public readonly authorizer: HttpUserPoolAuthorizer;
+  public readonly authorizer: IHttpRouteAuthorizer;
   public readonly handlers: Record<HandlerName, NodejsFunction> = {} as Record<HandlerName, NodejsFunction>;
 
   constructor(service: Service, params: ApiAggregateParams) {
@@ -48,7 +49,12 @@ export class ApiAggregate<HandlerName extends string = string> extends Construct
     if (params.autoEventsEnabled && !params.eventBus)
       throw new SynthError('eventBus is needed when autoEventsEnabled is true', service.props);
 
-    const apiRest = new ApiRest(service, { ...params, ...params.cdnApi, ...params.authPool });
+    const apiRest = new ApiRest(service, {
+      ...params,
+      ...params.cdnApi,
+      ...params.authPool,
+      customAuthorizerHandler: params.customAuthorizerHandler,
+    });
 
     this.api = apiRest.api;
     this.authorizer = apiRest.authorizer;

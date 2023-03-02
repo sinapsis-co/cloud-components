@@ -1,13 +1,12 @@
-import { Construct } from 'constructs';
-import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { HttpApi, HttpMethod } from '@aws-cdk/aws-apigatewayv2-alpha';
+import { HttpApi, HttpMethod, IHttpRouteAuthorizer } from '@aws-cdk/aws-apigatewayv2-alpha';
 import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
-import { HttpUserPoolAuthorizer } from '@aws-cdk/aws-apigatewayv2-authorizers-alpha';
-import { ApiInterface, ApiConfig } from '@sinapsis-co/cc-platform-v2/catalog/api';
+import { ApiConfig, ApiInterface } from '@sinapsis-co/cc-platform-v2/catalog/api';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { Construct } from 'constructs';
 
 import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { BaseFunction, BaseFunctionParams, BaseHandlerParams } from '../base-function';
 import { Service } from '../../../common/service';
+import { BaseFunction, BaseFunctionParams, BaseHandlerParams } from '../base-function';
 
 export type ApiHandlerParams = BaseHandlerParams & {
   basePath: ApiConfig<ApiInterface>['basePath'];
@@ -18,7 +17,7 @@ export type ApiHandlerParams = BaseHandlerParams & {
 
 export type ApiFunctionParams = BaseFunctionParams & {
   api: HttpApi;
-  authorizer?: HttpUserPoolAuthorizer;
+  authorizer?: IHttpRouteAuthorizer;
 };
 
 export class ApiFunction extends Construct {
