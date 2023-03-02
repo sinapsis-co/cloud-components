@@ -1,4 +1,4 @@
-import { Service, Construct } from '@sinapsis-co/cc-infra-v2/common/service';
+import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { DeployPipelineConstruct } from '@sinapsis-co/cc-infra-v2/services/deploy-pipeline';
 
 import { GlobalProps } from '../../../config/config-type';
@@ -9,7 +9,7 @@ export class DeployPipeline extends Service<GlobalProps> {
 
     new DeployPipelineConstruct(this, {
       // fullClone: true,
-      preDeployCommands: ['cd templates && bash pre-deploy.bash'],
+      preDeployCommands: ['cd templates/ecs && bash pre-deploy.bash'],
       // postDeployCommands: [`yarn deploy-spa ${this.props.envName} webapp`],
     });
   }
