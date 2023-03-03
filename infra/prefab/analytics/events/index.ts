@@ -3,7 +3,7 @@ import { Construct } from 'constructs';
 
 import { getDeployConfig } from '../../../common/naming/get-deploy-config';
 import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getDatabaseName, getResourceName } from '../../../common/naming/get-resource-name';
+import { getBucketName, getDatabaseName, getResourceName } from '../../../common/naming/get-resource-name';
 import { Service } from '../../../common/service';
 
 import { CfnWorkGroup } from 'aws-cdk-lib/aws-athena';
@@ -14,10 +14,10 @@ import { Effect, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws
 import { CfnDeliveryStream } from 'aws-cdk-lib/aws-kinesisfirehose';
 import { BlockPublicAccess, Bucket, BucketEncryption, StorageClass } from 'aws-cdk-lib/aws-s3';
 import { BaseFunction } from '../../compute/function/base-function';
-import { CustomEventBusParams } from '../../integration/event-bus';
+import { EventBusPrefab } from '../../integration/event-bus';
 
 export type EventsAnalyticsParams = {
-  eventBus: CustomEventBusParams;
+  eventBus: EventBusPrefab;
   eventSource?: string;
   paramsCrawlerProps?: Partial<CfnCrawlerProps>;
   lifecycleDurations?: {
@@ -41,7 +41,7 @@ export class EventsAnalyticsPrefab extends Construct {
     super(service, getLogicalName(EventsAnalyticsPrefab.name));
 
     this.datalakeBucket = new Bucket(service, 'DataLakeBucket', {
-      bucketName: getResourceName('datalake', service.props),
+      bucketName: getBucketName('datalake', service.props),
       versioned: false,
       publicReadAccess: false,
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
@@ -99,7 +99,7 @@ export class EventsAnalyticsPrefab extends Construct {
     });
 
     new Rule(service, 'EventProcessorRule', {
-      ...(params.eventBus ? { eventBus: params.eventBus } : {}),
+      ...(params.eventBus ? { eventBus: params.eventBus.bus } : {}),
       eventPattern: { source: [params.eventSource || 'app'] },
       targets: [new KinesisFirehoseStream(deliveryStream)],
     });
@@ -170,7 +170,7 @@ export class EventsAnalyticsPrefab extends Construct {
     });
 
     this.athenaOutputBucket = new Bucket(service, 'QueryOutputsBucket', {
-      bucketName: getResourceName('query-outputs', service.props),
+      bucketName: getBucketName('query-outputs', service.props),
       versioned: false,
       publicReadAccess: false,
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,

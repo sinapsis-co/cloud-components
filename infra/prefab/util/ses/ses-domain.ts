@@ -2,10 +2,13 @@ import { CnameRecord, HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { AwsCustomResource, AwsCustomResourcePolicy, PhysicalResourceId } from 'aws-cdk-lib/custom-resources';
 import { Construct } from 'constructs';
 
+import { CfnUserPool } from 'aws-cdk-lib/aws-cognito/lib';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs/lib/function';
 import { getDomain } from '../../../common/naming/get-domain';
 import { getLogicalName } from '../../../common/naming/get-logical-name';
 import { Service } from '../../../common/service';
+import { BaseGlobalProps } from '../../../common/synth/props-types';
 
 export class SesDomain extends Construct {
   constructor(service: Service) {
@@ -89,6 +92,40 @@ export class SesDomain extends Construct {
       });
       cnameRecord.node.addDependency(verifyDomainDkim);
     });
+  }
+
+  public useMod(mods: (() => any)[]): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      mods.map((fn) => fn()(lambda));
+    };
+  }
+
+  public static modifier = {
+    emailSender: (): ((lambda: NodejsFunction) => void) => {
+      return (lambda: NodejsFunction): void => {
+        lambda.addToRolePolicy(
+          new PolicyStatement({ effect: Effect.ALLOW, actions: ['ses:SendRawEmail'], resources: ['*'] })
+        );
+      };
+    },
+    smsSender: (): ((lambda: NodejsFunction) => void) => {
+      return (lambda: NodejsFunction): void => {
+        lambda.addToRolePolicy(
+          new PolicyStatement({ effect: Effect.ALLOW, actions: ['sns:Publish'], resources: ['*'] })
+        );
+      };
+    },
+  };
+
+  public static getCognitoRef(props: BaseGlobalProps): CfnUserPool.EmailConfigurationProperty {
+    return {
+      emailSendingAccount: 'DEVELOPER',
+      from: props.emailSender,
+      sourceArn: `arn:aws:ses:${props.regionName}:${props.deployTarget['services'].account}:identity/${getDomain(
+        '',
+        props
+      )}`,
+    };
   }
 }
 

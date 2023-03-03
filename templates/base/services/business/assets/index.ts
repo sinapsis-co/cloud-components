@@ -2,23 +2,24 @@ import { getDomain } from '@sinapsis-co/cc-infra-v2/common/naming/get-domain';
 import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/api-function/api-aggregate';
 import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/event-function/event-aggregate';
+import { EventBusPrefab } from '@sinapsis-co/cc-infra-v2/prefab/integration/event-bus';
 import { PrivateBucketPrefab } from '@sinapsis-co/cc-infra-v2/prefab/storage/bucket/private-bucket';
 import { Duration } from 'aws-cdk-lib';
-import { EventBus } from 'aws-cdk-lib/aws-events';
 import { Architecture } from 'aws-cdk-lib/aws-lambda';
 
 import { CdnApi } from 'services/support/cdn-api';
 import { CdnAssets } from 'services/support/cdn-assets';
 import { GlobalProps } from '../../../config/config-type';
+import { EventBus } from '../../support/event-bus';
 import { Identity } from '../identity';
 import { assetApi, assetEvent } from './catalog';
 import { eventConfig as rawAsset } from './catalog/event/raw-asset-uploaded';
 import { assetsTypes } from './lib/assets-type';
 
 export type AssetsDeps = {
-  customEventBus: EventBus;
+  eventBus: EventBus;
   cdnApi: CdnApi;
-  cdnMedia: CdnAssets;
+  cdnAssets: CdnAssets;
   identity: Identity;
 };
 
@@ -32,22 +33,22 @@ export class Assets extends Service<GlobalProps, AssetsDeps> {
   constructor(scope: Construct, globalProps: GlobalProps, params: AssetsDeps) {
     super(scope, Assets.name, globalProps, { params });
 
-    this.addDependency(this.props.cdnMedia);
+    this.addDependency(this.props.cdnAssets);
 
     this.privateAssetsBucket = new PrivateBucketPrefab(this, { bucketName: 'private' });
 
-    this.publicAssetsBucket = params.cdnMedia.bucket;
+    this.publicAssetsBucket = params.cdnAssets.cdnAssetPrefab.bucketPrefab;
 
     this.apiAggregate = new ApiAggregate(this, {
       baseFunctionFolder: __dirname,
       basePath: 'assets',
-      cdnApi: params.cdnApi,
+      cdnApi: params.cdnApi.cdnApiPrefab,
       authPool: params.identity.authPool,
       skipTable: true,
       handlers: {
         createPutUrl: {
           ...assetApi.createPutUrl.config,
-          environment: { MEDIA_URL: getDomain(this.props.subdomain.media, this.props, true) },
+          environment: { MEDIA_URL: getDomain(this.props.subdomain.assets, this.props, true) },
           modifiers: [
             this.publicAssetsBucket.useMod('PUBLIC_BUCKET', [PrivateBucketPrefab.modifier.writer]),
             this.privateAssetsBucket.useMod('PRIVATE_BUCKET', [PrivateBucketPrefab.modifier.writer]),
@@ -62,7 +63,7 @@ export class Assets extends Service<GlobalProps, AssetsDeps> {
 
     this.eventAggregate = new EventAggregate(this, {
       name: 'custom',
-      eventBus: this.props.customEventBus.bus,
+      eventBus: this.props.eventBus.eventBusPrefab,
       baseFunctionFolder: __dirname,
       handlers: {
         remove: {
@@ -94,7 +95,7 @@ export class Assets extends Service<GlobalProps, AssetsDeps> {
     });
 
     this.eventRaw = new EventAggregate(this, {
-      eventBus: EventBus.fromEventBusName(this, 'DefaultEventBus', 'default'),
+      eventBus: new EventBusPrefab(this, { defaultEventBus: true }),
       baseFunctionFolder: __dirname,
       handlers: {
         assetUploaded: {
@@ -108,7 +109,7 @@ export class Assets extends Service<GlobalProps, AssetsDeps> {
               PrivateBucketPrefab.modifier.reader,
               PrivateBucketPrefab.modifier.writer,
             ]),
-            params.customEventBus.customEventBus.useModWriter('CUSTOM_BUS'),
+            params.eventBus.eventBusPrefab.useModWriter('CUSTOM_BUS'),
           ],
           eventConfig: [
             {

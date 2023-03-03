@@ -1,31 +1,22 @@
 import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { CdnApiPrefab } from '@sinapsis-co/cc-infra-v2/prefab/gateway/global/cdn-api';
-import { BehaviorOptions, Distribution } from 'aws-cdk-lib/aws-cloudfront';
 
 import { GlobalProps } from '../../../config/config-type';
 import { DnsSubdomainCertificate } from '../dns-subdomain-certificate';
 
 export type CdnApiParams = {
-  certificateService: DnsSubdomainCertificate;
+  dnsSubdomainCertificate: DnsSubdomainCertificate;
 };
 
 export class CdnApi extends Service<GlobalProps, CdnApiParams> {
-  public readonly domain: string;
-  public readonly baseUrl: string;
-  public readonly distribution: Distribution;
-  public readonly behaviorOptions: Omit<BehaviorOptions, 'origin'>;
+  public readonly cdnApiPrefab: CdnApiPrefab;
 
   constructor(scope: Construct, globalProps: GlobalProps, params: CdnApiParams) {
     super(scope, CdnApi.name, globalProps, { params });
 
-    const cdnApiRest = new CdnApiPrefab(this, {
+    this.cdnApiPrefab = new CdnApiPrefab(this, {
       subDomain: this.props.subdomain.api,
-      certificate: this.props.certificateService.certificate,
+      certificate: this.props.dnsSubdomainCertificate.certificatePrefab.certificate,
     });
-
-    this.domain = cdnApiRest.domain;
-    this.baseUrl = cdnApiRest.baseUrl;
-    this.distribution = cdnApiRest.distribution;
-    this.behaviorOptions = cdnApiRest.behaviorOptions;
   }
 }

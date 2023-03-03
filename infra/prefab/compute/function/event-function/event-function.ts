@@ -1,4 +1,4 @@
-import { Rule } from 'aws-cdk-lib/aws-events';
+import { IEventBus, Rule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
@@ -6,7 +6,6 @@ import { Construct } from 'constructs';
 import { EventConfig } from '@sinapsis-co/cc-platform-v2/catalog/event';
 import { getLogicalName } from '../../../../common/naming/get-logical-name';
 import { Service } from '../../../../common/service';
-import { CustomEventBusParams } from '../../../integration/event-bus';
 import { BaseFunction, BaseFunctionParams, BaseHandlerParams } from '../base-function';
 
 export type EventHandlerParams = BaseHandlerParams & {
@@ -14,7 +13,7 @@ export type EventHandlerParams = BaseHandlerParams & {
 };
 
 export type EventFunctionParams = BaseFunctionParams & {
-  eventBus: CustomEventBusParams;
+  eventBus: IEventBus;
 };
 
 export class EventFunction extends Construct {

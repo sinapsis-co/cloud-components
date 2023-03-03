@@ -1,8 +1,7 @@
-import { Service, Construct } from '@sinapsis-co/cc-infra-v2/common/service';
-import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
-import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/event-function/event-aggregate';
-import { RuntimeSecret } from '@sinapsis-co/cc-infra-v2/prefab/config/runtime-secret';
-
+import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
+import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/api-function/api-aggregate';
+import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/event-function/event-aggregate';
+import { RuntimeSecret } from '@sinapsis-co/cc-infra-v2/prefab/util/config/runtime-secret';
 import { GlobalServiceDependencies } from '..';
 import { GlobalProps } from '../../../config/config-type';
 import { baseRepo } from '../base-crud/repository/base';
@@ -10,18 +9,18 @@ import { searchApi, searchSecret } from './catalog';
 
 export type SearchServiceParams = GlobalServiceDependencies;
 
-export class SearchService extends Service<GlobalProps, SearchServiceParams> {
+export class Search extends Service<GlobalProps, SearchServiceParams> {
   public readonly apiAggregate: ApiAggregate;
   public readonly eventAggregate: EventAggregate;
   public readonly secret: RuntimeSecret;
 
   constructor(scope: Construct, globalProps: GlobalProps, params: SearchServiceParams) {
-    super(scope, SearchService.name, globalProps, { params });
+    super(scope, Search.name, globalProps, { params });
 
     this.secret = new RuntimeSecret(this, searchSecret.algolia);
 
     this.eventAggregate = new EventAggregate(this, {
-      eventBus: this.props.customEventBus.bus,
+      eventBus: this.props.eventBus.eventBusPrefab,
       baseFunctionFolder: __dirname,
       handlers: {
         entityChanged: {
@@ -38,8 +37,8 @@ export class SearchService extends Service<GlobalProps, SearchServiceParams> {
     this.apiAggregate = new ApiAggregate(this, {
       basePath: 'search',
       baseFunctionFolder: __dirname,
-      eventBus: this.props.customEventBus.bus,
-      cdnApi: this.props.cdnApi,
+      eventBus: this.props.eventBus.eventBusPrefab,
+      cdnApi: this.props.cdnApi.cdnApiPrefab,
       authPool: this.props.identity.authPool,
       skipTable: true,
       handlers: {

@@ -1,11 +1,11 @@
 import { getDomain } from '@sinapsis-co/cc-infra-v2/common/naming/get-domain';
 import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { AuthPool } from '@sinapsis-co/cc-infra-v2/prefab/auth-pool';
-import { PrivateBucket } from '@sinapsis-co/cc-infra-v2/prefab/bucket/private-bucket';
-import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
-import { CognitoAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/cognito-function/cognito-aggregate';
-import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/event-function/event-aggregate';
-import { SesEmailAddress } from '@sinapsis-co/cc-infra-v2/prefab/ses/ses-email-address';
+import { CognitoAuthPoolPrefab } from '@sinapsis-co/cc-infra-v2/prefab/auth/cognito-pool';
+import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/api-function/api-aggregate';
+import { CognitoAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/cognito-function/cognito-aggregate';
+import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/event-function/event-aggregate';
+import { PrivateBucketPrefab } from '@sinapsis-co/cc-infra-v2/prefab/storage/bucket/private-bucket';
+import { SesDomain } from '@sinapsis-co/cc-infra-v2/prefab/util/ses/ses-domain';
 import { Duration } from 'aws-cdk-lib';
 import { UserPoolOperation } from 'aws-cdk-lib/aws-cognito';
 
@@ -20,33 +20,38 @@ import { assetEvent } from '../assets/catalog';
 import { identityApi } from './catalog';
 import { buildCustomAttributes } from './platform/cognito-mapper';
 
+/**
+ * Name of the user pool
+ *
+ * @default - automatically generated name by CloudFormation at deploy time
+ */
 export type IdentityParams = {
   notifications: Notifications;
-  customEventBus: EventBus;
+  eventBus: EventBus;
   dnsSubdomainCertificate: DnsSubdomainCertificate;
   cdnApi: CdnApi;
-  cdnMedia: CdnAssets;
+  cdnAssets: CdnAssets;
 };
 
 export class Identity extends Service<GlobalProps, IdentityParams> {
-  public readonly authPool: AuthPool;
+  public readonly authPool: CognitoAuthPoolPrefab;
   public readonly cognitoAggregate: CognitoAggregate;
   public readonly apiAggregate: ApiAggregate;
 
   constructor(scope: Construct, globalProps: GlobalProps, params: IdentityParams) {
     super(scope, Identity.name, globalProps, { params });
 
-    this.addDependency(params.cdnMedia);
+    this.addDependency(params.cdnAssets);
     this.addDependency(params.notifications);
 
-    this.authPool = new AuthPool(this, {
+    this.authPool = new CognitoAuthPoolPrefab(this, {
       callbackUrl: getDomain(this.props.subdomain.spaWebapp, this.props, true),
       userPool: { customAttributes: buildCustomAttributes() },
-      emailConfiguration: SesEmailAddress.getCognitoRef(this.props),
+      emailConfiguration: SesDomain.getCognitoRef(this.props),
       userPoolDomain: {
         customDomain: {
           domainName: getDomain(this.props.subdomain.auth, this.props),
-          certificate: params.dnsSubdomainCertificate.certificate,
+          certificate: params.dnsSubdomainCertificate.certificatePrefab.certificate,
         },
       },
     });
@@ -54,37 +59,37 @@ export class Identity extends Service<GlobalProps, IdentityParams> {
     this.apiAggregate = new ApiAggregate(this, {
       baseFunctionFolder: __dirname,
       basePath: 'identity',
-      cdnApi: this.props.cdnApi,
+      cdnApi: this.props.cdnApi.cdnApiPrefab,
       authPool: this.authPool,
-      eventBus: this.props.customEventBus.bus,
+      eventBus: this.props.eventBus.eventBusPrefab,
       autoEventsEnabled: true,
       handlers: {
         profileGet: {
           ...identityApi.profileGet.config,
           environment: {
-            MEDIA_URL: getDomain(this.props.subdomain.media, this.props, true),
+            MEDIA_URL: getDomain(this.props.subdomain.assets, this.props, true),
           },
         },
         profileUpdate: {
           ...identityApi.profileUpdate.config,
-          modifiers: [this.authPool.useMod([AuthPool.modifier.updateUserAtt])],
+          modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.updateUserAtt])],
         },
         memberCreate: {
           ...identityApi.memberCreate.config,
           environment: {
             PROJECT_NAME: this.props.projectName,
             WEBAPP_URL: getDomain(this.props.subdomain.spaWebapp, this.props),
-            MEDIA_URL: getDomain(this.props.subdomain.media, this.props),
+            MEDIA_URL: getDomain(this.props.subdomain.assets, this.props),
           },
         },
         memberList: identityApi.memberList.config,
         memberRoleUpdate: {
           ...identityApi.memberUpdateRole.config,
-          modifiers: [this.authPool.useMod([AuthPool.modifier.updateUserAtt])],
+          modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.updateUserAtt])],
         },
         profileDelete: {
           ...identityApi.memberDelete.config,
-          modifiers: [this.authPool.useMod([AuthPool.modifier.deleteUser])],
+          modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.deleteUser])],
         },
       },
     });
@@ -97,7 +102,7 @@ export class Identity extends Service<GlobalProps, IdentityParams> {
     this.cognitoAggregate = new CognitoAggregate(this, {
       baseFunctionFolder: __dirname,
       userPool: this.authPool.userPool,
-      eventBus: this.props.customEventBus.bus,
+      eventBus: this.props.eventBus.eventBusPrefab,
       table: this.apiAggregate.table,
       handlers: {
         customMessage: {
@@ -106,11 +111,11 @@ export class Identity extends Service<GlobalProps, IdentityParams> {
           environment: {
             PROJECT_NAME: this.props.projectName,
             WEBAPP_URL: getDomain(this.props.subdomain.spaWebapp, this.props),
-            MEDIA_URL: getDomain(this.props.subdomain.media, this.props),
+            MEDIA_URL: getDomain(this.props.subdomain.assets, this.props),
           },
           tablePermission: 'none',
           modifiers: [
-            this.props.notifications.templatesBucket.useMod('TEMPLATES_BUCKET', [PrivateBucket.modifier.reader]),
+            this.props.notifications.templatesBucket.useMod('TEMPLATES_BUCKET', [PrivateBucketPrefab.modifier.reader]),
           ],
         },
         postConfirmation: {
@@ -119,10 +124,10 @@ export class Identity extends Service<GlobalProps, IdentityParams> {
           environment: {
             PROJECT_NAME: this.props.projectName,
             WEBAPP_URL: getDomain(this.props.subdomain.spaWebapp, this.props),
-            MEDIA_URL: getDomain(this.props.subdomain.media, this.props),
+            MEDIA_URL: getDomain(this.props.subdomain.assets, this.props),
           },
           tablePermission: 'write',
-          modifiers: [AuthPool.modifier.updateUserAtt()],
+          modifiers: [CognitoAuthPoolPrefab.modifier.updateUserAtt()],
           timeout: Duration.seconds(15),
         },
       },
@@ -130,7 +135,7 @@ export class Identity extends Service<GlobalProps, IdentityParams> {
 
     new EventAggregate(this, {
       baseFunctionFolder: __dirname,
-      eventBus: this.props.customEventBus.bus,
+      eventBus: this.props.eventBus.eventBusPrefab,
       table: this.apiAggregate.table,
       handlers: {
         eventNotificationDispatch: {

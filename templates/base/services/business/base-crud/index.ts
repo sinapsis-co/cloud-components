@@ -16,8 +16,8 @@ export class BaseCrud extends Service<GlobalProps, BaseCrudParams> {
     this.apiAggregate = new ApiAggregate(this, {
       basePath: 'base',
       baseFunctionFolder: __dirname,
-      eventBus: this.props.customEventBus.bus,
-      cdnApi: this.props.cdnApi,
+      eventBus: this.props.eventBus.eventBusPrefab,
+      cdnApi: this.props.cdnApi.cdnApiPrefab,
       authPool: this.props.identity.authPool,
       autoEventsEnabled: true,
       handlers: {

@@ -6,15 +6,20 @@ import { getLogicalName } from '../../../common/naming/get-logical-name';
 import { getResourceName } from '../../../common/naming/get-resource-name';
 import { Service } from '../../../common/service';
 
-export type CustomEventBusParams = IEventBus;
-
+export type EventBusPrefabParams = {
+  defaultEventBus?: true;
+};
 export class EventBusPrefab extends Construct {
-  public readonly bus: EventBus;
+  public readonly bus: IEventBus;
 
-  constructor(service: Service) {
+  constructor(service: Service, params?: EventBusPrefabParams) {
     super(service, getLogicalName(EventBusPrefab.name));
 
-    this.bus = new EventBus(this, 'bus', { eventBusName: getResourceName('', service.props) });
+    if (params?.defaultEventBus) {
+      this.bus = EventBus.fromEventBusName(service, 'DefaultEventBus', 'default');
+    } else {
+      this.bus = new EventBus(this, 'bus', { eventBusName: getResourceName('', service.props) });
+    }
   }
 
   public useMod(variableName = 'EVENT_BUS', mods: ((bus: IEventBus) => any)[]): (lambda: NodejsFunction) => void {
@@ -37,7 +42,7 @@ export class EventBusPrefab extends Construct {
     },
   };
 
-  static addBus(lambdaFunction: NodejsFunction, eventBus?: CustomEventBusParams): void {
+  static addBus(lambdaFunction: NodejsFunction, eventBus?: IEventBus): void {
     if (eventBus instanceof EventBus) {
       eventBus.grantPutEventsTo(lambdaFunction);
       lambdaFunction.addEnvironment('EVENT_BUS', eventBus.eventBusName);

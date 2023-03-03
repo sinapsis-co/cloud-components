@@ -10,7 +10,7 @@ import { Construct } from 'constructs';
 
 import { getDomain } from '../../../../common/naming/get-domain';
 import { getLogicalName } from '../../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../../common/naming/get-resource-name';
+import { getBucketName, getResourceName } from '../../../../common/naming/get-resource-name';
 import { Service } from '../../../../common/service';
 import { SynthError } from '../../../../common/synth/synth-error';
 import { WafPrefab } from '../../../networking/waf';
@@ -41,7 +41,7 @@ export class SpaPrefab extends Construct {
     this.baseUrl = `https://${this.domain}/`;
 
     const bucket = new Bucket(this, 'WebappBucket', {
-      bucketName: getResourceName('webapp', service.props),
+      bucketName: getBucketName('webapp', service.props),
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       publicReadAccess: false,
       encryption: BucketEncryption.S3_MANAGED,

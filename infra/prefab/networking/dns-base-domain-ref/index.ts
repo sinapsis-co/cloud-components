@@ -7,6 +7,11 @@ import { Service } from '../../../common/service';
 export type DnsBaseDomainRefConstructParams = { hostedZoneNS: string };
 
 export class DnsDomainRefPrefab extends Construct {
+  /**
+   * Creates the DNS records in the parent HostedZone in order
+   * @remarks Use it only if you have the root HostedZone in another AWS account
+   * @remarks Should be only instance one per solution
+   */
   constructor(service: Service, params: DnsBaseDomainRefConstructParams) {
     super(service, getLogicalName(DnsDomainRefPrefab.name));
 

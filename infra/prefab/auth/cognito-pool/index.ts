@@ -36,6 +36,13 @@ export class CognitoAuthPoolPrefab extends Construct {
   public readonly userPoolDomain: UserPoolDomain;
   public readonly frontendRefs: Record<string, string>;
 
+  /**
+   * Creates a Cognito UserPool
+   *
+   * @param service - The instance of Service where the prefab will be deployed
+   * @param params - Prefab params
+   * @returns CognitoAuthPoolPrefab instance
+   */
   constructor(service: Service, params: AuthPoolParams) {
     super(service, getLogicalName(CognitoAuthPoolPrefab.name));
 
@@ -82,13 +89,11 @@ export class CognitoAuthPoolPrefab extends Construct {
       ...params.userPoolClient,
     });
 
-    const defaultUserPoolDomainProps = { cognitoDomain: { domainPrefix: getResourceName('', service.props) } };
-
     const userPoolDomain = new UserPoolDomain(this, 'UserPoolDomain', {
       userPool,
       ...(!service.props.ephemeralEnvName && params.userPoolDomain
         ? params.userPoolDomain
-        : defaultUserPoolDomainProps),
+        : { cognitoDomain: { domainPrefix: getDomain('auth', service.props).replace(/\./g, '-') } }),
     });
 
     if (params.userPoolDomain) {
@@ -101,12 +106,8 @@ export class CognitoAuthPoolPrefab extends Construct {
       record.node.addDependency(userPoolDomain);
     }
 
-    this.userPool = userPool;
-    this.userPoolClient = userPoolClient;
-    this.userPoolDomain = userPoolDomain;
     const userPoolId = userPool.userPoolId;
     const userPoolClientId = userPoolClient.userPoolClientId;
-
     const userPoolDomainUrl = Fn.join('', ['https://', userPoolDomain.domainName, '.auth.us-east-1.amazoncognito.com']);
     const userPoolRegion = service.props.regionName;
 
@@ -115,6 +116,9 @@ export class CognitoAuthPoolPrefab extends Construct {
     new CfnOutput(this, 'UserPoolDomainUrl', { value: userPoolDomainUrl });
     new CfnOutput(this, 'UserPoolRegion', { value: userPoolRegion });
 
+    this.userPool = userPool;
+    this.userPoolClient = userPoolClient;
+    this.userPoolDomain = userPoolDomain;
     this.frontendRefs = {
       REACT_APP_COGNITO_USER_POOL_ID: userPoolId,
       REACT_APP_COGNITO_WEB_CLIENT_ID: userPoolClientId,

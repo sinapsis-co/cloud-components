@@ -10,7 +10,7 @@ export type Subdomain = {
   ssrLanding: string;
   spaWebapp: string;
   api: string;
-  media: string;
+  assets: string;
   auth: string;
 };
 

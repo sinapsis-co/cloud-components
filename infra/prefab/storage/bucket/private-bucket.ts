@@ -7,7 +7,7 @@ import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 
 import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../common/naming/get-resource-name';
+import { getBucketName } from '../../../common/naming/get-resource-name';
 import { Service } from '../../../common/service';
 
 export type PrivateBucketParams = {
@@ -30,7 +30,7 @@ export class PrivateBucketPrefab extends Construct {
     };
 
     this.bucket = new awsS3.Bucket(this, getLogicalName(PrivateBucketPrefab.name, 'Bucket'), {
-      bucketName: getResourceName(params.bucketName, service.props),
+      bucketName: getBucketName(params.bucketName, service.props),
       ...defaultProps,
       ...params.bucketProps,
     });

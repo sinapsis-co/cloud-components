@@ -16,7 +16,7 @@ import { Construct } from 'constructs';
 import { HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { getDomain } from '../../../../common/naming/get-domain';
 import { getLogicalName } from '../../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../../common/naming/get-resource-name';
+import { getBucketName, getResourceName } from '../../../../common/naming/get-resource-name';
 import { Service } from '../../../../common/service';
 import { WafPrefab } from '../../../networking/waf';
 import { AssetBucketParams, AssetBucketPrefab } from '../../../storage/bucket/asset-bucket';
@@ -31,7 +31,7 @@ export type CdnAssetConstructProps = {
 };
 
 export class CdnAssetPrefab extends Construct {
-  public readonly bucket: AssetBucketPrefab;
+  public readonly bucketPrefab: AssetBucketPrefab;
   public readonly domain: string;
   public readonly baseUrl: string;
   public readonly distribution: Distribution;
@@ -43,8 +43,8 @@ export class CdnAssetPrefab extends Construct {
     this.domain = getDomain(params.subDomain, service.props);
     this.baseUrl = `https://${this.domain}/`;
 
-    this.bucket = new AssetBucketPrefab(service, {
-      bucketName: params.subDomain,
+    this.bucketPrefab = new AssetBucketPrefab(service, {
+      bucketName: getBucketName(params.subDomain, service.props),
       ...params.assetBucketProps,
       bucketProps: {
         cors: [{ allowedMethods: [HttpMethods.GET, HttpMethods.POST], allowedOrigins: ['*'], allowedHeaders: ['*'] }],
@@ -73,7 +73,7 @@ export class CdnAssetPrefab extends Construct {
       certificate: params.certificate,
       domainNames: domains,
       defaultBehavior: {
-        origin: new S3Origin(this.bucket.bucket),
+        origin: new S3Origin(this.bucketPrefab.bucket),
         ...this.behaviorOptions,
       },
       webAclId: params.waf?.webACL?.attrArn,

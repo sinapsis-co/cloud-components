@@ -18,7 +18,7 @@ import { DetailType, NotificationRule } from 'aws-cdk-lib/aws-codestarnotificati
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs/lib';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../common/naming/get-resource-name';
+import { getBucketName, getResourceName } from '../../../common/naming/get-resource-name';
 import { Service } from '../../../common/service';
 import { SynthError } from '../../../common/synth/synth-error';
 import { TopicFunction } from '../../compute/function/topic-function';
@@ -135,7 +135,7 @@ export class DeployPipelinePrefab extends Construct {
 
     const pipeline = new Pipeline(this, 'Pipeline', {
       artifactBucket: new Bucket(this, 'bucket', {
-        bucketName: getResourceName('bucket', service.props),
+        bucketName: getBucketName('bucket', service.props),
         autoDeleteObjects: true,
         removalPolicy: RemovalPolicy.DESTROY,
       }),

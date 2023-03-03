@@ -1,18 +1,17 @@
-import { DnsSubdomainHostedZoneConstruct } from '@sinapsis-co/cc-infra-v2/services/dns-subdomain-hosted-zone';
-import { Service, Construct } from '@sinapsis-co/cc-infra-v2/common/service';
+import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
+import { DnsSubdomainHostedZonePrefab } from '@sinapsis-co/cc-infra-v2/prefab/networking/dns-subdomain-hosted-zone';
 import { GlobalProps } from '../../../config/config-type';
 
 export class DnsSubdomainHostedZone extends Service<GlobalProps> {
-  public readonly hostedZoneNS: string;
+  public readonly subdomainHostedZonePrefab: DnsSubdomainHostedZonePrefab;
 
   constructor(scope: Construct, globalProps: GlobalProps) {
     super(scope, DnsSubdomainHostedZone.name, globalProps, {});
 
     const isBootstrapping = this.node.tryGetContext('isBootstrapping') === 'true' ? true : false;
 
-    if (this.props.envName !== 'prod')
-      this.hostedZoneNS = new DnsSubdomainHostedZoneConstruct(this, {
-        isBootstrapping,
-      }).hostedZoneNS;
+    if (this.props.envName !== 'prod') {
+      this.subdomainHostedZonePrefab = new DnsSubdomainHostedZonePrefab(this, { isBootstrapping });
+    }
   }
 }

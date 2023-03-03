@@ -13,7 +13,7 @@ export const globalConstConfig: GlobalConstConfig = {
     ssrLanding: '',
     spaWebapp: 'app',
     api: 'api',
-    media: 'media',
+    assets: 'media',
     auth: 'auth',
   },
 };

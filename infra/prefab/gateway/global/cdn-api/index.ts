@@ -17,7 +17,7 @@ import { Construct } from 'constructs';
 
 import { getDomain } from '../../../../common/naming/get-domain';
 import { getLogicalName } from '../../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../../common/naming/get-resource-name';
+import { getBucketName, getResourceName } from '../../../../common/naming/get-resource-name';
 import { Service } from '../../../../common/service';
 import { WafPrefab } from '../../../networking/waf';
 import { PublicAlbPrefab } from '../alb-public';
@@ -76,7 +76,7 @@ export class CdnApiPrefab extends Construct {
       : {
           origin: new HttpOrigin(
             new Bucket(this, 'DefaultOrigin', {
-              bucketName: getResourceName('cdn-default-origin', service.props),
+              bucketName: getBucketName('default-origin', service.props),
               removalPolicy: RemovalPolicy.DESTROY,
             }).bucketDomainName
           ),

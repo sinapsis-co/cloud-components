@@ -9,7 +9,7 @@ import { getFunctionEntry } from '../../../../common/naming/get-function-entry';
 import { getLogicalName } from '../../../../common/naming/get-logical-name';
 import { getShortResourceName } from '../../../../common/naming/get-resource-name';
 import { Service } from '../../../../common/service';
-import { CustomEventBusParams, EventBusPrefab } from '../../../integration/event-bus';
+import { EventBusPrefab } from '../../../integration/event-bus';
 import { DynamoTablePrefab } from '../../../storage/dynamo/table';
 
 export type BaseHandlerParams = NodejsFunctionProps & {
@@ -22,7 +22,7 @@ export type BaseHandlerParams = NodejsFunctionProps & {
 
 export type BaseFunctionParams = {
   baseFunctionFolder: string;
-  eventBus?: CustomEventBusParams;
+  eventBus?: EventBusPrefab;
   table?: Table;
   modifiers?: ((lambda: NodejsFunction) => any)[];
   environment?: Record<string, string>;
@@ -49,6 +49,6 @@ export class BaseFunction extends Construct {
     params.modifiers?.map((fn) => fn(this.lambdaFunction));
 
     DynamoTablePrefab.addTable(this.lambdaFunction, params.table, params.tablePermission);
-    EventBusPrefab.addBus(this.lambdaFunction, params.eventBus);
+    if (params.eventBus) EventBusPrefab.addBus(this.lambdaFunction, params.eventBus.bus);
   }
 }

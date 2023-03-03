@@ -6,6 +6,7 @@ type GetResourceNameParams = {
   envName: BaseServiceProps['envName'];
   ephemeralEnvName?: BaseServiceProps['ephemeralEnvName'];
   serviceName: BaseServiceProps['serviceName'];
+  envDomainName?: BaseServiceProps['envDomainName'];
 };
 
 export const getResourceName = (
@@ -15,6 +16,15 @@ export const getResourceName = (
   const env = ephemeralEnvName ? `${envName}-${ephemeralEnvName}` : envName;
   const resource = resourceName && serviceName !== resourceName ? `-${toDashCase(resourceName)}` : '';
   return `${toDashCase(projectName)}-${toDashCase(env)}-${toDashCase(serviceName)}${resource}`;
+};
+
+export const getBucketName = (
+  bucketName: string,
+  { envDomainName, ephemeralEnvName, serviceName }: GetResourceNameParams
+): string => {
+  const preFix = bucketName === serviceName ? bucketName : `${serviceName}.${bucketName}`;
+  const posFix = ephemeralEnvName ? `${ephemeralEnvName}.${envDomainName}` : envDomainName;
+  return `${preFix}.${posFix}`.toLowerCase();
 };
 
 type GetShortResourceNameParams = {
