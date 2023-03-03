@@ -5,8 +5,8 @@ import { GlobalProps } from '../../../config/config-type';
 export class DnsSubdomainHostedZone extends Service<GlobalProps> {
   public readonly subdomainHostedZonePrefab: DnsSubdomainHostedZonePrefab;
 
-  constructor(scope: Construct, globalProps: GlobalProps) {
-    super(scope, DnsSubdomainHostedZone.name, globalProps, {});
+  constructor(scope: Construct, globalProps: GlobalProps, params = {}) {
+    super(scope, DnsSubdomainHostedZone.name, globalProps, { params });
 
     const isBootstrapping = this.node.tryGetContext('isBootstrapping') === 'true' ? true : false;
 

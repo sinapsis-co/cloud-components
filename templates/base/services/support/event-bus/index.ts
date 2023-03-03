@@ -6,8 +6,8 @@ import { GlobalProps } from '../../../config/config-type';
 export class EventBus extends Service {
   public readonly eventBusPrefab: EventBusPrefab;
 
-  constructor(scope: Construct, globalProps: GlobalProps) {
-    super(scope, EventBus.name, globalProps, {});
+  constructor(scope: Construct, globalProps: GlobalProps, params = {}) {
+    super(scope, EventBus.name, globalProps, params);
 
     this.eventBusPrefab = new EventBusPrefab(this);
   }

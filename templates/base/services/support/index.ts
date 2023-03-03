@@ -23,23 +23,14 @@ export class SupportServices {
   public readonly eventsAnalytics: EventsAnalytics;
 
   constructor(scope: Construct, globalProps: GlobalProps) {
-    this.deployPipeline = new DeployPipeline(scope, globalProps);
-    this.dnsSubdomainHostedZone = new DnsSubdomainHostedZone(scope, globalProps);
-    this.dnsDomainRef = new DnsDomainRef(scope, globalProps, {
-      dnsSubdomainHostedZone: this.dnsSubdomainHostedZone,
-    });
-    this.dnsSubdomainCertificate = new DnsSubdomainCertificate(scope, globalProps, {
-      dnsSubdomainHostedZone: this.dnsSubdomainHostedZone,
-      dnsDomainRef: this.dnsDomainRef,
-    });
-    this.cdnApi = new CdnApi(scope, globalProps, { dnsSubdomainCertificate: this.dnsSubdomainCertificate });
-    this.cdnAssets = new CdnAssets(scope, globalProps, { dnsSubdomainCertificate: this.dnsSubdomainCertificate });
-    this.eventBus = new EventBus(scope, globalProps);
-    this.notifications = new Notifications(scope, globalProps, {
-      eventBus: this.eventBus,
-      dnsSubdomainHostedZone: this.dnsSubdomainHostedZone,
-      dnsDomainRef: this.dnsDomainRef,
-    });
-    this.eventsAnalytics = new EventsAnalytics(scope, globalProps, { eventBus: this.eventBus });
+    this.deployPipeline = new DeployPipeline(scope, globalProps, this);
+    this.dnsSubdomainHostedZone = new DnsSubdomainHostedZone(scope, globalProps, this);
+    this.dnsDomainRef = new DnsDomainRef(scope, globalProps, this);
+    this.dnsSubdomainCertificate = new DnsSubdomainCertificate(scope, globalProps, this);
+    this.cdnApi = new CdnApi(scope, globalProps, this);
+    this.cdnAssets = new CdnAssets(scope, globalProps, this);
+    this.eventBus = new EventBus(scope, globalProps, this);
+    this.notifications = new Notifications(scope, globalProps, this);
+    this.eventsAnalytics = new EventsAnalytics(scope, globalProps, this);
   }
 }
