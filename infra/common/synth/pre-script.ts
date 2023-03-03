@@ -2,7 +2,6 @@
 
 import { getServiceName } from '../naming/get-service-name';
 import { accountMapping } from './account-mapping';
-import { parseContext } from './parse-context';
 import {
   BaseDeployTargetName,
   BaseEnvName,
@@ -87,4 +86,12 @@ const parseServicesNames = (servicesNamesInput: string[], props: BaseGlobalProps
         acc += `${getServiceName(s, props)} `;
         return acc;
       }, '')}--exclusively`;
+};
+
+const parseContext = (stringContext: string): string => {
+  if (!stringContext) return '';
+  return stringContext
+    .split('&')
+    .map((c) => `--context ${c} `)
+    .join('');
 };

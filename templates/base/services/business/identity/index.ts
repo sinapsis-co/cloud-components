@@ -11,9 +11,9 @@ import { UserPoolOperation } from 'aws-cdk-lib/aws-cognito';
 
 import { AttributeType } from 'aws-cdk-lib/aws-dynamodb';
 import { CdnApi } from 'services/support/cdn-api';
-import { CdnMedia } from 'services/support/cdn-media';
-import { CustomEventBus } from 'services/support/custom-event-bus';
+import { CdnAssets } from 'services/support/cdn-assets';
 import { DnsSubdomainCertificate } from 'services/support/dns-subdomain-certificate';
+import { EventBus } from 'services/support/event-bus';
 import { Notifications } from 'services/support/notifications';
 import { GlobalProps } from '../../../config/config-type';
 import { assetEvent } from '../assets/catalog';
@@ -22,10 +22,10 @@ import { buildCustomAttributes } from './platform/cognito-mapper';
 
 export type IdentityParams = {
   notifications: Notifications;
-  customEventBus: CustomEventBus;
+  customEventBus: EventBus;
   dnsSubdomainCertificate: DnsSubdomainCertificate;
   cdnApi: CdnApi;
-  cdnMedia: CdnMedia;
+  cdnMedia: CdnAssets;
 };
 
 export class Identity extends Service<GlobalProps, IdentityParams> {

@@ -9,17 +9,17 @@ import { Identity } from './identity';
 import { SearchService } from './search';
 
 // External Services
-import { CdnMedia } from 'services/support/cdn-media';
+import { CdnAssets } from 'services/support/cdn-assets';
 import { DnsSubdomainCertificate } from 'services/support/dns-subdomain-certificate';
 import { Notifications } from 'services/support/notifications';
 import { CdnApi } from '../support/cdn-api';
-import { CustomEventBus } from '../support/custom-event-bus';
+import { EventBus } from '../support/event-bus';
 
 export type GlobalServiceDependencies = {
   notifications: Notifications;
   cdnApi: CdnApi;
-  cdnMedia: CdnMedia;
-  customEventBus: CustomEventBus;
+  cdnMedia: CdnAssets;
+  customEventBus: EventBus;
   dnsSubdomainCertificate: DnsSubdomainCertificate;
   identity: Identity;
 };

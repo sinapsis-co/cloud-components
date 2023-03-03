@@ -1,6 +1,6 @@
-import { Service, Construct } from '@sinapsis-co/cc-infra-v2/common/service';
-import { Distribution, BehaviorOptions } from 'aws-cdk-lib/aws-cloudfront';
-import { CdnApiConstruct } from '@sinapsis-co/cc-infra-v2/services/cdn-api';
+import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
+import { CdnApiPrefab } from '@sinapsis-co/cc-infra-v2/prefab/gateway/global/cdn-api';
+import { BehaviorOptions, Distribution } from 'aws-cdk-lib/aws-cloudfront';
 
 import { GlobalProps } from '../../../config/config-type';
 import { DnsSubdomainCertificate } from '../dns-subdomain-certificate';
@@ -18,7 +18,7 @@ export class CdnApi extends Service<GlobalProps, CdnApiParams> {
   constructor(scope: Construct, globalProps: GlobalProps, params: CdnApiParams) {
     super(scope, CdnApi.name, globalProps, { params });
 
-    const cdnApiRest = new CdnApiConstruct(this, {
+    const cdnApiRest = new CdnApiPrefab(this, {
       subDomain: this.props.subdomain.api,
       certificate: this.props.certificateService.certificate,
     });

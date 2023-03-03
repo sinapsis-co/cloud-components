@@ -1,19 +1,19 @@
 import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { SesDomain } from '@sinapsis-co/cc-infra-v2/prefab/ses/ses-domain';
-import { SesEmailAddress } from '@sinapsis-co/cc-infra-v2/prefab/ses/ses-email-address';
 import { AssetBucket } from '@sinapsis-co/cc-infra-v2/prefab/bucket/asset-bucket';
+import { PrivateBucket } from '@sinapsis-co/cc-infra-v2/prefab/bucket/private-bucket';
 import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/event-function/event-aggregate';
 import { QueueFunction } from '@sinapsis-co/cc-infra-v2/prefab/function/queue-function';
-import { PrivateBucket } from '@sinapsis-co/cc-infra-v2/prefab/bucket/private-bucket';
+import { SesDomain } from '@sinapsis-co/cc-infra-v2/prefab/ses/ses-domain';
+import { SesEmailAddress } from '@sinapsis-co/cc-infra-v2/prefab/ses/ses-email-address';
 
-import { GlobalProps } from '../../../config/config-type';
-import { CustomEventBus } from 'services/support/custom-event-bus';
-import { DnsSubdomainHostedZone } from 'services/support/dns-subdomain-hosted-zone';
 import { DnsBaseDomainRef } from 'services/support/dns-base-domain-ref';
+import { DnsSubdomainHostedZone } from 'services/support/dns-subdomain-hosted-zone';
+import { EventBus } from 'services/support/event-bus';
+import { GlobalProps } from '../../../config/config-type';
 import { notificationEvent } from './catalog';
 
 export type NotificationsParams = {
-  customEventBus: CustomEventBus;
+  customEventBus: EventBus;
   dnsSubdomainHostedZone: DnsSubdomainHostedZone;
   dnsBaseDomainRef: DnsBaseDomainRef;
 };

@@ -3,7 +3,7 @@ import { Construct } from 'constructs';
 import { getDeployConfig } from './naming/get-deploy-config';
 import { getServiceName } from './naming/get-service-name';
 import { getServiceProps } from './synth/get-service-props';
-import { BaseServiceDependencies, BaseGlobalProps, BaseServiceProps } from './synth/props-types';
+import { BaseGlobalProps, BaseServiceDependencies, BaseServiceProps } from './synth/props-types';
 
 export { Construct } from 'constructs';
 
@@ -31,5 +31,3 @@ export class Service<
     this.scope = scope;
   }
 }
-
-// Changing Infra

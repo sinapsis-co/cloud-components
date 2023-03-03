@@ -2,10 +2,10 @@ import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { EventsAnalyticsPrefab } from '@sinapsis-co/cc-infra-v2/services/events-analytics';
 
 import { GlobalProps } from '../../../config/config-type';
-import { CustomEventBus } from '../custom-event-bus';
+import { EventBus } from '../event-bus';
 
 export type EventsAnalyticsParams = {
-  customEventBus: CustomEventBus;
+  customEventBus: EventBus;
 };
 
 export class EventsAnalytics extends Service<GlobalProps, EventsAnalyticsParams> {

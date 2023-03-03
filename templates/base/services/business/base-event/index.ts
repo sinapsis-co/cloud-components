@@ -1,5 +1,5 @@
-import { Service, Construct } from '@sinapsis-co/cc-infra-v2/common/service';
-import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
+import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
+import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/api-function/api-aggregate';
 
 import { GlobalServiceDependencies } from '..';
 import { GlobalProps } from '../../../config/config-type';
@@ -8,7 +8,7 @@ import { otherApi } from './catalog';
 export type BaseCrudParams = GlobalServiceDependencies;
 
 export class BaseEvent extends Service<GlobalProps, BaseCrudParams> {
-  public readonly apiAggregate: ApiAggregate;
+  public readonly apiAggregate: unknown;
 
   constructor(scope: Construct, globalProps: GlobalProps, params: BaseCrudParams) {
     super(scope, BaseEvent.name, globalProps, { params });

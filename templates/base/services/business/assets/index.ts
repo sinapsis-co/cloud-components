@@ -1,32 +1,31 @@
-import { Duration } from 'aws-cdk-lib';
-import { Architecture } from 'aws-cdk-lib/aws-lambda';
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { EventBus } from 'aws-cdk-lib/aws-events';
-import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
 import { getDomain } from '@sinapsis-co/cc-infra-v2/common/naming/get-domain';
-import { PrivateBucket } from '@sinapsis-co/cc-infra-v2/prefab/bucket/private-bucket';
-import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/event-function/event-aggregate';
+import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
+import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/api-function/api-aggregate';
+import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/event-function/event-aggregate';
+import { PrivateBucketPrefab } from '@sinapsis-co/cc-infra-v2/prefab/storage/bucket/private-bucket';
+import { Duration } from 'aws-cdk-lib';
+import { EventBus } from 'aws-cdk-lib/aws-events';
+import { Architecture } from 'aws-cdk-lib/aws-lambda';
 
-import { CustomEventBus } from 'services/support/custom-event-bus';
-import { CdnMedia } from 'services/support/cdn-media';
 import { CdnApi } from 'services/support/cdn-api';
-import { Identity } from '../identity';
-import { assetsTypes } from './lib/assets-type';
+import { CdnAssets } from 'services/support/cdn-assets';
 import { GlobalProps } from '../../../config/config-type';
+import { Identity } from '../identity';
 import { assetApi, assetEvent } from './catalog';
 import { eventConfig as rawAsset } from './catalog/event/raw-asset-uploaded';
+import { assetsTypes } from './lib/assets-type';
 
 export type AssetsDeps = {
-  customEventBus: CustomEventBus;
+  customEventBus: EventBus;
   cdnApi: CdnApi;
-  cdnMedia: CdnMedia;
+  cdnMedia: CdnAssets;
   identity: Identity;
 };
 
 export class Assets extends Service<GlobalProps, AssetsDeps> {
   public readonly apiAggregate: ApiAggregate;
-  public readonly privateAssetsBucket: PrivateBucket;
-  public readonly publicAssetsBucket: PrivateBucket;
+  public readonly privateAssetsBucket: PrivateBucketPrefab;
+  public readonly publicAssetsBucket: PrivateBucketPrefab;
   public readonly eventRaw: EventAggregate;
   public readonly eventAggregate: EventAggregate;
 
@@ -35,7 +34,7 @@ export class Assets extends Service<GlobalProps, AssetsDeps> {
 
     this.addDependency(this.props.cdnMedia);
 
-    this.privateAssetsBucket = new PrivateBucket(this, { bucketName: 'private' });
+    this.privateAssetsBucket = new PrivateBucketPrefab(this, { bucketName: 'private' });
 
     this.publicAssetsBucket = params.cdnMedia.bucket;
 
@@ -50,13 +49,13 @@ export class Assets extends Service<GlobalProps, AssetsDeps> {
           ...assetApi.createPutUrl.config,
           environment: { MEDIA_URL: getDomain(this.props.subdomain.media, this.props, true) },
           modifiers: [
-            this.publicAssetsBucket.useMod('PUBLIC_BUCKET', [PrivateBucket.modifier.writer]),
-            this.privateAssetsBucket.useMod('PRIVATE_BUCKET', [PrivateBucket.modifier.writer]),
+            this.publicAssetsBucket.useMod('PUBLIC_BUCKET', [PrivateBucketPrefab.modifier.writer]),
+            this.privateAssetsBucket.useMod('PRIVATE_BUCKET', [PrivateBucketPrefab.modifier.writer]),
           ],
         },
         createGetUrl: {
           ...assetApi.createGetUrl.config,
-          modifiers: [this.privateAssetsBucket.useMod('PRIVATE_BUCKET', [PrivateBucket.modifier.reader])],
+          modifiers: [this.privateAssetsBucket.useMod('PRIVATE_BUCKET', [PrivateBucketPrefab.modifier.reader])],
         },
       },
     });
@@ -70,8 +69,8 @@ export class Assets extends Service<GlobalProps, AssetsDeps> {
           name: 'event-asset-remove',
           eventConfig: [assetEvent.assetToRemove.eventConfig],
           modifiers: [
-            this.publicAssetsBucket.useMod('PUBLIC_BUCKET', [PrivateBucket.modifier.writer]),
-            this.privateAssetsBucket.useMod('PRIVATE_BUCKET', [PrivateBucket.modifier.writer]),
+            this.publicAssetsBucket.useMod('PUBLIC_BUCKET', [PrivateBucketPrefab.modifier.writer]),
+            this.privateAssetsBucket.useMod('PRIVATE_BUCKET', [PrivateBucketPrefab.modifier.writer]),
           ],
         },
         resize: {
@@ -82,12 +81,12 @@ export class Assets extends Service<GlobalProps, AssetsDeps> {
           timeout: Duration.minutes(5),
           modifiers: [
             this.publicAssetsBucket.useMod('PUBLIC_BUCKET', [
-              PrivateBucket.modifier.reader,
-              PrivateBucket.modifier.writer,
+              PrivateBucketPrefab.modifier.reader,
+              PrivateBucketPrefab.modifier.writer,
             ]),
             this.privateAssetsBucket.useMod('PRIVATE_BUCKET', [
-              PrivateBucket.modifier.reader,
-              PrivateBucket.modifier.writer,
+              PrivateBucketPrefab.modifier.reader,
+              PrivateBucketPrefab.modifier.writer,
             ]),
           ],
         },
@@ -102,12 +101,12 @@ export class Assets extends Service<GlobalProps, AssetsDeps> {
           name: 'event-asset-uploaded',
           modifiers: [
             this.publicAssetsBucket.useMod('PUBLIC_BUCKET', [
-              PrivateBucket.modifier.reader,
-              PrivateBucket.modifier.writer,
+              PrivateBucketPrefab.modifier.reader,
+              PrivateBucketPrefab.modifier.writer,
             ]),
             this.privateAssetsBucket.useMod('PRIVATE_BUCKET', [
-              PrivateBucket.modifier.reader,
-              PrivateBucket.modifier.writer,
+              PrivateBucketPrefab.modifier.reader,
+              PrivateBucketPrefab.modifier.writer,
             ]),
             params.customEventBus.customEventBus.useModWriter('CUSTOM_BUS'),
           ],
