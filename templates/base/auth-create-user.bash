@@ -8,12 +8,12 @@ fi
 
 PROJECT_BASE_PATH=$(pwd)
 ENV_NAME=${1}
-EMAIL_PREFIX=${2}
-PASS=${3}
-NAME=${4}
-LAST_NAME=${5}
-EMAIL_SUFFIX=${6}
-COGNITO_WEB_CLIENT_ID=${7}
+COGNITO_WEB_CLIENT_ID=${2}
+EMAIL_PREFIX=${3}
+PASS=${4}
+NAME=${5}
+LAST_NAME=${6}
+EMAIL_SUFFIX=${7}
 
 if [ -z "$EMAIL_PREFIX" ]; then
   echo 'email prefix is required'

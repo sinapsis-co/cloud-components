@@ -1,9 +1,9 @@
+import { ApiConfig, ApiInterface, TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
+import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Architecture, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
-
-import { ApiConfig, ApiInterface, TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api';
 
 import { getFunctionEntry } from '../../../../common/naming/get-function-entry';
 import { getLogicalName } from '../../../../common/naming/get-logical-name';
@@ -35,10 +35,17 @@ export class BaseFunction extends Construct {
   constructor(service: Service, params: BaseHandlerParams & BaseFunctionParams) {
     super(service, getLogicalName(BaseFunction.name, params.name));
 
+    const role = new Role(this, getLogicalName('role', params.name), {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+      roleName: getShortResourceName(params.name, service.props),
+    });
+    role.addManagedPolicy({ managedPolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole' });
+
     this.lambdaFunction = new NodejsFunction(this, params.name, {
       runtime: Runtime.NODEJS_16_X,
       logRetention: 30,
       handler: 'handler',
+      role,
       functionName: getShortResourceName(params.name, service.props),
       entry: getFunctionEntry(params.baseFunctionFolder, params.name, params.compiled),
       architecture: params.architecture || Architecture.ARM_64,
@@ -49,6 +56,6 @@ export class BaseFunction extends Construct {
     params.modifiers?.map((fn) => fn(this.lambdaFunction));
 
     DynamoTablePrefab.addTable(this.lambdaFunction, params.table, params.tablePermission);
-    if (params.eventBus) EventBusPrefab.addBus(this.lambdaFunction, params.eventBus.bus);
+    EventBusPrefab.addBus(this.lambdaFunction, params.eventBus?.bus);
   }
 }

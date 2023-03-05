@@ -1,5 +1,5 @@
 import { getDomain } from '@sinapsis-co/cc-infra-v2/common/naming/get-domain';
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
+import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { CognitoAuthPoolPrefab } from '@sinapsis-co/cc-infra-v2/prefab/auth/cognito-pool';
 import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/api-function/api-aggregate';
 import { CognitoAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/cognito-function/cognito-aggregate';
@@ -13,9 +13,9 @@ import { AttributeType } from 'aws-cdk-lib/aws-dynamodb';
 import { CdnApi } from 'services/support/cdn-api';
 import { CdnAssets } from 'services/support/cdn-assets';
 import { DnsSubdomainCertificate } from 'services/support/dns-subdomain-certificate';
-import { EventBus } from 'services/support/event-bus';
+import { GlobalEventBus } from 'services/support/global-event-bus';
 import { Notifications } from 'services/support/notifications';
-import { GlobalProps } from '../../../config/config-type';
+import { GlobalCoordinator } from '../../../config/config-type';
 import { assetEvent } from '../assets/catalog';
 import { identityApi } from './catalog';
 import { buildCustomAttributes } from './platform/cognito-mapper';
@@ -27,22 +27,40 @@ import { buildCustomAttributes } from './platform/cognito-mapper';
  */
 export type IdentityParams = {
   notifications: Notifications;
-  eventBus: EventBus;
+  globalEventBus: GlobalEventBus;
   dnsSubdomainCertificate: DnsSubdomainCertificate;
   cdnApi: CdnApi;
   cdnAssets: CdnAssets;
 };
 
-export class Identity extends Service<GlobalProps, IdentityParams> {
-  public readonly authPool: CognitoAuthPoolPrefab;
-  public readonly cognitoAggregate: CognitoAggregate;
-  public readonly apiAggregate: ApiAggregate;
+type Deps = {
+  notifications: Notifications;
+  globalEventBus: GlobalEventBus;
+  dnsSubdomainCertificate: DnsSubdomainCertificate;
+  cdnApi: CdnApi;
+  cdnAssets: CdnAssets;
+};
+const depsNames: Array<keyof Deps> = [
+  'notifications',
+  'globalEventBus',
+  'dnsSubdomainCertificate',
+  'cdnApi',
+  'cdnAssets',
+];
 
-  constructor(scope: Construct, globalProps: GlobalProps, params: IdentityParams) {
-    super(scope, Identity.name, globalProps, { params });
+export class Identity extends Service<GlobalCoordinator> {
+  public authPool: CognitoAuthPoolPrefab;
+  public cognitoAggregate: CognitoAggregate;
+  public apiAggregate: ApiAggregate;
 
-    this.addDependency(params.cdnAssets);
-    this.addDependency(params.notifications);
+  constructor(coordinator: GlobalCoordinator) {
+    super(coordinator, Identity.name, depsNames);
+    coordinator.addService(this);
+  }
+
+  build(deps: Deps) {
+    this.addDependency(deps.cdnAssets);
+    this.addDependency(deps.notifications);
 
     this.authPool = new CognitoAuthPoolPrefab(this, {
       callbackUrl: getDomain(this.props.subdomain.spaWebapp, this.props, true),
@@ -51,7 +69,7 @@ export class Identity extends Service<GlobalProps, IdentityParams> {
       userPoolDomain: {
         customDomain: {
           domainName: getDomain(this.props.subdomain.auth, this.props),
-          certificate: params.dnsSubdomainCertificate.certificatePrefab.certificate,
+          certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,
         },
       },
     });
@@ -59,9 +77,9 @@ export class Identity extends Service<GlobalProps, IdentityParams> {
     this.apiAggregate = new ApiAggregate(this, {
       baseFunctionFolder: __dirname,
       basePath: 'identity',
-      cdnApi: this.props.cdnApi.cdnApiPrefab,
+      cdnApi: deps.cdnApi.cdnApiPrefab,
       authPool: this.authPool,
-      eventBus: this.props.eventBus.eventBusPrefab,
+      eventBus: deps.globalEventBus.eventBusPrefab,
       autoEventsEnabled: true,
       handlers: {
         profileGet: {
@@ -102,7 +120,7 @@ export class Identity extends Service<GlobalProps, IdentityParams> {
     this.cognitoAggregate = new CognitoAggregate(this, {
       baseFunctionFolder: __dirname,
       userPool: this.authPool.userPool,
-      eventBus: this.props.eventBus.eventBusPrefab,
+      eventBus: deps.globalEventBus.eventBusPrefab,
       table: this.apiAggregate.table,
       handlers: {
         customMessage: {
@@ -115,7 +133,7 @@ export class Identity extends Service<GlobalProps, IdentityParams> {
           },
           tablePermission: 'none',
           modifiers: [
-            this.props.notifications.templatesBucket.useMod('TEMPLATES_BUCKET', [PrivateBucketPrefab.modifier.reader]),
+            deps.notifications.templatesBucket.useMod('TEMPLATES_BUCKET', [PrivateBucketPrefab.modifier.reader]),
           ],
         },
         postConfirmation: {
@@ -135,7 +153,7 @@ export class Identity extends Service<GlobalProps, IdentityParams> {
 
     new EventAggregate(this, {
       baseFunctionFolder: __dirname,
-      eventBus: this.props.eventBus.eventBusPrefab,
+      eventBus: deps.globalEventBus.eventBusPrefab,
       table: this.apiAggregate.table,
       handlers: {
         eventNotificationDispatch: {

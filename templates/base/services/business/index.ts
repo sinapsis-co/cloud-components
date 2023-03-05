@@ -1,6 +1,3 @@
-import { Construct } from '@sinapsis-co/cc-infra-v2/common/service';
-import { GlobalProps } from '../../config/config-type';
-
 // Services
 import { Assets } from './assets';
 import { BaseCrud } from './base-crud';
@@ -12,14 +9,15 @@ import { Search } from './search';
 import { CdnAssets } from 'services/support/cdn-assets';
 import { DnsSubdomainCertificate } from 'services/support/dns-subdomain-certificate';
 import { Notifications } from 'services/support/notifications';
+import { Coordinator } from '../../app';
 import { CdnApi } from '../support/cdn-api';
-import { EventBus } from '../support/event-bus';
+import { GlobalEventBus } from '../support/global-event-bus';
 
 export type GlobalServiceDependencies = {
   notifications: Notifications;
   cdnApi: CdnApi;
   cdnAssets: CdnAssets;
-  eventBus: EventBus;
+  globalEventBus: GlobalEventBus;
   dnsSubdomainCertificate: DnsSubdomainCertificate;
   identity: Identity;
 };
@@ -31,14 +29,14 @@ export class BusinessServices {
   public readonly assets: Assets;
   public readonly searchService: Search;
 
-  constructor(scope: Construct, globalProps: GlobalProps, dependencies: Omit<GlobalServiceDependencies, 'identity'>) {
-    this.identity = new Identity(scope, globalProps, dependencies);
+  constructor(coordinator: Coordinator, dependencies: Omit<GlobalServiceDependencies, 'identity'>) {
+    this.identity = new Identity(coordinator, coordinator.globalProps, dependencies);
 
     const globalDeps: GlobalServiceDependencies = { ...dependencies, identity: this.identity };
 
-    this.assets = new Assets(scope, globalProps, globalDeps);
-    this.baseCrud = new BaseCrud(scope, globalProps, globalDeps);
-    this.baseEvent = new BaseEvent(scope, globalProps, globalDeps);
-    this.searchService = new Search(scope, globalProps, globalDeps);
+    this.assets = new Assets(coordinator, coordinator.globalProps, globalDeps);
+    this.baseCrud = new BaseCrud(coordinator, coordinator.globalProps, globalDeps);
+    this.baseEvent = new BaseEvent(coordinator, coordinator.globalProps, globalDeps);
+    this.searchService = new Search(coordinator, coordinator.globalProps, globalDeps);
   }
 }

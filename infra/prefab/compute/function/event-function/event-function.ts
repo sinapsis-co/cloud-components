@@ -1,10 +1,11 @@
-import { IEventBus, Rule } from 'aws-cdk-lib/aws-events';
+import { Rule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
 import { EventConfig } from '@sinapsis-co/cc-platform-v2/catalog/event';
 import { getLogicalName } from '../../../../common/naming/get-logical-name';
+import { getShortResourceName } from '../../../../common/naming/get-resource-name';
 import { Service } from '../../../../common/service';
 import { BaseFunction, BaseFunctionParams, BaseHandlerParams } from '../base-function';
 
@@ -12,10 +13,7 @@ export type EventHandlerParams = BaseHandlerParams & {
   eventConfig: EventConfig[];
 };
 
-export type EventFunctionParams = BaseFunctionParams & {
-  eventBus: IEventBus;
-};
-
+export type EventFunctionParams = BaseFunctionParams;
 export class EventFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
 
@@ -29,7 +27,8 @@ export class EventFunction extends Construct {
     const detailRules = params.eventConfig.reduce((memo, e) => ({ ...memo, ...(e.detail || {}) }), {});
 
     new Rule(service, getLogicalName('EventProcessorRule', params.name), {
-      eventBus: params.eventBus,
+      ruleName: getShortResourceName(params.name, service.props),
+      eventBus: params.eventBus?.bus,
       eventPattern: {
         ...(source.filter((e) => !!e).length > 0 ? { source } : {}),
         ...(detailType.filter((e) => !!e).length > 0 ? { detailType } : {}),

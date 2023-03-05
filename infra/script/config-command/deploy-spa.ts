@@ -1,10 +1,12 @@
 /* eslint-disable no-console */
+import CloudFront from 'aws-sdk/clients/cloudfront';
 import SSM from 'aws-sdk/clients/ssm';
-import { execSync } from 'child_process';
+import { execSync, ExecSyncOptions } from 'child_process';
 import { writeFileSync } from 'fs';
-import { getParameterName, getResourceName } from '../common/naming/get-resource-name';
-import { assumeRole } from '../common/synth/assume-role';
-import { preScript } from '../common/synth/pre-script';
+import { ConfigCommand } from '..';
+import { getParameterName, getResourceName } from '../../common/naming/get-resource-name';
+import { assumeRole } from '../../common/synth/assume-role';
+import { preScript } from '../../common/synth/pre-script';
 import {
   BaseDeployTargetName,
   BaseEnvName,
@@ -12,9 +14,9 @@ import {
   BaseGlobalDeployTargetConfig,
   BaseGlobalEnv,
   BaseGlobalEnvConfig,
-} from '../common/synth/props-types';
+} from '../../common/synth/props-types';
 
-export const startSPA = async <
+export const deploySPA: ConfigCommand = async <
   GlobalConst,
   AllowedEnv extends BaseEnvName = BaseEnvName,
   GlobalEnv extends BaseGlobalEnv = BaseGlobalEnv,
@@ -26,7 +28,7 @@ export const startSPA = async <
   args: string[]
 ): Promise<void> => {
   try {
-    console.log('<< Start SPA Script >>');
+    console.log('<< Deploy SPA Started >>');
 
     const { envName, ephemeralEnvName, servicesNamesInput, envNameInput, roleName, accountMap } = await preScript(
       globalConstConfig,
@@ -35,7 +37,7 @@ export const startSPA = async <
       args
     );
 
-    console.log('>> STEP: (1/3) => LOADING CONFIGS');
+    console.log('>> STEP: (1/4) => LOADING CONFIGS');
     const projectName = globalConstConfig.projectName;
 
     const account =
@@ -54,13 +56,15 @@ export const startSPA = async <
       serviceName: servicesNamesInput[0],
     });
 
-    console.log('>> STEP: (2/3) => RENDERING ENV');
+    console.log('>> STEP: (2/4) => RENDERING ENV');
 
     const ssm = new SSM(role);
     const deployConfig = await ssm.getParameter({ Name: parameterName }).promise();
 
     if (!deployConfig.Parameter?.Value) throw new Error('Invalid Config');
-    const { baseDir } = JSON.parse(deployConfig.Parameter?.Value);
+    const { domain, bucketName, distributionId, assetMaxAge, indexMaxAge, baseDir, distDir } = JSON.parse(
+      deployConfig.Parameter?.Value
+    );
 
     const baseSecretName = getParameterName('secret', {
       projectName,
@@ -79,16 +83,45 @@ export const startSPA = async <
       .map((key) => `${key}=${secret[key]}\n`)
       .join('');
 
-    if (Parameters && Parameters?.length > 0) {
+    if (Parameters && Parameters?.length > 0)
       writeFileSync(`${process.cwd()}/${baseDir}/.env.${envNameInput}`, envFile);
-      console.log(`>> NEW ENV FILE GENERATED AT => ${process.cwd()}/${baseDir}/.env.${envNameInput}`);
-    }
 
-    console.log('>> STEP: (3/3) => STARTING');
+    console.log('>> STEP: (3/4) => BUILDING');
 
-    const command = `yarn ${args[5] === 'vite' ? 'dev' : 'start'} ${envNameInput}`;
+    const command = `yarn && yarn build ${envNameInput}`;
 
     execSync(command, { stdio: 'inherit', cwd: `${process.cwd()}/${baseDir}` });
+
+    const copyFolderCmd = `aws s3 cp ${distDir}/ s3://${bucketName}/ --recursive --cache-control "max-age=${assetMaxAge}" --exclude "index.html"`;
+    const copyIndexCmd = `aws s3 cp ${distDir}/index.html s3://${bucketName}/index.html --cache-control "max-age=${indexMaxAge}"`;
+    const execOptions: ExecSyncOptions = {
+      stdio: 'inherit',
+      cwd: `${process.cwd()}/${baseDir}`,
+      env: {
+        ...process.env,
+        AWS_ACCESS_KEY_ID: role.credentials.accessKeyId,
+        AWS_SECRET_ACCESS_KEY: role.credentials.secretAccessKey,
+        AWS_SESSION_TOKEN: role.credentials.sessionToken,
+        AWS_REGION: role.region,
+      },
+    };
+    execSync(copyFolderCmd, execOptions);
+    execSync(copyIndexCmd, execOptions);
+    console.log('STEP: (4/4) => CREATING INVALIDATION');
+    const cf = new CloudFront(role);
+    await cf
+      .createInvalidation({
+        DistributionId: distributionId,
+        InvalidationBatch: {
+          CallerReference: Date.now().toString(),
+          Paths: {
+            Items: ['/*'],
+            Quantity: 1,
+          },
+        },
+      })
+      .promise();
+    console.log(`>> DEPLOYED AT => ${domain}`);
   } catch (error: any) {
     console.log(error);
     process.exit(1);

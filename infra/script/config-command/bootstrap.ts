@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
 import { execSync } from 'child_process';
-import { assumeRole } from '../common/synth/assume-role';
-import { preScript } from '../common/synth/pre-script';
+import { ConfigCommand } from '..';
+import { assumeRole } from '../../common/synth/assume-role';
+import { preScript } from '../../common/synth/pre-script';
 import {
   BaseDeployTargetName,
   BaseEnvName,
@@ -10,9 +11,9 @@ import {
   BaseGlobalEnv,
   BaseGlobalEnvConfig,
   BaseRegionName,
-} from '../common/synth/props-types';
+} from '../../common/synth/props-types';
 
-export const bootstrap = async <
+export const bootstrap: ConfigCommand = async <
   GlobalConst,
   AllowedEnv extends BaseEnvName = BaseEnvName,
   GlobalEnv extends BaseGlobalEnv = BaseGlobalEnv,

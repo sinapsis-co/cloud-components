@@ -47,7 +47,7 @@ export const globalDeployTargetConfig: GlobalDeployTargetConfig = {
       region: 'us-east-1',
       account: 'demos-dev',
     },
-    deploy: {
+    deployPipeline: {
       region: 'us-east-1',
       account: 'sinapsis-shared',
     },
@@ -61,7 +61,7 @@ export const globalDeployTargetConfig: GlobalDeployTargetConfig = {
       region: 'us-east-1',
       account: 'demos-dev',
     },
-    deploy: {
+    deployPipeline: {
       region: 'us-east-1',
       account: 'sinapsis-shared',
     },

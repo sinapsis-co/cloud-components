@@ -20,10 +20,10 @@
     "deploy-ssr": "npx ts-node script-manager.ts deploy-ssr",
     "start-spa": "npx ts-node script-manager.ts start-spa",
     "destroy": "npx ts-node script-manager.ts destroy",
+    "create-user": "npx ts-node script-manager.ts create-user",
     "prepare": "npx husky install",
     "verify": "npx tsc --pretty --noEmit && npx eslint . --ext .ts && npx prettier -c . && npx cspell '**/*.ts'",
-    "test": "jest",
-    "create-user": "./auth-create-user.bash"
+    "test": "jest"
   },
   "private": true,
   "devDependencies": {

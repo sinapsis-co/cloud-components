@@ -47,6 +47,7 @@ export class EventsAnalyticsPrefab extends Construct {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       encryption: BucketEncryption.KMS_MANAGED,
       removalPolicy: RemovalPolicy.DESTROY,
+      ...(service.props.envName !== 'prod' ? { autoDeleteObjects: true } : {}),
       lifecycleRules: [
         {
           transitions: [
@@ -62,7 +63,9 @@ export class EventsAnalyticsPrefab extends Construct {
         },
       ],
     });
-    if (service.props.envName === 'prod') this.datalakeBucket.applyRemovalPolicy(RemovalPolicy.RETAIN);
+    if (service.props.envName === 'prod') {
+      this.datalakeBucket.applyRemovalPolicy(RemovalPolicy.RETAIN);
+    }
 
     const role = new Role(service, getLogicalName('DataLakeDeliveryStringRole'), {
       assumedBy: new ServicePrincipal('firehose.amazonaws.com'),

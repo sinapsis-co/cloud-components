@@ -54,7 +54,7 @@ export const preScript = async <
         )
       ).join('&')
     );
-    const outputFile = `cdk.out/output/${envName}.json`;
+    const outputFile = `cdk.out/output/${envNameInput}.json`;
     const roleName = globalEnvConfig[envName].roleName;
     const servicesNames = parseServicesNames(servicesNamesInput, props);
 

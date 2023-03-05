@@ -1,4 +1,5 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
+import { Coordinator } from '@sinapsis-co/cc-infra-v2/common/coordinator';
+import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/event-function/event-aggregate';
 import { QueueFunction } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/queue-function';
 import { AssetBucketPrefab } from '@sinapsis-co/cc-infra-v2/prefab/storage/bucket/asset-bucket';
@@ -7,27 +8,29 @@ import { SesDomain } from '@sinapsis-co/cc-infra-v2/prefab/util/ses/ses-domain';
 
 import { DnsDomainRef } from 'services/support/dns-domain-ref';
 import { DnsSubdomainHostedZone } from 'services/support/dns-subdomain-hosted-zone';
-import { EventBus } from 'services/support/event-bus';
-import { GlobalProps } from '../../../config/config-type';
+import { GlobalEventBus } from 'services/support/global-event-bus';
 import { notificationEvent } from './catalog';
 
-export type NotificationsParams = {
-  eventBus: EventBus;
+type Deps = {
+  globalEventBus: GlobalEventBus;
   dnsSubdomainHostedZone: DnsSubdomainHostedZone;
   dnsDomainRef: DnsDomainRef;
 };
+const depsNames: Array<keyof Deps> = ['globalEventBus', 'dnsSubdomainHostedZone', 'dnsDomainRef'];
+export class Notifications extends Service<Coordinator> {
+  public templatesBucket: PrivateBucketPrefab;
+  public attachmentsBucket: PrivateBucketPrefab;
+  public sendEmailQueueFn: QueueFunction;
+  public ses: SesDomain;
 
-export class Notifications extends Service<GlobalProps, NotificationsParams> {
-  public readonly templatesBucket: PrivateBucketPrefab;
-  public readonly attachmentsBucket: PrivateBucketPrefab;
-  public readonly sendEmailQueueFn: QueueFunction;
-  public readonly ses: SesDomain;
+  constructor(coordinator: Coordinator) {
+    super(coordinator, Notifications.name, depsNames);
+    coordinator.addService(this);
+  }
 
-  constructor(scope: Construct, globalProps: GlobalProps, params: NotificationsParams) {
-    super(scope, Notifications.name, globalProps, { params });
-
-    this.addDependency(params.dnsSubdomainHostedZone);
-    this.addDependency(params.dnsDomainRef);
+  build(deps: Deps) {
+    this.addDependency(deps.dnsSubdomainHostedZone);
+    this.addDependency(deps.dnsDomainRef);
 
     this.ses = new SesDomain(this);
 
@@ -50,7 +53,7 @@ export class Notifications extends Service<GlobalProps, NotificationsParams> {
 
     new EventAggregate(this, {
       baseFunctionFolder: __dirname,
-      eventBus: this.props.eventBus.eventBusPrefab,
+      eventBus: deps.globalEventBus.eventBusPrefab,
       handlers: {
         eventNotificationDispatch: {
           name: 'event-notification-dispatch',

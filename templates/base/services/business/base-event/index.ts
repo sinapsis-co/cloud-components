@@ -1,24 +1,34 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
+import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/api-function/api-aggregate';
 
-import { GlobalServiceDependencies } from '..';
-import { GlobalProps } from '../../../config/config-type';
+import { GlobalCoordinator } from '../../../config/config-type';
+import { CdnApi } from '../../support/cdn-api';
+import { GlobalEventBus } from '../../support/global-event-bus';
+import { Identity } from '../identity';
+
 import { otherApi } from './catalog';
 
-export type BaseCrudParams = GlobalServiceDependencies;
+type Deps = {
+  globalEventBus: GlobalEventBus;
+  cdnApi: CdnApi;
+  identity: Identity;
+};
+const depsNames: Array<keyof Deps> = ['globalEventBus', 'cdnApi', 'identity'];
+export class BaseEvent extends Service<GlobalCoordinator> {
+  public apiAggregate: unknown;
 
-export class BaseEvent extends Service<GlobalProps, BaseCrudParams> {
-  public readonly apiAggregate: unknown;
+  constructor(coordinator: GlobalCoordinator) {
+    super(coordinator, BaseEvent.name, depsNames);
+    coordinator.addService(this);
+  }
 
-  constructor(scope: Construct, globalProps: GlobalProps, params: BaseCrudParams) {
-    super(scope, BaseEvent.name, globalProps, { params });
-
+  build(deps: Deps) {
     this.apiAggregate = new ApiAggregate(this, {
       basePath: 'other',
       baseFunctionFolder: __dirname,
-      eventBus: this.props.eventBus.eventBusPrefab,
-      cdnApi: this.props.cdnApi.cdnApiPrefab,
-      authPool: this.props.identity.authPool,
+      eventBus: deps.globalEventBus.eventBusPrefab,
+      cdnApi: deps.cdnApi.cdnApiPrefab,
+      authPool: deps.identity.authPool,
       autoEventsEnabled: true,
       handlers: {
         create: otherApi.create.config,

@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { execSync } from 'child_process';
-import { preScript } from '../common/synth/pre-script';
+import { ConfigCommand } from '..';
+import { preScript } from '../../common/synth/pre-script';
 import {
   BaseDeployTargetName,
   BaseEnvName,
@@ -8,9 +9,9 @@ import {
   BaseGlobalDeployTargetConfig,
   BaseGlobalEnv,
   BaseGlobalEnvConfig,
-} from '../common/synth/props-types';
+} from '../../common/synth/props-types';
 
-export const destroy = async <
+export const destroy: ConfigCommand = async <
   GlobalConst,
   AllowedEnv extends BaseEnvName = BaseEnvName,
   GlobalEnv extends BaseGlobalEnv = BaseGlobalEnv,

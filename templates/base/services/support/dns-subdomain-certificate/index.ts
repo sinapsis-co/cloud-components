@@ -1,23 +1,27 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
+import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { DnsSubdomainCertificatePrefab } from '@sinapsis-co/cc-infra-v2/prefab/networking/dns-subdomain-certificate';
+import { GlobalCoordinator } from '../../../config/config-type';
 
-import { GlobalProps } from '../../../config/config-type';
 import { DnsDomainRef } from '../dns-domain-ref';
 import { DnsSubdomainHostedZone } from '../dns-subdomain-hosted-zone';
 
-type ServiceDependencies = {
+type Deps = {
   dnsSubdomainHostedZone: DnsSubdomainHostedZone;
   dnsDomainRef: DnsDomainRef;
 };
+const depsNames: Array<keyof Deps> = ['dnsSubdomainHostedZone', 'dnsDomainRef'];
 
-export class DnsSubdomainCertificate extends Service<GlobalProps, ServiceDependencies> {
-  public readonly certificatePrefab: DnsSubdomainCertificatePrefab;
+export class DnsSubdomainCertificate extends Service<GlobalCoordinator> {
+  public certificatePrefab: DnsSubdomainCertificatePrefab;
 
-  constructor(scope: Construct, globalProps: GlobalProps, params: ServiceDependencies) {
-    super(scope, DnsSubdomainCertificate.name, globalProps, { params });
+  constructor(coordinator: GlobalCoordinator) {
+    super(coordinator, DnsSubdomainCertificate.name, depsNames);
+    coordinator.addService(this);
+  }
 
-    this.addDependency(params.dnsSubdomainHostedZone);
-    this.addDependency(params.dnsDomainRef);
+  build(deps: Deps) {
+    this.addDependency(deps.dnsSubdomainHostedZone);
+    this.addDependency(deps.dnsDomainRef);
 
     this.certificatePrefab = new DnsSubdomainCertificatePrefab(this);
   }

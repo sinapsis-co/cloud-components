@@ -1,11 +1,25 @@
 /* eslint-disable no-console */
-import { globalConstConfig, globalEnvConfig, globalDeployTargetConfig } from './config';
-import { invoke } from '@sinapsis-co/cc-infra-v2/script';
+import { executeConfigCommand, executeOutputCommand, getCommandSignature } from '@sinapsis-co/cc-infra-v2/script';
+import { readFileSync } from 'fs';
+import { globalConstConfig, globalDeployTargetConfig, globalEnvConfig } from './config';
 
 (async () => {
   try {
     const op: string = process.argv[2];
-    await invoke(op)(globalConstConfig, globalEnvConfig, globalDeployTargetConfig, process.argv);
+    const signature = getCommandSignature(op);
+    if (signature === 'config') {
+      await executeConfigCommand(op)(globalConstConfig, globalEnvConfig, globalDeployTargetConfig, process.argv);
+    } else {
+      const output = JSON.parse(readFileSync(`${__dirname}/cdk.out/output/${process.argv[3]}.json`).toString());
+
+      await executeOutputCommand(op)(
+        globalConstConfig,
+        globalEnvConfig,
+        globalDeployTargetConfig,
+        output,
+        process.argv
+      );
+    }
   } catch (error: any) {
     console.log(error.message);
   }

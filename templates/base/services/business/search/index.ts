@@ -1,26 +1,35 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
+import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/api-function/api-aggregate';
 import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/event-function/event-aggregate';
 import { RuntimeSecret } from '@sinapsis-co/cc-infra-v2/prefab/util/config/runtime-secret';
-import { GlobalServiceDependencies } from '..';
-import { GlobalProps } from '../../../config/config-type';
+import { GlobalCoordinator } from '../../../config/config-type';
+import { CdnApi } from '../../support/cdn-api';
+import { GlobalEventBus } from '../../support/global-event-bus';
 import { baseRepo } from '../base-crud/repository/base';
+import { Identity } from '../identity';
 import { searchApi, searchSecret } from './catalog';
 
-export type SearchServiceParams = GlobalServiceDependencies;
+type Deps = {
+  globalEventBus: GlobalEventBus;
+  cdnApi: CdnApi;
+  identity: Identity;
+};
+const depsNames: Array<keyof Deps> = ['globalEventBus', 'cdnApi', 'identity'];
+export class Search extends Service<GlobalCoordinator> {
+  public apiAggregate: ApiAggregate;
+  public eventAggregate: EventAggregate;
+  public secret: RuntimeSecret;
 
-export class Search extends Service<GlobalProps, SearchServiceParams> {
-  public readonly apiAggregate: ApiAggregate;
-  public readonly eventAggregate: EventAggregate;
-  public readonly secret: RuntimeSecret;
+  constructor(coordinator: GlobalCoordinator) {
+    super(coordinator, Search.name, depsNames);
+    coordinator.addService(this);
+  }
 
-  constructor(scope: Construct, globalProps: GlobalProps, params: SearchServiceParams) {
-    super(scope, Search.name, globalProps, { params });
-
+  build(deps: Deps) {
     this.secret = new RuntimeSecret(this, searchSecret.algolia);
 
     this.eventAggregate = new EventAggregate(this, {
-      eventBus: this.props.eventBus.eventBusPrefab,
+      eventBus: deps.globalEventBus.eventBusPrefab,
       baseFunctionFolder: __dirname,
       handlers: {
         entityChanged: {
@@ -37,9 +46,9 @@ export class Search extends Service<GlobalProps, SearchServiceParams> {
     this.apiAggregate = new ApiAggregate(this, {
       basePath: 'search',
       baseFunctionFolder: __dirname,
-      eventBus: this.props.eventBus.eventBusPrefab,
-      cdnApi: this.props.cdnApi.cdnApiPrefab,
-      authPool: this.props.identity.authPool,
+      eventBus: deps.globalEventBus.eventBusPrefab,
+      cdnApi: deps.cdnApi.cdnApiPrefab,
+      authPool: deps.identity.authPool,
       skipTable: true,
       handlers: {
         search: {

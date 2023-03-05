@@ -1,11 +1,16 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
+import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { DeployPipelinePrefab } from '@sinapsis-co/cc-infra-v2/prefab/util/deploy-pipeline';
-import { GlobalProps } from '../../../config/config-type';
+import { DeployTargetName, GlobalCoordinator } from '../../../config/config-type';
 
-export class DeployPipeline extends Service<GlobalProps> {
-  constructor(scope: Construct, globalProps: GlobalProps, params = {}) {
-    super(scope, DeployPipeline.name, globalProps, { params, deployConfigName: 'deploy' });
-
+type Deps = Record<string, never>;
+const depsNames: Array<keyof Deps> = [];
+export class DeployPipeline extends Service<GlobalCoordinator, DeployTargetName> {
+  constructor(coordinator: GlobalCoordinator) {
+    super(coordinator, DeployPipeline.name, depsNames, 'deployPipeline');
+    coordinator.addService(this);
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  build(_deps = {}) {
     new DeployPipelinePrefab(this, {
       preDeployCommands: ['cd templates/base && bash pre-deploy.bash'],
       // fullClone: true,

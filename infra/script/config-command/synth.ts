@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { execSync } from 'child_process';
-import { preScript } from '../common/synth/pre-script';
+import { ConfigCommand } from '..';
+import { preScript } from '../../common/synth/pre-script';
 import {
   BaseDeployTargetName,
   BaseEnvName,
@@ -8,9 +9,9 @@ import {
   BaseGlobalDeployTargetConfig,
   BaseGlobalEnv,
   BaseGlobalEnvConfig,
-} from '../common/synth/props-types';
+} from '../../common/synth/props-types';
 
-export const deploy = async <
+export const synth: ConfigCommand = async <
   GlobalConst,
   AllowedEnv extends BaseEnvName = BaseEnvName,
   GlobalEnv extends BaseGlobalEnv = BaseGlobalEnv,
@@ -31,7 +32,7 @@ export const deploy = async <
       args
     );
 
-    const command = `npx cdk deploy \
+    const command = `npx cdk synth \
     --require-approval='never' \
     --cloudformation-execution-policies=arn:aws:iam::aws:policy/AdministratorAccess \
     --context env=${envNameInput} \

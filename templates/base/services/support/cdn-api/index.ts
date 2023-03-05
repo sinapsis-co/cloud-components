@@ -1,22 +1,26 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
+import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { CdnApiPrefab } from '@sinapsis-co/cc-infra-v2/prefab/gateway/global/cdn-api';
+import { GlobalCoordinator } from '../../../config/config-type';
 
-import { GlobalProps } from '../../../config/config-type';
 import { DnsSubdomainCertificate } from '../dns-subdomain-certificate';
 
-export type CdnApiParams = {
+type Deps = {
   dnsSubdomainCertificate: DnsSubdomainCertificate;
 };
+const depsNames: Array<keyof Deps> = ['dnsSubdomainCertificate'];
 
-export class CdnApi extends Service<GlobalProps, CdnApiParams> {
-  public readonly cdnApiPrefab: CdnApiPrefab;
+export class CdnApi extends Service<GlobalCoordinator> {
+  public cdnApiPrefab: CdnApiPrefab;
 
-  constructor(scope: Construct, globalProps: GlobalProps, params: CdnApiParams) {
-    super(scope, CdnApi.name, globalProps, { params });
+  constructor(coordinator: GlobalCoordinator) {
+    super(coordinator, CdnApi.name, depsNames);
+    coordinator.addService(this);
+  }
 
+  build(deps: Deps) {
     this.cdnApiPrefab = new CdnApiPrefab(this, {
       subDomain: this.props.subdomain.api,
-      certificate: this.props.dnsSubdomainCertificate.certificatePrefab.certificate,
+      certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,
     });
   }
 }

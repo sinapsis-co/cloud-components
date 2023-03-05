@@ -2,9 +2,10 @@
 import SSM from 'aws-sdk/clients/ssm';
 import { execSync } from 'child_process';
 import { writeFileSync } from 'fs';
-import { getParameterName, getResourceName } from '../common/naming/get-resource-name';
-import { assumeRole } from '../common/synth/assume-role';
-import { preScript } from '../common/synth/pre-script';
+import { ConfigCommand } from '..';
+import { getParameterName, getResourceName } from '../../common/naming/get-resource-name';
+import { assumeRole } from '../../common/synth/assume-role';
+import { preScript } from '../../common/synth/pre-script';
 import {
   BaseDeployTargetName,
   BaseEnvName,
@@ -12,9 +13,9 @@ import {
   BaseGlobalDeployTargetConfig,
   BaseGlobalEnv,
   BaseGlobalEnvConfig,
-} from '../common/synth/props-types';
+} from '../../common/synth/props-types';
 
-export const startSSR = async <
+export const startSSR: ConfigCommand = async <
   GlobalConst,
   AllowedEnv extends BaseEnvName = BaseEnvName,
   GlobalEnv extends BaseGlobalEnv = BaseGlobalEnv,

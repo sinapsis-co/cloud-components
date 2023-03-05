@@ -5,9 +5,9 @@ import { userProfileRepository } from 'services/business/identity/repository/use
 
 export const handler = eventHandler<assetEvent.assetUploaded.Event>(async (event) => {
   const { key, meta } = event.detail;
-  const { tenantId, sub: id } = meta;
+  const { tenantId, sub } = meta;
   const { avatar } = await userProfileRepository.updateItem(
-    { tenantId, id },
+    { tenantId, id: `user#${sub}` },
     { avatar: key },
     { ReturnValues: 'ALL_OLD' }
   );

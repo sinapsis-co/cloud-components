@@ -1,28 +1,39 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
+import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/event-function/event-aggregate';
 import { QueueFunction } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/queue-function';
+import { SsrPrefab } from '@sinapsis-co/cc-infra-v2/prefab/gateway/service/ssr';
 import { PrivateBucketPrefab } from '@sinapsis-co/cc-infra-v2/prefab/storage/bucket/private-bucket';
 
-import { SsrPrefab } from '@sinapsis-co/cc-infra-v2/prefab/gateway/service/ssr';
-import { GlobalProps } from '../../../config/config-type';
-
-import { GlobalServiceDependencies } from '../../business';
+import { GlobalCoordinator } from '../../../config/config-type';
 import { baseRepo } from '../../business/base-crud/repository/base';
 import { otherRepo } from '../../business/base-event/repository/other';
+import { Identity } from '../../business/identity';
+import { CdnApi } from '../../support/cdn-api';
+import { DnsSubdomainCertificate } from '../../support/dns-subdomain-certificate';
+import { GlobalEventBus } from '../../support/global-event-bus';
 import { ssrLandingEvent } from './catalog';
 
-export type WebappNextServiceDeps = GlobalServiceDependencies;
+type Deps = {
+  identity: Identity;
+  globalEventBus: GlobalEventBus;
+  dnsSubdomainCertificate: DnsSubdomainCertificate;
+  cdnApi: CdnApi;
+};
+const depsNames: Array<keyof Deps> = ['identity', 'globalEventBus', 'dnsSubdomainCertificate', 'cdnApi'];
 
-export class SsrLanding extends Service<GlobalProps, WebappNextServiceDeps> {
-  public readonly ssr: SsrPrefab;
-  public readonly eventAggregate: EventAggregate;
-  public readonly queueFunction: QueueFunction;
+export class SsrLanding extends Service<GlobalCoordinator> {
+  public ssr: SsrPrefab;
+  public eventAggregate: EventAggregate;
+  public queueFunction: QueueFunction;
 
-  constructor(scope: Construct, globalProps: GlobalProps, params: WebappNextServiceDeps) {
-    super(scope, SsrLanding.name, globalProps, { params });
+  constructor(coordinator: GlobalCoordinator) {
+    super(coordinator, SsrLanding.name, depsNames);
+    coordinator.addService(this);
+  }
 
+  build(deps: Deps) {
     // Dependency due domain in identity verification
-    params.identity.addDependency(this);
+    deps.identity.addDependency(this);
 
     this.ssr = new SsrPrefab(this, {
       subDomain: this.props.subdomain.ssrLanding,
@@ -30,14 +41,14 @@ export class SsrLanding extends Service<GlobalProps, WebappNextServiceDeps> {
       distDir: '.next',
       deployTriggeredEventConfig: {
         ...ssrLandingEvent.renderGenerator.eventConfig,
-        bus: params.eventBus.eventBusPrefab.bus.eventBusArn,
+        bus: deps.globalEventBus.eventBusPrefab.bus.eventBusArn,
       },
-      certificate: this.props.dnsSubdomainCertificate.certificatePrefab.certificate,
+      certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,
       wwwRedirectEnabled: true,
       envVars: {
         calculatedSecrets: {
           SKIP_PREFLIGHT_CHECK: 'true',
-          REACT_APP_API_URL: params.cdnApi.cdnApiPrefab.baseUrl,
+          REACT_APP_API_URL: deps.cdnApi.cdnApiPrefab.baseUrl,
         },
       },
     });
@@ -57,7 +68,7 @@ export class SsrLanding extends Service<GlobalProps, WebappNextServiceDeps> {
     });
 
     this.eventAggregate = new EventAggregate(this, {
-      eventBus: this.props.eventBus.eventBusPrefab,
+      eventBus: deps.globalEventBus.eventBusPrefab,
       baseFunctionFolder: __dirname,
       handlers: {
         entityChanged: {

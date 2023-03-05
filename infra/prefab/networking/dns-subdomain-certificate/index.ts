@@ -1,3 +1,4 @@
+import { RemovalPolicy } from 'aws-cdk-lib';
 import { Certificate, CertificateValidation, ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { HostedZone } from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
@@ -25,6 +26,7 @@ export class DnsSubdomainCertificatePrefab extends Construct {
         subjectAlternativeNames: [getDomain('*', service.props)],
         validation: CertificateValidation.fromDns(hostedZone),
       });
+      this.certificate.applyRemovalPolicy(RemovalPolicy.DESTROY);
     }
   }
 }
