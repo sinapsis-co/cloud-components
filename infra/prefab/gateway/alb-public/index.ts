@@ -1,25 +1,23 @@
 import { Tags } from 'aws-cdk-lib';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
-import { OriginRequestPolicy } from 'aws-cdk-lib/aws-cloudfront';
-import { LoadBalancerV2Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { ISecurityGroup, IVpc, Peer, Port, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { FargateService } from 'aws-cdk-lib/aws-ecs';
 import * as awsALB from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { ApplicationListener, ListenerAction, ListenerCondition } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Construct } from 'constructs';
 
-import { getLogicalName } from '../../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../../common/naming/get-resource-name';
-import { Service } from '../../../../common/service';
-import { SynthError } from '../../../../common/synth/synth-error';
-import { ApiCdnApiParams } from '../../../compute/function/api-function/api-aggregate';
+import { getLogicalName } from '../../../common/naming/get-logical-name';
+import { getResourceName } from '../../../common/naming/get-resource-name';
+import { Service } from '../../../common/service';
+import { SynthError } from '../../../common/synth/synth-error';
+import { CdnApiPrefab } from '../cdn-api';
 
 export type PublicAlbConstructParams = {
   name: string;
   vpc: IVpc;
   certificate: ICertificate;
   basePath?: string;
-  cdnApi?: ApiCdnApiParams;
+  cdnApiPrefab?: CdnApiPrefab;
   existingResource?: {
     albToClusterSG: string;
     securityGroupId: string;
@@ -93,12 +91,9 @@ export class PublicAlbPrefab extends Construct {
     Tags.of(this.albToClusterSG).add('Name', getResourceName('downstream', service.props));
 
     // ADD PATH TO CDN DISTRO
-    if (params.cdnApi) {
+    if (params.cdnApiPrefab) {
       if (!params.basePath) throw new SynthError('basePath is required when cdnApi is enabled');
-      params.cdnApi.distribution?.addBehavior(`/${params.basePath}/*`, new LoadBalancerV2Origin(this.alb), {
-        ...params.cdnApi.behaviorOptions,
-        originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
-      });
+      params.cdnApiPrefab.addAlb(params.basePath, this.alb);
     }
   }
   private getNextPriorityIndex(): number {

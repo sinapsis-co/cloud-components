@@ -16,5 +16,5 @@ export const handler = eventHandler<RenderRequest>(async (event) => {
   }
   const uri = `/${entityName}/${renderPageSelected.uriGenerationFn(event.detail)}`;
 
-  sendMessages<ssrLandingMessage.renderGenerator.Message>([{ uri }], process.env.QUEUE!);
+  sendMessages<ssrLandingMessage.renderGenerator.Message>([{ uri, querystring: '' }], process.env.QUEUE!);
 });

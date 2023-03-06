@@ -1,6 +1,7 @@
 import { RemovalPolicy } from 'aws-cdk-lib';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as awsS3 from 'aws-cdk-lib/aws-s3';
+import { BucketProps } from 'aws-cdk-lib/aws-s3';
 import { SnsDestination, SqsDestination } from 'aws-cdk-lib/aws-s3-notifications';
 import { Topic } from 'aws-cdk-lib/aws-sns';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
@@ -12,7 +13,7 @@ import { Service } from '../../../common/service';
 
 export type PrivateBucketParams = {
   bucketName: string;
-  bucketProps?: awsS3.BucketProps;
+  bucketProps?: BucketProps;
 };
 export class PrivateBucketPrefab extends Construct {
   public readonly bucket: awsS3.Bucket;
@@ -20,7 +21,7 @@ export class PrivateBucketPrefab extends Construct {
   constructor(service: Service, params: PrivateBucketParams) {
     super(service, getLogicalName(PrivateBucketPrefab.name, params.bucketName));
 
-    const defaultProps: awsS3.BucketProps = {
+    const defaultProps: BucketProps = {
       encryption: awsS3.BucketEncryption.S3_MANAGED,
       blockPublicAccess: awsS3.BlockPublicAccess.BLOCK_ALL,
       removalPolicy: service.props.envName === 'prod' ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY,

@@ -1,6 +1,12 @@
 import { CfnOutput, Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
-import { AllowedMethods, Distribution, OriginRequestPolicy, ViewerProtocolPolicy } from 'aws-cdk-lib/aws-cloudfront';
+import {
+  AllowedMethods,
+  CachePolicy,
+  Distribution,
+  OriginRequestPolicy,
+  ViewerProtocolPolicy,
+} from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
@@ -8,17 +14,16 @@ import { HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 
-import { EventConfig } from '@sinapsis-co/cc-platform-v2/catalog/event';
-import { getDomain } from '../../../../common/naming/get-domain';
-import { getLogicalName } from '../../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../../common/naming/get-resource-name';
-import { Service } from '../../../../common/service';
-import { SynthError } from '../../../../common/synth/synth-error';
-import { WafPrefab } from '../../../networking/waf';
-import { PrivateBucketPrefab } from '../../../storage/bucket/private-bucket';
-import { DeploySecret, DeploySecretProps } from '../../../util/config/deploy-secret';
+import { getDomain } from '../../../common/naming/get-domain';
+import { getLogicalName } from '../../../common/naming/get-logical-name';
+import { getCloudFrontName, getResourceName } from '../../../common/naming/get-resource-name';
+import { Service } from '../../../common/service';
+import { SynthError } from '../../../common/synth/synth-error';
+import { WafPrefab } from '../../networking/waf';
+import { PrivateBucketPrefab } from '../../storage//bucket/private-bucket';
+import { DeploySecret, DeploySecretProps } from '../../util/config/deploy-secret';
 
-export type SsrConstructParams = {
+export type WebappConstructParams = {
   subDomain: string;
   certificate: ICertificate;
   assetMaxAge?: string;
@@ -29,25 +34,23 @@ export type SsrConstructParams = {
   waf?: WafPrefab;
   skipRecord?: true;
   wwwRedirectEnabled?: true;
-  deployTriggeredEventConfig: EventConfig & { bus: string };
 };
 
-export class SsrPrefab extends Construct {
-  public readonly domain: string;
-  public readonly baseUrl: string;
-  public readonly distribution: Distribution;
-  public readonly distributionBucket: PrivateBucketPrefab;
-  public readonly recipeBucket: PrivateBucketPrefab;
+export class SpaPrefab extends Construct {
+  private readonly domain: string;
+  private readonly baseUrl: string;
+  private readonly distribution: Distribution;
 
-  constructor(service: Service, params: SsrConstructParams) {
-    super(service, getLogicalName(SsrPrefab.name, params.subDomain));
+  constructor(service: Service, params: WebappConstructParams) {
+    super(service, getLogicalName(SpaPrefab.name, params.subDomain));
 
     this.domain = getDomain(params.subDomain, service.props);
     this.baseUrl = `https://${this.domain}/`;
 
-    this.distributionBucket = new PrivateBucketPrefab(service, {
-      bucketName: 'distribution',
+    const privateBucketPrefab = new PrivateBucketPrefab(service, {
+      bucketName: 'spawebapp',
       bucketProps: {
+        autoDeleteObjects: true,
         removalPolicy: RemovalPolicy.DESTROY,
         cors: [
           {
@@ -56,20 +59,26 @@ export class SsrPrefab extends Construct {
             allowedHeaders: ['*'],
           },
         ],
-        autoDeleteObjects: true,
       },
     });
 
-    this.recipeBucket = new PrivateBucketPrefab(service, {
-      bucketName: 'recipe',
-    });
-
-    const originRequestPolicy = new OriginRequestPolicy(this, 'OriginRequestPolicy', {
-      headerBehavior: {
-        behavior: 'whitelist',
-        headers: ['Access-Control-Allow-Origin', 'Access-Control-Allow-Headers', 'Origin'],
-      },
-    });
+    const behaviorOptions = {
+      compress: true,
+      origin: new S3Origin(privateBucketPrefab.bucket, {
+        originId: getCloudFrontName('Origin', 'Default', service.props),
+      }),
+      originRequestPolicy: new OriginRequestPolicy(this, 'OriginRequestPolicy', {
+        originRequestPolicyName: getCloudFrontName('Bucket', 'RequestPolicy', service.props),
+        headerBehavior: {
+          behavior: 'whitelist',
+          headers: ['Access-Control-Allow-Origin', 'Access-Control-Allow-Headers', 'Origin'],
+        },
+      }),
+      cachePolicy: CachePolicy.CACHING_OPTIMIZED,
+      cachedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+      allowedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+      viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+    };
 
     const domains = [this.domain];
     if (params.wwwRedirectEnabled) {
@@ -77,6 +86,7 @@ export class SsrPrefab extends Construct {
         throw new SynthError('wwwRedirectEnabled is only allowed in the root domain', service.props);
       domains.push(`www.${this.domain}`);
     }
+
     this.distribution = new Distribution(this, 'Distribution', {
       enabled: true,
       comment: getResourceName('cdn', service.props),
@@ -97,14 +107,7 @@ export class SsrPrefab extends Construct {
           ttl: Duration.seconds(86400),
         },
       ],
-      defaultBehavior: {
-        origin: new S3Origin(this.distributionBucket.bucket),
-        originRequestPolicy: originRequestPolicy,
-        allowedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
-        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-        cachedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
-        compress: true,
-      },
+      defaultBehavior: behaviorOptions,
       webAclId: params.waf?.webACL?.attrArn,
     });
 
@@ -124,11 +127,9 @@ export class SsrPrefab extends Construct {
       parameterName: getResourceName('config', service.props),
       stringValue: JSON.stringify({
         domain: this.domain,
-        distributionBucket: this.distributionBucket.bucket.bucketName,
-        recipeBucket: this.recipeBucket.bucket.bucketName,
+        bucketName: privateBucketPrefab.bucket.bucketName,
         distributionId: this.distribution.distributionId,
-        deployTriggeredEventConfig: params.deployTriggeredEventConfig,
-        assetMaxAge: params.assetMaxAge || '300',
+        assetMaxAge: params.assetMaxAge || '604800',
         indexMaxAge: params.indexMaxAge || '1800',
         baseDir: params.baseDir || `frontend/${service.props.serviceName}`,
         distDir: params.distDir || 'build',

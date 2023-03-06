@@ -1,26 +1,20 @@
 import { HttpApi, IHttpRouteAuthorizer } from '@aws-cdk/aws-apigatewayv2-alpha';
-import { BehaviorOptions, Distribution } from 'aws-cdk-lib/aws-cloudfront';
 import { UserPool, UserPoolClient } from 'aws-cdk-lib/aws-cognito';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
 import { getLogicalName } from '../../../../common/naming/get-logical-name';
-import { ApiRestPrefab } from '../../../gateway/service/api/api-rest';
+import { ApiRestPrefab } from '../../../gateway/api/api-rest';
 import { DynamoTablePrefab, ServiceTableParams } from '../../../storage/dynamo/table';
 
-import { HttpOriginProps } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { Service } from '../../../../common/service';
 import { SynthError } from '../../../../common/synth/synth-error';
+import { CdnApiPrefab } from '../../../gateway/cdn-api';
 import { BaseFunctionParams } from '../base-function';
 import { ApiFunction, ApiHandlerParams } from './api-function';
 
-export type ApiCdnApiParams = {
-  distribution: Distribution;
-  behaviorOptions: Omit<BehaviorOptions, 'origin'>;
-  originOptions?: HttpOriginProps;
-};
 export type ApiAuthPoolParams = {
   userPool?: UserPool;
   userPoolClient?: UserPoolClient;
@@ -29,7 +23,7 @@ export type ApiAuthPoolParams = {
 export type ApiAggregateParams<HandlerName extends string = string> = BaseFunctionParams & {
   basePath: string;
   handlers: Record<HandlerName, ApiHandlerParams>;
-  cdnApi: ApiCdnApiParams;
+  cdnApiPrefab: CdnApiPrefab;
   authPool?: ApiAuthPoolParams;
   tableOptions?: Omit<ServiceTableParams, 'tableName'>;
   autoEventsEnabled?: true;
@@ -51,7 +45,6 @@ export class ApiAggregate<HandlerName extends string = string> extends Construct
 
     const apiRest = new ApiRestPrefab(service, {
       ...params,
-      ...params.cdnApi,
       ...params.authPool,
       customAuthorizerHandler: params.customAuthorizerHandler,
     });

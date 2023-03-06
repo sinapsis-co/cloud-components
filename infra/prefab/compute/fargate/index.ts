@@ -9,7 +9,7 @@ import { getLogicalName } from '../../../common/naming/get-logical-name';
 import { getResourceName } from '../../../common/naming/get-resource-name';
 import { Service } from '../../../common/service';
 import { SynthError } from '../../../common/synth/synth-error';
-import { PublicAlbPrefab } from '../../gateway/global/alb-public';
+import { PublicAlbPrefab } from '../../gateway/alb-public';
 import { VpcPrefab } from '../../networking/vpc';
 
 export type FargateContainerHealthCheck = HealthCheck;

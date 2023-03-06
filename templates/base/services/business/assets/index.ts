@@ -46,7 +46,7 @@ export class Assets extends Service<GlobalCoordinator> {
     this.apiAggregate = new ApiAggregate(this, {
       baseFunctionFolder: __dirname,
       basePath: 'assets',
-      cdnApi: deps.cdnApi.cdnApiPrefab,
+      cdnApiPrefab: deps.cdnApi.cdnApiPrefab,
       authPool: deps.identity.authPool,
       skipTable: true,
       handlers: {
@@ -64,8 +64,6 @@ export class Assets extends Service<GlobalCoordinator> {
         },
       },
     });
-
-    console.log(deps.globalEventBus.eventBusPrefab);
 
     this.eventAggregate = new EventAggregate(this, {
       name: 'custom',

@@ -14,12 +14,12 @@ import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { Construct } from 'constructs';
 
 import { HttpMethods } from 'aws-cdk-lib/aws-s3';
-import { getDomain } from '../../../../common/naming/get-domain';
-import { getLogicalName } from '../../../../common/naming/get-logical-name';
-import { getBucketName, getResourceName } from '../../../../common/naming/get-resource-name';
-import { Service } from '../../../../common/service';
-import { WafPrefab } from '../../../networking/waf';
-import { AssetBucketParams, AssetBucketPrefab } from '../../../storage/bucket/asset-bucket';
+import { getDomain } from '../../../common/naming/get-domain';
+import { getLogicalName } from '../../../common/naming/get-logical-name';
+import { getBucketName, getCloudFrontName, getResourceName } from '../../../common/naming/get-resource-name';
+import { Service } from '../../../common/service';
+import { WafPrefab } from '../../networking/waf';
+import { AssetBucketParams, AssetBucketPrefab } from '../../storage/bucket/asset-bucket';
 
 export type CdnAssetConstructProps = {
   subDomain: string;
@@ -55,6 +55,7 @@ export class CdnAssetPrefab extends Construct {
     this.behaviorOptions = {
       compress: true,
       originRequestPolicy: new OriginRequestPolicy(this, 'OriginRequestPolicy', {
+        originRequestPolicyName: getCloudFrontName('Bucket', 'RequestPolicy', service.props),
         headerBehavior: {
           behavior: 'whitelist',
           headers: ['Access-Control-Allow-Origin', 'Access-Control-Allow-Headers', 'Origin'],
@@ -67,13 +68,16 @@ export class CdnAssetPrefab extends Construct {
 
     const domains = [this.domain];
     if (params.recordForRootPath) domains.push(getDomain('', service.props));
+
     this.distribution = new Distribution(this, 'Distribution', {
       enabled: true,
       comment: getResourceName('cdn', service.props),
       certificate: params.certificate,
       domainNames: domains,
       defaultBehavior: {
-        origin: new S3Origin(this.bucketPrefab.bucket),
+        origin: new S3Origin(this.bucketPrefab.bucket, {
+          originId: getCloudFrontName('Origin', 'Default', service.props),
+        }),
         ...this.behaviorOptions,
       },
       webAclId: params.waf?.webACL?.attrArn,

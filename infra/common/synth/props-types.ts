@@ -28,9 +28,9 @@ export type BaseGlobalConstConfig<ExtendedConst = {}> = {
 export type BaseGlobalEnv<ExtendedEnv = {}> = {
   roleName: string;
   deployBranch: string;
-  hostedZoneName?: string;
-  baseDomainName?: string;
-  envDomainName?: string;
+  hostedZoneName: string;
+  baseDomainName: string;
+  envDomainName: string;
   emailSender: string;
   useRepositoryDefaultConfig?: boolean;
   pipelineNotificationSlackChannel?: string;

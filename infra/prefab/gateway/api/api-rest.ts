@@ -5,23 +5,20 @@ import {
   HttpUserPoolAuthorizer,
 } from '@aws-cdk/aws-apigatewayv2-authorizers-alpha';
 import { CfnOutput, Duration, Fn } from 'aws-cdk-lib';
-import { BehaviorOptions, Distribution } from 'aws-cdk-lib/aws-cloudfront';
-import { HttpOrigin, HttpOriginProps } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { UserPool, UserPoolClient } from 'aws-cdk-lib/aws-cognito';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 
-import { getLogicalName } from '../../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../../common/naming/get-resource-name';
-import { Service } from '../../../../common/service';
+import { getLogicalName } from '../../../common/naming/get-logical-name';
+import { getResourceName } from '../../../common/naming/get-resource-name';
+import { Service } from '../../../common/service';
+import { CdnApiPrefab } from '../cdn-api';
 
 export type ApiRestParams = {
   basePath: string;
-  distribution: Distribution;
-  behaviorOptions: Omit<BehaviorOptions, 'origin'>;
+  cdnApiPrefab: CdnApiPrefab;
   userPool?: UserPool;
   userPoolClient?: UserPoolClient;
-  originOptions?: HttpOriginProps;
   customAuthorizerHandler?: IFunction;
 };
 
@@ -53,13 +50,9 @@ export class ApiRestPrefab extends Construct {
       },
     });
 
-    const apiUrl = Fn.join('', [this.api.apiId, '.execute-api.', service.props.regionName, '.amazonaws.com']);
+    const apiUrl: string = Fn.join('', [this.api.apiId, '.execute-api.', service.props.regionName, '.amazonaws.com']);
 
-    params.distribution.addBehavior(
-      `/${params.basePath}*`,
-      new HttpOrigin(apiUrl, params.originOptions),
-      params.behaviorOptions
-    );
+    params.cdnApiPrefab.addApiGateway(params.basePath, apiUrl);
 
     new CfnOutput(this, 'ApiUrl', { value: apiUrl });
   }

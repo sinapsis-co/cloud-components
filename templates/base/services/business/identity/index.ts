@@ -77,7 +77,7 @@ export class Identity extends Service<GlobalCoordinator> {
     this.apiAggregate = new ApiAggregate(this, {
       baseFunctionFolder: __dirname,
       basePath: 'identity',
-      cdnApi: deps.cdnApi.cdnApiPrefab,
+      cdnApiPrefab: deps.cdnApi.cdnApiPrefab,
       authPool: this.authPool,
       eventBus: deps.globalEventBus.eventBusPrefab,
       autoEventsEnabled: true,

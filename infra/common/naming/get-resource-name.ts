@@ -6,7 +6,13 @@ type GetResourceNameParams = {
   envName: BaseServiceProps['envName'];
   ephemeralEnvName?: BaseServiceProps['ephemeralEnvName'];
   serviceName: BaseServiceProps['serviceName'];
-  envDomainName?: BaseServiceProps['envDomainName'];
+};
+
+type GetShortResourceNameParams = {
+  projectShortName: BaseServiceProps['projectShortName'];
+  envName: BaseServiceProps['envName'];
+  ephemeralEnvName?: BaseServiceProps['ephemeralEnvName'];
+  serviceName: BaseServiceProps['serviceName'];
 };
 
 export const getResourceName = (
@@ -16,22 +22,6 @@ export const getResourceName = (
   const env = ephemeralEnvName ? `${envName}-${ephemeralEnvName}` : envName;
   const resource = resourceName && serviceName !== resourceName ? `-${toDashCase(resourceName)}` : '';
   return `${toDashCase(projectName)}-${toDashCase(env)}-${toDashCase(serviceName)}${resource}`;
-};
-
-export const getBucketName = (
-  bucketName: string,
-  { envDomainName, ephemeralEnvName, serviceName }: GetResourceNameParams
-): string => {
-  const preFix = bucketName === serviceName ? bucketName : `${serviceName}.${bucketName}`;
-  const posFix = ephemeralEnvName ? `${ephemeralEnvName}.${envDomainName}` : envDomainName;
-  return `${preFix}.${posFix}`.toLowerCase();
-};
-
-type GetShortResourceNameParams = {
-  projectShortName: BaseServiceProps['projectShortName'];
-  envName: BaseServiceProps['envName'];
-  ephemeralEnvName?: BaseServiceProps['ephemeralEnvName'];
-  serviceName: BaseServiceProps['serviceName'];
 };
 
 export const getShortResourceName = (
@@ -68,4 +58,32 @@ export const getDatabaseName = (
   const env = ephemeralEnvName ? `${envName}_${ephemeralEnvName}` : envName;
   const resource = resourceName && serviceName !== resourceName ? `_${toSnakeCase(resourceName)}` : '';
   return `${toSnakeCase(projectName)}_${toSnakeCase(env)}_${toSnakeCase(serviceName)}${resource}`;
+};
+
+export const getCloudFrontName = (
+  resourceType: string,
+  resourceName: string,
+  { projectName, envName, ephemeralEnvName, serviceName }: GetResourceNameParams
+): string => {
+  const arr = [projectName, envName, ephemeralEnvName, serviceName, resourceType, resourceName].map((a) =>
+    a ? `${a.charAt(0).toUpperCase()}${a.slice(1)}` : ''
+  );
+  return arr.join('');
+};
+
+export const getBucketName = (
+  bucketName: string,
+  {
+    envDomainName,
+    ephemeralEnvName,
+    serviceName,
+  }: {
+    envDomainName: BaseServiceProps['envDomainName'];
+    ephemeralEnvName?: BaseServiceProps['ephemeralEnvName'];
+    serviceName: BaseServiceProps['serviceName'];
+  }
+): string => {
+  const preFix = bucketName === serviceName ? bucketName : `${serviceName}.${bucketName}`;
+  const posFix = ephemeralEnvName ? `${ephemeralEnvName}.${envDomainName}` : envDomainName;
+  return `${preFix}.${posFix}`.toLowerCase();
 };

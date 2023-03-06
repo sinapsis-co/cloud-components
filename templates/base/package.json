@@ -21,6 +21,7 @@
     "start-spa": "npx ts-node script-manager.ts start-spa",
     "destroy": "npx ts-node script-manager.ts destroy",
     "create-user": "npx ts-node script-manager.ts create-user",
+    "gen-postman-env": "npx ts-node script-manager.ts gen-postman-env",
     "prepare": "npx husky install",
     "verify": "npx tsc --pretty --noEmit && npx eslint . --ext .ts && npx prettier -c . && npx cspell '**/*.ts'",
     "test": "jest"

@@ -27,7 +27,7 @@ export class BaseEvent extends Service<GlobalCoordinator> {
       basePath: 'other',
       baseFunctionFolder: __dirname,
       eventBus: deps.globalEventBus.eventBusPrefab,
-      cdnApi: deps.cdnApi.cdnApiPrefab,
+      cdnApiPrefab: deps.cdnApi.cdnApiPrefab,
       authPool: deps.identity.authPool,
       autoEventsEnabled: true,
       handlers: {

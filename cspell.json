@@ -22,9 +22,11 @@
     "kinesisfirehose",
     "nosniff",
     "passwordless",
+    "Prefabapi",
     "Schemy",
     "sesv",
     "sinapsis",
+    "spawebapp",
     "spreedly",
     "timestream",
     "wafv2"
