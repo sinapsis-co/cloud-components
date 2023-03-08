@@ -3,6 +3,7 @@ import { IRepository, Repository } from 'aws-cdk-lib/aws-ecr';
 import * as awsECS from 'aws-cdk-lib/aws-ecs';
 import { FargatePlatformVersion, HealthCheck, Secret } from 'aws-cdk-lib/aws-ecs';
 import * as awsALB from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { LogGroup } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 
 import { getLogicalName } from '../../common/naming/get-logical-name';
@@ -87,7 +88,12 @@ export class FargateContainerConstruct extends Construct {
       secrets: params.containerSecrets,
       healthCheck: params.containerHealthCheck,
       environment: { BASE_PATH: params.basePath, ...params.containerEnv },
-      logging: awsECS.LogDriver.awsLogs({ streamPrefix: params.name }),
+      logging: awsECS.LogDriver.awsLogs({
+        streamPrefix: params.name,
+        logGroup: new LogGroup(this, getLogicalName(params.name, 'logGroup'), {
+          logGroupName: getResourceName('', service.props),
+        }),
+      }),
       portMappings: [{ containerPort: params.mappingPort }],
     });
     if (params.externalRepository) this.repository.grantPull(taskDefinition.taskRole);
