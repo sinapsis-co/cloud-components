@@ -1,19 +1,15 @@
-import S3 from 'aws-sdk/clients/s3';
 import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
+import { bucketGetObject } from '@sinapsis-co/cc-platform-v2/integrations/bucket';
 import { ManifestEntryArr, PlainRoutesManifest, RegExpManifest } from '../../entities/next-serverless';
-
-const s3 = new S3();
 
 let manifestMemo: RegExpManifest;
 
 export const getManifest = async (NEXT_MANIFEST_KEY: string, RECIPE_BUCKET_NAME: string): Promise<RegExpManifest> => {
   if (!manifestMemo) {
-    const response = await s3
-      .getObject({
-        Key: NEXT_MANIFEST_KEY,
-        Bucket: RECIPE_BUCKET_NAME,
-      })
-      .promise();
+    const response = await bucketGetObject({
+      Key: NEXT_MANIFEST_KEY,
+      Bucket: RECIPE_BUCKET_NAME,
+    });
     if (!response.Body) throw new ApiError('Missing manifest', 500);
     const manifest: PlainRoutesManifest = JSON.parse(response.Body.toString());
     manifestMemo = buildRegExpManifest(manifest);

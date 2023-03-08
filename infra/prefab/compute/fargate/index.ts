@@ -102,6 +102,7 @@ export class FargateClusterPrefab extends Construct {
       securityGroups: [params.albConstruct.getAlbToClusterSG()],
       assignPublicIp: true,
       circuitBreaker: { rollback: true },
+      capacityProviderStrategies: [{ capacityProvider: 'FARGATE' }],
     });
 
     // AUTOSCALING

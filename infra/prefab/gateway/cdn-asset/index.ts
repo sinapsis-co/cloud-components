@@ -6,6 +6,7 @@ import {
   CachePolicy,
   Distribution,
   OriginRequestPolicy,
+  PriceClass,
   ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
@@ -27,6 +28,7 @@ export type CdnAssetConstructProps = {
   recordForRootPath: boolean;
   assetBucketProps?: AssetBucketParams;
   waf?: WafPrefab;
+  bucketName?: string;
   skipRecord?: true;
 };
 
@@ -44,7 +46,7 @@ export class CdnAssetPrefab extends Construct {
     this.baseUrl = `https://${this.domain}/`;
 
     this.bucketPrefab = new AssetBucketPrefab(service, {
-      bucketName: getBucketName(params.subDomain, service.props),
+      bucketName: getBucketName(params.bucketName || params.subDomain, service.props),
       ...params.assetBucketProps,
       bucketProps: {
         cors: [{ allowedMethods: [HttpMethods.GET, HttpMethods.POST], allowedOrigins: ['*'], allowedHeaders: ['*'] }],
@@ -80,6 +82,7 @@ export class CdnAssetPrefab extends Construct {
         }),
         ...this.behaviorOptions,
       },
+      ...(service.props.envName !== 'prod' ? { priceClass: PriceClass.PRICE_CLASS_100 } : {}),
       webAclId: params.waf?.webACL?.attrArn,
     });
 

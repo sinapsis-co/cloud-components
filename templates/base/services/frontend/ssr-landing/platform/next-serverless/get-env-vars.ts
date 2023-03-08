@@ -1,14 +1,11 @@
-import S3 from 'aws-sdk/clients/s3';
-const s3 = new S3();
+import { bucketGetObject } from '@sinapsis-co/cc-platform-v2/integrations/bucket';
 
 export const getEnvVars = async (NEXT_ENV_KEY: string, RECIPE_BUCKET_NAME: string): Promise<void> => {
   if (!process.env.ENV_VARS_LOADED) {
-    const response = await s3
-      .getObject({
-        Key: NEXT_ENV_KEY,
-        Bucket: RECIPE_BUCKET_NAME,
-      })
-      .promise();
+    const response = await bucketGetObject({
+      Key: NEXT_ENV_KEY,
+      Bucket: RECIPE_BUCKET_NAME,
+    });
 
     if (!response.Body) return;
     const rawEnvs = response.Body.toString();

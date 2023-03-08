@@ -1,9 +1,6 @@
-import { SES } from 'aws-sdk';
-import { createTransport } from 'nodemailer';
 import { NotificationEmailAttachment } from '@sinapsis-co/cc-platform-v2/catalog/notifications';
+import { deliverEmail, DeliverEmailParams } from '@sinapsis-co/cc-platform-v2/integrations/ses';
 import { getAttachment } from './get-attachment';
-
-const ses = new SES();
 
 export const sendEmail = async (
   addressFrom: string,
@@ -12,8 +9,7 @@ export const sendEmail = async (
   subject: string,
   attachments?: NotificationEmailAttachment[]
 ): Promise<void> => {
-  const transporter = createTransport({ SES: ses });
-  const payload = {
+  const payload: DeliverEmailParams = {
     from: addressFrom,
     to: addressTo,
     subject,
@@ -21,16 +17,8 @@ export const sendEmail = async (
   };
 
   if (attachments) {
-    payload['attachments'] = await Promise.all(
-      attachments.map((a) => getAttachment(a, process.env.ATTACHMENT_BUCKET!))
-    );
+    payload.attachments = await Promise.all(attachments.map((a) => getAttachment(a, process.env.ATTACHMENT_BUCKET!)));
   }
 
-  await transporter.sendMail({
-    from: addressFrom,
-    to: addressTo,
-    subject,
-    html: body,
-    attachments,
-  });
+  await deliverEmail(payload);
 };

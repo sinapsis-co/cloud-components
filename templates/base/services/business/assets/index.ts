@@ -2,27 +2,28 @@ import { getDomain } from '@sinapsis-co/cc-infra-v2/common/naming/get-domain';
 import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/api-function/api-aggregate';
 import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/event-function/event-aggregate';
-import { EventBusPrefab } from '@sinapsis-co/cc-infra-v2/prefab/integration/event-bus';
+import { QueueFunction } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/queue-function';
+import { CdnAssetPrefab } from '@sinapsis-co/cc-infra-v2/prefab/gateway/cdn-asset';
 import { PrivateBucketPrefab } from '@sinapsis-co/cc-infra-v2/prefab/storage/bucket/private-bucket';
 import { Duration } from 'aws-cdk-lib';
 import { Architecture } from 'aws-cdk-lib/aws-lambda';
 
 import { CdnApi } from 'services/support/cdn-api';
-import { CdnAssets } from 'services/support/cdn-assets';
 import { GlobalCoordinator } from '../../../config/config-type';
+import { DnsSubdomainCertificate } from '../../support/dns-subdomain-certificate';
 import { GlobalEventBus } from '../../support/global-event-bus';
 import { Identity } from '../identity';
 import { assetApi, assetEvent } from './catalog';
-import { eventConfig as rawAsset } from './catalog/event/raw-asset-uploaded';
-import { assetsTypes } from './lib/assets-type';
+import { Asset } from './entities/asset';
+import { assetsTypes, AssetType } from './lib/assets-type';
 
 type Deps = {
   globalEventBus: GlobalEventBus;
   cdnApi: CdnApi;
-  cdnAssets: CdnAssets;
   identity: Identity;
+  dnsSubdomainCertificate: DnsSubdomainCertificate;
 };
-const depsNames: Array<keyof Deps> = ['globalEventBus', 'cdnApi', 'cdnAssets', 'identity'];
+const depsNames: Array<keyof Deps> = ['globalEventBus', 'cdnApi', 'dnsSubdomainCertificate', 'identity'];
 
 export class Assets extends Service<GlobalCoordinator> {
   public apiAggregate: ApiAggregate;
@@ -30,6 +31,7 @@ export class Assets extends Service<GlobalCoordinator> {
   public publicAssetsBucket: PrivateBucketPrefab;
   public eventRaw: EventAggregate;
   public eventAggregate: EventAggregate;
+  public cdnAssetPrefab: CdnAssetPrefab;
 
   constructor(coordinator: GlobalCoordinator) {
     super(coordinator, Assets.name, depsNames);
@@ -37,11 +39,20 @@ export class Assets extends Service<GlobalCoordinator> {
   }
 
   build(deps: Deps) {
-    this.addDependency(deps.cdnAssets);
+    this.cdnAssetPrefab = new CdnAssetPrefab(this, {
+      bucketName: 'public',
+      subDomain: this.props.subdomain.assets,
+      certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,
+      recordForRootPath: false,
+      assetBucketProps: {
+        bucketName: 'bucket',
+        folder: './notifications/assets',
+        prefix: 'assets',
+      },
+    });
 
     this.privateAssetsBucket = new PrivateBucketPrefab(this, { bucketName: 'private' });
-
-    this.publicAssetsBucket = deps.cdnAssets.cdnAssetPrefab.bucketPrefab;
+    this.publicAssetsBucket = this.cdnAssetPrefab.bucketPrefab;
 
     this.apiAggregate = new ApiAggregate(this, {
       baseFunctionFolder: __dirname,
@@ -66,7 +77,6 @@ export class Assets extends Service<GlobalCoordinator> {
     });
 
     this.eventAggregate = new EventAggregate(this, {
-      name: 'custom',
       eventBus: deps.globalEventBus.eventBusPrefab,
       baseFunctionFolder: __dirname,
       handlers: {
@@ -98,40 +108,39 @@ export class Assets extends Service<GlobalCoordinator> {
       },
     });
 
-    this.eventRaw = new EventAggregate(this, {
-      eventBus: new EventBusPrefab(this, { defaultEventBus: true }),
+    const queueFunction = new QueueFunction(this, {
+      name: 'msg-asset-uploaded',
       baseFunctionFolder: __dirname,
-      handlers: {
-        assetUploaded: {
-          name: 'event-asset-uploaded',
-          modifiers: [
-            this.publicAssetsBucket.useMod('PUBLIC_BUCKET', [
-              PrivateBucketPrefab.modifier.reader,
-              PrivateBucketPrefab.modifier.writer,
-            ]),
-            this.privateAssetsBucket.useMod('PRIVATE_BUCKET', [
-              PrivateBucketPrefab.modifier.reader,
-              PrivateBucketPrefab.modifier.writer,
-            ]),
-            deps.globalEventBus.eventBusPrefab.useModWriter('CUSTOM_BUS'),
-          ],
-          eventConfig: [
-            {
-              ...rawAsset,
-              detail: {
-                bucket: {
-                  name: [this.privateAssetsBucket.bucket.bucketName, this.publicAssetsBucket.bucket.bucketName],
-                },
-                object: {
-                  key: Object.values(assetsTypes).map((a) => {
-                    if (a.eventEmitterEnabled) return { prefix: a.rootPath };
-                  }),
-                },
-              },
-            },
-          ],
-        },
-      },
+      eventBus: deps.globalEventBus.eventBusPrefab,
+      modifiers: [
+        this.publicAssetsBucket.useMod('PUBLIC_BUCKET', [
+          PrivateBucketPrefab.modifier.reader,
+          PrivateBucketPrefab.modifier.writer,
+        ]),
+        this.privateAssetsBucket.useMod('PRIVATE_BUCKET', [
+          PrivateBucketPrefab.modifier.reader,
+          PrivateBucketPrefab.modifier.writer,
+        ]),
+      ],
+    });
+
+    this.privateAssetsBucket.addQueueNotification({
+      queue: queueFunction.customQueue.queue,
+      filters: getFilters(assetsTypes, false),
+    });
+    this.publicAssetsBucket.addQueueNotification({
+      queue: queueFunction.customQueue.queue,
+      filters: getFilters(assetsTypes, true),
     });
   }
 }
+
+const getFilters = (assetsTypes: Record<AssetType, Asset<AssetType>>, filterPublicOnly: boolean) => {
+  return Object.values(assetsTypes)
+    .filter((a) => a.isPublic === filterPublicOnly)
+    .map((a) => {
+      if (a.eventEmitterEnabled) return { prefix: a.rootPath };
+      else return {};
+    })
+    .filter((a) => Object.keys(a).length > 0);
+};

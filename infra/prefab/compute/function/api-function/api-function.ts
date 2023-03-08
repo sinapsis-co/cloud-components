@@ -26,7 +26,10 @@ export class ApiFunction extends Construct {
   constructor(service: Service, params: ApiHandlerParams & ApiFunctionParams) {
     super(service, getLogicalName(ApiFunction.name, params.name));
 
-    this.lambdaFunction = new BaseFunction(service, params).lambdaFunction;
+    this.lambdaFunction = new BaseFunction(service, {
+      ...params,
+      environment: { ...params.environment, CC_FUNCTION_TYPE: 'API' },
+    }).lambdaFunction;
 
     const path = params.path === '/' ? '' : params.path;
     params.api.addRoutes({

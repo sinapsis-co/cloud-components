@@ -7,6 +7,7 @@ import {
   CacheQueryStringBehavior,
   Distribution,
   OriginRequestPolicy,
+  PriceClass,
   ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
 import { HttpOrigin, HttpOriginProps, LoadBalancerV2Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
@@ -109,6 +110,7 @@ export class CdnApiPrefab extends Construct {
       certificate: params.certificate,
       domainNames: [this.domain],
       defaultBehavior,
+      ...(service.props.envName !== 'prod' ? { priceClass: PriceClass.PRICE_CLASS_100 } : {}),
       webAclId: params.waf?.webACL?.attrArn,
     });
 

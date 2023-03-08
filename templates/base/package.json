@@ -45,7 +45,6 @@
     "@types/node": "^18.11.7",
     "algoliasearch": "^4.13.1",
     "aws-lambda": "^1.0.7",
-    "aws-sdk": "^2.1243.0",
     "esbuild": "^0.14.43",
     "false": "^0.0.4",
     "messages": "^0.1.0",

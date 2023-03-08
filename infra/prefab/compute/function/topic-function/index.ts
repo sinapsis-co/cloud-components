@@ -26,7 +26,10 @@ export class TopicFunction extends Construct {
 
     this.customTopic = params.topic || new TopicPrefab(service, { name: params.name, ...params.customTopicParams });
 
-    this.lambdaFunction = new BaseFunction(service, params).lambdaFunction;
+    this.lambdaFunction = new BaseFunction(service, {
+      ...params,
+      environment: { ...params.environment, CC_FUNCTION_TYPE: 'TOPIC' },
+    }).lambdaFunction;
 
     this.lambdaFunction.addEventSource(new SnsEventSource(this.customTopic.topic));
   }

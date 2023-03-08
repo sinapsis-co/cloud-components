@@ -1,9 +1,9 @@
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
 import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
-import { createPutPresignedUrl } from '@sinapsis-co/cc-platform-v2/integrations/bucket/index';
+import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
+import { createPutPresignedUrl } from '@sinapsis-co/cc-platform-v2/integrations/bucket/presigned';
 import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
-import { assetsTypes } from 'services/business/assets/lib/assets-type';
 import { AssetKeyGeneratorParams } from 'services/business/assets/entities/asset';
+import { assetsTypes } from 'services/business/assets/lib/assets-type';
 import { assetApi } from '../../catalog';
 
 export const handler = apiHandler<assetApi.createPutUrl.Interface>(async (event, request) => {
@@ -30,7 +30,7 @@ export const handler = apiHandler<assetApi.createPutUrl.Interface>(async (event,
 
   const assetUrl = selected.isPublic ? `${process.env.MEDIA_URL!}/${key}` : undefined;
 
-  const presignedPost = createPutPresignedUrl({
+  const presignedPost = await createPutPresignedUrl({
     Bucket: selected.isPublic ? process.env.PUBLIC_BUCKET! : process.env.PRIVATE_BUCKET!,
     Key: key,
     ContentType: mediaType,

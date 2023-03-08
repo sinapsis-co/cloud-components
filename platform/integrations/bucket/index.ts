@@ -1,38 +1,65 @@
-import S3 from 'aws-sdk/clients/s3';
-const s3 = new S3();
+import * as S3 from '@aws-sdk/client-s3';
+import AwsXRay from 'aws-xray-sdk-core';
 
-const DEFAULT_MAX_LENGTH = 1024 * 1024 * 5; // 5 MB
+export const s3 = AwsXRay.captureAWSv3Client(new S3.S3Client({}));
 
-type PresignedPostParams = {
-  Bucket: string;
-  Key: string;
-  ContentType: string;
-  Expires?: number;
-  ContentLengthRange?: { min: number; max: number };
-};
+export { Upload } from '@aws-sdk/lib-storage';
 
-export const createPutPresignedUrl = (
-  params: PresignedPostParams,
-  metadata?: Record<string, string>
-): S3.PresignedPost => {
-  const { Key, ContentType, ContentLengthRange, ...rest } = params;
-
-  return s3.createPresignedPost({
-    Expires: 3600,
-    ...rest,
-    Fields: {
-      key: Key,
-      'Content-Type': ContentType,
-      ...(metadata || {}),
-    },
-    Conditions: [['content-length-range', ContentLengthRange?.min ?? 0, ContentLengthRange?.max ?? DEFAULT_MAX_LENGTH]],
+export const bucketPutObject = async <TracingMeta extends Record<string, string> = Record<string, string>>(
+  params: S3.PutObjectRequest,
+  tracingMeta?: TracingMeta
+): Promise<S3.PutObjectOutput> => {
+  return AwsXRay.captureAsyncFunc(`PutObject: ${params.Bucket}`, async (innerSubsegment) => {
+    if (tracingMeta) Object.keys(tracingMeta).map((t) => innerSubsegment!.addAnnotation(t, tracingMeta[t]));
+    const r = await s3.send(new S3.PutObjectCommand(params));
+    innerSubsegment?.close();
+    return r;
   });
 };
 
-export const createGetPresignedUrl = (bucket: string, key: string, expires = 3600): string => {
-  return s3.getSignedUrl('getObject', {
-    Bucket: bucket,
-    Key: key,
-    Expires: expires,
+export const bucketHeadObject = async <TracingMeta extends Record<string, string> = Record<string, string>>(
+  params: S3.HeadObjectRequest,
+  tracingMeta?: TracingMeta
+): Promise<S3.HeadObjectOutput> => {
+  return AwsXRay.captureAsyncFunc(`HeadObject: ${params.Bucket}`, async (innerSubsegment) => {
+    if (tracingMeta) Object.keys(tracingMeta).map((t) => innerSubsegment!.addAnnotation(t, tracingMeta[t]));
+    const r = await s3.send(new S3.HeadObjectCommand(params));
+    innerSubsegment?.close();
+    return r;
+  });
+};
+export const bucketGetObject = async <TracingMeta extends Record<string, string> = Record<string, string>>(
+  params: S3.GetObjectRequest,
+  tracingMeta?: TracingMeta
+): Promise<S3.GetObjectOutput> => {
+  return AwsXRay.captureAsyncFunc(`GetObject: ${params.Bucket}`, async (innerSubsegment) => {
+    if (tracingMeta) Object.keys(tracingMeta).map((t) => innerSubsegment!.addAnnotation(t, tracingMeta[t]));
+    const r = await s3.send(new S3.GetObjectCommand(params));
+    innerSubsegment?.close();
+    return r;
+  });
+};
+
+export const bucketDeleteObject = async <TracingMeta extends Record<string, string> = Record<string, string>>(
+  params: S3.DeleteObjectRequest,
+  tracingMeta?: TracingMeta
+): Promise<S3.DeleteObjectOutput> => {
+  return AwsXRay.captureAsyncFunc(`DeleteObject: ${params.Bucket}`, async (innerSubsegment) => {
+    if (tracingMeta) Object.keys(tracingMeta).map((t) => innerSubsegment!.addAnnotation(t, tracingMeta[t]));
+    const r = await s3.send(new S3.DeleteObjectCommand(params));
+    innerSubsegment?.close();
+    return r;
+  });
+};
+
+export const bucketListObjects = async <TracingMeta extends Record<string, string> = Record<string, string>>(
+  params: S3.ListObjectsV2Request,
+  tracingMeta?: TracingMeta
+): Promise<S3.ListObjectsV2Output> => {
+  return AwsXRay.captureAsyncFunc(`ListObjects: ${params.Bucket}`, async (innerSubsegment) => {
+    if (tracingMeta) Object.keys(tracingMeta).map((t) => innerSubsegment!.addAnnotation(t, tracingMeta[t]));
+    const r = await s3.send(new S3.ListObjectsV2Command(params));
+    innerSubsegment?.close();
+    return r;
   });
 };

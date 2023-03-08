@@ -26,7 +26,10 @@ export class QueueFunction extends Construct {
 
     this.customQueue = params.queue || new QueuePrefab(service, { name: params.name, ...params.customQueueParams });
 
-    this.lambdaFunction = new BaseFunction(service, params).lambdaFunction;
+    this.lambdaFunction = new BaseFunction(service, {
+      ...params,
+      environment: { ...params.environment, CC_FUNCTION_TYPE: 'QUEUE' },
+    }).lambdaFunction;
 
     this.lambdaFunction.addEventSource(
       new SqsEventSource(this.customQueue.queue, {

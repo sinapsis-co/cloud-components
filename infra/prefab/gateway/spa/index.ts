@@ -5,6 +5,7 @@ import {
   CachePolicy,
   Distribution,
   OriginRequestPolicy,
+  PriceClass,
   ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
@@ -108,6 +109,7 @@ export class SpaPrefab extends Construct {
         },
       ],
       defaultBehavior: behaviorOptions,
+      ...(service.props.envName !== 'prod' ? { priceClass: PriceClass.PRICE_CLASS_100 } : {}),
       webAclId: params.waf?.webACL?.attrArn,
     });
 

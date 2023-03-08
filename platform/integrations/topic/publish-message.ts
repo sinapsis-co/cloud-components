@@ -1,7 +1,9 @@
 import SNS from 'aws-sdk/clients/sns';
+import AwsXRay from 'aws-xray-sdk-core';
 import { chunkArray } from '../../util/array/chunk-array';
 
-const sns = new SNS();
+const sns = AwsXRay.captureAWSClient(new SNS());
+
 const MAX_MESSAGE_PER_BATCH = 10;
 
 export const publishMessages = async <T>(

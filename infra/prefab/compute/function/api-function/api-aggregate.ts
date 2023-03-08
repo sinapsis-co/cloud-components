@@ -5,7 +5,7 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
 import { getLogicalName } from '../../../../common/naming/get-logical-name';
-import { ApiRestPrefab } from '../../../gateway/api/api-rest';
+import { ApiHttpPrefab } from '../../../gateway/api/api-http';
 import { DynamoTablePrefab, ServiceTableParams } from '../../../storage/dynamo/table';
 
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
@@ -43,7 +43,7 @@ export class ApiAggregate<HandlerName extends string = string> extends Construct
     if (params.autoEventsEnabled && !params.eventBus)
       throw new SynthError('eventBus is needed when autoEventsEnabled is true', service.props);
 
-    const apiRest = new ApiRestPrefab(service, {
+    const apiRest = new ApiHttpPrefab(service, {
       ...params,
       ...params.authPool,
       customAuthorizerHandler: params.customAuthorizerHandler,

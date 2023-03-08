@@ -44,6 +44,8 @@ export const createUser = async <
       .split('-')
       .map((w) => `${w.charAt(0).toUpperCase()}${w.slice(1)}`)
       .join('-');
+    if (!identityServiceKey)
+      throw new Error('Missing Service. Please deploy it in order to run this command: yarn deploy [env] Identity');
     const clientIdKey = Object.keys(output[identityServiceKey]).find((w) =>
       w.startsWith('CognitoAuthPoolPrefabUserPoolClient')
     );

@@ -15,6 +15,9 @@ export type PrivateBucketParams = {
   bucketName: string;
   bucketProps?: BucketProps;
 };
+
+export type BucketNotFilter = awsS3.NotificationKeyFilter[];
+
 export class PrivateBucketPrefab extends Construct {
   public readonly bucket: awsS3.Bucket;
 
@@ -27,7 +30,6 @@ export class PrivateBucketPrefab extends Construct {
       removalPolicy: service.props.envName === 'prod' ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY,
       autoDeleteObjects: service.props.envName !== 'prod',
       publicReadAccess: false,
-      eventBridgeEnabled: true,
     };
 
     this.bucket = new awsS3.Bucket(this, getLogicalName(PrivateBucketPrefab.name, 'Bucket'), {
@@ -37,11 +39,7 @@ export class PrivateBucketPrefab extends Construct {
     });
   }
 
-  public addTopicNotification(params: {
-    topic: Topic;
-    eventType?: awsS3.EventType;
-    filters?: awsS3.NotificationKeyFilter[];
-  }): void {
+  public addTopicNotification(params: { topic: Topic; eventType?: awsS3.EventType; filters?: BucketNotFilter }): void {
     this.bucket.addEventNotification(
       params.eventType || awsS3.EventType.OBJECT_CREATED,
       new SnsDestination(params.topic),
@@ -49,11 +47,7 @@ export class PrivateBucketPrefab extends Construct {
     );
   }
 
-  public addQueueNotification(params: {
-    queue: Queue;
-    eventType?: awsS3.EventType;
-    filters?: awsS3.NotificationKeyFilter[];
-  }): void {
+  public addQueueNotification(params: { queue: Queue; eventType?: awsS3.EventType; filters?: BucketNotFilter }): void {
     this.bucket.addEventNotification(
       params.eventType || awsS3.EventType.OBJECT_CREATED,
       new SqsDestination(params.queue),

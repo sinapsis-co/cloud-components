@@ -20,7 +20,10 @@ export class EventFunction extends Construct {
   constructor(service: Service, params: EventFunctionParams & EventHandlerParams) {
     super(service, getLogicalName(EventFunction.name, params.name));
 
-    this.lambdaFunction = new BaseFunction(service, params).lambdaFunction;
+    this.lambdaFunction = new BaseFunction(service, {
+      ...params,
+      environment: { ...params.environment, CC_FUNCTION_TYPE: 'EVENT' },
+    }).lambdaFunction;
 
     const source = params.eventConfig.map((e) => e.source);
     const detailType = params.eventConfig.map((e) => e.name);

@@ -1,7 +1,10 @@
 import { TimestreamWrite } from 'aws-sdk';
+import AwsXRay from 'aws-xray-sdk-core';
 import { chunkArray } from '../../util/array/chunk-array';
+
 import { HandledError } from '../../util/handled-error';
-const timestream = new TimestreamWrite();
+
+const timestream = AwsXRay.captureAWSClient(new TimestreamWrite());
 
 const MAX_MESSAGE_PER_BATCH = 100;
 

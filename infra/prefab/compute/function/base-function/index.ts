@@ -41,6 +41,10 @@ export class BaseFunction extends Construct {
     });
     role.addManagedPolicy({ managedPolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole' });
 
+    const ccEnv = service.props.ephemeralEnvName
+      ? `${service.props.ephemeralEnvName}-${service.props.envName}`
+      : service.props.envDomainName;
+
     this.lambdaFunction = new NodejsFunction(this, params.name, {
       runtime: Runtime.NODEJS_16_X,
       logRetention: 30,
@@ -50,9 +54,13 @@ export class BaseFunction extends Construct {
       functionName: getShortResourceName(params.name, service.props),
       entry: getFunctionEntry(params.baseFunctionFolder, params.name, params.compiled),
       architecture: params.architecture || Architecture.ARM_64,
-      environment: params.environment || {},
       ...params,
+      environment: { CC_SERVICE: service.props.serviceName, CC_ENV: ccEnv, ...params.environment },
     });
+    this.lambdaFunction.addEnvironment(
+      'CC_FUNCTION_TIMEOUT',
+      this.lambdaFunction.timeout?.toSeconds().toString() || '6'
+    );
 
     params.modifiers?.map((fn) => fn(this.lambdaFunction));
 

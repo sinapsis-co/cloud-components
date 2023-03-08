@@ -1,6 +1,9 @@
 /* eslint-disable no-console */
+import { DeleteMessageCommand } from '@aws-sdk/client-sqs';
 import { SQSEvent, SQSRecord } from 'aws-lambda';
-import { deleteMessage } from '../../integrations/queue/delete-message';
+import { DeleteMessageRequest } from 'aws-sdk/clients/sqs';
+import { sqs } from '../../integrations/queue';
+import { generateTracing } from '../../tracing';
 
 type Handler<Payload> = (event: SQSEvent, record: SQSRecord, payload: Payload) => Promise<void>;
 
@@ -10,24 +13,43 @@ export const queueBatchHandler = <Payload>(handler: Handler<Payload>): Handler<P
     const url = `https://sqs.${region}.amazonaws.com/${account}/${name}`;
     let errorCounter = 0;
     const promises = await Promise.allSettled(
-      event.Records.map(async (r) => {
+      event.Records.map(async (record) => {
+        const tracing = generateTracing();
         try {
-          await handler(event, r, JSON.parse(r.body));
-          await deleteMessage(r.receiptHandle, url);
+          const payload = JSON.parse(record.body);
+          await handler(event, record, payload);
+          return record.receiptHandle;
+          tracing.close();
         } catch (error: any) {
           errorCounter++;
           console.log({
-            messageId: r.messageId,
-            retries: r.attributes.ApproximateReceiveCount,
+            messageId: record.messageId,
+            retries: record.attributes.ApproximateReceiveCount,
             detail: error['raw'] || error.message,
           });
+          tracing.close(error);
           throw error;
         }
       })
     );
     if (!promises.find((p) => p.status === 'rejected')) return;
+    else {
+      const toDelete: PromiseFulfilledResult<string>[] = promises.filter(
+        (p) => p.status === 'fulfilled'
+      ) as PromiseFulfilledResult<string>[];
+
+      await Promise.all(toDelete.map((p: PromiseFulfilledResult<string>) => deleteMessage(p.value, url)));
+    }
     const error = new Error(`${errorCounter} events rejected of ${event.Records.length}`);
     error['errorType'] = 'EventsRejected';
     throw error;
   };
+};
+
+const deleteMessage = async (receiptHandle: string, queueUrl: string): Promise<void> => {
+  const params: DeleteMessageRequest = {
+    QueueUrl: queueUrl,
+    ReceiptHandle: receiptHandle,
+  };
+  await sqs.send(new DeleteMessageCommand(params));
 };

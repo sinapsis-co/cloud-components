@@ -20,7 +20,10 @@ export class CognitoFunction extends Construct {
   constructor(service: Service, params: CognitoFunctionParams & CognitoHandlerParams) {
     super(service, getLogicalName(CognitoFunction.name, params.name));
 
-    this.lambdaFunction = new BaseFunction(service, params).lambdaFunction;
+    this.lambdaFunction = new BaseFunction(service, {
+      ...params,
+      environment: { ...params.environment, CC_FUNCTION_TYPE: 'COGNITO' },
+    }).lambdaFunction;
 
     params.userPool.addTrigger(params.operation, this.lambdaFunction);
   }

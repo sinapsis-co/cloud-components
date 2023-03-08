@@ -190,7 +190,7 @@ export class DeployPipelinePrefab extends Construct {
         environment: environmentTopicFunction,
         modifiers: modifierTopicFunction,
         customTopicParams: {
-          name: 'pipeline-notifications',
+          name: 'notifications',
         },
       });
 

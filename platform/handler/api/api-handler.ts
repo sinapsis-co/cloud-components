@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
 import { APIGatewayProxyEventV2WithJWTAuthorizer, APIGatewayProxyResultV2 } from 'aws-lambda';
+import { ApiConfig, ApiInterface, ApiInterfaceRequest } from '../../catalog/api';
+import { generateTracing } from '../../tracing';
 import { apiParser } from './api-parser';
 import { DEFAULT_HEADERS } from './headers';
-import { ApiInterface, ApiConfig, ApiInterfaceRequest } from '../../catalog/api';
 
 type Handler<T extends ApiInterface> = (
   event: APIGatewayProxyEventV2WithJWTAuthorizer,
@@ -18,6 +19,7 @@ export const apiHandler = <T extends ApiInterface>(
 ): Handler<T> => {
   return async (event: APIGatewayProxyEventV2WithJWTAuthorizer): Promise<APIGatewayProxyResultV2> => {
     const headers = { ...DEFAULT_HEADERS, ...customHeaders };
+    const tracing = generateTracing();
 
     try {
       const request: ApiInterfaceRequest<T> = await apiParser<T>(event, apiOptions.schema);
@@ -26,6 +28,7 @@ export const apiHandler = <T extends ApiInterface>(
 
       const result = await handler(event, request);
 
+      tracing.close();
       return {
         statusCode: statusCode,
         headers,
@@ -33,7 +36,7 @@ export const apiHandler = <T extends ApiInterface>(
       };
     } catch (error: any) {
       console.error(error);
-
+      tracing.close(error);
       return {
         statusCode: error.statusCode || 500,
         headers,

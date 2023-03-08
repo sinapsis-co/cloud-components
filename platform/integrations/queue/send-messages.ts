@@ -1,14 +1,18 @@
-import SQS from 'aws-sdk/clients/sqs';
+import {
+  SendMessageBatchCommand,
+  SendMessageBatchCommandOutput,
+  SendMessageBatchRequestEntry,
+} from '@aws-sdk/client-sqs';
+import { sqs } from '.';
 import { chunkArray } from '../../util/array/chunk-array';
 
-const sqs = new SQS();
 const MAX_MESSAGE_PER_BATCH = 10;
 
 export const sendMessages = async <T>(
   messages: Array<T>,
   queueUrl: string,
   DelaySeconds?: number
-): Promise<Array<SQS.SendMessageBatchResult>> => {
+): Promise<Array<SendMessageBatchCommandOutput>> => {
   const messagesChucked = chunkArray(messages, MAX_MESSAGE_PER_BATCH);
   return Promise.all(
     messagesChucked.map((messageChucked) => sendMessagesBatch(messageChucked, queueUrl, DelaySeconds))
@@ -19,8 +23,8 @@ const sendMessagesBatch = async <T>(
   messages: Array<T>,
   queueUrl: string,
   DelaySeconds?: number
-): Promise<SQS.SendMessageBatchResult> => {
-  const entries: SQS.SendMessageBatchRequestEntryList = messages.map((message, index) => {
+): Promise<SendMessageBatchCommandOutput> => {
+  const entries: SendMessageBatchRequestEntry[] = messages.map((message, index) => {
     return {
       Id: String(index),
       MessageBody: JSON.stringify(message),
@@ -28,10 +32,10 @@ const sendMessagesBatch = async <T>(
     };
   });
 
-  const params: SQS.SendMessageBatchRequest = {
-    QueueUrl: queueUrl,
-    Entries: entries,
-  };
-
-  return sqs.sendMessageBatch(params).promise();
+  return sqs.send(
+    new SendMessageBatchCommand({
+      QueueUrl: queueUrl,
+      Entries: entries,
+    })
+  );
 };

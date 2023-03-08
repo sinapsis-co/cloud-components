@@ -11,7 +11,6 @@ import { UserPoolOperation } from 'aws-cdk-lib/aws-cognito';
 
 import { AttributeType } from 'aws-cdk-lib/aws-dynamodb';
 import { CdnApi } from 'services/support/cdn-api';
-import { CdnAssets } from 'services/support/cdn-assets';
 import { DnsSubdomainCertificate } from 'services/support/dns-subdomain-certificate';
 import { GlobalEventBus } from 'services/support/global-event-bus';
 import { Notifications } from 'services/support/notifications';
@@ -30,7 +29,7 @@ export type IdentityParams = {
   globalEventBus: GlobalEventBus;
   dnsSubdomainCertificate: DnsSubdomainCertificate;
   cdnApi: CdnApi;
-  cdnAssets: CdnAssets;
+  // cdnAssets: CdnAssets;
 };
 
 type Deps = {
@@ -38,14 +37,14 @@ type Deps = {
   globalEventBus: GlobalEventBus;
   dnsSubdomainCertificate: DnsSubdomainCertificate;
   cdnApi: CdnApi;
-  cdnAssets: CdnAssets;
+  // cdnAssets: CdnAssets;
 };
 const depsNames: Array<keyof Deps> = [
   'notifications',
   'globalEventBus',
   'dnsSubdomainCertificate',
   'cdnApi',
-  'cdnAssets',
+  // 'cdnAssets',
 ];
 
 export class Identity extends Service<GlobalCoordinator> {
@@ -59,7 +58,7 @@ export class Identity extends Service<GlobalCoordinator> {
   }
 
   build(deps: Deps) {
-    this.addDependency(deps.cdnAssets);
+    // this.addDependency(deps.cdnAssets);
     this.addDependency(deps.notifications);
 
     this.authPool = new CognitoAuthPoolPrefab(this, {
