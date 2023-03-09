@@ -5,12 +5,13 @@ import { Construct } from 'constructs';
 
 import { getLogicalName } from '../../../../common/naming/get-logical-name';
 import { Service } from '../../../../common/service';
-import { CustomQueueParams, QueuePrefab } from '../../../integration/queue';
+import { QueuePrefab, QueuePrefabParams } from '../../../integration/queue';
 import { BaseFunction, BaseFunctionParams, BaseHandlerParams } from '../base-function';
 
 export type QueueHandlerParams = BaseHandlerParams & {
   queue?: QueuePrefab;
-  customQueueParams?: CustomQueueParams;
+  customQueueParams?: QueuePrefabParams;
+  maxConcurrency?: number;
   batchSize?: number;
   batchWindow?: Duration;
 };
@@ -33,6 +34,7 @@ export class QueueFunction extends Construct {
 
     this.lambdaFunction.addEventSource(
       new SqsEventSource(this.customQueue.queue, {
+        ...(params.maxConcurrency ? { maxConcurrency: params.maxConcurrency } : {}),
         batchSize: params.batchSize || 10,
         maxBatchingWindow: params.batchWindow,
       })

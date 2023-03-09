@@ -1,4 +1,5 @@
 import { ApiConfig, ApiInterface, TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api';
+import { Duration } from 'aws-cdk-lib';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Architecture, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
@@ -51,16 +52,14 @@ export class BaseFunction extends Construct {
       handler: 'handler',
       role,
       tracing: Tracing.ACTIVE,
+      timeout: Duration.seconds(6),
       functionName: getShortResourceName(params.name, service.props),
       entry: getFunctionEntry(params.baseFunctionFolder, params.name, params.compiled),
       architecture: params.architecture || Architecture.ARM_64,
       ...params,
       environment: { CC_SERVICE: service.props.serviceName, CC_ENV: ccEnv, ...params.environment },
     });
-    this.lambdaFunction.addEnvironment(
-      'CC_FUNCTION_TIMEOUT',
-      this.lambdaFunction.timeout?.toSeconds().toString() || '6'
-    );
+    this.lambdaFunction.addEnvironment('CC_FUNCTION_TIMEOUT', this.lambdaFunction.timeout!.toSeconds().toString());
 
     params.modifiers?.map((fn) => fn(this.lambdaFunction));
 

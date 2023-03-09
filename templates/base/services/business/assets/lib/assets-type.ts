@@ -19,7 +19,7 @@ export const assetsTypes: Record<AssetType, Asset<AssetType>> = {
     isPublic: false,
     eventEmitterEnabled: true,
     presignedPutOptions: {
-      maxSize: 1024 * 1024 * 5,
+      maxSize: 1024 * 1024 * 5, // 5MBs
       allowedMediaType: ['image/jpeg'],
       keyGenerator: (p: AssetKeyGeneratorParams) => `${p.tenantId}/${p.sub}.${p.extension}`,
       keyDecoder: (key: string) => {

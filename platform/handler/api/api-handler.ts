@@ -3,6 +3,7 @@
 import { APIGatewayProxyEventV2WithJWTAuthorizer, APIGatewayProxyResultV2 } from 'aws-lambda';
 import { ApiConfig, ApiInterface, ApiInterfaceRequest } from '../../catalog/api';
 import { generateTracing } from '../../tracing';
+import { timeoutController } from '../../tracing/timeout';
 import { apiParser } from './api-parser';
 import { DEFAULT_HEADERS } from './headers';
 
@@ -26,7 +27,7 @@ export const apiHandler = <T extends ApiInterface>(
 
       if (apiOptions.authorizationMdw) apiOptions.authorizationMdw(request, apiOptions.scope);
 
-      const result = await handler(event, request);
+      const result = await timeoutController(handler(event, request));
 
       tracing.close();
       return {
@@ -36,6 +37,7 @@ export const apiHandler = <T extends ApiInterface>(
       };
     } catch (error: any) {
       console.error(error);
+      tracing.addFaultFlag();
       tracing.close(error);
       return {
         statusCode: error.statusCode || 500,

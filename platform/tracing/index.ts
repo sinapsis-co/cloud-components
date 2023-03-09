@@ -1,4 +1,4 @@
-import { getSegment, Subsegment } from 'aws-xray-sdk-core';
+import { captureAsyncFunc, getSegment, Subsegment } from 'aws-xray-sdk-core';
 
 const injectAnnotations = (sub: Subsegment): void => {
   Object.keys(process.env)
@@ -13,6 +13,14 @@ export const generateTracing = (): Subsegment => {
   const subsegment = segment?.addNewSubsegment('Handler');
   injectAnnotations(subsegment!);
   return subsegment!;
+};
+export const tracedFunction = async <T>(name: string, fn: () => T): Promise<T> => {
+  return captureAsyncFunc(name, async (innerSubsegment) => {
+    // if (tracingMeta) Object.keys(tracingMeta).map((t) => innerSubsegment!.addAnnotation(t, tracingMeta[t]));
+    const r = await fn();
+    innerSubsegment?.close();
+    return r;
+  });
 };
 
 // type Fn = (args: any[]) => any;

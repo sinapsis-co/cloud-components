@@ -7,7 +7,7 @@ import { getLogicalName } from '../../../common/naming/get-logical-name';
 import { getResourceName } from '../../../common/naming/get-resource-name';
 import { Service } from '../../../common/service';
 
-export type CustomQueueParams = {
+export type QueuePrefabParams = {
   name: string;
   maxRetries?: number;
   dlqRetention?: Duration;
@@ -20,7 +20,7 @@ export class QueuePrefab extends Construct {
   public readonly dlq: Queue;
   public readonly queue: Queue;
 
-  constructor(service: Service, params: CustomQueueParams) {
+  constructor(service: Service, params: QueuePrefabParams) {
     super(service, getLogicalName(QueuePrefab.name, params.name));
 
     this.dlq =

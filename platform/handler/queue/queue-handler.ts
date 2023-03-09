@@ -14,6 +14,7 @@ export const queueHandler = <Payload>(handler: Handler<Payload>): Handler<Payloa
     } catch (error: any) {
       // eslint-disable-next-line no-console
       console.log(error);
+      tracing.addFaultFlag();
       tracing.close(error);
       throw error;
     }

@@ -24,13 +24,6 @@ import { buildCustomAttributes } from './platform/cognito-mapper';
  *
  * @default - automatically generated name by CloudFormation at deploy time
  */
-export type IdentityParams = {
-  notifications: Notifications;
-  globalEventBus: GlobalEventBus;
-  dnsSubdomainCertificate: DnsSubdomainCertificate;
-  cdnApi: CdnApi;
-  // cdnAssets: CdnAssets;
-};
 
 type Deps = {
   notifications: Notifications;
@@ -99,7 +92,12 @@ export class Identity extends Service<GlobalCoordinator> {
             MEDIA_URL: getDomain(this.props.subdomain.assets, this.props),
           },
         },
-        memberList: identityApi.memberList.config,
+        memberList: {
+          ...identityApi.memberList.config,
+          environment: {
+            MEDIA_URL: getDomain(this.props.subdomain.assets, this.props, true),
+          },
+        },
         memberRoleUpdate: {
           ...identityApi.memberUpdateRole.config,
           modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.updateUserAtt])],

@@ -13,6 +13,7 @@ export const eventHandler = <Event extends EventInterface>(handler: Handler<Even
       await handler(event);
       tracing.close();
     } catch (error: any) {
+      tracing.addFaultFlag();
       tracing.close(error);
       // eslint-disable-next-line no-console
       console.log(JSON.stringify(event));

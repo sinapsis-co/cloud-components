@@ -18,8 +18,8 @@ export const queueBatchHandler = <Payload>(handler: Handler<Payload>): Handler<P
         try {
           const payload = JSON.parse(record.body);
           await handler(event, record, payload);
-          return record.receiptHandle;
           tracing.close();
+          return record.receiptHandle;
         } catch (error: any) {
           errorCounter++;
           console.log({
@@ -27,6 +27,7 @@ export const queueBatchHandler = <Payload>(handler: Handler<Payload>): Handler<P
             retries: record.attributes.ApproximateReceiveCount,
             detail: error['raw'] || error.message,
           });
+          tracing.addFaultFlag();
           tracing.close(error);
           throw error;
         }
