@@ -5,3 +5,10 @@ export class HandledError extends Error {
     Object.setPrototypeOf(this, actualProto);
   }
 }
+
+export class HandledFault extends Error {
+  constructor(message: string, ruleName: string) {
+    super(message);
+    this.name = 'HandledFault';
+  }
+}

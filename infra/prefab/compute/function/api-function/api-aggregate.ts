@@ -1,4 +1,3 @@
-import { HttpApi, IHttpRouteAuthorizer } from '@aws-cdk/aws-apigatewayv2-alpha';
 import { UserPool, UserPoolClient } from 'aws-cdk-lib/aws-cognito';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
@@ -11,6 +10,7 @@ import { DynamoTablePrefab, ServiceTableParams } from '../../../storage/dynamo/t
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { Service } from '../../../../common/service';
 import { SynthError } from '../../../../common/synth/synth-error';
+import { ApiRestPrefab } from '../../../gateway/api/api-rest';
 import { CdnApiPrefab } from '../../../gateway/cdn-api';
 import { BaseFunctionParams } from '../base-function';
 import { ApiFunction, ApiHandlerParams } from './api-function';
@@ -29,12 +29,12 @@ export type ApiAggregateParams<HandlerName extends string = string> = BaseFuncti
   autoEventsEnabled?: true;
   customAuthorizerHandler?: IFunction;
   skipTable?: true;
+  useRestApi?: true;
 };
 
 export class ApiAggregate<HandlerName extends string = string> extends Construct {
-  public readonly api: HttpApi;
+  public readonly apiPrefab: ApiRestPrefab | ApiHttpPrefab;
   public readonly table?: Table;
-  public readonly authorizer: IHttpRouteAuthorizer;
   public readonly handlers: Record<HandlerName, NodejsFunction> = {} as Record<HandlerName, NodejsFunction>;
 
   constructor(service: Service, params: ApiAggregateParams) {
@@ -43,14 +43,19 @@ export class ApiAggregate<HandlerName extends string = string> extends Construct
     if (params.autoEventsEnabled && !params.eventBus)
       throw new SynthError('eventBus is needed when autoEventsEnabled is true', service.props);
 
-    const apiRest = new ApiHttpPrefab(service, {
-      ...params,
-      ...params.authPool,
-      customAuthorizerHandler: params.customAuthorizerHandler,
-    });
-
-    this.api = apiRest.api;
-    this.authorizer = apiRest.authorizer;
+    if (params.useRestApi) {
+      this.apiPrefab = new ApiRestPrefab(service, {
+        ...params,
+        ...params.authPool,
+        customAuthorizerHandler: params.customAuthorizerHandler,
+      });
+    } else {
+      this.apiPrefab = new ApiHttpPrefab(service, {
+        ...params,
+        ...params.authPool,
+        customAuthorizerHandler: params.customAuthorizerHandler,
+      });
+    }
 
     if (!params.skipTable) {
       const serviceTable = new DynamoTablePrefab(service, { ...params.tableOptions, tableName: params.basePath });
@@ -67,8 +72,7 @@ export class ApiAggregate<HandlerName extends string = string> extends Construct
         ...params,
         ...params.handlers[handler],
         table: this.table,
-        api: this.api,
-        authorizer: this.authorizer,
+        apiPrefab: this.apiPrefab,
         modifiers: [...(params.modifiers || []), ...(params.handlers[handler].modifiers || [])],
         environment: {
           ...(params.autoEventsEnabled ? { AUTO_EVENTS: 'true' } : {}),

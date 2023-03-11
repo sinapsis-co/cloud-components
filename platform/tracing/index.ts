@@ -1,5 +1,7 @@
 import { captureAsyncFunc, getSegment, Subsegment } from 'aws-xray-sdk-core';
 
+export { getSegment } from 'aws-xray-sdk-core';
+
 const injectAnnotations = (sub: Subsegment): void => {
   Object.keys(process.env)
     .filter((k) => k.startsWith('CC_'))

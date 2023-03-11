@@ -1,9 +1,11 @@
-import { CorsHttpMethod, HttpApi, IHttpRouteAuthorizer } from '@aws-cdk/aws-apigatewayv2-alpha';
+import { CorsHttpMethod, HttpApi, HttpMethod, IHttpRouteAuthorizer } from '@aws-cdk/aws-apigatewayv2-alpha';
 import {
   HttpLambdaAuthorizer,
   HttpLambdaResponseType,
   HttpUserPoolAuthorizer,
 } from '@aws-cdk/aws-apigatewayv2-authorizers-alpha';
+import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
+import { ApiConfig, ApiInterface } from '@sinapsis-co/cc-platform-v2/catalog/api';
 import { CfnOutput, Duration, Fn } from 'aws-cdk-lib';
 import { UserPool, UserPoolClient } from 'aws-cdk-lib/aws-cognito';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
@@ -55,5 +57,20 @@ export class ApiHttpPrefab extends Construct {
     params.cdnApiPrefab.addApiGateway(params.basePath, apiUrl);
 
     new CfnOutput(this, 'ApiUrl', { value: apiUrl });
+  }
+  public addPath(params: {
+    basePath: string;
+    path: string;
+    method: ApiConfig<ApiInterface>['method'];
+    lambdaFunction: IFunction;
+    isPublic?: true;
+  }): void {
+    const path = params.path === '/' ? '' : params.path;
+    this.api.addRoutes({
+      path: `/${params.basePath}${path}`,
+      methods: [params.method as HttpMethod],
+      integration: new HttpLambdaIntegration(params.lambdaFunction.functionName, params.lambdaFunction),
+      ...(params.isPublic ? {} : { authorizer: this.authorizer }),
+    });
   }
 }

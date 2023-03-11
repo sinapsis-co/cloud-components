@@ -1,9 +1,25 @@
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
-import { baseApi } from '../../catalog';
-import { baseRepo } from '../../repository/base';
+// import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
 
-export const handler = apiHandler<baseApi.delete.Interface>(async (_, req) => {
-  const { tenantId } = req.claims;
-  const { id } = req.pathParams;
-  return await baseRepo.deleteItem({ tenantId, id });
-}, baseApi.delete.config);
+import { generateTracing } from '@sinapsis-co/cc-platform-v2/tracing';
+
+// export const handler = apiHandler<baseApi.delete.Interface>(async (_, req) => {
+//   const { tenantId } = req.claims;
+//   const { id } = req.pathParams;
+//   return await baseRepo.deleteItem({ tenantId, id });
+// }, baseApi.delete.config);
+
+export const handler = async () => {
+  // const tracing = generateTracing();
+  const tracing = generateTracing();
+  // tracing!.addError(new Error('this is a 400 error'));
+  tracing.addErrorFlag();
+
+  tracing.close();
+  return {
+    statusCode: 400,
+    body: JSON.stringify({
+      errorType: 'error400',
+      errorMessage: 'this an error 400',
+    }),
+  };
+};

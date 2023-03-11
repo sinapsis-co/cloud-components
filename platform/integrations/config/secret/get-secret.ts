@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { SecretsManager } from 'aws-sdk';
-import { SecretConfig, SecretInterface } from '../../catalog/secret';
+import { SecretConfig, SecretInterface } from '../../../catalog/secret';
 
 const _secrets = {};
 

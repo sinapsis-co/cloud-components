@@ -30,15 +30,8 @@ type Deps = {
   globalEventBus: GlobalEventBus;
   dnsSubdomainCertificate: DnsSubdomainCertificate;
   cdnApi: CdnApi;
-  // cdnAssets: CdnAssets;
 };
-const depsNames: Array<keyof Deps> = [
-  'notifications',
-  'globalEventBus',
-  'dnsSubdomainCertificate',
-  'cdnApi',
-  // 'cdnAssets',
-];
+const depsNames: Array<keyof Deps> = ['notifications', 'globalEventBus', 'dnsSubdomainCertificate', 'cdnApi'];
 
 export class Identity extends Service<GlobalCoordinator> {
   public authPool: CognitoAuthPoolPrefab;
@@ -51,7 +44,6 @@ export class Identity extends Service<GlobalCoordinator> {
   }
 
   build(deps: Deps) {
-    // this.addDependency(deps.cdnAssets);
     this.addDependency(deps.notifications);
 
     this.authPool = new CognitoAuthPoolPrefab(this, {

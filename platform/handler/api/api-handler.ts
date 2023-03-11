@@ -5,7 +5,15 @@ import { ApiConfig, ApiInterface, ApiInterfaceRequest } from '../../catalog/api'
 import { generateTracing } from '../../tracing';
 import { timeoutController } from '../../tracing/timeout';
 import { apiParser } from './api-parser';
-import { DEFAULT_HEADERS } from './headers';
+
+const DEFAULT_MAX_AGE = 10;
+
+export const DEFAULT_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': '*',
+  'Cache-Control': `max-age=${DEFAULT_MAX_AGE}`,
+  'Content-Type': 'application/json',
+};
 
 type Handler<T extends ApiInterface> = (
   event: APIGatewayProxyEventV2WithJWTAuthorizer,
