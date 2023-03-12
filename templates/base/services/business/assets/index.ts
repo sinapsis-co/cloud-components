@@ -43,7 +43,6 @@ export class Assets extends Service<GlobalCoordinator> {
       bucketName: 'public',
       subDomain: this.props.subdomain.assets,
       certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,
-      recordForRootPath: false,
       assetBucketProps: {
         bucketName: 'bucket',
         folder: './notifications/assets',

@@ -12,8 +12,8 @@ import { generateTracing } from '@sinapsis-co/cc-platform-v2/tracing';
 
 export const handler = async () => {
   const tracing = generateTracing();
-  tracing!.addError(new Error('this is a 500 error'));
-  // tracing!.addFaultFlag();
+  // tracing!.addError(new Error('this is a 500 error'));
+  tracing!.addFaultFlag();
   tracing.close();
   return {
     statusCode: 500,

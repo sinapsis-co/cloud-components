@@ -25,7 +25,6 @@ import { AssetBucketParams, AssetBucketPrefab } from '../../storage/bucket/asset
 export type CdnAssetConstructProps = {
   subDomain: string;
   certificate: ICertificate;
-  recordForRootPath: boolean;
   assetBucketProps?: AssetBucketParams;
   waf?: WafPrefab;
   bucketName?: string;
@@ -69,8 +68,6 @@ export class CdnAssetPrefab extends Construct {
     };
 
     const domains = [this.domain];
-    if (params.recordForRootPath) domains.push(getDomain('', service.props));
-
     this.distribution = new Distribution(this, 'Distribution', {
       enabled: true,
       comment: getResourceName('cdn', service.props),
