@@ -9,6 +9,15 @@ import reportWebVitals from './reportWebVitals';
 // import { ConnectedRouter } from "connected-react-router";
 import { HistoryRouter as Router } from 'redux-first-history/rr6';
 
+// Bugsnag implementation
+import Bugsnag from '@bugsnag/js';
+import BugsnagPluginReact from '@bugsnag/plugin-react';
+
+Bugsnag.start({
+  apiKey: process.env.REACT_APP_BUGSNAG || '',
+  plugins: [new BugsnagPluginReact()],
+});
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <Provider store={store}>
