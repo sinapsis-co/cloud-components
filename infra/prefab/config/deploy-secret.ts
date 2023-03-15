@@ -1,5 +1,5 @@
-import { Construct } from 'constructs';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import { Construct } from 'constructs';
 
 import { getLogicalName } from '../../common/naming/get-logical-name';
 import { getParameterName, getParameterNamePlain } from '../../common/naming/get-resource-name';
@@ -20,18 +20,10 @@ export class DeploySecret extends Construct {
 
     params.secretsKeys?.map((secretKey) => {
       const secretName = `secret/${secretKey}`;
-      const input = this.node.tryGetContext(secretKey);
-      let value;
-      if (input) {
-        value = params.saveAsPlain ? input : JSON.stringify({ [secretKey]: input });
-      } else {
-        StringParameter.valueFromLookup(this, getParameterNamePlain(secretName, service.props));
-        value = StringParameter.valueForStringParameter(this, getParameterNamePlain(secretName, service.props));
-      }
       const parameter = new StringParameter(this, getLogicalName(`new-${secretName}`, params.name), {
         simpleName: false,
         parameterName: getParameterNamePlain(secretName, service.props),
-        stringValue: value,
+        stringValue: 'to-be-defined',
       });
       this.secrets[secretKey] = parameter;
     });
