@@ -21,7 +21,7 @@ import { getCloudFrontName, getResourceName } from '../../../common/naming/get-r
 import { Service } from '../../../common/service';
 import { SynthError } from '../../../common/synth/synth-error';
 import { WafPrefab } from '../../networking/waf';
-import { PrivateBucketPrefab } from '../../storage//bucket/private-bucket';
+import { PrivateBucketPrefab } from '../../storage/bucket/private-bucket';
 import { DeploySecret, DeploySecretProps } from '../../util/config/deploy-secret';
 
 export type WebappConstructParams = {
