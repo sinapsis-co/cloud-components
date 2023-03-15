@@ -6,6 +6,7 @@
     "backoffice",
     "backofficeauth",
     "browserslist",
+    "Bugsnag",
     "certificatemanager",
     "cognitoidentityserviceprovider",
     "DISTRO",
