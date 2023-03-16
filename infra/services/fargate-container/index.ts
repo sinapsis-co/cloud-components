@@ -3,6 +3,7 @@ import { IRepository, Repository } from 'aws-cdk-lib/aws-ecr';
 import * as awsECS from 'aws-cdk-lib/aws-ecs';
 import { FargatePlatformVersion, HealthCheck, Secret } from 'aws-cdk-lib/aws-ecs';
 import * as awsALB from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { LogGroup } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 
@@ -96,6 +97,19 @@ export class FargateContainerConstruct extends Construct {
       }),
       portMappings: [{ containerPort: params.mappingPort }],
     });
+
+    taskDefinition.addToTaskRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: [
+          'ssmmessages:CreateControlChannel',
+          'ssmmessages:CreateDataChannel',
+          'ssmmessages:OpenControlChannel',
+          'ssmmessages:OpenDataChannel',
+        ],
+        resources: ['*'],
+      })
+    );
     if (params.externalRepository) this.repository.grantPull(taskDefinition.taskRole);
 
     // FARGATE
@@ -108,6 +122,7 @@ export class FargateContainerConstruct extends Construct {
       securityGroups: [params.albConstruct.getAlbToClusterSG()],
       assignPublicIp: true,
       circuitBreaker: { rollback: true },
+      enableExecuteCommand: true,
     });
 
     // AUTOSCALING
