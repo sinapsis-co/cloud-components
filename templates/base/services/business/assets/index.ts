@@ -6,7 +6,6 @@ import { QueueFunction } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/
 import { CdnAssetPrefab } from '@sinapsis-co/cc-infra-v2/prefab/gateway/cdn-asset';
 import { PrivateBucketPrefab } from '@sinapsis-co/cc-infra-v2/prefab/storage/bucket/private-bucket';
 import { Duration } from 'aws-cdk-lib';
-import { Architecture } from 'aws-cdk-lib/aws-lambda';
 
 import { CdnApi } from 'services/support/cdn-api';
 import { GlobalCoordinator } from '../../../config/config-type';
@@ -90,7 +89,7 @@ export class Assets extends Service<GlobalCoordinator> {
         resize: {
           name: 'event-asset-resize',
           eventConfig: [assetEvent.assetToResize.eventConfig],
-          architecture: Architecture.X86_64,
+          // architecture: Architecture.X86_64,
           bundling: { nodeModules: ['sharp'] },
           timeout: Duration.minutes(5),
           modifiers: [

@@ -3,8 +3,6 @@
   "version": "0.1.0",
   "license": "MIT",
   "cpu": [
-    "x86",
-    "x64",
     "arm64"
   ],
   "engines": {
@@ -50,7 +48,7 @@
     "messages": "^0.1.0",
     "require-from-string": "^2.0.2",
     "serverless-http": "^3.0.1",
-    "sharp": "^0.30.6",
+    "sharp": "^0.31.3",
     "stripe": "^11.6.0",
     "twilio": "^3.84.1"
   },
