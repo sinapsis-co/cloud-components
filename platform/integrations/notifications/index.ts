@@ -1,12 +1,13 @@
 import SES from 'aws-sdk/clients/ses';
 import AwsXRay from 'aws-xray-sdk-core';
 import { createTransport } from 'nodemailer';
+import { Readable } from 'stream';
 
 export const ses = AwsXRay.captureAWSClient(new SES());
 
 export type Attachment = {
   filename: string;
-  content: Buffer;
+  content: Readable;
 };
 
 export type DeliverEmailParams = {

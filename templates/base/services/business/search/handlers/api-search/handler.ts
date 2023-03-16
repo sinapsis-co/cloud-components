@@ -1,7 +1,7 @@
 import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
+import { getSecret } from '@sinapsis-co/cc-platform-v2/integrations/config/secret/get-secret';
 import { searchApi, searchSecret } from '../../catalog';
 import { algoliaIndexSearch } from '../../platform/index-search';
-import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
 
 export const handler = apiHandler<searchApi.search.Interface>(async (_, req) => {
   // const { tenantId } = req.claims;

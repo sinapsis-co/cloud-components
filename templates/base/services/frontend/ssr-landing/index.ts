@@ -1,7 +1,7 @@
 import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/event-function/event-aggregate';
 import { QueueFunction } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/queue-function';
-import { SsrPrefab } from '@sinapsis-co/cc-infra-v2/prefab/gateway/ssr';
+import { SsrPrefab } from '@sinapsis-co/cc-infra-v2/prefab/frontend/ssr';
 import { PrivateBucketPrefab } from '@sinapsis-co/cc-infra-v2/prefab/storage/bucket/private-bucket';
 
 import { GlobalCoordinator } from '../../../config/config-type';
