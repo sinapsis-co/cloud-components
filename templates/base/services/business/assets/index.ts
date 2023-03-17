@@ -89,7 +89,6 @@ export class Assets extends Service<GlobalCoordinator> {
         resize: {
           name: 'event-asset-resize',
           eventConfig: [assetEvent.assetToResize.eventConfig],
-          // architecture: Architecture.X86_64,
           bundling: { nodeModules: ['sharp'] },
           timeout: Duration.minutes(5),
           modifiers: [

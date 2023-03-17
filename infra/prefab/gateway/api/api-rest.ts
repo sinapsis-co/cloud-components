@@ -71,36 +71,4 @@ export class ApiRestPrefab extends Construct {
 
     new CfnOutput(this, 'RestApiUrl', { value: apiUrl });
   }
-  // public addPath(params: {
-  //   basePath: string;
-  //   path: string;
-  //   method: ApiConfig<ApiInterface>['method'];
-  //   isPublic?: true;
-  //   lambdaFunction: IFunction;
-  // }): void {
-  //   // const path = params.path === '/' ? '' : params.path;
-  //   // let currentPath = this.basePath;
-  //   // if(path === '/')
-  //   // if (path) currentPath = currentPath.addResource(path);
-  //   // if (path !== '/')
-  //   // currentPath = params.path.split('/').reduce((memo, att) => {
-  //   //   if (att) {
-  //   //     if (this.paths[att]) return this.paths[att];
-  //   //     this.paths[att] = memo.addResource(att);
-  //   //     memo = this.paths[att];
-  //   //     memo.resourceForPath
-  //   //     console.log(att, memo.path);
-  //   //   }
-
-  //   //   return memo;
-  //   // }, this.basePath);
-  //   // console.log(params.path, params.method, currentPath.path);
-
-  //   const currentPath = this.basePath.resourceForPath(`${this.basePath}${params.path}`);
-
-  //   currentPath.addMethod(params.method, new LambdaIntegration(params.lambdaFunction), {
-  //     operationName: params.lambdaFunction.functionName,
-  //     ...(params.isPublic ? {} : { authorizer: this.authorizer }),
-  //   });
-  // }
 }
