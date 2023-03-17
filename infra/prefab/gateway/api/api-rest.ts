@@ -3,6 +3,7 @@ import {
   CognitoUserPoolsAuthorizer,
   Cors,
   IAuthorizer,
+  IRestApi,
   RequestAuthorizer,
   Resource,
   RestApi,
@@ -21,10 +22,11 @@ export type ApiRestParams = {
   cdnApiPrefab: CdnApiPrefab;
   userPool?: UserPool;
   customAuthorizerHandler?: IFunction;
+  existingRestApiId?: string;
 };
 
 export class ApiRestPrefab extends Construct {
-  public readonly api: RestApi;
+  public readonly api: IRestApi;
   public readonly authorizer: IAuthorizer;
   public readonly basePath: Resource;
 
@@ -43,6 +45,8 @@ export class ApiRestPrefab extends Construct {
         handler: params.customAuthorizerHandler,
       });
     }
+
+    if (params.existingRestApiId) this.api = RestApi.fromRestApiId(this, 'RestApi', params.existingRestApiId);
 
     this.api = new RestApi(this, 'RestApi', {
       restApiName: getResourceName('', service.props),

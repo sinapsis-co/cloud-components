@@ -1,4 +1,5 @@
 import { CfnOutput } from 'aws-cdk-lib';
+import { RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import {
   AllowedMethods,
@@ -10,7 +11,7 @@ import {
   PriceClass,
   ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
-import { HttpOrigin, HttpOriginProps, LoadBalancerV2Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
+import { HttpOrigin, HttpOriginProps, LoadBalancerV2Origin, RestApiOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { ApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
@@ -20,14 +21,17 @@ import { getDomain } from '../../../common/naming/get-domain';
 import { getLogicalName } from '../../../common/naming/get-logical-name';
 import { getCloudFrontName, getResourceName } from '../../../common/naming/get-resource-name';
 import { Service } from '../../../common/service';
+import { SynthError } from '../../../common/synth/synth-error';
 import { WafPrefab } from '../../networking/waf';
 import { PrivateBucketPrefab } from '../../storage/bucket/private-bucket';
 import { PublicAlbPrefab } from '../alb-public';
+import { ApiRestPrefab } from '../api/api-rest';
 
 export type CdnApiConstructParams = {
   subDomain: string;
   certificate: ICertificate;
   albDefaultBehavior?: PublicAlbPrefab;
+  restApiDefaultBehavior?: ApiRestPrefab;
   waf?: WafPrefab;
   skipRecord?: true;
 };
@@ -40,7 +44,7 @@ export class CdnApiPrefab extends Construct {
   private readonly apiGatewayRequestPolicy: OriginRequestPolicy;
   private readonly apiGatewayCachePolicy: CachePolicy;
   private readonly apiGatewayBehaviorOptions: Omit<BehaviorOptions, 'origin'>;
-  private readonly albBehaviorOptions: Omit<BehaviorOptions, 'origin'>;
+  private readonly unrestrictedBehaviorOptions: Omit<BehaviorOptions, 'origin'>;
 
   constructor(service: Service, params: CdnApiConstructParams) {
     super(service, getLogicalName(CdnApiPrefab.name, params.subDomain));
@@ -48,6 +52,9 @@ export class CdnApiPrefab extends Construct {
     this.service = service;
     this.domain = getDomain(params.subDomain, service.props);
     this.baseUrl = `https://${this.domain}/`;
+
+    if (params.albDefaultBehavior && params.restApiDefaultBehavior)
+      throw new SynthError('Only alb or api can be default behavior', service.props);
 
     this.apiGatewayCachePolicy = new CachePolicy(this, 'CachePolicy', {
       cachePolicyName: getCloudFrontName('ApiGateway', 'CachePolicy', this.service.props),
@@ -79,7 +86,7 @@ export class CdnApiPrefab extends Construct {
       viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
     };
 
-    this.albBehaviorOptions = {
+    this.unrestrictedBehaviorOptions = {
       compress: true,
       cachePolicy: CachePolicy.CACHING_DISABLED,
       originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
@@ -87,22 +94,31 @@ export class CdnApiPrefab extends Construct {
       viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
     };
 
-    const defaultBehavior: BehaviorOptions = params.albDefaultBehavior
-      ? {
-          origin: new LoadBalancerV2Origin(params.albDefaultBehavior?.alb, {
-            originId: getCloudFrontName('Origin', 'Default', this.service.props),
-          }),
-          ...this.albBehaviorOptions,
-        }
-      : {
-          origin: new HttpOrigin(
-            new PrivateBucketPrefab(service, { bucketName: 'default-origin' }).bucket.bucketDomainName,
-            {
-              originId: getCloudFrontName('Origin', 'Default', this.service.props),
-            }
-          ),
-          ...this.apiGatewayBehaviorOptions,
-        };
+    let defaultBehavior: BehaviorOptions = {
+      origin: new HttpOrigin(
+        new PrivateBucketPrefab(service, { bucketName: 'default-origin' }).bucket.bucketDomainName,
+        { originId: getCloudFrontName('Origin', 'Default', this.service.props) }
+      ),
+      ...this.apiGatewayBehaviorOptions,
+    };
+
+    if (params.albDefaultBehavior) {
+      defaultBehavior = {
+        origin: new LoadBalancerV2Origin(params.albDefaultBehavior.alb, {
+          originId: getCloudFrontName('Origin', 'Default', this.service.props),
+        }),
+        ...this.unrestrictedBehaviorOptions,
+      };
+    }
+
+    if (params.restApiDefaultBehavior) {
+      defaultBehavior = {
+        origin: new RestApiOrigin(params.restApiDefaultBehavior.api as RestApi, {
+          originId: getCloudFrontName('Origin', 'Default', this.service.props),
+        }),
+        ...this.unrestrictedBehaviorOptions,
+      };
+    }
 
     this.distribution = new Distribution(this, 'Distribution', {
       enabled: true,
@@ -137,7 +153,7 @@ export class CdnApiPrefab extends Construct {
     this.distribution.addBehavior(
       `/${basePath}/*`,
       new LoadBalancerV2Origin(alb, { originId: getCloudFrontName('Origin', basePath, this.service.props) }),
-      this.albBehaviorOptions
+      this.unrestrictedBehaviorOptions
     );
   }
 }
