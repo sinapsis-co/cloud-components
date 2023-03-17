@@ -1,5 +1,9 @@
 package=$1
 
+branch=$(git branch | grep \* | cut -d' ' -f2)
+
+major=$(grep -n "version" package.json | cut -d':' -f3 | cut -d'"' -f2 | cut -d'.' -f1)
+
 cd $package
 version=$(grep -n "version" package.json | cut -d':' -f3 | cut -d'"' -f2)
 inm=$(echo $version | cut -d'.' -f1 -f2)
@@ -11,5 +15,5 @@ cd .dist
 yarn publish --new-version $inm.$current --no-git-tag-version
 cp package.json ../package.json
 cd ..
-git add . && git commit -m "$package-$inm.$current" && git push origin dev
+git add . && git commit -m "$package-$inm.$current" && git push origin $branch
 cd ..
