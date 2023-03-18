@@ -1,5 +1,5 @@
 import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
-import { ApiConfig, ApiInterface } from '@sinapsis-co/cc-platform-v2/catalog/api';
+import { ApiConfig, ApiInterface } from '@sinapsis-co/cc-platform/catalog/api';
 import { LambdaIntegration } from 'aws-cdk-lib/aws-apigateway';
 import { HttpMethod } from 'aws-cdk-lib/aws-events';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';

@@ -1,4 +1,4 @@
-import { ApiConfig, ApiInterface, TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api';
+import { ApiConfig, ApiInterface, TablePermission } from '@sinapsis-co/cc-platform/catalog/api';
 import { Duration } from 'aws-cdk-lib';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';

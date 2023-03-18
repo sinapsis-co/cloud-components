@@ -3,7 +3,7 @@ import { AttributeType, BillingMode, StreamViewType, Table } from 'aws-cdk-lib/a
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
-import { TablePermission } from '@sinapsis-co/cc-platform-v2/catalog/api';
+import { TablePermission } from '@sinapsis-co/cc-platform/catalog/api';
 import { getLogicalName } from '../../../common/naming/get-logical-name';
 import { getResourceName } from '../../../common/naming/get-resource-name';
 import { Service } from '../../../common/service';

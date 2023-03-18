@@ -1,11 +1,11 @@
 import { CorsHttpMethod, HttpApi, HttpMethod, IHttpRouteAuthorizer } from '@aws-cdk/aws-apigatewayv2-alpha';
 import {
-  HttpLambdaAuthorizer,
-  HttpLambdaResponseType,
-  HttpUserPoolAuthorizer,
+    HttpLambdaAuthorizer,
+    HttpLambdaResponseType,
+    HttpUserPoolAuthorizer
 } from '@aws-cdk/aws-apigatewayv2-authorizers-alpha';
 import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
-import { ApiConfig, ApiInterface } from '@sinapsis-co/cc-platform-v2/catalog/api';
+import { ApiConfig, ApiInterface } from '@sinapsis-co/cc-platform/catalog/api';
 import { CfnOutput, Duration, Fn } from 'aws-cdk-lib';
 import { UserPool, UserPoolClient } from 'aws-cdk-lib/aws-cognito';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';

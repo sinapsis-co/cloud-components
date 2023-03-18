@@ -1,12 +1,12 @@
 import { CfnOutput, Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import {
-  AllowedMethods,
-  CachePolicy,
-  Distribution,
-  OriginRequestPolicy,
-  PriceClass,
-  ViewerProtocolPolicy,
+    AllowedMethods,
+    CachePolicy,
+    Distribution,
+    OriginRequestPolicy,
+    PriceClass,
+    ViewerProtocolPolicy
 } from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
@@ -15,7 +15,7 @@ import { HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 
-import { EventConfig } from '@sinapsis-co/cc-platform-v2/catalog/event';
+import { EventConfig } from '@sinapsis-co/cc-platform/catalog/event';
 import { getDomain } from '../../../common/naming/get-domain';
 import { getLogicalName } from '../../../common/naming/get-logical-name';
 import { getCloudFrontName, getResourceName } from '../../../common/naming/get-resource-name';

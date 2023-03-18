@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { callApi } from '@sinapsis-co/cc-platform/integrations/api';
 import { SNSHandler } from 'aws-lambda';
-import { callApi } from '@sinapsis-co/cc-platform-v2/integrations/api';
-import { Slack } from '../../integrations';
-import { getPipelineDetail } from '../../platform/get-pipeline-detail';
 import { SecretsManager } from 'aws-sdk';
 import { SlackObject } from '../../index';
+import { Slack } from '../../integrations';
+import { getPipelineDetail } from '../../platform/get-pipeline-detail';
 const sm = new SecretsManager();
 
 export type PipelineNotification = {

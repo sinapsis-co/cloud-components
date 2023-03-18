@@ -1,4 +1,4 @@
-import { SecretConfig } from '@sinapsis-co/cc-platform-v2/catalog/secret';
+import { SecretConfig } from '@sinapsis-co/cc-platform/catalog/secret';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { CfnSecret } from 'aws-cdk-lib/aws-secretsmanager';

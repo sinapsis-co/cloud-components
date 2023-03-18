@@ -3,7 +3,7 @@ import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
-import { EventConfig } from '@sinapsis-co/cc-platform-v2/catalog/event';
+import { EventConfig } from '@sinapsis-co/cc-platform/catalog/event';
 import { getLogicalName } from '../../../../common/naming/get-logical-name';
 import { getShortResourceName } from '../../../../common/naming/get-resource-name';
 import { Service } from '../../../../common/service';
