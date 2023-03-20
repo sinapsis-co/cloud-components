@@ -1,5 +1,5 @@
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
+import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import { orderIncomePaid } from 'services/business/order/catalog/event/income';
 import { inventoryAllocationEvent } from '../../catalog';
 import { getAllocationInventoryByOrder } from '../../platform/allocation-inventory-by-order';

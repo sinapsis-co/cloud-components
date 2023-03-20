@@ -1,8 +1,8 @@
-import { userProfileRepository } from 'services/business/identity/repository/user-profile-repository';
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
-import { updateCognitoUser } from '@sinapsis-co/cc-platform-v2/integrations/cognito/admin-ops/update-user-att';
-import { cognitoUpdateStandardMapper } from 'services/business/identity/platform/cognito-mapper';
+import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
+import { updateCognitoUser } from '@sinapsis-co/cc-platform/integrations/cognito/admin-ops/update-user-att';
 import { identityApi } from 'services/business/identity/catalog';
+import { cognitoUpdateStandardMapper } from 'services/business/identity/platform/cognito-mapper';
+import { userProfileRepository } from 'services/business/identity/repository/user-profile-repository';
 
 export const handler = apiHandler<identityApi.profileUpdate.Interface>(async (_, req) => {
   const { tenantId, sub, email } = req.claims;

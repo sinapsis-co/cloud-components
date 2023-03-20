@@ -1,9 +1,9 @@
-import { repository } from '@sinapsis-co/cc-platform-v2/repository';
+import { repository } from '@sinapsis-co/cc-platform/repository';
 import {
-  UserProfileBackoffice,
-  UserProfileBackofficeBuilder,
-  UserProfileBackofficeCreate,
-  UserProfileBackofficeStore,
+    UserProfileBackoffice,
+    UserProfileBackofficeBuilder,
+    UserProfileBackofficeCreate,
+    UserProfileBackofficeStore
 } from '../entities/user-profile';
 
 export const userProfileRepository = repository<UserProfileBackofficeBuilder>({

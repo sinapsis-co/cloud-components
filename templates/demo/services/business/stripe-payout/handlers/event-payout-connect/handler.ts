@@ -1,5 +1,5 @@
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
+import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import { payoutGatewayExternal } from 'services/business/payout/catalog/event/payout';
 import { Webhook } from 'services/support/stripe/catalog/event';
 import Stripe from 'stripe';

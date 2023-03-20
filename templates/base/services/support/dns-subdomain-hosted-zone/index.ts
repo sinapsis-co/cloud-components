@@ -1,5 +1,5 @@
-import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { DnsSubdomainHostedZonePrefab } from '@sinapsis-co/cc-infra-v2/prefab/networking/dns-subdomain-hosted-zone';
+import { Service } from '@sinapsis-co/cc-infra/common/service';
+import { DnsSubdomainHostedZonePrefab } from '@sinapsis-co/cc-infra/prefab/networking/dns-subdomain-hosted-zone';
 import { GlobalCoordinator } from '../../../config/config-type';
 
 type Deps = Record<string, never>;

@@ -1,5 +1,5 @@
-import { EventConfig, EventInterface } from '@sinapsis-co/cc-platform-v2/catalog/event';
-import { OtherRepoEvent, otherRepo } from '../../repository/other';
+import { EventConfig, EventInterface } from '@sinapsis-co/cc-platform/catalog/event';
+import { otherRepo, OtherRepoEvent } from '../../repository/other';
 
 export type Event = EventInterface<OtherRepoEvent['deleted']>;
 

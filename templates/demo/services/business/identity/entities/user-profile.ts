@@ -1,10 +1,10 @@
 import {
-  Entity,
-  EntityBuilder,
-  EntityCreate,
-  EntityStore,
-  EntityUpdate,
-} from '@sinapsis-co/cc-platform-v2/repository/interface';
+    Entity,
+    EntityBuilder,
+    EntityCreate,
+    EntityStore,
+    EntityUpdate
+} from '@sinapsis-co/cc-platform/repository/interface';
 import { AuthScope } from '../platform/authorization';
 import { FullLocation } from './user-full-location';
 

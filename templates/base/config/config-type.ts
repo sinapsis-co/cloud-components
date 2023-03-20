@@ -1,11 +1,11 @@
-import { Coordinator } from '@sinapsis-co/cc-infra-v2/common/coordinator';
+import { Coordinator } from '@sinapsis-co/cc-infra/common/coordinator';
 import {
-  BaseGlobalConstConfig,
-  BaseGlobalDeployTargetConfig,
-  BaseGlobalEnv,
-  BaseGlobalEnvConfig,
-  BaseGlobalProps,
-} from '@sinapsis-co/cc-infra-v2/common/synth/props-types';
+    BaseGlobalConstConfig,
+    BaseGlobalDeployTargetConfig,
+    BaseGlobalEnv,
+    BaseGlobalEnvConfig,
+    BaseGlobalProps
+} from '@sinapsis-co/cc-infra/common/synth/props-types';
 
 export type Subdomain = {
   ssrLanding: string;

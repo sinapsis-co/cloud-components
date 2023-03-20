@@ -1,4 +1,4 @@
-import { repository } from '@sinapsis-co/cc-platform-v2/repository';
+import { repository } from '@sinapsis-co/cc-platform/repository';
 import { Price, PriceBuilder, PriceCreate, PriceStore } from '../entities/price';
 
 export const priceRepository = repository<PriceBuilder>({

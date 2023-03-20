@@ -1,7 +1,7 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { PrivateBucket } from '@sinapsis-co/cc-infra-v2/prefab/bucket/private-bucket';
-import { RuntimeSecret } from '@sinapsis-co/cc-infra-v2/prefab/config/runtime-secret';
-import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { PrivateBucket } from '@sinapsis-co/cc-infra/prefab/bucket/private-bucket';
+import { RuntimeSecret } from '@sinapsis-co/cc-infra/prefab/config/runtime-secret';
+import { ApiAggregate } from '@sinapsis-co/cc-infra/prefab/function/api-function/api-aggregate';
 import { GlobalProps } from 'config/config-type';
 import { GlobalServiceDependencies } from '..';
 import * as catalog from './catalog';

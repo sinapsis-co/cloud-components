@@ -1,4 +1,4 @@
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
+import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import { orderIncomeExpired } from '../../catalog/event/income';
 import { Order, OrderIncome } from '../../entities';
 import { orderRepo } from '../../repository';

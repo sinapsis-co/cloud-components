@@ -1,7 +1,7 @@
-import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
-import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
+import { getSecret } from '@sinapsis-co/cc-platform/config/secret/get-secret';
+import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
+import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
+import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import { eventsStripe, secretsStripe } from 'services/support/stripe/catalog';
 import { getStripeClient } from 'services/support/stripe/platform';
 import { webHookConnect } from '../../catalog/api';

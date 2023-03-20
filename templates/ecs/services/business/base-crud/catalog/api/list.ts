@@ -1,10 +1,10 @@
 import {
-  ApiConfig,
-  ApiInterface,
-  EmptyObject,
-  PaginatedQueryParams,
-  PaginatedResponse,
-} from '@sinapsis-co/cc-platform-v2/catalog/api';
+    ApiConfig,
+    ApiInterface,
+    EmptyObject,
+    PaginatedQueryParams,
+    PaginatedResponse
+} from '@sinapsis-co/cc-platform/catalog/api';
 import { Base } from '../../entities/base';
 
 export type Interface = ApiInterface<{

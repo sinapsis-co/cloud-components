@@ -1,11 +1,11 @@
-import { userProfileRepository } from 'services/business/identity/repository/user-profile-repository';
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
+import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
+import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
+import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
+import { uuid } from '@sinapsis-co/cc-platform/lib/uuid';
 import { identityApi } from 'services/business/identity/catalog';
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
-import { notificationEvent } from '../../../../support/notifications/catalog';
-import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
+import { userProfileRepository } from 'services/business/identity/repository/user-profile-repository';
 import { UserInviteTemplate } from '../../../../../notifications/templates/user-invite';
-import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
+import { notificationEvent } from '../../../../support/notifications/catalog';
 
 export const handler = apiHandler<identityApi.memberCreate.Interface>(async (_, req) => {
   const { tenantId, companyName } = req.claims;

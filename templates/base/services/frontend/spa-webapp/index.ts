@@ -1,5 +1,5 @@
-import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { SpaPrefab } from '@sinapsis-co/cc-infra-v2/prefab/frontend/spa';
+import { Service } from '@sinapsis-co/cc-infra/common/service';
+import { SpaPrefab } from '@sinapsis-co/cc-infra/prefab/frontend/spa';
 
 import { GlobalCoordinator } from '../../../config/config-type';
 import { Identity } from '../../business/identity';

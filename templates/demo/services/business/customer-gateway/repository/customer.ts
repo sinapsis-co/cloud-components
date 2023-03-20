@@ -1,4 +1,4 @@
-import { repository } from '@sinapsis-co/cc-platform-v2/repository';
+import { repository } from '@sinapsis-co/cc-platform/repository';
 import { Customer, CustomerBuilder, CustomerCreate, CustomerStore } from '../entities/customer';
 
 export const customerRepository = repository<CustomerBuilder>({

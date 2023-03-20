@@ -1,5 +1,5 @@
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
+import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import { orderRepo } from 'services/business/order/repository';
 import { transactionCreate } from 'services/business/transaction/catalog/event';
 import { TransactionStatus } from 'services/business/transaction/entities';

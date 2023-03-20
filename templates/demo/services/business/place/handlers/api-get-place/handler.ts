@@ -1,4 +1,4 @@
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
+import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
 import { placeApi } from '../../catalog';
 import { placeRepo } from '../../repository/place';
 

@@ -1,5 +1,5 @@
-import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
+import { getSecret } from '@sinapsis-co/cc-platform/config/secret/get-secret';
+import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import { secretsStripe } from 'services/support/stripe/catalog';
 import { getStripeClient } from 'services/support/stripe/platform';
 import Stripe from 'stripe';

@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { getGlobalProps } from '@sinapsis-co/cc-infra-v2/common/synth/get-global-props';
+import { getGlobalProps } from '@sinapsis-co/cc-infra/common/synth/get-global-props';
 import { App } from 'aws-cdk-lib';
 import { globalConstConfig, globalDeployTargetConfig, globalEnvConfig } from './config';
 

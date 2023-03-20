@@ -1,5 +1,5 @@
-import { EventConfig, EventInterface } from '@sinapsis-co/cc-platform-v2/catalog/event';
-import { BaseRepoEvent, baseRepo } from '../../repository/base';
+import { EventConfig, EventInterface } from '@sinapsis-co/cc-platform/catalog/event';
+import { baseRepo, BaseRepoEvent } from '../../repository/base';
 
 export type Event = EventInterface<BaseRepoEvent['created']>;
 

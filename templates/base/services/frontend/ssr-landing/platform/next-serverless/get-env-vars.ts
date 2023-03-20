@@ -1,4 +1,4 @@
-import { bucketGetObject } from '@sinapsis-co/cc-platform-v2/integrations/bucket';
+import { bucketGetObject } from '@sinapsis-co/cc-platform/integrations/bucket';
 
 export const getEnvVars = async (NEXT_ENV_KEY: string, RECIPE_BUCKET_NAME: string): Promise<void> => {
   if (!process.env.ENV_VARS_LOADED) {

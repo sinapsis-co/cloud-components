@@ -1,6 +1,6 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
-import { BaseFunction } from '@sinapsis-co/cc-infra-v2/prefab/function/base-function';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { ApiAggregate } from '@sinapsis-co/cc-infra/prefab/function/api-function/api-aggregate';
+import { BaseFunction } from '@sinapsis-co/cc-infra/prefab/function/base-function';
 
 import { GlobalServiceDependencies } from '..';
 import { GlobalProps } from '../../../config/config-type';

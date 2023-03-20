@@ -1,6 +1,6 @@
+import { NotificationEmailAttachment } from '@sinapsis-co/cc-platform/catalog/notifications';
 import { SES } from 'aws-sdk';
 import { createTransport } from 'nodemailer';
-import { NotificationEmailAttachment } from '@sinapsis-co/cc-platform-v2/catalog/notifications';
 import { getAttachment } from './get-attachment';
 
 const ses = new SES();

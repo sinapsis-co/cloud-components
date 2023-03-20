@@ -1,4 +1,4 @@
-import { NotificationTemplate } from '@sinapsis-co/cc-platform-v2/catalog/notifications';
+import { NotificationTemplate } from '@sinapsis-co/cc-platform/catalog/notifications';
 
 export type ConfirmationCodeTemplate = NotificationTemplate<{
   templateName: 'confirmation-code';

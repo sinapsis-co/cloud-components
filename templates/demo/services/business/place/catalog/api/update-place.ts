@@ -1,4 +1,4 @@
-import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform-v2/catalog/api';
+import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform/catalog/api';
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
 import { Place, PlaceUpdate } from '../../entities';
 

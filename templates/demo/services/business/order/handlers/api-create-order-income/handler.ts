@@ -1,6 +1,6 @@
-import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
+import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
+import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
+import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import * as api from '../../catalog/api';
 import { orderIncomePending } from '../../catalog/event/income';
 import { createOrder } from '../../lib';

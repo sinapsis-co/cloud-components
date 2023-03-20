@@ -1,6 +1,6 @@
-import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
+import { getSecret } from '@sinapsis-co/cc-platform/config/secret/get-secret';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
+import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import { secretsStripe } from 'services/support/stripe/catalog';
 import * as eventCatalog from '../../catalog/event';
 import stripeSubscription from '../../platform/subscription';

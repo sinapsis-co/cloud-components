@@ -1,5 +1,5 @@
-import { Service, Construct } from '@sinapsis-co/cc-infra-v2/common/service';
-import { DnsBaseDomainRefConstruct } from '@sinapsis-co/cc-infra-v2/services/dns-base-domain-ref';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { DnsBaseDomainRefConstruct } from '@sinapsis-co/cc-infra/services/dns-base-domain-ref';
 
 import { GlobalProps } from '../../../config/config-type';
 import { DnsSubdomainHostedZone } from '../dns-subdomain-hosted-zone';

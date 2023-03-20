@@ -1,5 +1,5 @@
-import { DnsSubdomainHostedZoneConstruct } from '@sinapsis-co/cc-infra-v2/services/dns-subdomain-hosted-zone';
-import { Service, Construct } from '@sinapsis-co/cc-infra-v2/common/service';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { DnsSubdomainHostedZoneConstruct } from '@sinapsis-co/cc-infra/services/dns-subdomain-hosted-zone';
 import { GlobalProps } from '../../../config/config-type';
 
 export class DnsSubdomainHostedZone extends Service<GlobalProps> {

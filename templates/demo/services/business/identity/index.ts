@@ -1,11 +1,11 @@
-import { getDomain } from '@sinapsis-co/cc-infra-v2/common/naming/get-domain';
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { AuthPool } from '@sinapsis-co/cc-infra-v2/prefab/auth-pool';
-import { PrivateBucket } from '@sinapsis-co/cc-infra-v2/prefab/bucket/private-bucket';
-import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
-import { CognitoAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/cognito-function/cognito-aggregate';
-import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/event-function/event-aggregate';
-import { SesEmailAddress } from '@sinapsis-co/cc-infra-v2/prefab/ses/ses-email-address';
+import { getDomain } from '@sinapsis-co/cc-infra/common/naming/get-domain';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { AuthPool } from '@sinapsis-co/cc-infra/prefab/auth-pool';
+import { PrivateBucket } from '@sinapsis-co/cc-infra/prefab/bucket/private-bucket';
+import { ApiAggregate } from '@sinapsis-co/cc-infra/prefab/function/api-function/api-aggregate';
+import { CognitoAggregate } from '@sinapsis-co/cc-infra/prefab/function/cognito-function/cognito-aggregate';
+import { EventAggregate } from '@sinapsis-co/cc-infra/prefab/function/event-function/event-aggregate';
+import { SesEmailAddress } from '@sinapsis-co/cc-infra/prefab/ses/ses-email-address';
 import { Duration } from 'aws-cdk-lib';
 import { UserPoolOperation } from 'aws-cdk-lib/aws-cognito';
 

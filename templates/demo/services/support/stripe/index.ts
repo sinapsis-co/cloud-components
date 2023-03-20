@@ -1,11 +1,11 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { RuntimeSecret } from '@sinapsis-co/cc-infra-v2/prefab/config/runtime-secret';
-import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { RuntimeSecret } from '@sinapsis-co/cc-infra/prefab/config/runtime-secret';
+import { ApiAggregate } from '@sinapsis-co/cc-infra/prefab/function/api-function/api-aggregate';
 import {
-  BehaviorOptions,
-  CachePolicy,
-  CacheQueryStringBehavior,
-  OriginRequestPolicy,
+    BehaviorOptions,
+    CachePolicy,
+    CacheQueryStringBehavior,
+    OriginRequestPolicy
 } from 'aws-cdk-lib/aws-cloudfront';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { CfnSecret } from 'aws-cdk-lib/aws-secretsmanager';

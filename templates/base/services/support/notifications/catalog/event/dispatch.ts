@@ -1,5 +1,5 @@
-import { EventConfig, EventInterface } from '@sinapsis-co/cc-platform-v2/catalog/event';
-import { NotificationMessage, NotificationTemplate } from '@sinapsis-co/cc-platform-v2/catalog/notifications';
+import { EventConfig, EventInterface } from '@sinapsis-co/cc-platform/catalog/event';
+import { NotificationMessage, NotificationTemplate } from '@sinapsis-co/cc-platform/catalog/notifications';
 
 export type Event<Template extends NotificationTemplate> = EventInterface<{
   name: 'app.notification.dispatch';

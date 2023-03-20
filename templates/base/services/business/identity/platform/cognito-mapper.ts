@@ -1,4 +1,4 @@
-import { AttributeListType } from '@sinapsis-co/cc-platform-v2/integrations/cognito';
+import { AttributeListType } from '@sinapsis-co/cc-platform/integrations/cognito';
 import { StringAttribute } from 'aws-cdk-lib/aws-cognito';
 
 import { UserCognito } from '../entities/user-cognito';

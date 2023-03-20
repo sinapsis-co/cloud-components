@@ -1,4 +1,4 @@
-import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
+import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
 import algoliasearch from 'algoliasearch';
 import { UserClaims } from '../../identity/entities/user-cognito';
 import { UserProfile } from '../../identity/entities/user-profile';

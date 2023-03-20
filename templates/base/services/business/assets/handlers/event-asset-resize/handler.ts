@@ -1,6 +1,6 @@
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
-import { bucketGetObject, bucketStreamUpload } from '@sinapsis-co/cc-platform-v2/integrations/bucket';
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
+import { bucketGetObject, bucketStreamUpload } from '@sinapsis-co/cc-platform/integrations/bucket';
+import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import sharp from 'sharp';
 import { Readable } from 'stream';
 import { assetEvent } from '../../catalog';

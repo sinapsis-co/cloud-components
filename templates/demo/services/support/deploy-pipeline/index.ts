@@ -1,5 +1,5 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { DeployPipelineConstruct } from '@sinapsis-co/cc-infra-v2/services/deploy-pipeline';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { DeployPipelineConstruct } from '@sinapsis-co/cc-infra/services/deploy-pipeline';
 
 import { GlobalProps } from '../../../config/config-type';
 

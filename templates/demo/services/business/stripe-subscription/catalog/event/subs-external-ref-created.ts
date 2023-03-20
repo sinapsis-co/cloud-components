@@ -1,4 +1,4 @@
-import { EventConfig, EventInterface } from '@sinapsis-co/cc-platform-v2/catalog/event';
+import { EventConfig, EventInterface } from '@sinapsis-co/cc-platform/catalog/event';
 import { ExternalRef } from 'services/support/stripe/entities';
 import { Subscription } from '../../entities';
 

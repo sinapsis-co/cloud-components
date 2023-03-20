@@ -1,5 +1,5 @@
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
-import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
+import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
+import { uuid } from '@sinapsis-co/cc-platform/lib/uuid';
 import { OrderIncome } from 'services/business/order/entities';
 import { Order } from 'services/business/order/entities/order';
 import { errorApi } from 'services/support/utils/api-error';

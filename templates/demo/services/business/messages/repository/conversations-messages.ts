@@ -1,10 +1,10 @@
-import { repository } from '@sinapsis-co/cc-platform-v2/repository';
-import { RepositoryEvent } from '@sinapsis-co/cc-platform-v2/repository/interface';
+import { repository } from '@sinapsis-co/cc-platform/repository';
+import { RepositoryEvent } from '@sinapsis-co/cc-platform/repository/interface';
 import {
-  ConversationsUser,
-  ConversationsUserBuilder,
-  ConversationsUserCreate,
-  ConversationsUserStore,
+    ConversationsUser,
+    ConversationsUserBuilder,
+    ConversationsUserCreate,
+    ConversationsUserStore
 } from '../entities';
 
 export const conversationsUserRepo = repository<ConversationsUserBuilder>({

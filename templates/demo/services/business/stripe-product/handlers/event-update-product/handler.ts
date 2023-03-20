@@ -1,4 +1,4 @@
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
 import { Webhook } from 'services/support/stripe/catalog/event';
 import { Stripe } from 'services/support/stripe/platform';
 import { ProductCategory } from '../../entities/product/product-category';

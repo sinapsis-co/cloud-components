@@ -1,9 +1,9 @@
-import { userProfileRepository } from 'services/business/identity/repository/user-profile-repository';
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
-import { deleteCognitoUser } from '@sinapsis-co/cc-platform-v2/integrations/cognito/admin-ops/delete-user';
-import { identityApi } from 'services/business/identity/catalog';
+import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
+import { deleteCognitoUser } from '@sinapsis-co/cc-platform/integrations/cognito/admin-ops/delete-user';
+import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import { assetEvent } from 'services/business/assets/catalog';
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
+import { identityApi } from 'services/business/identity/catalog';
+import { userProfileRepository } from 'services/business/identity/repository/user-profile-repository';
 
 export const handler = apiHandler<identityApi.memberDelete.Interface>(async (_, req) => {
   const { tenantId } = req.claims;

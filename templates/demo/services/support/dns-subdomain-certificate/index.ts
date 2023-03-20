@@ -1,6 +1,6 @@
-import { Service, Construct } from '@sinapsis-co/cc-infra-v2/common/service';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { DnsSubdomainCertificateConstruct } from '@sinapsis-co/cc-infra/services/dns-subdomain-certificate';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
-import { DnsSubdomainCertificateConstruct } from '@sinapsis-co/cc-infra-v2/services/dns-subdomain-certificate';
 
 import { GlobalProps } from '../../../config/config-type';
 import { DnsBaseDomainRef } from '../dns-base-domain-ref';

@@ -1,10 +1,10 @@
-import { Coordinator } from '@sinapsis-co/cc-infra-v2/common/coordinator';
-import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/event-function/event-aggregate';
-import { QueueFunction } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/queue-function';
-import { AssetBucketPrefab } from '@sinapsis-co/cc-infra-v2/prefab/storage/bucket/asset-bucket';
-import { PrivateBucketPrefab } from '@sinapsis-co/cc-infra-v2/prefab/storage/bucket/private-bucket';
-import { SesDomain } from '@sinapsis-co/cc-infra-v2/prefab/util/ses/ses-domain';
+import { Coordinator } from '@sinapsis-co/cc-infra/common/coordinator';
+import { Service } from '@sinapsis-co/cc-infra/common/service';
+import { EventAggregate } from '@sinapsis-co/cc-infra/prefab/compute/function/event-function/event-aggregate';
+import { QueueFunction } from '@sinapsis-co/cc-infra/prefab/compute/function/queue-function';
+import { AssetBucketPrefab } from '@sinapsis-co/cc-infra/prefab/storage/bucket/asset-bucket';
+import { PrivateBucketPrefab } from '@sinapsis-co/cc-infra/prefab/storage/bucket/private-bucket';
+import { SesDomain } from '@sinapsis-co/cc-infra/prefab/util/ses/ses-domain';
 
 import { DnsDomainRef } from 'services/support/dns-domain-ref';
 import { DnsSubdomainHostedZone } from 'services/support/dns-subdomain-hosted-zone';

@@ -1,4 +1,4 @@
-import { SecretConfig, SecretInterface } from '@sinapsis-co/cc-platform-v2/catalog/secret';
+import { SecretConfig, SecretInterface } from '@sinapsis-co/cc-platform/catalog/secret';
 
 export type Secret = SecretInterface<{
   name: 'twilio';

@@ -1,4 +1,4 @@
-import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
+import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
 import { Stock } from 'services/business/stock/entities';
 import { stockRepo } from 'services/business/stock/repository/stock';
 

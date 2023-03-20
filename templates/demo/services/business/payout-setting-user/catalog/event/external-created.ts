@@ -1,4 +1,4 @@
-import { EventConfig } from '@sinapsis-co/cc-platform-v2/catalog/event';
+import { EventConfig } from '@sinapsis-co/cc-platform/catalog/event';
 import { PayoutUser } from '../../entities';
 
 export type Event = {

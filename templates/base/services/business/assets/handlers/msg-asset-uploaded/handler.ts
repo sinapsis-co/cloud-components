@@ -1,5 +1,5 @@
-import { queueBatchHandler } from '@sinapsis-co/cc-platform-v2/handler/queue/queue-batch-handler';
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
+import { queueBatchHandler } from '@sinapsis-co/cc-platform/handler/queue/queue-batch-handler';
+import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import { S3Event } from 'aws-lambda';
 import { assetEvent } from '../../catalog';
 import { Asset } from '../../entities/asset';

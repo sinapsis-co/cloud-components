@@ -1,10 +1,7 @@
 import {
-  ApiInterface,
-  EmptyObject,
-  ApiConfig,
-  PaginatedResponse,
-  PaginatedQueryParams,
-} from '@sinapsis-co/cc-platform-v2/catalog/api';
+    ApiConfig, ApiInterface,
+    EmptyObject, PaginatedQueryParams, PaginatedResponse
+} from '@sinapsis-co/cc-platform/catalog/api';
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
 import { Base } from '../../entities/base';
 

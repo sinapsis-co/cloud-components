@@ -1,5 +1,5 @@
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
-import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
+import { uuid } from '@sinapsis-co/cc-platform/lib/uuid';
 import { OrderStatus } from 'services/business/order/entities';
 import { transactionCreate } from '../../catalog/event';
 import { TransactionStatus } from '../../entities';

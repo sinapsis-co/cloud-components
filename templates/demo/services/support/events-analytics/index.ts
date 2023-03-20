@@ -1,5 +1,5 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { EventsAnalyticsPrefab } from '@sinapsis-co/cc-infra-v2/services/events-analytics';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { EventsAnalyticsPrefab } from '@sinapsis-co/cc-infra/services/events-analytics';
 
 import { GlobalProps } from '../../../config/config-type';
 import { CustomEventBus } from '../custom-event-bus';

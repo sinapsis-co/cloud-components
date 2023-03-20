@@ -1,4 +1,4 @@
-import { EventConfig, EventInterface } from '@sinapsis-co/cc-platform-v2/catalog/event';
+import { EventConfig, EventInterface } from '@sinapsis-co/cc-platform/catalog/event';
 import { AssetKeyGeneratorParams, ResizeMiddleware } from 'services/business/assets/entities/asset';
 import { AssetType } from 'services/business/assets/lib/assets-type';
 

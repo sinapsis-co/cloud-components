@@ -1,4 +1,4 @@
-import { PaginatedResponse } from '@sinapsis-co/cc-platform-v2/catalog/api';
+import { PaginatedResponse } from '@sinapsis-co/cc-platform/catalog/api';
 import { Stock } from '../entities';
 import { stockRepo } from '../repository/stock';
 

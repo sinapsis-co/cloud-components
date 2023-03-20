@@ -1,5 +1,5 @@
-import { ApiInterface, EmptyObject, ApiConfig } from '@sinapsis-co/cc-platform-v2/catalog/api';
-import { Schemy } from '@sinapsis-co/cc-platform-v2/lib/schemy';
+import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform/catalog/api';
+import { Schemy } from '@sinapsis-co/cc-platform/lib/schemy';
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
 import { Other, OtherUpdate } from '../../entities/other';
 

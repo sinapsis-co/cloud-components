@@ -1,5 +1,5 @@
-import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
+import { getSecret } from '@sinapsis-co/cc-platform/config/secret/get-secret';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
 import { secretsStripe } from 'services/support/stripe/catalog';
 import { Webhook } from 'services/support/stripe/catalog/event';
 import { AcceptedCurrencies } from 'services/support/stripe/entities';

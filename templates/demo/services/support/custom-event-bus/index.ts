@@ -1,6 +1,6 @@
-import { Service, Construct } from '@sinapsis-co/cc-infra-v2/common/service';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { CustomEventBusConstruct } from '@sinapsis-co/cc-infra/services/custom-event-bus';
 import { EventBus } from 'aws-cdk-lib/aws-events';
-import { CustomEventBusConstruct } from '@sinapsis-co/cc-infra-v2/services/custom-event-bus';
 
 import { GlobalProps } from '../../../config/config-type';
 

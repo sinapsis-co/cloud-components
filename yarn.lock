@@ -1692,6 +1692,21 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@sinapsis-co/cc-platform-v2@^0.1.115":
+  version "0.1.120"
+  resolved "https://npm.pkg.github.com/download/@sinapsis-co/cc-platform-v2/0.1.120/912d4384a27cab217e5e207c73baee2d87116293#912d4384a27cab217e5e207c73baee2d87116293"
+  integrity sha512-oozeqX2zacG2m/vJFd4MgRbyL0kf6GsC8FSxIohVvhB3HLbbOP4ofhmyWfAlSHV4tAkDJjWq0xBZFxIPt4qn6Q==
+  dependencies:
+    "@types/html-minifier-terser" "^6.1.0"
+    aws-lambda "^1.0.7"
+    dayjs "^1.11.0"
+    html-minifier-terser "^7.0.0-alpha.1"
+    mustache "^4.2.0"
+    node-fetch "^3.0.0"
+    nodemailer "^6.7.5"
+    schemy-ts "^1.5.6"
+    uuid "^8.3.2"
+
 "@tsconfig/node10@^1.0.7":
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/@tsconfig/node10/-/node10-1.0.9.tgz#df4907fc07a886922637b15e02d4cebc4c0021b2"

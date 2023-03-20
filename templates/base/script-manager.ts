@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { executeConfigCommand, executeOutputCommand, getCommandSignature } from '@sinapsis-co/cc-infra-v2/script';
+import { executeConfigCommand, executeOutputCommand, getCommandSignature } from '@sinapsis-co/cc-infra/script';
 import { readFileSync } from 'fs';
 import { globalConstConfig, globalDeployTargetConfig, globalEnvConfig } from './config';
 

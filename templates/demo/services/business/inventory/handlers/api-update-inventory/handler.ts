@@ -1,8 +1,8 @@
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
+import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
+import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
+import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import { inventoryApi, inventoryEvent } from '../../catalog';
 import { inventoryRepo } from '../../repository/inventory';
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
-import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
 
 export const handler = apiHandler<inventoryApi.updateInventory.Interface>(async (_, req) => {
 

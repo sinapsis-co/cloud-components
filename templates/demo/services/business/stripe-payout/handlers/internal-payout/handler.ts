@@ -1,4 +1,4 @@
-import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
+import { getSecret } from '@sinapsis-co/cc-platform/config/secret/get-secret';
 import { secretsStripe } from 'services/support/stripe/catalog';
 import Stripe from 'stripe';
 import { StripePayout } from '../../entities';

@@ -1,4 +1,4 @@
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
 import { getCustomerByExternal } from 'services/business/customer-gateway/platform';
 import { InvoicePaid } from 'services/support/stripe/catalog/event/webhook';
 import Stripe from 'stripe';

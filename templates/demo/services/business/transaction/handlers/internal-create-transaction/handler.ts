@@ -1,4 +1,4 @@
-import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
+import { uuid } from '@sinapsis-co/cc-platform/lib/uuid';
 import { Order, OrderStatus } from 'services/business/order/entities';
 import { Payment } from 'services/business/payment/entities';
 import { Transaction, TransactionStatus } from '../../entities';

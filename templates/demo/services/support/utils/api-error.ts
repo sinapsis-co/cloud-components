@@ -1,4 +1,4 @@
-import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
+import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
 
 export const errorApi = ({
   message,

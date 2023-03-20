@@ -1,10 +1,10 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { ParameterSecret } from '@sinapsis-co/cc-infra-v2/prefab/config/parameter-secret';
-import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { ParameterSecret } from '@sinapsis-co/cc-infra/prefab/config/parameter-secret';
+import { ApiAggregate } from '@sinapsis-co/cc-infra/prefab/function/api-function/api-aggregate';
 import {
-  FargateContainerConstruct,
-  FargatePerformanceTunning,
-} from '@sinapsis-co/cc-infra-v2/services/fargate-container';
+    FargateContainerConstruct,
+    FargatePerformanceTunning
+} from '@sinapsis-co/cc-infra/services/fargate-container';
 import { Duration } from 'aws-cdk-lib';
 import { Secret } from 'aws-cdk-lib/aws-ecs';
 

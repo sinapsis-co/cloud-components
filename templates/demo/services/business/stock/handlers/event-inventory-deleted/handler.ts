@@ -1,4 +1,4 @@
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
 import { inventoryEvent } from 'services/business/inventory/catalog';
 import { stockRepo } from '../../repository/stock';
 

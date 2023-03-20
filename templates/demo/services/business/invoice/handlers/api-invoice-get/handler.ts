@@ -1,4 +1,4 @@
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
+import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
 import { invoiceApi } from '../../catalog';
 import { invoiceRepository } from '../../repository/invoice';
 export const handler = apiHandler<invoiceApi.get.Interface>(async (_, req) => {

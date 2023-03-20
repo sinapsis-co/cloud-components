@@ -1,4 +1,4 @@
-import { repository } from '@sinapsis-co/cc-platform-v2/repository';
+import { repository } from '@sinapsis-co/cc-platform/repository';
 import { WaitList, WaitListUserBuilder, WaitListUserCreate, WaitListUserStore } from '../entities/wait-list-user';
 
 export const waitListRepository = repository<WaitListUserBuilder>({

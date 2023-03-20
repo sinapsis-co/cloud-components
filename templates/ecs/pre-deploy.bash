@@ -31,5 +31,5 @@ sub="isDemoProject: false,"
 echo "${input/$patten/$sub}" >config/index.ts
 
 # Adding dependencies
-yarn add -W @sinapsis-co/cc-infra-v2
-yarn add -W @sinapsis-co/cc-platform-v2
+yarn add -W @sinapsis-co/cc-infra
+yarn add -W @sinapsis-co/cc-platform

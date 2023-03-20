@@ -1,5 +1,5 @@
-import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
+import { getSecret } from '@sinapsis-co/cc-platform/config/secret/get-secret';
+import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
 import { secretsStripe } from 'services/support/stripe/catalog';
 import { getStripeClient } from 'services/support/stripe/platform';
 import { metaDataUser } from 'services/support/stripe/utils/user-metadata';

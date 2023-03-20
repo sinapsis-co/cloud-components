@@ -1,5 +1,5 @@
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
-import { getSecret } from '@sinapsis-co/cc-platform-v2/integrations/config/secret/get-secret';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
+import { getSecret } from '@sinapsis-co/cc-platform/integrations/config/secret/get-secret';
 import { BaseRepoEvent } from '../../../base-crud/repository/base';
 import { searchSecret } from '../../catalog';
 import { algoliaSyncEntity } from '../../platform/index-sync';

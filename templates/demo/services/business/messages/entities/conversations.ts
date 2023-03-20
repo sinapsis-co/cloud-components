@@ -1,4 +1,4 @@
-import { Entity, EntityBuilder, EntityCreate, EntityStore } from '@sinapsis-co/cc-platform-v2/repository/interface';
+import { Entity, EntityBuilder, EntityCreate, EntityStore } from '@sinapsis-co/cc-platform/repository/interface';
 import { ConversationState } from 'twilio/lib/rest/conversations/v1/conversation';
 
 export type ConversationsBuilder = EntityBuilder<{

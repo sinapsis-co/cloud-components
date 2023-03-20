@@ -1,6 +1,6 @@
-import { NotificationMessage } from '@sinapsis-co/cc-platform-v2/catalog/notifications';
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
-import { sendMessages } from '@sinapsis-co/cc-platform-v2/integrations/queue/send-messages';
+import { NotificationMessage } from '@sinapsis-co/cc-platform/catalog/notifications';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
+import { sendMessages } from '@sinapsis-co/cc-platform/integrations/queue/send-messages';
 import { notificationEvent } from '../../catalog';
 
 export const handler = eventHandler<notificationEvent.dispatch.Event<any>>(async (event) => {

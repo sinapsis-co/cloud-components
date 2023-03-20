@@ -1,5 +1,5 @@
-import { ApiConfig, ApiInterface, ApiInterfaceRequest } from '@sinapsis-co/cc-platform-v2/catalog/api';
-import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
+import { ApiConfig, ApiInterface, ApiInterfaceRequest } from '@sinapsis-co/cc-platform/catalog/api';
+import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
 
 export type AuthScope = 'owner' | 'member';
 

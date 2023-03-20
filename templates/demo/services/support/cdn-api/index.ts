@@ -1,6 +1,6 @@
-import { Service, Construct } from '@sinapsis-co/cc-infra-v2/common/service';
-import { Distribution, BehaviorOptions } from 'aws-cdk-lib/aws-cloudfront';
-import { CdnApiConstruct } from '@sinapsis-co/cc-infra-v2/services/cdn-api';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { CdnApiConstruct } from '@sinapsis-co/cc-infra/services/cdn-api';
+import { BehaviorOptions, Distribution } from 'aws-cdk-lib/aws-cloudfront';
 
 import { GlobalProps } from '../../../config/config-type';
 import { DnsSubdomainCertificate } from '../dns-subdomain-certificate';

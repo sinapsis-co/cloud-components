@@ -1,9 +1,9 @@
-import { getDomain } from '@sinapsis-co/cc-infra-v2/common/naming/get-domain';
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { RuntimeSecret } from '@sinapsis-co/cc-infra-v2/prefab/config/runtime-secret';
-import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
-import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/event-function/event-aggregate';
-import { ServiceTable } from '@sinapsis-co/cc-infra-v2/prefab/table/dynamo-table';
+import { getDomain } from '@sinapsis-co/cc-infra/common/naming/get-domain';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { RuntimeSecret } from '@sinapsis-co/cc-infra/prefab/config/runtime-secret';
+import { ApiAggregate } from '@sinapsis-co/cc-infra/prefab/function/api-function/api-aggregate';
+import { EventAggregate } from '@sinapsis-co/cc-infra/prefab/function/event-function/event-aggregate';
+import { ServiceTable } from '@sinapsis-co/cc-infra/prefab/table/dynamo-table';
 import { Duration } from 'aws-cdk-lib';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { GlobalProps } from 'config/config-type';

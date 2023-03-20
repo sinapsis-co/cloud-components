@@ -1,5 +1,5 @@
-import { repository } from '@sinapsis-co/cc-platform-v2/repository';
-import { RepositoryEvent } from '@sinapsis-co/cc-platform-v2/repository/interface';
+import { repository } from '@sinapsis-co/cc-platform/repository';
+import { RepositoryEvent } from '@sinapsis-co/cc-platform/repository/interface';
 import { Connect, ConnectBuilder, ConnectCreate, ConnectStore } from '../entities/connect';
 
 export const connectRepo = repository<ConnectBuilder>({

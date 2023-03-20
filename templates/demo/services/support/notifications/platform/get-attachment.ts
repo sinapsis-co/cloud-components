@@ -1,4 +1,4 @@
-import { NotificationEmailAttachment } from '@sinapsis-co/cc-platform-v2/catalog/notifications';
+import { NotificationEmailAttachment } from '@sinapsis-co/cc-platform/catalog/notifications';
 import { S3 } from 'aws-sdk';
 
 const s3 = new S3();

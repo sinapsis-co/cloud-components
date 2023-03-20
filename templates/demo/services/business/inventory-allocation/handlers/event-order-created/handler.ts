@@ -1,6 +1,6 @@
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
-import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
+import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
+import { uuid } from '@sinapsis-co/cc-platform/lib/uuid';
 import { orderIncomePending } from 'services/business/order/catalog/event/income';
 import { inventoryAllocationEvent } from '../../catalog';
 import { getFirstInventoryByCategoryId } from '../../platform/list-inventories';

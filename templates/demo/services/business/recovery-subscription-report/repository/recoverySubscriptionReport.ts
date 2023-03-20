@@ -1,10 +1,10 @@
-import { repository } from '@sinapsis-co/cc-platform-v2/repository';
-import { RepositoryEvent } from '@sinapsis-co/cc-platform-v2/repository/interface';
+import { repository } from '@sinapsis-co/cc-platform/repository';
+import { RepositoryEvent } from '@sinapsis-co/cc-platform/repository/interface';
 import {
-  RecoverySubscriptionReport,
-  RecoverySubscriptionReportBuilder,
-  RecoverySubscriptionReportCreate,
-  RecoverySubscriptionReportStore,
+    RecoverySubscriptionReport,
+    RecoverySubscriptionReportBuilder,
+    RecoverySubscriptionReportCreate,
+    RecoverySubscriptionReportStore
 } from '../entities/recoverySubscriptionReport';
 
 export const recoverySubscriptionReportRepo = repository<RecoverySubscriptionReportBuilder>({

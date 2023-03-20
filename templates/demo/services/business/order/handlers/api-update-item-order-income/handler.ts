@@ -1,4 +1,4 @@
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
+import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
 import { errorApi } from 'services/support/utils/api-error';
 import * as api from '../../catalog/api';
 import { Order, OrderIncome } from '../../entities';

@@ -1,4 +1,4 @@
-import { PresignedPost } from '@sinapsis-co/cc-platform-v2/integrations/bucket/presigned';
+import { PresignedPost } from '@sinapsis-co/cc-platform/integrations/bucket/presigned';
 export type PresignedPutUrl = {
   assetUrl?: string;
   presignedPost: PresignedPost;

@@ -1,5 +1,5 @@
-import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { CdnApiPrefab } from '@sinapsis-co/cc-infra-v2/prefab/gateway/cdn-api';
+import { Service } from '@sinapsis-co/cc-infra/common/service';
+import { CdnApiPrefab } from '@sinapsis-co/cc-infra/prefab/gateway/cdn-api';
 import { GlobalCoordinator } from '../../../config/config-type';
 
 import { DnsSubdomainCertificate } from '../dns-subdomain-certificate';

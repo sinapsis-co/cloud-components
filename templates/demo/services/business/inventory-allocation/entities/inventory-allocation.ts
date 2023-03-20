@@ -1,10 +1,10 @@
 import {
-  Entity,
-  EntityBuilder,
-  EntityCreate,
-  EntityStore,
-  EntityUpdate,
-} from '@sinapsis-co/cc-platform-v2/repository/interface';
+    Entity,
+    EntityBuilder,
+    EntityCreate,
+    EntityStore,
+    EntityUpdate
+} from '@sinapsis-co/cc-platform/repository/interface';
 import { Inventory } from 'services/business/inventory/entities';
 
 export type InventoryAllocationStatus = 'RESERVED' | 'TO_BE_DELIVERED' | 'ASSIGNED' | 'EXPIRED' | 'CANCELLED';

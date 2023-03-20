@@ -1,5 +1,5 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { BaseFunction } from '@sinapsis-co/cc-infra-v2/prefab/function/base-function';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { BaseFunction } from '@sinapsis-co/cc-infra/prefab/function/base-function';
 import { Duration } from 'aws-cdk-lib';
 import * as sfn from 'aws-cdk-lib/aws-stepfunctions';
 import { GlobalProps } from 'config/config-type';

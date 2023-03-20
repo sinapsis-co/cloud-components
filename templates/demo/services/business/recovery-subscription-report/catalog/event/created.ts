@@ -1,7 +1,6 @@
-import { EventConfig, EventInterface } from '@sinapsis-co/cc-platform-v2/catalog/event';
+import { EventConfig, EventInterface } from '@sinapsis-co/cc-platform/catalog/event';
 import {
-  RecoverySubscriptionReportRepoEvent,
-  recoverySubscriptionReportRepo,
+    recoverySubscriptionReportRepo, RecoverySubscriptionReportRepoEvent
 } from '../../repository/recoverySubscriptionReport';
 
 export type Event = EventInterface<RecoverySubscriptionReportRepoEvent['created']>;

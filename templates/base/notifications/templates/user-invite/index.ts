@@ -1,4 +1,4 @@
-import { NotificationTemplate } from '@sinapsis-co/cc-platform-v2/catalog/notifications';
+import { NotificationTemplate } from '@sinapsis-co/cc-platform/catalog/notifications';
 
 export type UserInviteTemplate = NotificationTemplate<{
   templateName: 'user-invite';

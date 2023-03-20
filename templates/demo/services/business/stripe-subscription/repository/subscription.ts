@@ -1,4 +1,4 @@
-import { repository } from '@sinapsis-co/cc-platform-v2/repository';
+import { repository } from '@sinapsis-co/cc-platform/repository';
 import { Subscription, SubscriptionBuilder, SubscriptionCreate, SubscriptionStore } from '../entities/subscription';
 
 export const subscriptionRepository = repository<SubscriptionBuilder>({

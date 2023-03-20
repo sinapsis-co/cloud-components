@@ -1,8 +1,8 @@
-import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
+import { getSecret } from '@sinapsis-co/cc-platform/config/secret/get-secret';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
+import { UserProfileRepoEvent } from 'services/business/identity/repository/user-profile-repository';
 import { messagesSecret } from '../../catalog';
 import { message } from '../../platform/twilio';
-import { UserProfileRepoEvent } from 'services/business/identity/repository/user-profile-repository';
 
 
 export const handler = eventHandler<UserProfileRepoEvent['updated']>(async (event) => {

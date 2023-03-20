@@ -1,6 +1,6 @@
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
-import { payoutUserRepo } from '../../repository';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
 import { settingUserExternalPayout } from '../../catalog/event';
+import { payoutUserRepo } from '../../repository';
 
 export const handler = eventHandler<settingUserExternalPayout.Event>(async ({ detail }) => {
   const { items } = await payoutUserRepo.listItem(detail.tenantId, {

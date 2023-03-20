@@ -1,4 +1,4 @@
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
 import { InvoiceCreated } from 'services/support/stripe/catalog/event/webhook';
 import Stripe from 'stripe';
 import { createOrderCycle } from '../../lib/create-order/create-order-subscription_cycle';

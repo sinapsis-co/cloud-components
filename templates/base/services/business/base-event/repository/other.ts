@@ -1,5 +1,5 @@
-import { repository } from '@sinapsis-co/cc-platform-v2/repository';
-import { RepositoryEvent } from '@sinapsis-co/cc-platform-v2/repository/interface';
+import { repository } from '@sinapsis-co/cc-platform/repository';
+import { RepositoryEvent } from '@sinapsis-co/cc-platform/repository/interface';
 import { Other, OtherBuilder, OtherCreate, OtherStore } from '../entities/other';
 
 export const otherRepo = repository<OtherBuilder>({

@@ -1,5 +1,5 @@
-import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { DeployPipelinePrefab } from '@sinapsis-co/cc-infra-v2/prefab/util/deploy-pipeline';
+import { Service } from '@sinapsis-co/cc-infra/common/service';
+import { DeployPipelinePrefab } from '@sinapsis-co/cc-infra/prefab/util/deploy-pipeline';
 import { DeployTargetName, GlobalCoordinator } from '../../../config/config-type';
 
 type Deps = Record<string, never>;

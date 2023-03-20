@@ -1,10 +1,10 @@
 import {
-  Entity,
-  EntityBuilder,
-  EntityCreate,
-  EntityStore,
-  EntityUpdate,
-} from '@sinapsis-co/cc-platform-v2/repository/interface';
+    Entity,
+    EntityBuilder,
+    EntityCreate,
+    EntityStore,
+    EntityUpdate
+} from '@sinapsis-co/cc-platform/repository/interface';
 
 export type CategoryBuilder = EntityBuilder<{
   name: 'categories';

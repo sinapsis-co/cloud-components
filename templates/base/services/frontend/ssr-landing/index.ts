@@ -1,8 +1,8 @@
-import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/event-function/event-aggregate';
-import { QueueFunction } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/queue-function';
-import { SsrPrefab } from '@sinapsis-co/cc-infra-v2/prefab/frontend/ssr';
-import { PrivateBucketPrefab } from '@sinapsis-co/cc-infra-v2/prefab/storage/bucket/private-bucket';
+import { Service } from '@sinapsis-co/cc-infra/common/service';
+import { EventAggregate } from '@sinapsis-co/cc-infra/prefab/compute/function/event-function/event-aggregate';
+import { QueueFunction } from '@sinapsis-co/cc-infra/prefab/compute/function/queue-function';
+import { SsrPrefab } from '@sinapsis-co/cc-infra/prefab/frontend/ssr';
+import { PrivateBucketPrefab } from '@sinapsis-co/cc-infra/prefab/storage/bucket/private-bucket';
 
 import { GlobalCoordinator } from '../../../config/config-type';
 import { baseRepo } from '../../business/base-crud/repository/base';

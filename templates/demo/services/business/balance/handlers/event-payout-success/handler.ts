@@ -1,4 +1,4 @@
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
 import { payoutSuccess } from 'services/business/payout/catalog/event/payout';
 import { balanceRepo } from '../../repository';
 

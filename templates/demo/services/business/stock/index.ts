@@ -1,6 +1,6 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
-import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/event-function/event-aggregate';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { ApiAggregate } from '@sinapsis-co/cc-infra/prefab/function/api-function/api-aggregate';
+import { EventAggregate } from '@sinapsis-co/cc-infra/prefab/function/event-function/event-aggregate';
 import { GlobalServiceDependencies } from '..';
 import { GlobalProps } from '../../../config/config-type';
 import { inventoryEvent } from '../inventory/catalog';

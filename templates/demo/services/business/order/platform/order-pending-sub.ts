@@ -1,4 +1,4 @@
-import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
+import { getSecret } from '@sinapsis-co/cc-platform/config/secret/get-secret';
 import { getOrCreateCustomer } from 'services/business/customer-gateway/lib';
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
 import { FullLocation } from 'services/business/identity/entities/user-full-location';

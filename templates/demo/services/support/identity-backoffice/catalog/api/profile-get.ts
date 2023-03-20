@@ -1,6 +1,6 @@
-import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform-v2/catalog/api';
-import { UserProfile } from 'services/business/identity/entities/user-profile';
+import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform/catalog/api';
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
+import { UserProfile } from 'services/business/identity/entities/user-profile';
 
 export type Interface = ApiInterface<{
   response: UserProfile;

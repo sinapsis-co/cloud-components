@@ -1,8 +1,8 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { BaseFunction } from '@sinapsis-co/cc-infra-v2/prefab/function/base-function';
-import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/event-function/event-aggregate';
-import { QueueFunction } from '@sinapsis-co/cc-infra-v2/prefab/function/queue-function';
-import { ServiceTable } from '@sinapsis-co/cc-infra-v2/prefab/table/dynamo-table';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { BaseFunction } from '@sinapsis-co/cc-infra/prefab/function/base-function';
+import { EventAggregate } from '@sinapsis-co/cc-infra/prefab/function/event-function/event-aggregate';
+import { QueueFunction } from '@sinapsis-co/cc-infra/prefab/function/queue-function';
+import { ServiceTable } from '@sinapsis-co/cc-infra/prefab/table/dynamo-table';
 import { Duration } from 'aws-cdk-lib';
 import { GlobalServiceDependencies } from '..';
 import { GlobalProps } from '../../../config/config-type';

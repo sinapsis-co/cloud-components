@@ -1,6 +1,6 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
 
-import { WebappConstruct } from '@sinapsis-co/cc-infra-v2/services/webapp';
+import { WebappConstruct } from '@sinapsis-co/cc-infra/services/webapp';
 import { FrontendGlobalServiceDeps } from '..';
 import { GlobalProps } from '../../../config/config-type';
 

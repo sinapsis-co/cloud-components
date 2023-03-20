@@ -1,4 +1,4 @@
-import { EventConfig, EventInterface } from '@sinapsis-co/cc-platform-v2/catalog/event';
+import { EventConfig, EventInterface } from '@sinapsis-co/cc-platform/catalog/event';
 import { Order } from 'services/business/order/entities';
 import { Subscription } from '../../entities';
 

@@ -1,4 +1,4 @@
-import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
+import { uuid } from '@sinapsis-co/cc-platform/lib/uuid';
 import { Asset, AssetKeyGeneratorParams } from '../entities/asset';
 
 export type AssetType = 'asset' | 'privateAsset' | 'rawAvatar' | 'avatar';

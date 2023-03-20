@@ -1,10 +1,10 @@
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
+import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
+import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
+import { uuid } from '@sinapsis-co/cc-platform/lib/uuid';
 import { inventoryApi, inventoryEvent } from '../../catalog';
-import { inventoryRepo } from '../../repository/inventory';
-import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
 import { getPlace } from '../../platform/place';
 import { getProduct } from '../../platform/product';
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
+import { inventoryRepo } from '../../repository/inventory';
 
 export const handler = apiHandler<inventoryApi.createInventory.Interface>(async (_, req) => {
 

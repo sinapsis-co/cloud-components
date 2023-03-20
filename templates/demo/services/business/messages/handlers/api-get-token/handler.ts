@@ -1,5 +1,5 @@
-import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
+import { getSecret } from '@sinapsis-co/cc-platform/config/secret/get-secret';
+import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
 import { messagesSecret } from '../../catalog';
 import * as api from '../../catalog/api';
 import { message } from '../../platform/twilio';

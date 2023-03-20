@@ -1,10 +1,10 @@
-import { getDomain } from '@sinapsis-co/cc-infra-v2/common/naming/get-domain';
-import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/api-function/api-aggregate';
-import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/event-function/event-aggregate';
-import { QueueFunction } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/queue-function';
-import { CdnAssetPrefab } from '@sinapsis-co/cc-infra-v2/prefab/gateway/cdn-asset';
-import { PrivateBucketPrefab } from '@sinapsis-co/cc-infra-v2/prefab/storage/bucket/private-bucket';
+import { getDomain } from '@sinapsis-co/cc-infra/common/naming/get-domain';
+import { Service } from '@sinapsis-co/cc-infra/common/service';
+import { ApiAggregate } from '@sinapsis-co/cc-infra/prefab/compute/function/api-function/api-aggregate';
+import { EventAggregate } from '@sinapsis-co/cc-infra/prefab/compute/function/event-function/event-aggregate';
+import { QueueFunction } from '@sinapsis-co/cc-infra/prefab/compute/function/queue-function';
+import { CdnAssetPrefab } from '@sinapsis-co/cc-infra/prefab/gateway/cdn-asset';
+import { PrivateBucketPrefab } from '@sinapsis-co/cc-infra/prefab/storage/bucket/private-bucket';
 import { Duration } from 'aws-cdk-lib';
 
 import { CdnApi } from 'services/support/cdn-api';

@@ -1,4 +1,4 @@
-import { Entity, EntityBuilder, EntityCreate, EntityStore } from '@sinapsis-co/cc-platform-v2/repository/interface';
+import { Entity, EntityBuilder, EntityCreate, EntityStore } from '@sinapsis-co/cc-platform/repository/interface';
 import { AcceptedCurrencies, ProductWithFrequency } from 'services/support/stripe/entities';
 
 export type PriceBuilder = EntityBuilder<{

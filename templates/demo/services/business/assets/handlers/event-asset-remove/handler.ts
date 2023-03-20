@@ -1,5 +1,5 @@
-import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
+import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
 import S3 from 'aws-sdk/clients/s3';
 import { assetEvent } from '../../catalog';
 import { Asset } from '../../entities/asset';

@@ -1,5 +1,5 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { CdnApiConstruct, CdnApiConstructParams } from '@sinapsis-co/cc-infra-v2/services/cdn-api';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { CdnApiConstruct, CdnApiConstructParams } from '@sinapsis-co/cc-infra/services/cdn-api';
 import { BehaviorOptions, Distribution } from 'aws-cdk-lib/aws-cloudfront';
 
 import { GlobalProps } from '../../../config/config-type';

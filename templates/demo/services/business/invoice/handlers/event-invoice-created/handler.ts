@@ -1,4 +1,4 @@
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
 import { orderIncomePending } from 'services/business/order/catalog/event/income';
 import { invoiceRepository } from '../../repository/invoice';
 

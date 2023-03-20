@@ -1,4 +1,4 @@
-import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
+import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
 import { Customer } from 'services/business/customer-gateway/entities';
 import { Order, OrderIncome } from 'services/business/order/entities';
 import { PriceCreate } from 'services/business/stripe-product/entities/price';

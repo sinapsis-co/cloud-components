@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { queueBatchHandler } from '@sinapsis-co/cc-platform-v2/handler/queue/queue-batch-handler';
+import { queueBatchHandler } from '@sinapsis-co/cc-platform/handler/queue/queue-batch-handler';
 import { ssrLandingMessage } from '../../catalog';
 import { nextServerlessRender } from '../../platform/next-serverless';
 

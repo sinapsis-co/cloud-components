@@ -1,5 +1,5 @@
-import { repository } from '@sinapsis-co/cc-platform-v2/repository';
-import { RepositoryEvent } from '@sinapsis-co/cc-platform-v2/repository/interface';
+import { repository } from '@sinapsis-co/cc-platform/repository';
+import { RepositoryEvent } from '@sinapsis-co/cc-platform/repository/interface';
 import { Order, OrderBuilder, OrderCreate, OrderIncome, OrderStore, OrderWithdrawal } from '../entities/order';
 
 export const orderRepo = repository<OrderBuilder>({

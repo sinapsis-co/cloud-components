@@ -1,9 +1,9 @@
-import { repository } from '@sinapsis-co/cc-platform-v2/repository';
+import { repository } from '@sinapsis-co/cc-platform/repository';
 import {
-  InventoryAllocation,
-  InventoryAllocationBuilder,
-  InventoryAllocationCreate,
-  InventoryAllocationStore,
+    InventoryAllocation,
+    InventoryAllocationBuilder,
+    InventoryAllocationCreate,
+    InventoryAllocationStore
 } from '../entities/inventory-allocation';
 
 export const inventoryAllocationRepo = repository<InventoryAllocationBuilder>({

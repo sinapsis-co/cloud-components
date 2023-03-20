@@ -1,4 +1,4 @@
-import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
+import { uuid } from '@sinapsis-co/cc-platform/lib/uuid';
 import { Payout } from 'services/business/payout/entities';
 import { StripePayout } from '../../entities';
 import { stripePayoutRepo } from '../../repository';

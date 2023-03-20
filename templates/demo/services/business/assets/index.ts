@@ -1,20 +1,20 @@
+import { getDomain } from '@sinapsis-co/cc-infra/common/naming/get-domain';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { PrivateBucket } from '@sinapsis-co/cc-infra/prefab/bucket/private-bucket';
+import { ApiAggregate } from '@sinapsis-co/cc-infra/prefab/function/api-function/api-aggregate';
+import { EventAggregate } from '@sinapsis-co/cc-infra/prefab/function/event-function/event-aggregate';
 import { Duration } from 'aws-cdk-lib';
-import { Architecture } from 'aws-cdk-lib/aws-lambda';
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
 import { EventBus } from 'aws-cdk-lib/aws-events';
-import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
-import { getDomain } from '@sinapsis-co/cc-infra-v2/common/naming/get-domain';
-import { PrivateBucket } from '@sinapsis-co/cc-infra-v2/prefab/bucket/private-bucket';
-import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/event-function/event-aggregate';
+import { Architecture } from 'aws-cdk-lib/aws-lambda';
 
-import { CustomEventBus } from 'services/support/custom-event-bus';
-import { CdnMedia } from 'services/support/cdn-media';
 import { CdnApi } from 'services/support/cdn-api';
-import { Identity } from '../identity';
-import { assetsTypes } from './lib/assets-type';
+import { CdnMedia } from 'services/support/cdn-media';
+import { CustomEventBus } from 'services/support/custom-event-bus';
 import { GlobalProps } from '../../../config/config-type';
+import { Identity } from '../identity';
 import { assetApi, assetEvent } from './catalog';
 import { eventConfig as rawAsset } from './catalog/event/raw-asset-uploaded';
+import { assetsTypes } from './lib/assets-type';
 
 export type AssetsDeps = {
   customEventBus: CustomEventBus;

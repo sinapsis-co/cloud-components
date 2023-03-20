@@ -1,13 +1,13 @@
-import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
-import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
+import { getSecret } from '@sinapsis-co/cc-platform/config/secret/get-secret';
+import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
+import { uuid } from '@sinapsis-co/cc-platform/lib/uuid';
+import { userProfileRepository } from 'services/business/identity/repository/user-profile-repository';
+import { errorApi } from 'services/support/utils/api-error';
 import { messagesSecret } from '../../catalog';
 import * as api from '../../catalog/api';
 import { message } from '../../platform/twilio';
 import { conversationsRepo, conversationsUserRepo } from '../../repository';
-import { userProfileRepository } from 'services/business/identity/repository/user-profile-repository';
 import { ERROR_OWN_SERVICE } from '../../utils/errors';
-import { errorApi } from 'services/support/utils/api-error';
 
 export const handler = apiHandler<api.createMessage.Interface>(
   async (_, req) => {

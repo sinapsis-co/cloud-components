@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Coordinator } from '@sinapsis-co/cc-infra-v2/common/coordinator';
+import { Coordinator } from '@sinapsis-co/cc-infra/common/coordinator';
 import { globalConstConfig, globalDeployTargetConfig, globalEnvConfig } from './config';
 import { Assets } from './services/business/assets';
 import { BaseCrud } from './services/business/base-crud';

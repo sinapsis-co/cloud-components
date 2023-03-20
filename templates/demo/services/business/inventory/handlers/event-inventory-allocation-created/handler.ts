@@ -1,8 +1,8 @@
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
+import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import { inventoryAllocationEvent } from 'services/business/inventory-allocation/catalog';
 import { inventoryEvent } from '../../catalog';
 import { inventoryRepo } from '../../repository/inventory';
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
 
 export const handler = eventHandler<inventoryAllocationEvent.created.Event>(async (event) => {
 

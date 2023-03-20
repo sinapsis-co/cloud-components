@@ -1,8 +1,8 @@
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
+import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
+import { uuid } from '@sinapsis-co/cc-platform/lib/uuid';
 import { productApi } from '../../catalog';
-import { productRepo } from '../../repository/product';
-import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
 import { getCategory } from '../../platform/category';
+import { productRepo } from '../../repository/product';
 
 export const handler = apiHandler<productApi.createProduct.Interface>(async (_, req) => {
 

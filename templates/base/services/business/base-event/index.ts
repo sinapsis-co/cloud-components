@@ -1,5 +1,5 @@
-import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/api-function/api-aggregate';
+import { Service } from '@sinapsis-co/cc-infra/common/service';
+import { ApiAggregate } from '@sinapsis-co/cc-infra/prefab/compute/function/api-function/api-aggregate';
 
 import { GlobalCoordinator } from '../../../config/config-type';
 import { CdnApi } from '../../support/cdn-api';

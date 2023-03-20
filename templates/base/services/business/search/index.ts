@@ -1,7 +1,7 @@
-import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/api-function/api-aggregate';
-import { EventAggregate } from '@sinapsis-co/cc-infra-v2/prefab/compute/function/event-function/event-aggregate';
-import { RuntimeSecret } from '@sinapsis-co/cc-infra-v2/prefab/util/config/runtime-secret';
+import { Service } from '@sinapsis-co/cc-infra/common/service';
+import { ApiAggregate } from '@sinapsis-co/cc-infra/prefab/compute/function/api-function/api-aggregate';
+import { EventAggregate } from '@sinapsis-co/cc-infra/prefab/compute/function/event-function/event-aggregate';
+import { RuntimeSecret } from '@sinapsis-co/cc-infra/prefab/util/config/runtime-secret';
 import { GlobalCoordinator } from '../../../config/config-type';
 import { CdnApi } from '../../support/cdn-api';
 import { GlobalEventBus } from '../../support/global-event-bus';

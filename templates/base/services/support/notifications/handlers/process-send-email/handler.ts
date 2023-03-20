@@ -1,8 +1,8 @@
-import { NotificationMessage } from '@sinapsis-co/cc-platform-v2/catalog/notifications/index';
-import { queueBatchHandler } from '@sinapsis-co/cc-platform-v2/handler/queue/queue-batch-handler';
-import { bucketGetObject } from '@sinapsis-co/cc-platform-v2/integrations/bucket';
-import { deliverEmail, DeliverEmailParams } from '@sinapsis-co/cc-platform-v2/integrations/notifications';
-import { renderEmailTemplate } from '@sinapsis-co/cc-platform-v2/integrations/notifications/render-template';
+import { NotificationMessage } from '@sinapsis-co/cc-platform/catalog/notifications/index';
+import { queueBatchHandler } from '@sinapsis-co/cc-platform/handler/queue/queue-batch-handler';
+import { bucketGetObject } from '@sinapsis-co/cc-platform/integrations/bucket';
+import { deliverEmail, DeliverEmailParams } from '@sinapsis-co/cc-platform/integrations/notifications';
+import { renderEmailTemplate } from '@sinapsis-co/cc-platform/integrations/notifications/render-template';
 import { Readable } from 'stream';
 
 export const handler = queueBatchHandler<NotificationMessage>(async (event, record, payload) => {

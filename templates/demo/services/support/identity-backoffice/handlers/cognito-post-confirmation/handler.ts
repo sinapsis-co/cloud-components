@@ -1,6 +1,6 @@
-import { updateCognitoUser } from '@sinapsis-co/cc-platform-v2/integrations/cognito/admin-ops/update-user-att';
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
-import { uuid } from '@sinapsis-co/cc-platform-v2/lib/uuid';
+import { updateCognitoUser } from '@sinapsis-co/cc-platform/integrations/cognito/admin-ops/update-user-att';
+import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
+import { uuid } from '@sinapsis-co/cc-platform/lib/uuid';
 import { PostConfirmationTriggerHandler } from 'aws-lambda';
 import { UserCognito } from 'services/business/identity/entities/user-cognito';
 import { cognitoToProfileMapper, cognitoUpdateCustomMapper } from 'services/business/identity/platform/cognito-mapper';

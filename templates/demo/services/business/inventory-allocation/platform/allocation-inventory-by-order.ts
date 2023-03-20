@@ -1,4 +1,4 @@
-import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
+import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
 import { InventoryAllocation } from '../entities/inventory-allocation';
 import { BY_ORDER_ID_IDX_NAME } from '../repository/gsi';
 import { inventoryAllocationRepo } from '../repository/inventory-allocation-repository';

@@ -1,4 +1,4 @@
-import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
+import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
 import { Inventory } from 'services/business/inventory/entities';
 import { BY_CATEGORY_ID_IDX_NAME } from 'services/business/inventory/repository/gsi';
 import { inventoryRepo } from 'services/business/inventory/repository/inventory';

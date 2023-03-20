@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
-import { bucketListObjects } from '@sinapsis-co/cc-platform-v2/integrations/bucket';
-import { sendMessages } from '@sinapsis-co/cc-platform-v2/integrations/queue/send-messages';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
+import { bucketListObjects } from '@sinapsis-co/cc-platform/integrations/bucket';
+import { sendMessages } from '@sinapsis-co/cc-platform/integrations/queue/send-messages';
 import { ssrLandingMessage } from '../../catalog';
 import { renderPageTypes } from '../../lib/render-page';
 

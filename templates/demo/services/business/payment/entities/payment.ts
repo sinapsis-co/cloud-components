@@ -1,4 +1,4 @@
-import { Entity, EntityBuilder, EntityCreate, EntityStore } from '@sinapsis-co/cc-platform-v2/repository/interface';
+import { Entity, EntityBuilder, EntityCreate, EntityStore } from '@sinapsis-co/cc-platform/repository/interface';
 import { PaymentAcceptedCurrencies } from './payment-currency';
 import { GatewayAvailable } from './payment-gateway';
 

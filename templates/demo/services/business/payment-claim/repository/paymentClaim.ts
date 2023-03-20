@@ -1,5 +1,5 @@
-import { repository } from '@sinapsis-co/cc-platform-v2/repository';
-import { RepositoryEvent } from '@sinapsis-co/cc-platform-v2/repository/interface';
+import { repository } from '@sinapsis-co/cc-platform/repository';
+import { RepositoryEvent } from '@sinapsis-co/cc-platform/repository/interface';
 import { PaymentClaim, PaymentClaimBuilder, PaymentClaimCreate, PaymentClaimStore } from '../entities/paymentClaim';
 
 export const paymentClaimRepo = repository<PaymentClaimBuilder>({

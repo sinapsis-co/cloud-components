@@ -1,7 +1,7 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { Distribution, BehaviorOptions } from 'aws-cdk-lib/aws-cloudfront';
-import { CdnAssetConstruct } from '@sinapsis-co/cc-infra-v2/services/cdn-asset';
-import { PrivateBucket } from '@sinapsis-co/cc-infra-v2/prefab/bucket/private-bucket';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { PrivateBucket } from '@sinapsis-co/cc-infra/prefab/bucket/private-bucket';
+import { CdnAssetConstruct } from '@sinapsis-co/cc-infra/services/cdn-asset';
+import { BehaviorOptions, Distribution } from 'aws-cdk-lib/aws-cloudfront';
 
 import { GlobalProps } from '../../../config/config-type';
 import { DnsSubdomainCertificate } from '../dns-subdomain-certificate';

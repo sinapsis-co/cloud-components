@@ -1,5 +1,5 @@
-import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
+import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
+import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
 import { placeApi } from '../../catalog';
 import { placeRepo } from '../../repository/place';
 

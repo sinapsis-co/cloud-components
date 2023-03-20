@@ -1,7 +1,7 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { ApiCdnApiParams } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
-import { PublicAlbConstruct } from '@sinapsis-co/cc-infra-v2/services/alb-public';
-import { VpcConstruct } from '@sinapsis-co/cc-infra-v2/services/vpc';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { ApiCdnApiParams } from '@sinapsis-co/cc-infra/prefab/function/api-function/api-aggregate';
+import { PublicAlbConstruct } from '@sinapsis-co/cc-infra/services/alb-public';
+import { VpcConstruct } from '@sinapsis-co/cc-infra/services/vpc';
 
 import { GlobalProps } from '../../../config/config-type';
 import { DnsSubdomainCertificate } from '../dns-subdomain-certificate';

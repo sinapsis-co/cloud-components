@@ -1,4 +1,4 @@
-import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform-v2/catalog/api';
+import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform/catalog/api';
 import { Product } from '../../entities/product';
 
 export type Interface = ApiInterface<{

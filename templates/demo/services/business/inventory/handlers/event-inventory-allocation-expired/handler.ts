@@ -1,8 +1,8 @@
-import { eventHandler } from '@sinapsis-co/cc-platform-v2/handler/event/event-handler';
+import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
+import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import { inventoryAllocationEvent } from 'services/business/inventory-allocation/catalog';
-import { inventoryRepo } from '../../repository/inventory';
 import { inventoryEvent } from '../../catalog';
-import { dispatchEvent } from '@sinapsis-co/cc-platform-v2/integrations/event/dispatch-event';
+import { inventoryRepo } from '../../repository/inventory';
 
 export const handler = eventHandler<inventoryAllocationEvent.expired.Event>(async (event) => {
 

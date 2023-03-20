@@ -1,4 +1,4 @@
-import { Construct } from '@sinapsis-co/cc-infra-v2/common/service';
+import { Construct } from '@sinapsis-co/cc-infra/common/service';
 import { GlobalProps } from '../../config/config-type';
 
 import { CdnApi } from './cdn-api';

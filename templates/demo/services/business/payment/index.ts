@@ -1,6 +1,6 @@
-import { Construct, Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { ApiAggregate } from '@sinapsis-co/cc-infra-v2/prefab/function/api-function/api-aggregate';
-import { ServiceTable } from '@sinapsis-co/cc-infra-v2/prefab/table/dynamo-table';
+import { Construct, Service } from '@sinapsis-co/cc-infra/common/service';
+import { ApiAggregate } from '@sinapsis-co/cc-infra/prefab/function/api-function/api-aggregate';
+import { ServiceTable } from '@sinapsis-co/cc-infra/prefab/table/dynamo-table';
 import { Duration } from 'aws-cdk-lib';
 import { GlobalProps } from 'config/config-type';
 import { GlobalServiceDependencies } from '..';

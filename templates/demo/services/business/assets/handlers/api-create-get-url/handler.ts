@@ -1,6 +1,6 @@
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
-import { ApiError } from '@sinapsis-co/cc-platform-v2/handler/api/api-error';
-import { createGetPresignedUrl } from '@sinapsis-co/cc-platform-v2/integrations/bucket/index';
+import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
+import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
+import { createGetPresignedUrl } from '@sinapsis-co/cc-platform/integrations/bucket/index';
 import { assetsTypes } from 'services/business/assets/lib/assets-type';
 import { assetApi } from '../../catalog';
 

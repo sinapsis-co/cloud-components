@@ -1,4 +1,4 @@
-import { getSecret } from '@sinapsis-co/cc-platform-v2/config/secret/get-secret';
+import { getSecret } from '@sinapsis-co/cc-platform/config/secret/get-secret';
 import { secretsStripe } from 'services/support/stripe/catalog';
 import { getStripeClient } from 'services/support/stripe/platform';
 import { getInvoiceStripe, updateInvoiceItemsStripe } from 'services/support/stripe/platform/stripe/invoice-stripe';

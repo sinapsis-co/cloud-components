@@ -1,5 +1,5 @@
-import { Service } from '@sinapsis-co/cc-infra-v2/common/service';
-import { DnsDomainRefPrefab } from '@sinapsis-co/cc-infra-v2/prefab/networking/dns-domain-ref';
+import { Service } from '@sinapsis-co/cc-infra/common/service';
+import { DnsDomainRefPrefab } from '@sinapsis-co/cc-infra/prefab/networking/dns-domain-ref';
 import { DeployTargetName, GlobalCoordinator } from '../../../config/config-type';
 import { DnsSubdomainHostedZone } from '../dns-subdomain-hosted-zone';
 

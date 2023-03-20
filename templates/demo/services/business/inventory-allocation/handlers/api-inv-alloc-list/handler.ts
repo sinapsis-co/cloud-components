@@ -1,4 +1,4 @@
-import { apiHandler } from '@sinapsis-co/cc-platform-v2/handler/api/api-handler';
+import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
 import { inventoryAllocationApi } from '../../catalog';
 import { getAllocationInventoryByOrder } from '../../platform/allocation-inventory-by-order';
 import { inventoryAllocationRepo } from '../../repository/inventory-allocation-repository';
