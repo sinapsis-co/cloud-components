@@ -1,29 +1,27 @@
-import DynamoDB from 'aws-sdk/clients/dynamodb';
-import { ApiError } from '../../handler/api/api-error';
+import { DeleteCommand, DeleteCommandInput, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { dispatchEvent } from '../../integrations/event/dispatch-event';
-import { DeleteItemFunc, Entity, EntityBuilder, EntityRepositoryConfig, RepositoryEvent } from '../interface';
+import { HandledError, HandledFault } from '../../util/handled-exception';
+import { DeleteItemFn, Entity, EntityBuilder, EntityRepositoryConfig, RepositoryEvent } from '../interface';
 
 export const deleteItem = <Builder extends EntityBuilder>(
   repoConfig: EntityRepositoryConfig<Builder>,
-  dynamodb: DynamoDB.DocumentClient
-): DeleteItemFunc<Builder> => {
-  return async (
-    key: EntityBuilder<Builder>['key'],
-    params?: Partial<DynamoDB.DocumentClient.DeleteItemInput>
-  ): Promise<Entity<Builder>> => {
+  dynamodb: DynamoDBDocumentClient
+): DeleteItemFn<Builder> => {
+  return async (key: EntityBuilder<Builder>['key'], params?: Partial<DeleteCommandInput>): Promise<Entity<Builder>> => {
     const { Attributes } = await dynamodb
-      .delete({
-        TableName: repoConfig.tableName,
-        Key: repoConfig.keySerialize(key),
-        ReturnValues: 'ALL_OLD',
-        ...params,
-      })
-      .promise()
+      .send(
+        new DeleteCommand({
+          TableName: repoConfig.tableName,
+          Key: repoConfig.keySerialize(key),
+          ReturnValues: 'ALL_OLD',
+          ...params,
+        })
+      )
       .catch((e) => {
-        throw new ApiError(e.code, 500, e.message);
+        throw new HandledFault({ code: 'FAULT_DYN_DELETE_ITEM', detail: e.message });
       });
 
-    if (!Attributes) throw new ApiError('NotFound', 404);
+    if (!Attributes) throw new HandledError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
 
     const entity = repoConfig.entityDeserialize(Attributes);
 

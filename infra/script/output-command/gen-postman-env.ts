@@ -42,7 +42,7 @@ export const genPostmanEnv = async <
     if (!clientIdKey || !apiUrlKey) throw new Error('Missing output');
 
     const postmanEnv = {
-      name: envNameInput,
+      name: `${globalConstConfig.projectName}-${envNameInput}`,
       values: [
         {
           key: 'baseUrl',
@@ -52,6 +52,16 @@ export const genPostmanEnv = async <
         {
           key: 'cognitoClientId',
           value: output[identityServiceKey][clientIdKey],
+          enabled: true,
+        },
+        {
+          key: 'cognitoUser',
+          value: 'andres+test@sinapsis.co',
+          enabled: true,
+        },
+        {
+          key: 'cognitoPassword',
+          value: '4tn34n2ewc-23r23',
           enabled: true,
         },
       ],

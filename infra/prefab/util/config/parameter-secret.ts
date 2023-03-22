@@ -9,6 +9,7 @@ import { SynthError } from '../../../common/synth/synth-error';
 export type ParameterSecretProps = {
   name?: string;
   existingName?: string;
+  value?: string;
 };
 
 export class ParameterSecret extends Construct {
@@ -31,7 +32,7 @@ export class ParameterSecret extends Construct {
       this.secret = new StringParameter(this, getLogicalName('param', params.name), {
         simpleName: false,
         parameterName: getParameterNamePlain(params.name, service.props),
-        stringValue: 'Default value: this need to be changed',
+        stringValue: params.value || 'Default value: this need to be changed',
       });
     }
   }

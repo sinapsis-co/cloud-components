@@ -13,6 +13,8 @@
     "fargate",
     "forceatlas",
     "fullname",
+    "nodenext",
+    "noprod",
     "passwordless",
     "schemy",
     "sesv",
@@ -25,6 +27,10 @@
   ],
   "ignorePaths": [
     "**/node_modules/**",
-    "cdk.out/**"
+    "cdk.out/**",
+    "dist/**",
+    "package.json",
+    "yarn.lock",
+    ".yarnrc"
   ]
 }

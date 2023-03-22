@@ -1,4 +1,0 @@
-{
-  "app": "npx ts-node --project tsconfig.json app.ts",
-  "context": {}
-}

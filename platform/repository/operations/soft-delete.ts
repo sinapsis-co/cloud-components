@@ -1,23 +1,23 @@
-import DynamoDB from 'aws-sdk/clients/dynamodb';
+import { DynamoDBDocumentClient, UpdateCommand, UpdateCommandInput } from '@aws-sdk/lib-dynamodb';
 import dayjs from 'dayjs';
-import { ApiError } from '../../handler/api/api-error';
+import { HandledError, HandledFault } from '../../util/handled-exception';
 import {
   Entity,
   EntityBuilder,
   EntityRepositoryConfig,
   EntityUpdate,
-  SoftDeleteItemFunc,
+  SoftDeleteItemFn,
   TimeToDelete,
 } from '../interface';
 import { updateMapper } from '../update-mapper';
 
 export const softDeleteItem = <Builder extends EntityBuilder>(
   repoConfig: EntityRepositoryConfig<Builder>,
-  dynamodb: DynamoDB.DocumentClient
-): SoftDeleteItemFunc<Builder> => {
+  dynamodb: DynamoDBDocumentClient
+): SoftDeleteItemFn<Builder> => {
   return async (
     key: EntityBuilder<Builder>['key'],
-    params?: Partial<DynamoDB.DocumentClient.UpdateItemInput>,
+    params?: Partial<UpdateCommandInput>,
     deleteAfter?: TimeToDelete
   ): Promise<Entity<Builder>> => {
     const ttl = deleteAfter || { amount: 30, period: 'days' };
@@ -26,19 +26,20 @@ export const softDeleteItem = <Builder extends EntityBuilder>(
     });
 
     const { Attributes } = await dynamodb
-      .update({
-        TableName: repoConfig.tableName,
-        Key: repoConfig.keySerialize(key),
-        ReturnValues: 'ALL_NEW',
-        ...mapper,
-        ...params,
-      })
-      .promise()
+      .send(
+        new UpdateCommand({
+          TableName: repoConfig.tableName,
+          Key: repoConfig.keySerialize(key),
+          ReturnValues: 'ALL_NEW',
+          ...mapper,
+          ...params,
+        })
+      )
       .catch((e) => {
-        throw new ApiError(e.code, 500, e.message);
+        throw new HandledFault({ code: 'FAULT_DYN_SOFT_DELETE_ITEM', detail: e.message });
       });
 
-    if (!Attributes) throw new ApiError('NotFound', 404);
+    if (!Attributes) throw new HandledError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
     return repoConfig.entityDeserialize(Attributes);
   };
 };

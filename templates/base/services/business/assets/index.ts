@@ -39,11 +39,10 @@ export class Assets extends Service<GlobalCoordinator> {
 
   build(deps: Deps) {
     this.cdnAssetPrefab = new CdnAssetPrefab(this, {
-      bucketName: 'public',
       subDomain: this.props.subdomain.assets,
       certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,
       assetBucketProps: {
-        bucketName: 'bucket',
+        bucketName: 'public',
         folder: './notifications/assets',
         prefix: 'assets',
       },

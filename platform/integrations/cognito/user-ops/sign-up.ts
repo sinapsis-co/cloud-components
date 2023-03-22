@@ -1,5 +1,6 @@
-import Cognito from 'aws-sdk/clients/cognitoidentityserviceprovider';
-import { ApiError } from '../../../handler/api/api-error';
+import { SignUpCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { cognito } from '..';
+import { HandledFault } from '../../../util/handled-exception';
 
 type CognitoUser = {
   sub: string;
@@ -12,21 +13,18 @@ type CognitoUser = {
   permission?: string;
 };
 
-const cognito = new Cognito();
-
 export const signUpCognitoUser = async (
   user: Omit<CognitoUser, 'sub'>,
   password: string,
   clientId = process.env.USER_POOL_CLIENT_ID
 ): Promise<CognitoUser> => {
-  if (!clientId) throw new ApiError('AUTH.USER_POOL_CLIENT_ID');
-  if (!user.tenantId) throw new ApiError('AUTH.MISSING_TENANT_ID', 400);
+  if (!clientId) throw new HandledFault({ code: 'FAULT_COG_INVALID_CLIENT_POOL' });
 
   if (!user.role) user.role = 'owner';
   if (!user.permission || user.role === 'owner') user.permission = 'ADMIN';
 
-  const response = await cognito
-    .signUp({
+  const response = await cognito.send(
+    new SignUpCommand({
       ClientId: clientId,
       Username: user.email,
       Password: password,
@@ -40,7 +38,9 @@ export const signUpCognitoUser = async (
         { Name: 'custom:permission', Value: user.permission },
       ],
     })
-    .promise();
+  );
+
+  if (!response.UserSub) throw new HandledFault({ code: 'FAULT_COG_INVALID_SIGN_UP' });
 
   return {
     sub: response.UserSub,

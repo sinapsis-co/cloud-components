@@ -1,6 +1,5 @@
-import { BaseRegionName, BaseGlobalProps, DeployConfig } from './props-types';
-import STS from 'aws-sdk/clients/sts';
-const sts = new STS();
+import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
+import { BaseGlobalProps, BaseRegionName, DeployConfig } from './props-types';
 
 export type AssumeRoleResponse = {
   region: BaseRegionName;
@@ -20,15 +19,13 @@ export const assumeRole = async (
   { account, region }: AssumeRoleParams,
   roleName: string
 ): Promise<AssumeRoleResponse> => {
-  const { Credentials } = await sts
-    .assumeRole({
+  const sts = new STSClient({ region: 'us-east-1' });
+  const { Credentials } = await sts.send(
+    new AssumeRoleCommand({
       RoleArn: `arn:aws:iam::${account}:role/${roleName}`,
       RoleSessionName: 'cdk-scripts',
     })
-    .promise()
-    .catch((e) => {
-      throw e.message;
-    });
+  );
   return {
     region,
     credentials: {

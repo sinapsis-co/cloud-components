@@ -11,6 +11,7 @@ import {
   BaseGlobalEnvConfig,
   BaseGlobalProps,
 } from './props-types';
+import { SynthError } from './synth-error';
 
 export const preScript = async <
   GlobalConst,
@@ -32,6 +33,7 @@ export const preScript = async <
   servicesNames: string;
   bootstrappingServices: string;
   accountMap: string;
+  landingZones: string[];
 }> => {
   try {
     const envNameInput: string = args[3];
@@ -40,6 +42,10 @@ export const preScript = async <
     const envName = envNameInput.includes('-') ? envNameInput.split('-')[0] : envNameInput;
     const ephemeralEnvName = envNameInput.includes('-') ? envNameInput.split('-')[1] : '';
     const props: BaseGlobalProps = { ...globalConstConfig, ...globalEnvConfig[envName], envName, ephemeralEnvName };
+
+    if (!globalDeployTargetConfig[envName]) throw new SynthError('Invalid Env');
+
+    const landingZones = await Promise.all(globalConstConfig.landingZones.map((l) => accountMapping(l, 'landingzone')));
 
     const accountMap = parseContext(
       (
@@ -72,6 +78,7 @@ export const preScript = async <
       servicesNames,
       bootstrappingServices,
       accountMap,
+      landingZones,
     };
   } catch (error: any) {
     console.log(`PreScript Error: ${error.message}`);

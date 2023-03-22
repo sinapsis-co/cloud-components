@@ -20,5 +20,17 @@
   "hosted-zone:account=913838861210:domainName=dev.base.sinapsis.co:region=us-east-1": {
     "Id": "/hostedzone/Z04688423I3CUU8G4V9Q4",
     "Name": "dev.base.sinapsis.co."
+  },
+  "ssm:account=491739098658:parameterName=pipeline-default-repository-owner:region=us-east-1": "sinapsis.co",
+  "ssm:account=491739098658:parameterName=pipeline-default-repository-connection:region=us-east-1": "arn:aws:codestar-connections:us-east-1:491739098658:connection/d90802f8-3a3c-4b91-bfb5-749c00bd409d",
+  "ssm:account=491739098658:parameterName=pipeline-default-slack-token:region=us-east-1": "T4M0B8VEF/B03LY8J4ACA/z6p0CQeurAtsz3oS4JYq8iAO",
+  "hosted-zone:account=491739098658:domainName=sinapsis.io:region=us-east-1": {
+    "Id": "/hostedzone/Z028396912FH4ULCLE67J",
+    "Name": "sinapsis.io."
+  },
+  "ssm:account=913838861210:parameterName=v3base-dev-dns-subdomain-hosted-zone-hosted-zone-name-servers:region=us-east-1": "ns-178.awsdns-22.com,ns-1131.awsdns-13.org,ns-839.awsdns-40.net,ns-1593.awsdns-07.co.uk",
+  "hosted-zone:account=913838861210:domainName=dev.v3base.sinapsis.io:region=us-east-1": {
+    "Id": "/hostedzone/Z0041780YFT0BCQHQJKL",
+    "Name": "dev.v3base.sinapsis.io."
   }
 }

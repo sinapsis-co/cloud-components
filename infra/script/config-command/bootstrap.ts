@@ -27,11 +27,18 @@ export const bootstrap: ConfigCommand = async <
   try {
     console.log('<< Bootstrap Started >>');
 
-    const { envName, envNameInput, roleName, outputFile, servicesNames, accountMap, bootstrappingServices } =
-      await preScript(globalConstConfig, globalEnvConfig, globalDeployTargetConfig, args);
+    const {
+      envName,
+      envNameInput,
+      roleName,
+      outputFile,
+      servicesNames,
+      accountMap,
+      bootstrappingServices,
+      landingZones,
+    } = await preScript(globalConstConfig, globalEnvConfig, globalDeployTargetConfig, args);
 
     const accountArr = accountMap.split(' ');
-
     const deployAccount: string = accountArr.find((a) => a.includes('deploy'))?.split('=')[1] || '';
     const serviceAccount: string = accountArr.find((a) => a.includes('services'))?.split('=')[1] || '';
     const dnsAccount: string = accountArr.find((a) => a.includes('dnsShared'))?.split('=')[1] || '';
@@ -39,7 +46,7 @@ export const bootstrap: ConfigCommand = async <
     const region = globalDeployTargetConfig[envName]['services']['region'];
 
     await runBootstrap(
-      deployAccount,
+      landingZones,
       serviceAccount,
       region,
       roleName,
@@ -49,9 +56,20 @@ export const bootstrap: ConfigCommand = async <
       servicesNames
     );
 
-    if (dnsAccount !== serviceAccount) {
+    await runBootstrap(
+      landingZones,
+      deployAccount,
+      region,
+      roleName,
+      envNameInput,
+      outputFile,
+      accountMap,
+      servicesNames
+    );
+
+    if (dnsAccount !== deployAccount) {
       await runBootstrap(
-        deployAccount,
+        landingZones,
         dnsAccount,
         region,
         roleName,
@@ -81,7 +99,7 @@ export const bootstrap: ConfigCommand = async <
 };
 
 const runBootstrap = async (
-  deployAccount: string,
+  landingZones: string[],
   account: string,
   region: BaseRegionName,
   roleName: string,
@@ -92,18 +110,20 @@ const runBootstrap = async (
 ) => {
   const command = `npx cdk bootstrap ${account}/${region} \
     --require-approval='never' \
-    --trust ${deployAccount} \
-    --trust-for-lookup ${deployAccount} \
+    ${landingZones.map((lz) => `--trust ${lz}`).join(' ')} \
+    ${landingZones.map((lz) => `--trust-for-lookup ${lz}`).join(' ')} \
     --no-bootstrap-customer-key \
     --require-approval='never' \
     --cloudformation-execution-policies=arn:aws:iam::aws:policy/AdministratorAccess \
     --context env=${envNameInput} \
     --outputs-file ${outputFile} \
     ${accountMap} ${serviceName}`;
+
   const role = await assumeRole({ account, region }, roleName).catch((e) => {
     console.log(e);
     throw e;
   });
+
   execSync(command, {
     stdio: 'inherit',
     env: {

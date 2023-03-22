@@ -13,7 +13,7 @@ import { Service } from '../../../common/service';
 
 export type PrivateBucketParams = {
   bucketName: string;
-  bucketProps?: BucketProps;
+  bucketProps?: Omit<BucketProps, 'bucketName'>;
 };
 
 export type BucketNotFilter = awsS3.NotificationKeyFilter[];

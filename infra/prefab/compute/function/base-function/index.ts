@@ -28,6 +28,7 @@ export type BaseFunctionParams = {
   modifiers?: ((lambda: NodejsFunction) => any)[];
   environment?: Record<string, string>;
   compiled?: true;
+  tracingDisabled?: true;
 };
 
 export class BaseFunction extends Construct {
@@ -44,14 +45,14 @@ export class BaseFunction extends Construct {
 
     const ccEnv = service.props.ephemeralEnvName
       ? `${service.props.ephemeralEnvName}-${service.props.envName}`
-      : service.props.envDomainName;
+      : service.props.envName;
 
     this.lambdaFunction = new NodejsFunction(this, params.name, {
-      runtime: Runtime.NODEJS_16_X,
+      runtime: Runtime.NODEJS_18_X,
       logRetention: 30,
       handler: 'handler',
       role,
-      tracing: Tracing.ACTIVE,
+      tracing: params.tracingDisabled ? Tracing.DISABLED : Tracing.ACTIVE,
       timeout: Duration.seconds(6),
       functionName: getShortResourceName(params.name, service.props),
       entry: getFunctionEntry(params.baseFunctionFolder, params.name, params.compiled),
@@ -60,6 +61,7 @@ export class BaseFunction extends Construct {
       environment: { CC_SERVICE: service.props.serviceName, CC_ENV: ccEnv, ...params.environment },
     });
     this.lambdaFunction.addEnvironment('CC_FUNCTION_TIMEOUT', this.lambdaFunction.timeout!.toSeconds().toString());
+    if (!params.tracingDisabled) this.lambdaFunction.addEnvironment('CC_TRACING', 'true');
 
     params.modifiers?.map((fn) => fn(this.lambdaFunction));
 

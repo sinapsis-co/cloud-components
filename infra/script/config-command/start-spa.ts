@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
-import SSM from 'aws-sdk/clients/ssm';
+import { GetParameterCommand, SSMClient } from '@aws-sdk/client-ssm';
 import { execSync } from 'child_process';
 import { writeFileSync } from 'fs';
 import { ConfigCommand } from '..';
-import { getParameterName, getResourceName } from '../../common/naming/get-resource-name';
+import { getResourceName } from '../../common/naming/get-resource-name';
 import { assumeRole } from '../../common/synth/assume-role';
 import { preScript } from '../../common/synth/pre-script';
 import {
@@ -48,42 +48,25 @@ export const startSPA: ConfigCommand = async <
 
     const role = await assumeRole({ account, region }, roleName);
 
-    const parameterName = getResourceName('config', {
-      projectName,
-      envName,
-      ephemeralEnvName,
-      serviceName: servicesNamesInput[0],
-    });
-
     console.log('>> STEP: (2/3) => RENDERING ENV');
+    const getParamName = (name: string) =>
+      getResourceName(name, { projectName, envName, ephemeralEnvName, serviceName: servicesNamesInput[0] });
 
-    const ssm = new SSM(role);
-    const deployConfig = await ssm.getParameter({ Name: parameterName }).promise();
+    const ssm = new SSMClient(role);
+    const deployConfig = await ssm.send(new GetParameterCommand({ Name: getParamName('config') }));
 
     if (!deployConfig.Parameter?.Value) throw new Error('Invalid Config');
     const { baseDir } = JSON.parse(deployConfig.Parameter?.Value);
 
-    const baseSecretName = getParameterName('secret', {
-      projectName,
-      envName,
-      ephemeralEnvName,
-      serviceName: servicesNamesInput[0],
-    });
-    const { Parameters } = await ssm.getParametersByPath({ Path: baseSecretName, Recursive: true }).promise();
-    if (!Parameters) throw new Error('Invalid secret');
-    const secret: Record<string, any> = Parameters?.reduce(
-      (pre, curr) => ({ ...pre, ...JSON.parse(curr.Value as string) }),
-      {}
-    );
+    const calculatedEnv = await ssm.send(new GetParameterCommand({ Name: getParamName('env-calculated') }));
+    if (!calculatedEnv.Parameter?.Value) throw new Error('Invalid CalculatedEnv');
 
-    const envFile = Object.keys(secret)
-      .map((key) => `${key}=${secret[key]}\n`)
-      .join('');
+    const manualEnv = await ssm.send(new GetParameterCommand({ Name: getParamName('env-manual') }));
+    if (!manualEnv.Parameter?.Value) throw new Error('Invalid CalculatedEnv');
 
-    if (Parameters && Parameters?.length > 0) {
-      writeFileSync(`${process.cwd()}/${baseDir}/.env.${envNameInput}`, envFile);
-      console.log(`>> NEW ENV FILE GENERATED AT => ${process.cwd()}/${baseDir}/.env.${envNameInput}`);
-    }
+    const envFile = `${calculatedEnv.Parameter?.Value}\n${manualEnv.Parameter?.Value}`;
+
+    writeFileSync(`${process.cwd()}/${baseDir}/.env.${envNameInput}`, envFile);
 
     console.log('>> STEP: (3/3) => STARTING');
 

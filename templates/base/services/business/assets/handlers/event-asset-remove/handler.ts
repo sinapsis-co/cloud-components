@@ -1,6 +1,6 @@
 import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
 import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
-import { bucketDeleteObject } from '@sinapsis-co/cc-platform/integrations/bucket';
+import { bucketDeleteObject } from '@sinapsis-co/cc-platform/integrations/bucket/object';
 import { assetEvent } from '../../catalog';
 import { Asset } from '../../entities/asset';
 import { assetsTypes } from '../../lib/assets-type';

@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
-import CloudFront from 'aws-sdk/clients/cloudfront';
-import SSM from 'aws-sdk/clients/ssm';
+import { CloudFrontClient, CreateInvalidationCommand } from '@aws-sdk/client-cloudfront';
+import { GetParameterCommand, SSMClient } from '@aws-sdk/client-ssm';
 import { execSync, ExecSyncOptions } from 'child_process';
 import { writeFileSync } from 'fs';
 import { ConfigCommand } from '..';
-import { getParameterName, getResourceName } from '../../common/naming/get-resource-name';
+import { getResourceName } from '../../common/naming/get-resource-name';
 import { assumeRole } from '../../common/synth/assume-role';
 import { preScript } from '../../common/synth/pre-script';
 import {
@@ -47,20 +47,14 @@ export const deploySSR: ConfigCommand = async <
         ?.split('=')[1] || '';
     const region = globalDeployTargetConfig[envName]['services']['region'];
 
-    const role = await assumeRole({ account, region }, roleName);
-
-    const parameterName = getResourceName('config', {
-      projectName,
-      envName,
-      ephemeralEnvName,
-      serviceName: servicesNamesInput[0],
-    });
-
     console.log('>> STEP: (2/4) => RENDERING ENV');
 
-    const ssm = new SSM(role);
-    const deployConfig = await ssm.getParameter({ Name: parameterName }).promise();
+    const getParamName = (name: string) =>
+      getResourceName(name, { projectName, envName, ephemeralEnvName, serviceName: servicesNamesInput[0] });
+    const role = await assumeRole({ account, region }, roleName);
 
+    const ssm = new SSMClient(role);
+    const deployConfig = await ssm.send(new GetParameterCommand({ Name: getParamName('config') }));
     if (!deployConfig.Parameter?.Value) throw new Error('Invalid Config');
     const {
       domain,
@@ -74,25 +68,15 @@ export const deploySSR: ConfigCommand = async <
       deployTriggeredEventConfig,
     } = JSON.parse(deployConfig.Parameter?.Value);
 
-    const baseSecretName = getParameterName('secret', {
-      projectName,
-      envName,
-      ephemeralEnvName,
-      serviceName: servicesNamesInput[0],
-    });
-    const { Parameters } = await ssm.getParametersByPath({ Path: baseSecretName, Recursive: true }).promise();
-    if (!Parameters) throw new Error('Invalid secret');
-    const secret: Record<string, any> = Parameters?.reduce(
-      (pre, curr) => ({ ...pre, ...JSON.parse(curr.Value as string) }),
-      {}
-    );
+    const calculatedEnv = await ssm.send(new GetParameterCommand({ Name: getParamName('env-calculated') }));
+    if (!calculatedEnv.Parameter?.Value) throw new Error('Invalid CalculatedEnv');
 
-    const envFile = Object.keys(secret)
-      .map((key) => `${key}=${secret[key]}\n`)
-      .join('');
+    const manualEnv = await ssm.send(new GetParameterCommand({ Name: getParamName('env-manual') }));
+    if (!manualEnv.Parameter?.Value) throw new Error('Invalid CalculatedEnv');
 
-    if (Parameters && Parameters?.length > 0)
-      writeFileSync(`${process.cwd()}/${baseDir}/.env.${envNameInput}`, envFile);
+    const envFile = `${calculatedEnv.Parameter?.Value}\n${manualEnv.Parameter?.Value}`;
+
+    writeFileSync(`${process.cwd()}/${baseDir}/.env.${envNameInput}`, envFile);
 
     console.log('>> STEP: (3/4) => BUILDING');
 
@@ -129,9 +113,10 @@ export const deploySSR: ConfigCommand = async <
     execSync(cpEventTrigger, execOptions);
 
     console.log('STEP: (4/4) => CREATING INVALIDATION');
-    const cf = new CloudFront(role);
-    await cf
-      .createInvalidation({
+
+    const cf = new CloudFrontClient(role);
+    await cf.send(
+      new CreateInvalidationCommand({
         DistributionId: distributionId,
         InvalidationBatch: {
           CallerReference: Date.now().toString(),
@@ -141,7 +126,7 @@ export const deploySSR: ConfigCommand = async <
           },
         },
       })
-      .promise();
+    );
     console.log(`>> DEPLOYED AT => ${domain}`);
   } catch (error: any) {
     console.log(error);

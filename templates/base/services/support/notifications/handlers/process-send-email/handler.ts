@@ -1,6 +1,6 @@
 import { NotificationMessage } from '@sinapsis-co/cc-platform/catalog/notifications/index';
 import { queueBatchHandler } from '@sinapsis-co/cc-platform/handler/queue/queue-batch-handler';
-import { bucketGetObject } from '@sinapsis-co/cc-platform/integrations/bucket';
+import { bucketGetObject } from '@sinapsis-co/cc-platform/integrations/bucket/object';
 import { deliverEmail, DeliverEmailParams } from '@sinapsis-co/cc-platform/integrations/notifications';
 import { renderEmailTemplate } from '@sinapsis-co/cc-platform/integrations/notifications/render-template';
 import { Readable } from 'stream';

@@ -45,6 +45,7 @@ export class Identity extends Service<GlobalCoordinator> {
 
   build(deps: Deps) {
     this.addDependency(deps.notifications);
+    this.addDependency(deps.notifications);
 
     this.authPool = new CognitoAuthPoolPrefab(this, {
       callbackUrl: getDomain(this.props.subdomain.spaWebapp, this.props, true),

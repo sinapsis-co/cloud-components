@@ -6,6 +6,7 @@ import { UserCognito } from 'services/business/identity/entities/user-cognito';
 import { cognitoToProfileMapper, cognitoUpdateCustomMapper } from 'services/business/identity/platform/cognito-mapper';
 import { userProfileRepository } from 'services/business/identity/repository/user-profile-repository';
 
+import { HandledError } from '@sinapsis-co/cc-platform/util/handled-exception';
 import { WelcomeTemplate } from 'notifications/templates/welcome';
 import { notificationEvent } from 'services/support/notifications/catalog';
 
@@ -35,7 +36,7 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
       id: `pending#${inviteId}`,
     })
     .catch((e) => {
-      if (e.message === 'NotFound') return;
+      if (e instanceof HandledError && e.exception.errorCode === 'ITEM_NOT_FOUND') return;
       throw e;
     });
   if (userWithInvite) {

@@ -1,9 +1,9 @@
-import DynamoDB from 'aws-sdk/clients/dynamodb';
-import { ApiError } from '../../handler/api/api-error';
-import { chunkArray } from '../../util/array/chunk-array';
+import { BatchWriteCommand, BatchWriteCommandInput, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import { chunkArray } from '../../util/chunk-array';
 import { wait } from '../../util/executers';
+import { HandledFault } from '../../util/handled-exception';
 import {
-  BatchCreateItemFunc,
+  BatchCreateItemFn,
   Entity,
   EntityBuilder,
   EntityCreate,
@@ -18,9 +18,9 @@ export type BatchCreateItemParams = {
 
 export const batchCreateItem = <Builder extends EntityBuilder>(
   repoConfig: EntityRepositoryConfig<Builder>,
-  dynamodb: DynamoDB.DocumentClient,
+  dynamodb: DynamoDBDocumentClient,
   params?: BatchCreateItemParams
-): BatchCreateItemFunc<Builder> => {
+): BatchCreateItemFn<Builder> => {
   return async (
     items: { key: EntityBuilder<Builder>['key']; entityCreate: EntityCreate<Builder> }[]
   ): Promise<Entity<Builder>[]> => {
@@ -29,7 +29,7 @@ export const batchCreateItem = <Builder extends EntityBuilder>(
     const table = params?.tableName || repoConfig.tableName;
     await Promise.all(
       chunk.map(async (c): Promise<any> => {
-        const RequestItems: DynamoDB.DocumentClient.BatchWriteItemRequestMap = {
+        const RequestItems: BatchWriteCommandInput['RequestItems'] = {
           [table]: c.map((Item) => {
             return { PutRequest: { Item } };
           }),
@@ -43,17 +43,14 @@ export const batchCreateItem = <Builder extends EntityBuilder>(
 };
 
 const call = async (
-  dynamodb: DynamoDB.DocumentClient,
-  RequestItems: DynamoDB.DocumentClient.BatchWriteItemRequestMap,
+  dynamodb: DynamoDBDocumentClient,
+  RequestItems: BatchWriteCommandInput['RequestItems'],
   table: string,
   autoRetry?: boolean
 ): Promise<void> => {
-  const { UnprocessedItems } = await dynamodb
-    .batchWrite({ RequestItems })
-    .promise()
-    .catch((e) => {
-      throw new ApiError('InternalServerError', 500, e.message);
-    });
+  const { UnprocessedItems } = await dynamodb.send(new BatchWriteCommand({ RequestItems })).catch((e) => {
+    throw new HandledFault({ code: 'FAULT_DYN_BATCH_CREATE_ITEM', detail: e.message });
+  });
   if (autoRetry && UnprocessedItems && UnprocessedItems[table]) {
     await wait(Math.ceil(Math.random() * 2000));
     await call(dynamodb, UnprocessedItems, table, autoRetry);

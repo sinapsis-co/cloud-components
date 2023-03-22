@@ -1,5 +1,5 @@
+import * as Dynamo from '@aws-sdk/lib-dynamodb';
 import dayjs from 'dayjs';
-import DynamoDB from 'aws-sdk/clients/dynamodb';
 import { PaginatedResponse } from '../catalog/api';
 
 export type TimeToDelete = {
@@ -48,71 +48,66 @@ export type EntityRepositoryConfig<Builder extends EntityBuilder, Create = Entit
   entityDeserialize: (entityStore: EntityStore<Builder>) => Entity<Builder>;
 };
 
-export type CreateItemFunc<Builder extends EntityBuilder, EntityCreate = Builder['body']> = (
+export type CreateItemFn<Builder extends EntityBuilder, EntityCreate = Builder['body']> = (
   key: EntityBuilder<Builder>['key'],
   entityCreate: EntityCreate,
-  params?: Partial<DynamoDB.DocumentClient.PutItemInput>
+  params?: Partial<Dynamo.PutCommandInput>
 ) => Promise<Entity<Builder>>;
 
-export type BatchCreateItemFunc<Builder extends EntityBuilder> = (
-  items: {
+export type BatchCreateItemFn<Builder extends EntityBuilder> = (
+  Commands: {
     key: EntityBuilder<Builder>['key'];
     entityCreate: EntityCreate<Builder>;
   }[],
   autoRetry?: boolean
 ) => Promise<Entity<Builder>[]>;
 
-export type CheckItemExistsFunc<Builder extends EntityBuilder> = (
+export type CheckItemExistsFn<Builder extends EntityBuilder> = (
   key: EntityBuilder<Builder>['key'],
-  params?: Partial<DynamoDB.DocumentClient.GetItemInput>
+  params?: Partial<Dynamo.GetCommandInput>
 ) => Promise<{ exists: boolean; entity?: Entity<Builder> }>;
 
-export type GetItemFunc<Builder extends EntityBuilder> = (
+export type GetItemFn<Builder extends EntityBuilder> = (
   key: EntityBuilder<Builder>['key'],
-  params?: Partial<DynamoDB.DocumentClient.GetItemInput>
+  params?: Partial<Dynamo.GetCommandInput>
 ) => Promise<Entity<Builder>>;
 
-export type BatchGetItemFunc<Builder extends EntityBuilder> = (
+export type BatchGetItemFn<Builder extends EntityBuilder> = (
   keys: EntityBuilder<Builder>['key'][],
   autoRetry?: boolean
 ) => Promise<Entity<Builder>[] | undefined[]>;
 
-export type ListItemFunc<Builder extends EntityBuilder> = (
+export type ListItemFn<Builder extends EntityBuilder> = (
   pk: string,
   queryParams: { limit: number; nextToken?: string },
-  params?: Partial<DynamoDB.DocumentClient.QueryInput>
+  params?: Partial<Dynamo.QueryCommandInput>
 ) => Promise<PaginatedResponse<Entity<Builder>>>;
 
-export type DeleteItemFunc<Builder extends EntityBuilder> = (
+export type DeleteItemFn<Builder extends EntityBuilder> = (
   key: EntityBuilder<Builder>['key'],
-  params?: Partial<DynamoDB.DocumentClient.DeleteItemInput>
+  params?: Partial<Dynamo.DeleteCommandInput>
 ) => Promise<Entity<Builder>>;
 
-export type SoftDeleteItemFunc<Builder extends EntityBuilder> = (
+export type SoftDeleteItemFn<Builder extends EntityBuilder> = (
   key: EntityBuilder<Builder>['key'],
-  params?: DynamoDB.DocumentClient.UpdateItemInput,
+  params?: Dynamo.UpdateCommandInput,
   deleteAfter?: TimeToDelete
 ) => Promise<Entity<Builder>>;
 
-export type LogicalDeleteItemFunc<Builder extends EntityBuilder> = (
-  key: EntityBuilder<Builder>['key'],
-  params?: DynamoDB.DocumentClient.UpdateItemInput,
-) => Promise<Entity<Builder>>;
-
-export type UpdateItemFunc<Builder extends EntityBuilder> = (
+export type UpdateItemFn<Builder extends EntityBuilder> = (
   key: EntityBuilder<Builder>['key'],
   entityUpdate: Partial<EntityUpdate<Builder>>,
-  params?: Partial<DynamoDB.DocumentClient.UpdateItemInput>
+  params?: Partial<Dynamo.UpdateCommandInput>
 ) => Promise<Entity<Builder>>;
 
-export type RecoverItemFunc<Builder extends EntityBuilder> = (
+export type RecoverItemFn<Builder extends EntityBuilder> = (
   key: EntityBuilder<Builder>['key'],
-  params?: DynamoDB.DocumentClient.GetItemInput
+  params?: Dynamo.GetCommandInput
 ) => Promise<Entity<Builder>>;
 
-export type ScanTableFunc<Builder extends EntityBuilder> = (
+export type ScanTableFn<Builder extends EntityBuilder> = (
   queryParams: { limit: number; nextToken?: string },
-  params?: Partial<DynamoDB.DocumentClient.QueryInput>
+  params?: Partial<Dynamo.ScanCommand>
 ) => Promise<PaginatedResponse<Entity<Builder>>>;
 
 export type RepositoryEvent<Builder extends EntityBuilder> = {
@@ -147,16 +142,15 @@ export type Repository<Builder extends EntityBuilder> = {
   };
   entitySerialize: EntityRepositoryConfig<Builder>['entitySerialize'];
   entityDeserialize: EntityRepositoryConfig<Builder>['entityDeserialize'];
-  createItem: CreateItemFunc<Builder>;
-  checkItemExists: CheckItemExistsFunc<Builder>;
-  getItem: GetItemFunc<Builder>;
-  listItem: ListItemFunc<Builder>;
-  deleteItem: DeleteItemFunc<Builder>;
-  updateItem: UpdateItemFunc<Builder>;
-  batchCreateItem: BatchCreateItemFunc<Builder>;
-  batchGetItem: BatchGetItemFunc<Builder>;
-  softDeleteItem: SoftDeleteItemFunc<Builder>;
-  logicalDeleteItem: LogicalDeleteItemFunc<Builder>;
-  recoverItem: RecoverItemFunc<Builder>;
-  scanTable: ScanTableFunc<Builder>;
+  createItem: CreateItemFn<Builder>;
+  checkItemExists: CheckItemExistsFn<Builder>;
+  getItem: GetItemFn<Builder>;
+  listItem: ListItemFn<Builder>;
+  deleteItem: DeleteItemFn<Builder>;
+  updateItem: UpdateItemFn<Builder>;
+  batchCreateItem: BatchCreateItemFn<Builder>;
+  batchGetItem: BatchGetItemFn<Builder>;
+  softDeleteItem: SoftDeleteItemFn<Builder>;
+  recoverItem: RecoverItemFn<Builder>;
+  scanTable: ScanTableFn<Builder>;
 };

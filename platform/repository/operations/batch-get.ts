@@ -1,8 +1,9 @@
-import DynamoDB from 'aws-sdk/clients/dynamodb';
-import { ApiError } from '../../handler/api/api-error';
-import { chunkArray } from '../../util/array/chunk-array';
+import { BatchGetCommand, BatchGetCommandInput, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import { NativeAttributeValue } from '@aws-sdk/util-dynamodb';
+import { chunkArray } from '../../util/chunk-array';
 import { wait } from '../../util/executers';
-import { BatchGetItemFunc, Entity, EntityBuilder, EntityRepositoryConfig, EntityStore } from '../interface';
+import { HandledFault } from '../../util/handled-exception';
+import { BatchGetItemFn, Entity, EntityBuilder, EntityRepositoryConfig, EntityStore } from '../interface';
 
 export type BatchGetItemParams = {
   autoRetry?: true;
@@ -11,9 +12,9 @@ export type BatchGetItemParams = {
 
 export const batchGetItem = <Builder extends EntityBuilder>(
   repoConfig: EntityRepositoryConfig<Builder>,
-  dynamodb: DynamoDB.DocumentClient,
+  dynamodb: DynamoDBDocumentClient,
   params?: BatchGetItemParams
-): BatchGetItemFunc<Builder> => {
+): BatchGetItemFn<Builder> => {
   return async (keys: EntityBuilder<Builder>['key'][]): Promise<Entity<Builder>[] | undefined[]> => {
     const table = params?.tableName || repoConfig.tableName;
     const items = keys.map((k) => repoConfig.keySerialize(k));
@@ -39,18 +40,15 @@ export const batchGetItem = <Builder extends EntityBuilder>(
 };
 
 const call = async (
-  dynamodb: DynamoDB.DocumentClient,
-  RequestItems: DynamoDB.DocumentClient.BatchGetRequestMap,
+  dynamodb: DynamoDBDocumentClient,
+  RequestItems: BatchGetCommandInput['RequestItems'],
   table: string,
   autoRetry?: boolean
-): Promise<DynamoDB.ItemList> => {
-  const responses: DynamoDB.ItemList = [];
-  const { UnprocessedKeys, Responses } = await dynamodb
-    .batchGet({ RequestItems })
-    .promise()
-    .catch((e) => {
-      throw new ApiError('InternalServerError', 500, e.message);
-    });
+): Promise<Record<string, NativeAttributeValue>[]> => {
+  const responses: Record<string, NativeAttributeValue>[] = [];
+  const { UnprocessedKeys, Responses } = await dynamodb.send(new BatchGetCommand({ RequestItems })).catch((e) => {
+    throw new HandledFault({ code: 'FAULT_DYN_BATCH_GET_ITEM', detail: e.message });
+  });
   if (Responses && Responses[table]) responses.push(...Responses[table]);
   if (autoRetry && UnprocessedKeys && UnprocessedKeys[table]) {
     await wait(Math.ceil(Math.random() * 2000));

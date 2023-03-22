@@ -4,7 +4,7 @@ import {
   SendMessageBatchRequestEntry,
 } from '@aws-sdk/client-sqs';
 import { sqs } from '.';
-import { chunkArray } from '../../util/array/chunk-array';
+import { chunkArray } from '../../util/chunk-array';
 
 const MAX_MESSAGE_PER_BATCH = 10;
 

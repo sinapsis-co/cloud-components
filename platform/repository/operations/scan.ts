@@ -1,27 +1,28 @@
-import DynamoDB from 'aws-sdk/clients/dynamodb';
-import { ApiError } from '../../handler/api/api-error';
+import { DynamoDBDocumentClient, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { PaginatedResponse } from '../../catalog/api';
+import { HandledFault } from '../../util/handled-exception';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from '../../util/pagination';
-import { Entity, EntityBuilder, EntityRepositoryConfig, ScanTableFunc } from '../interface';
+import { Entity, EntityBuilder, EntityRepositoryConfig, ScanTableFn } from '../interface';
 
 export const scanTable = <Builder extends EntityBuilder>(
   repoConfig: EntityRepositoryConfig<Builder>,
-  dynamodb: DynamoDB.DocumentClient
-): ScanTableFunc<Builder> => {
+  dynamodb: DynamoDBDocumentClient
+): ScanTableFn<Builder> => {
   return async (
     queryParams: { limit: number; nextToken?: string },
-    params?: Partial<DynamoDB.DocumentClient.QueryInput>
+    params?: Partial<ScanCommand>
   ): Promise<PaginatedResponse<Entity<Builder>>> => {
     const { Items, LastEvaluatedKey } = await dynamodb
-      .scan({
-        TableName: repoConfig.tableName,
-        ExclusiveStartKey: decodeLastEvaluatedKey(queryParams.nextToken),
-        Limit: queryParams.limit,
-        ...params,
-      })
-      .promise()
+      .send(
+        new ScanCommand({
+          TableName: repoConfig.tableName,
+          ExclusiveStartKey: decodeLastEvaluatedKey(queryParams.nextToken),
+          Limit: queryParams.limit,
+          ...params,
+        })
+      )
       .catch((e) => {
-        throw new ApiError(e.code, 500, e.message);
+        throw new HandledFault({ code: 'FAULT_DYN_SCAN_TABLE', detail: e.message });
       });
 
     return {

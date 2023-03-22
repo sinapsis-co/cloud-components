@@ -24,12 +24,10 @@ export class SpaWebapp extends Service<GlobalCoordinator> {
       subDomain: this.props.subdomain.spaWebapp,
       baseDir: 'frontend/spa-webapp',
       certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,
-      envVars: {
-        calculatedSecrets: {
-          SKIP_PREFLIGHT_CHECK: 'true',
-          VITE_APP_API_URL: deps.cdnApi.cdnApiPrefab.baseUrl,
-          ...deps.identity.authPool.frontendRefs,
-        },
+      calculatedSecrets: {
+        SKIP_PREFLIGHT_CHECK: 'true',
+        VITE_APP_API_URL: deps.cdnApi.cdnApiPrefab.baseUrl,
+        ...deps.identity.authPool.frontendRefs,
       },
     });
   }

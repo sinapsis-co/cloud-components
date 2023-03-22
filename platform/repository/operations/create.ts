@@ -1,8 +1,8 @@
-import DynamoDB from 'aws-sdk/clients/dynamodb';
-import { ApiError } from '../../handler/api/api-error';
+import { DynamoDBDocumentClient, PutCommand, PutCommandInput } from '@aws-sdk/lib-dynamodb';
 import { dispatchEvent } from '../../integrations/event/dispatch-event';
+import { HandledFault } from '../../util/handled-exception';
 import {
-  CreateItemFunc,
+  CreateItemFn,
   Entity,
   EntityBuilder,
   EntityCreate,
@@ -12,23 +12,24 @@ import {
 
 export const createItem = <Builder extends EntityBuilder, Omitted extends keyof Builder['body'] = ''>(
   repoConfig: EntityRepositoryConfig<Builder, EntityCreate<Builder, Omitted>>,
-  dynamodb: DynamoDB.DocumentClient
-): CreateItemFunc<Builder, EntityCreate<Builder, Omitted>> => {
+  dynamodb: DynamoDBDocumentClient
+): CreateItemFn<Builder, EntityCreate<Builder, Omitted>> => {
   return async (
     key: EntityBuilder<Builder>['key'],
     entityCreate: EntityCreate<Builder, Omitted>,
-    params?: Partial<DynamoDB.DocumentClient.PutItemInput>
+    params?: Partial<PutCommandInput>
   ): Promise<Entity<Builder>> => {
     const item = repoConfig.entitySerialize(key, entityCreate);
     await dynamodb
-      .put({
-        TableName: repoConfig.tableName,
-        Item: item,
-        ...params,
-      })
-      .promise()
+      .send(
+        new PutCommand({
+          TableName: repoConfig.tableName,
+          Item: item,
+          ...params,
+        })
+      )
       .catch((e) => {
-        throw new ApiError(e.code, 500, e.message);
+        throw new HandledFault({ code: 'FAULT_DYN_CREATE_ITEM', detail: e.message });
       });
 
     const entity = repoConfig.entityDeserialize(item);

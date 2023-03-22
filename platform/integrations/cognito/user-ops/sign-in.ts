@@ -1,16 +1,15 @@
-import Cognito from 'aws-sdk/clients/cognitoidentityserviceprovider';
-import { ApiError } from '../../../handler/api/api-error';
-
-const cognito = new Cognito();
+import { InitiateAuthCommand, InitiateAuthCommandOutput } from '@aws-sdk/client-cognito-identity-provider';
+import { cognito } from '..';
+import { HandledFault } from '../../../util/handled-exception';
 
 export const signInCognitoUser = async (
   username: string,
   password: string,
   clientId = process.env.USER_POOL_CLIENT_ID
-): Promise<Cognito.AuthenticationResultType> => {
-  if (!clientId) throw new Error('Missing USER_POOL_CLIENT_ID');
-  const response = await cognito
-    .initiateAuth({
+): Promise<InitiateAuthCommandOutput['AuthenticationResult']> => {
+  if (!clientId) throw new HandledFault({ code: 'FAULT_COG_INVALID_CLIENT_POOL' });
+  const response = await cognito.send(
+    new InitiateAuthCommand({
       ClientId: clientId,
       AuthFlow: 'USER_PASSWORD_AUTH',
       AuthParameters: {
@@ -18,8 +17,8 @@ export const signInCognitoUser = async (
         PASSWORD: password,
       },
     })
-    .promise();
+  );
 
-  if (!response.AuthenticationResult) throw new ApiError('InvalidAuth', 500, 'MissingAuthResult');
+  if (!response.AuthenticationResult) throw new HandledFault({ code: 'FAULT_COG_INVALID_SIGN_IN' });
   return response.AuthenticationResult;
 };

@@ -1,6 +1,6 @@
 // import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
 
-import { generateTracing } from '@sinapsis-co/cc-platform/tracing';
+import { HandledError } from '@sinapsis-co/cc-platform/util/handled-exception';
 
 // export const handler = apiHandler<baseApi.delete.Interface>(async (_, req) => {
 //   const { tenantId } = req.claims;
@@ -9,17 +9,5 @@ import { generateTracing } from '@sinapsis-co/cc-platform/tracing';
 // }, baseApi.delete.config);
 
 export const handler = async () => {
-  // const tracing = generateTracing();
-  const tracing = generateTracing();
-  // tracing!.addError(new Error('this is a 400 error'));
-  tracing.addErrorFlag();
-
-  tracing.close();
-  return {
-    statusCode: 400,
-    body: JSON.stringify({
-      errorType: 'error400',
-      errorMessage: 'this an error 400',
-    }),
-  };
+  throw new HandledError({ code: 'ERROR_ITEM_NOT_FOUND' });
 };

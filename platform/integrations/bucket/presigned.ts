@@ -3,6 +3,8 @@ import { createPresignedPost, PresignedPost } from '@aws-sdk/s3-presigned-post';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { s3 } from '.';
 
+export type { PresignedPost } from '@aws-sdk/s3-presigned-post';
+
 const DEFAULT_MAX_LENGTH = 1024 * 1024 * 5; // 5 MB
 
 type PresignedPostParams = {
@@ -12,8 +14,6 @@ type PresignedPostParams = {
   Expires?: number;
   ContentLengthRange?: { min: number; max: number };
 };
-
-export type { PresignedPost } from '@aws-sdk/s3-presigned-post';
 
 export const createPutPresignedUrl = async (
   params: PresignedPostParams,
@@ -25,10 +25,7 @@ export const createPutPresignedUrl = async (
     ...rest,
     Expires: 3600,
     Key,
-    Fields: {
-      'Content-Type': ContentType,
-      ...(metadata || {}),
-    },
+    Fields: { 'Content-Type': ContentType, ...(metadata || {}) },
     Conditions: [['content-length-range', ContentLengthRange?.min ?? 0, ContentLengthRange?.max ?? DEFAULT_MAX_LENGTH]],
   });
 };

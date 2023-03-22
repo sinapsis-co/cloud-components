@@ -1,4 +1,4 @@
-import { bucketPutObject } from '@sinapsis-co/cc-platform/integrations/bucket';
+import { bucketPutObject } from '@sinapsis-co/cc-platform/integrations/bucket/object';
 import requireFromString from 'require-from-string';
 import serverlessHttp from 'serverless-http';
 import { getEnvVars } from './get-env-vars';

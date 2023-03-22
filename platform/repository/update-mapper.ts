@@ -1,9 +1,9 @@
-import { DynamoDB } from 'aws-sdk';
+import { UpdateCommandInput } from '@aws-sdk/lib-dynamodb';
 
 type updateMapperReturn = {
-  UpdateExpression: DynamoDB.UpdateExpression;
-  ExpressionAttributeNames: DynamoDB.DocumentClient.ExpressionAttributeNameMap;
-  ExpressionAttributeValues: DynamoDB.DocumentClient.ExpressionAttributeValueMap;
+  UpdateExpression: UpdateCommandInput['UpdateExpression'];
+  ExpressionAttributeNames: UpdateCommandInput['ExpressionAttributeNames'];
+  ExpressionAttributeValues: UpdateCommandInput['ExpressionAttributeValues'];
 };
 
 export const updateMapper = <T>(itemToUpdate: T, extraAtt?: Record<string, unknown>): updateMapperReturn => {

@@ -23,6 +23,7 @@ export type BaseGlobalConstConfig<ExtendedConst = {}> = {
   repositoryOwner?: true;
   repositoryConnection?: string;
   bootstrappingServices?: string[];
+  landingZones: string[];
 } & ExtendedConst;
 
 export type BaseGlobalEnv<ExtendedEnv = {}> = {

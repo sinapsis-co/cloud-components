@@ -1,5 +1,5 @@
 import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
-import { bucketGetObject, bucketStreamUpload } from '@sinapsis-co/cc-platform/integrations/bucket';
+import { bucketStreamGetObject, bucketStreamUpload } from '@sinapsis-co/cc-platform/integrations/bucket/object';
 import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import sharp from 'sharp';
 import { Readable } from 'stream';
@@ -19,7 +19,7 @@ export const handler = eventHandler<assetEvent.assetToResize.Event>(async (event
   const destKey = `${selected.rootPath}/${nextPartialKey}`;
 
   // Pipe Input: Read from bucket
-  const { ContentType, Body } = await bucketGetObject({ Bucket: bucketName, Key: originalKey });
+  const { ContentType, Body } = await bucketStreamGetObject({ Bucket: bucketName, Key: originalKey });
   // Pipe Middleware: Resize
   const resizeStream = streamToSharp({ width: resizeToPixels, height: resizeToPixels });
   // Pipe Output: Write in bucket

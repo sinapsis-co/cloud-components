@@ -1,5 +1,9 @@
 /* eslint-disable no-console */
-import { CognitoIdentityServiceProvider } from 'aws-sdk';
+import {
+  AdminConfirmSignUpCommand,
+  CognitoIdentityProviderClient,
+  SignUpCommand,
+} from '@aws-sdk/client-cognito-identity-provider';
 import { assumeRole } from '../../common/synth/assume-role';
 import { preScript } from '../../common/synth/pre-script';
 import {
@@ -66,7 +70,7 @@ export const createUser = async <
 
     const role = await assumeRole({ account, region }, roleName);
 
-    const cognito = new CognitoIdentityServiceProvider(role);
+    const cognito = new CognitoIdentityProviderClient(role);
 
     const att = [
       { Name: 'email', Value: email },
@@ -75,18 +79,16 @@ export const createUser = async <
     ];
     if (tenant) att.push({ Name: 'custom:companyName', Value: tenant });
 
-    await cognito
-      .signUp({
+    await cognito.send(
+      new SignUpCommand({
         ClientId: clientId,
         Username: email,
         Password: password,
         UserAttributes: att,
       })
-      .promise();
+    );
 
-    await cognito.adminConfirmSignUp({ UserPoolId: userPoolId, Username: email }).promise();
-
-    // execSync(command, { stdio: 'inherit', env: process.env });
+    await cognito.send(new AdminConfirmSignUpCommand({ UserPoolId: userPoolId, Username: email }));
   } catch (error: any) {
     console.log(error);
     process.exit(1);

@@ -1,12 +1,12 @@
 import { CfnOutput, Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import {
-    AllowedMethods,
-    CachePolicy,
-    Distribution,
-    OriginRequestPolicy,
-    PriceClass,
-    ViewerProtocolPolicy
+  AllowedMethods,
+  CachePolicy,
+  Distribution,
+  OriginRequestPolicy,
+  PriceClass,
+  ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
@@ -23,16 +23,16 @@ import { Service } from '../../../common/service';
 import { SynthError } from '../../../common/synth/synth-error';
 import { WafPrefab } from '../../networking/waf';
 import { PrivateBucketPrefab } from '../../storage/bucket/private-bucket';
-import { DeploySecret, DeploySecretProps } from '../../util/config/deploy-secret';
+import { FrontendEnvBuilder } from '../../util/config/frontend-env-builder';
 
-export type SsrConstructParams = {
+export type SsrPrefabParams = {
   subDomain: string;
   certificate: ICertificate;
   assetMaxAge?: string;
   indexMaxAge?: string;
   baseDir?: string;
   distDir?: string;
-  envVars?: Omit<DeploySecretProps, 'name'>;
+  calculatedSecrets?: Record<string, string>;
   waf?: WafPrefab;
   skipRecord?: true;
   wwwRedirectEnabled?: true;
@@ -46,7 +46,7 @@ export class SsrPrefab extends Construct {
   public readonly distributionBucket: PrivateBucketPrefab;
   public readonly recipeBucket: PrivateBucketPrefab;
 
-  constructor(service: Service, params: SsrConstructParams) {
+  constructor(service: Service, params: SsrPrefabParams) {
     super(service, getLogicalName(SsrPrefab.name, params.subDomain));
 
     this.domain = getDomain(params.subDomain, service.props);
@@ -130,6 +130,8 @@ export class SsrPrefab extends Construct {
       });
     }
 
+    new FrontendEnvBuilder(service, { ...params, name: params.subDomain });
+
     new StringParameter(this, 'Config', {
       simpleName: true,
       parameterName: getResourceName('config', service.props),
@@ -147,7 +149,5 @@ export class SsrPrefab extends Construct {
     });
     new CfnOutput(this, 'Domain', { value: this.domain });
     new CfnOutput(this, 'BaseUrl', { value: this.baseUrl });
-
-    if (params.envVars) new DeploySecret(service, { ...params.envVars, name: params.subDomain });
   }
 }

@@ -1,5 +1,5 @@
 import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
-import { bucketGetObject } from '@sinapsis-co/cc-platform/integrations/bucket';
+import { bucketGetObject } from '@sinapsis-co/cc-platform/integrations/bucket/object';
 import { ManifestEntryArr, PlainRoutesManifest, RegExpManifest } from '../../entities/next-serverless';
 
 let manifestMemo: RegExpManifest;

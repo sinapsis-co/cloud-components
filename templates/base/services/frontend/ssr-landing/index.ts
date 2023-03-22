@@ -45,11 +45,9 @@ export class SsrLanding extends Service<GlobalCoordinator> {
       },
       certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,
       wwwRedirectEnabled: true,
-      envVars: {
-        calculatedSecrets: {
-          SKIP_PREFLIGHT_CHECK: 'true',
-          REACT_APP_API_URL: deps.cdnApi.cdnApiPrefab.baseUrl,
-        },
+      calculatedSecrets: {
+        SKIP_PREFLIGHT_CHECK: 'true',
+        REACT_APP_API_URL: deps.cdnApi.cdnApiPrefab.baseUrl,
       },
     });
 

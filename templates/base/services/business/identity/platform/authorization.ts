@@ -1,5 +1,5 @@
 import { ApiConfig, ApiInterface, ApiInterfaceRequest } from '@sinapsis-co/cc-platform/catalog/api';
-import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
+import { HandledError } from '@sinapsis-co/cc-platform/util/handled-exception';
 
 export type AuthScope = 'owner' | 'member';
 
@@ -16,6 +16,10 @@ export const authMdw: ApiConfig<ApiInterface>['authorizationMdw'] = (
   const apiLevel: number = parseInt(apiScope || '1');
 
   if (inputLevel > apiLevel) {
-    throw new ApiError('Unauthorized', 403, 'You do not have sufficient permissions to execute this action');
+    throw new HandledError({
+      code: 'ERROR_UNAUTHORIZED',
+      statusCode: 403,
+      detail: 'You do not have sufficient permissions to execute this action',
+    });
   }
 };

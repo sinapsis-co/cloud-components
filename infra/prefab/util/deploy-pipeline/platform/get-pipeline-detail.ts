@@ -1,6 +1,6 @@
-import { CodePipeline } from 'aws-sdk';
+import { CodePipelineClient, GetPipelineExecutionCommand } from '@aws-sdk/client-codepipeline';
 
-const codepipeline = new CodePipeline();
+const codepipeline = new CodePipelineClient({});
 
 export type PipelineDetail = {
   commitId: string;
@@ -8,12 +8,12 @@ export type PipelineDetail = {
 };
 
 export const getPipelineDetail = async (pipelineName: string, executionId: string): Promise<PipelineDetail> => {
-  const { pipelineExecution } = await codepipeline
-    .getPipelineExecution({
+  const { pipelineExecution } = await codepipeline.send(
+    new GetPipelineExecutionCommand({
       pipelineName: pipelineName,
       pipelineExecutionId: executionId,
     })
-    .promise();
+  );
 
   if (!pipelineExecution) throw new Error('Missing pipelineExecution');
 

@@ -1,8 +1,8 @@
-import { S3 } from 'aws-sdk';
 import { minify } from 'html-minifier-terser';
 import mustache from 'mustache';
 import { NotificationTemplate } from '../../catalog/notifications';
-const s3 = new S3();
+import { HandledFault } from '../../util/handled-exception';
+import { bucketGetObject } from '../bucket/object';
 
 export const renderEmailTemplate = async <Template extends NotificationTemplate = NotificationTemplate>(
   bucketName: string,
@@ -38,11 +38,10 @@ const fetchTemplate = async (
   fragment: string,
   extension: string
 ): Promise<string> => {
-  const params: S3.GetObjectRequest = {
+  const { Body } = await bucketGetObject({
     Bucket: bucket,
     Key: `${templateName}/${via}/${fragment}.${extension}`,
-  };
-  const response = await s3.getObject(params).promise();
-  if (!response.Body) throw new Error(`MISSING_TEMPLATE ${templateName}`);
-  return response.Body.toString();
+  });
+  if (!Body) throw new HandledFault({ code: 'FAULT_NOT_MISSING_TEMPLATE', detail: templateName });
+  return Body;
 };

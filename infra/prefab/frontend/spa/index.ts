@@ -22,16 +22,16 @@ import { Service } from '../../../common/service';
 import { SynthError } from '../../../common/synth/synth-error';
 import { WafPrefab } from '../../networking/waf';
 import { PrivateBucketPrefab } from '../../storage/bucket/private-bucket';
-import { DeploySecret, DeploySecretProps } from '../../util/config/deploy-secret';
+import { FrontendEnvBuilder } from '../../util/config/frontend-env-builder';
 
-export type WebappConstructParams = {
+export type SpaPrefabParams = {
   subDomain: string;
   certificate: ICertificate;
   assetMaxAge?: string;
   indexMaxAge?: string;
   baseDir?: string;
   distDir?: string;
-  envVars?: Omit<DeploySecretProps, 'name'>;
+  calculatedSecrets?: Record<string, string>;
   waf?: WafPrefab;
   skipRecord?: true;
   wwwRedirectEnabled?: true;
@@ -42,7 +42,7 @@ export class SpaPrefab extends Construct {
   private readonly baseUrl: string;
   private readonly distribution: Distribution;
 
-  constructor(service: Service, params: WebappConstructParams) {
+  constructor(service: Service, params: SpaPrefabParams) {
     super(service, getLogicalName(SpaPrefab.name, params.subDomain));
 
     this.domain = getDomain(params.subDomain, service.props);
@@ -123,6 +123,7 @@ export class SpaPrefab extends Construct {
         });
       });
     }
+    new FrontendEnvBuilder(service, { ...params, name: params.subDomain });
 
     new StringParameter(this, 'Config', {
       simpleName: true,
@@ -139,7 +140,5 @@ export class SpaPrefab extends Construct {
     });
     new CfnOutput(this, 'Domain', { value: this.domain });
     new CfnOutput(this, 'BaseUrl', { value: this.baseUrl });
-
-    if (params.envVars) new DeploySecret(service, { ...params.envVars, name: params.subDomain });
   }
 }

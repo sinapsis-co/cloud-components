@@ -1,31 +1,32 @@
-import DynamoDB from 'aws-sdk/clients/dynamodb';
+import { DynamoDBDocumentClient, QueryCommand, QueryCommandInput } from '@aws-sdk/lib-dynamodb';
 import { PaginatedResponse } from '../../catalog/api';
-import { ApiError } from '../../handler/api/api-error';
+import { HandledFault } from '../../util/handled-exception';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from '../../util/pagination';
-import { Entity, EntityBuilder, EntityRepositoryConfig, ListItemFunc } from '../interface';
+import { Entity, EntityBuilder, EntityRepositoryConfig, ListItemFn } from '../interface';
 
 export const listItem = <Builder extends EntityBuilder>(
   repoConfig: EntityRepositoryConfig<Builder>,
-  dynamodb: DynamoDB.DocumentClient
-): ListItemFunc<Builder> => {
+  dynamodb: DynamoDBDocumentClient
+): ListItemFn<Builder> => {
   return async (
     pk: string,
     queryParams: { limit: number; nextToken?: string },
-    params?: Partial<DynamoDB.DocumentClient.QueryInput>
+    params?: Partial<QueryCommandInput>
   ): Promise<PaginatedResponse<Entity<Builder>>> => {
     const { Items, LastEvaluatedKey } = await dynamodb
-      .query({
-        TableName: repoConfig.tableName,
-        KeyConditionExpression: '#pk = :pk',
-        ExpressionAttributeNames: { '#pk': 'pk' },
-        ExpressionAttributeValues: { ':pk': pk },
-        ExclusiveStartKey: decodeLastEvaluatedKey(queryParams.nextToken),
-        Limit: queryParams.limit,
-        ...params,
-      })
-      .promise()
+      .send(
+        new QueryCommand({
+          TableName: repoConfig.tableName,
+          KeyConditionExpression: '#pk = :pk',
+          ExpressionAttributeNames: { '#pk': 'pk' },
+          ExpressionAttributeValues: { ':pk': pk },
+          ExclusiveStartKey: decodeLastEvaluatedKey(queryParams.nextToken),
+          Limit: queryParams.limit,
+          ...params,
+        })
+      )
       .catch((e) => {
-        throw new ApiError(e.code, 500, e.message);
+        throw new HandledFault({ code: 'FAULT_DYN_LIST_ITEM', detail: e.message });
       });
 
     return {

@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import { DeleteMessageCommand } from '@aws-sdk/client-sqs';
 import { SQSEvent, SQSRecord } from 'aws-lambda';
-import { DeleteMessageRequest } from 'aws-sdk/clients/sqs';
 import { sqs } from '../../integrations/queue';
 import { generateTracing } from '../../tracing';
 
@@ -48,9 +47,10 @@ export const queueBatchHandler = <Payload>(handler: Handler<Payload>): Handler<P
 };
 
 const deleteMessage = async (receiptHandle: string, queueUrl: string): Promise<void> => {
-  const params: DeleteMessageRequest = {
-    QueueUrl: queueUrl,
-    ReceiptHandle: receiptHandle,
-  };
-  await sqs.send(new DeleteMessageCommand(params));
+  await sqs.send(
+    new DeleteMessageCommand({
+      QueueUrl: queueUrl,
+      ReceiptHandle: receiptHandle,
+    })
+  );
 };

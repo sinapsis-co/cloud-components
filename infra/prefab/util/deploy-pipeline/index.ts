@@ -22,9 +22,8 @@ import { getBucketName, getResourceName } from '../../../common/naming/get-resou
 import { Service } from '../../../common/service';
 import { SynthError } from '../../../common/synth/synth-error';
 import { TopicFunction } from '../../compute/function/topic-function';
-import { DeploySecret } from '../config/deploy-secret';
 import { RuntimeSecret } from '../config/runtime-secret';
-import { slackToken } from './catalog';
+import { slackToken } from './catalog/secrets';
 
 export type SlackObject = {
   channel: string;
@@ -63,16 +62,7 @@ export class DeployPipelinePrefab extends Construct {
       ? StringParameter.valueFromLookup(this, 'pipeline-default-repository-connection')
       : service.props.repositoryConnection!;
 
-    let githubTokenParameterName = 'pipeline-default-repository-token';
-
-    if (!service.props.useRepositoryDefaultConfig) {
-      const secretBuilder = new DeploySecret(service, {
-        name: 'pipeline',
-        saveAsPlain: true,
-        secretsKeys: ['GITHUB_TOKEN'],
-      });
-      githubTokenParameterName = secretBuilder.secrets['GITHUB_TOKEN'].parameterName;
-    }
+    const githubTokenParameterName = 'pipeline-default-repository-token';
 
     const sourceCodeArtifact = new Artifact('sourceCode');
     const sourceCodeAction = new CodeStarConnectionsSourceAction({

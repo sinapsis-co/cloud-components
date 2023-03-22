@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "es2019",
+    "target": "ES2022",
     "lib": ["es2019", "DOM"],
     "module": "commonjs",
     "moduleResolution": "node",
@@ -28,12 +28,12 @@
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": ".dist",
-    "typeRoots": ["./node_modules/@types"],
-    "paths": {
-      "@webapp/*": ["./frontend/webapp/src/*"],
-      "services/*": ["services/*"]
-    }
+    "typeRoots": ["./node_modules/@types"]
   },
-  "include": ["./**/*.ts", "jest.config.ts", "tree/deps.js"],
-  "exclude": ["cdk.out", "node_modules/**/*", "dist/**/*"]
+  "include": ["./**/*.ts"],
+  "exclude": ["cdk.out", "node_modules/**/*", "dist/**/*"],
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  }
 }

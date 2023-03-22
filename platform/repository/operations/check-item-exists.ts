@@ -1,24 +1,25 @@
-import DynamoDB from 'aws-sdk/clients/dynamodb';
-import { ApiError } from '../../handler/api/api-error';
-import { CheckItemExistsFunc, Entity, EntityBuilder, EntityRepositoryConfig } from '../interface';
+import { DynamoDBDocumentClient, GetCommand, GetCommandInput } from '@aws-sdk/lib-dynamodb';
+import { HandledFault } from '../../util/handled-exception';
+import { CheckItemExistsFn, Entity, EntityBuilder, EntityRepositoryConfig } from '../interface';
 
 export const checkItemExists = <Builder extends EntityBuilder>(
   repoConfig: EntityRepositoryConfig<Builder>,
-  dynamodb: DynamoDB.DocumentClient
-): CheckItemExistsFunc<Builder> => {
+  dynamodb: DynamoDBDocumentClient
+): CheckItemExistsFn<Builder> => {
   return async (
     key: EntityBuilder<Builder>['key'],
-    params?: Partial<DynamoDB.DocumentClient.GetItemInput>
+    params?: Partial<GetCommandInput>
   ): Promise<{ exists: boolean; entity?: Entity<Builder> }> => {
     const { Item } = await dynamodb
-      .get({
-        TableName: repoConfig.tableName,
-        Key: repoConfig.keySerialize(key),
-        ...params,
-      })
-      .promise()
+      .send(
+        new GetCommand({
+          TableName: repoConfig.tableName,
+          Key: repoConfig.keySerialize(key),
+          ...params,
+        })
+      )
       .catch((e) => {
-        throw new ApiError(e.code, 500, e.message);
+        throw new HandledFault({ code: 'FAULT_DYN_CHECK_ITEM_EXISTS', detail: e.message });
       });
 
     if (!Item) return { exists: false };

@@ -29,7 +29,6 @@ export class BaseCrud extends Service<GlobalCoordinator> {
       eventBus: deps.globalEventBus.eventBusPrefab,
       cdnApiPrefab: deps.cdnApi.cdnApiPrefab,
       authPool: deps.identity.authPool,
-      useRestApi: true,
       autoEventsEnabled: true,
       handlers: {
         create: baseApi.create.config,

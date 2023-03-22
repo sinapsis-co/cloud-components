@@ -1,9 +1,0 @@
-import { EventConfig } from '@sinapsis-co/cc-platform/catalog/event';
-import { Event as WebhookEvent } from '../webhook-event';
-
-export type Event = WebhookEvent<'topup.succeeded'>;
-
-export const eventConfig: EventConfig<Event> = {
-  name: 'stripe-connector:hook:topup.succeeded',
-  source: 'app',
-};
