@@ -1,5 +1,5 @@
 import { DynamoDBDocumentClient, GetCommand, GetCommandInput } from '@aws-sdk/lib-dynamodb';
-import { HandledFault } from '../../util/handled-exception';
+import { PlatformFault } from '../../error';
 import { CheckItemExistsFn, Entity, EntityBuilder, EntityRepositoryConfig } from '../interface';
 
 export const checkItemExists = <Builder extends EntityBuilder>(
@@ -19,7 +19,7 @@ export const checkItemExists = <Builder extends EntityBuilder>(
         })
       )
       .catch((e) => {
-        throw new HandledFault({ code: 'FAULT_DYN_CHECK_ITEM_EXISTS', detail: e.message });
+        throw new PlatformFault({ code: 'FAULT_DYN_CHECK_ITEM_EXISTS', detail: e.message });
       });
 
     if (!Item) return { exists: false };

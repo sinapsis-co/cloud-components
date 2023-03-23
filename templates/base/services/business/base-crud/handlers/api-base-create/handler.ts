@@ -1,5 +1,6 @@
 // import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
-import { HandledFault } from '@sinapsis-co/cc-platform/util/handled-exception';
+
+import { CustomFault } from '../../../../../config/error-catalog';
 
 // export const handler = apiHandler<baseApi.create.Interface>(async (_, req) => {
 //   const { tenantId } = req.claims;
@@ -12,5 +13,5 @@ export const handler = async () => {
   // tracing!.addError(new Error('this is a 500 error'));
   // tracing!.addFaultFlag();
   // tracing.close();
-  throw new HandledFault({ code: 'FAULT_COG_INVALID_CLIENT_POOL', meta });
+  throw new CustomFault({ code: 'FAULT_COG_INVALID_CLIENT_POOL', meta });
 };

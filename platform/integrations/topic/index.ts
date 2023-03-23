@@ -4,10 +4,10 @@ import {
   PublishBatchCommandOutput,
   SNSClient,
 } from '@aws-sdk/client-sns';
-import AwsXRay from 'aws-xray-sdk-core';
+import { Tracing } from '../../tracing';
 import { chunkArray } from '../../util/chunk-array';
 
-const sns = AwsXRay.captureAWSClient(new SNSClient({}));
+const sns: SNSClient = Tracing.captureIntegration(new SNSClient({}) as any);
 
 const MAX_MESSAGE_PER_BATCH = 10;
 

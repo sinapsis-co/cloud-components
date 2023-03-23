@@ -1,5 +1,5 @@
 import { DynamoDBDocumentClient, GetCommand, GetCommandInput } from '@aws-sdk/lib-dynamodb';
-import { HandledError, HandledFault } from '../../util/handled-exception';
+import { PlatformError, PlatformFault } from '../../error';
 import { Entity, EntityBuilder, EntityRepositoryConfig, GetItemFn } from '../interface';
 
 export const getItem = <Builder extends EntityBuilder>(
@@ -16,10 +16,10 @@ export const getItem = <Builder extends EntityBuilder>(
         })
       )
       .catch((e) => {
-        throw new HandledFault({ code: 'FAULT_DYN_GET_ITEM', detail: e.message });
+        throw new PlatformFault({ code: 'FAULT_DYN_GET_ITEM', detail: e.message });
       });
 
-    if (!Item) throw new HandledError({ code: 'ERROR_ITEM_NOT_FOUND' });
+    if (!Item) throw new PlatformError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
     return repoConfig.entityDeserialize(Item);
   };
 };

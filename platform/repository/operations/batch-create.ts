@@ -1,7 +1,7 @@
 import { BatchWriteCommand, BatchWriteCommandInput, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import { PlatformFault } from '../../error';
 import { chunkArray } from '../../util/chunk-array';
 import { wait } from '../../util/executers';
-import { HandledFault } from '../../util/handled-exception';
 import {
   BatchCreateItemFn,
   Entity,
@@ -49,7 +49,7 @@ const call = async (
   autoRetry?: boolean
 ): Promise<void> => {
   const { UnprocessedItems } = await dynamodb.send(new BatchWriteCommand({ RequestItems })).catch((e) => {
-    throw new HandledFault({ code: 'FAULT_DYN_BATCH_CREATE_ITEM', detail: e.message });
+    throw new PlatformFault({ code: 'FAULT_DYN_BATCH_CREATE_ITEM', detail: e.message });
   });
   if (autoRetry && UnprocessedItems && UnprocessedItems[table]) {
     await wait(Math.ceil(Math.random() * 2000));

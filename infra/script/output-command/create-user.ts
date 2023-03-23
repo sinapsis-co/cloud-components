@@ -30,6 +30,7 @@ export const createUser = async <
   try {
     console.log('<< Create Cognito User >>');
 
+    console.log('>> STEP: (1/3) => LOADING CONFIGS');
     const name = args[4];
     const password = args[5];
     const postfix = args[6];
@@ -79,6 +80,7 @@ export const createUser = async <
     ];
     if (tenant) att.push({ Name: 'custom:companyName', Value: tenant });
 
+    console.log('>> STEP: (2/3) => SIGN UP');
     await cognito.send(
       new SignUpCommand({
         ClientId: clientId,
@@ -87,7 +89,7 @@ export const createUser = async <
         UserAttributes: att,
       })
     );
-
+    console.log('>> STEP: (3/3) => CONFIRM SIGN UP');
     await cognito.send(new AdminConfirmSignUpCommand({ UserPoolId: userPoolId, Username: email }));
   } catch (error: any) {
     console.log(error);

@@ -1,7 +1,7 @@
 import { minify } from 'html-minifier-terser';
 import mustache from 'mustache';
 import { NotificationTemplate } from '../../catalog/notifications';
-import { HandledFault } from '../../util/handled-exception';
+import { PlatformFault } from '../../error';
 import { bucketGetObject } from '../bucket/object';
 
 export const renderEmailTemplate = async <Template extends NotificationTemplate = NotificationTemplate>(
@@ -42,6 +42,6 @@ const fetchTemplate = async (
     Bucket: bucket,
     Key: `${templateName}/${via}/${fragment}.${extension}`,
   });
-  if (!Body) throw new HandledFault({ code: 'FAULT_NOT_MISSING_TEMPLATE', detail: templateName });
+  if (!Body) throw new PlatformFault({ code: 'FAULT_NOT_MISSING_TEMPLATE', detail: templateName });
   return Body;
 };

@@ -1,6 +1,9 @@
 import { EventBridgeEvent } from 'aws-lambda';
 import { EventInterface } from '../../catalog/event';
-import { generateTracing } from '../../tracing';
+import { PlatformError, PlatformFault } from '../../error';
+import { timeoutController } from '../../error/timeout';
+import { HandledException } from '../../error/types';
+import { Tracing } from '../../tracing';
 
 type Handler<Event extends EventInterface> = (
   event: EventBridgeEvent<Event['name'], Event['payload']>
@@ -8,16 +11,18 @@ type Handler<Event extends EventInterface> = (
 
 export const eventHandler = <Event extends EventInterface>(handler: Handler<Event>): Handler<Event> => {
   return async (event: EventBridgeEvent<Event['name'], Event['payload']>): Promise<void> => {
-    const tracing = generateTracing();
+    const tracing = new Tracing();
     try {
-      await handler(event);
+      await timeoutController(handler(event));
       tracing.close();
     } catch (error: any) {
-      tracing.addFaultFlag();
-      tracing.close(error);
-      // eslint-disable-next-line no-console
-      console.log(JSON.stringify(event));
-      throw error;
+      const handledException: HandledException =
+        error instanceof PlatformError || error instanceof PlatformFault
+          ? error
+          : new PlatformFault({ code: 'FAULT_UNHANDLED', detail: error.message });
+      handledException.addMeta({ functionType: process.env.CC_FUNCTION_TYPE, invokeId: event.id });
+      tracing.failureClose(handledException);
+      return handledException.throwException();
     }
   };
 };

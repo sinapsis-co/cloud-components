@@ -1,6 +1,6 @@
 import { DeleteCommand, DeleteCommandInput, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import { PlatformError, PlatformFault } from '../../error';
 import { dispatchEvent } from '../../integrations/event/dispatch-event';
-import { HandledError, HandledFault } from '../../util/handled-exception';
 import { DeleteItemFn, Entity, EntityBuilder, EntityRepositoryConfig, RepositoryEvent } from '../interface';
 
 export const deleteItem = <Builder extends EntityBuilder>(
@@ -18,10 +18,10 @@ export const deleteItem = <Builder extends EntityBuilder>(
         })
       )
       .catch((e) => {
-        throw new HandledFault({ code: 'FAULT_DYN_DELETE_ITEM', detail: e.message });
+        throw new PlatformFault({ code: 'FAULT_DYN_DELETE_ITEM', detail: e.message });
       });
 
-    if (!Attributes) throw new HandledError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
+    if (!Attributes) throw new PlatformError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
 
     const entity = repoConfig.entityDeserialize(Attributes);
 

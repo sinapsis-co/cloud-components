@@ -1,5 +1,5 @@
-import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
 import algoliasearch from 'algoliasearch';
+import { CustomError } from '../../../../config/error-catalog';
 import { UserClaims } from '../../identity/entities/user-cognito';
 import { UserProfile } from '../../identity/entities/user-profile';
 import { AlgoliaConfig, AlgoliaSearchResponse, SearchEntity } from '../entities/algolia';
@@ -17,7 +17,7 @@ export const algoliaIndexSearch = async (
   const index = client.initIndex(`${process.env.ENV_NAME}_${entityName}`);
 
   const searchType: SearchEntity = searchTypes[entityName];
-  if (!searchType) throw new ApiError('InvalidSearchType', 400);
+  if (!searchType) throw new CustomError({ code: 'ERROR_SEARCH_INVALID_TYPE' });
   const filters: string[] = [];
   if (searchType.excludeMyself) filters.push(`NOT id:${claims.sub}`);
   if (searchType.searchInTenant) filters.push(`tenantId:${claims.tenantId}`);

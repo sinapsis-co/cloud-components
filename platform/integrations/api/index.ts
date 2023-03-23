@@ -1,55 +1,84 @@
 import fetch from 'node-fetch';
-import { ApiInterfaceExtended, ApiInterface, ApiConfig } from '../../catalog/api';
+import { EmptyObject } from '../../catalog/api';
+import { ApiIntegrationConfig, ApiIntegrationInterface } from '../../catalog/integrations';
+import { PlatformFault } from '../../error';
+import { Tracing } from '../../tracing';
 
-export type ApiParams<Api extends ApiInterfaceExtended> = Partial<Omit<Api, 'response' | 'claims'>>;
+type NotEmptyObjects<T> = {
+  [P in keyof T]: Exclude<T[P], undefined> extends EmptyObject ? never : P;
+}[keyof T];
+
+type ApiParams<Api extends ApiIntegrationInterface> = Omit<
+  Pick<Api, NotEmptyObjects<Api>>,
+  'response' | 'errorResponse' | 'claims'
+>;
 
 export type BasicAuth = {
   user: string;
   pass: string;
 };
 
-export type ExtraParams = {
+export type ExtraParams<TracingMeta> = {
   basicAuth?: BasicAuth;
-  withoutResponse?: true;
+  tracingMeta: TracingMeta;
 };
 
-export const callApi = async <Api extends ApiInterfaceExtended>(
-  config: ApiConfig<ApiInterface>,
-  { body = {}, pathParams = {}, queryParams = {}, headers = {} }: ApiParams<Api>,
-  extraParams?: ExtraParams
-): Promise<Api['response']> => {
-  const { baseUrl, basePath, path, method } = config;
-  const querystring = !queryParams
-    ? ''
-    : Object.keys(queryParams)
+type Response<Api extends ApiIntegrationInterface, ErrorResponse extends boolean> = ErrorResponse extends true
+  ? Api['response'] | { errorResponse: Api['errorResponse'] }
+  : Api['response'];
+
+export const apiCall = async <
+  Api extends ApiIntegrationInterface,
+  TracingMeta extends Record<string, string>,
+  ErrorResponse extends boolean = false
+>(
+  config: ApiIntegrationConfig<Api>,
+  params: ApiParams<Api>,
+  extraParams: ExtraParams<TracingMeta>,
+  returnErrorAsJson?: ErrorResponse
+): Promise<Response<Api, ErrorResponse>> => {
+  const { url, method } = config;
+  const { pathParams = {}, queryParams = {}, headers = {}, body = {} } = params as Api;
+
+  const endpoint = Object.keys(pathParams).length
+    ? Object.keys(pathParams).reduce((memo, pathP) => memo.replace(`{${pathP}}`, pathParams[pathP] as string), url)
+    : url;
+
+  const endpointWithQuery = Object.keys(queryParams).length
+    ? `${endpoint}?${Object.keys(queryParams)
         .map((key) => `${key}=${queryParams[key]}`)
-        .join('&')
-        .replace(/^([^?])/g, '?$1');
+        .join('&')}`
+    : endpoint;
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  let endpoint = baseUrl!;
-  endpoint += basePath != '' ? basePath.replace(/^([^/])/g, '/$1') : '';
-  endpoint += path != '' ? path.replace(/^([^/])/g, '/$1') : '';
-  endpoint += querystring;
-
-  if (pathParams)
-    Object.keys(pathParams).forEach((pathP) => {
-      endpoint = endpoint.replace(`{${pathP}}`, pathParams[pathP] as string);
+  const cmd = async () => {
+    const response = await fetch(endpointWithQuery, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(extraParams?.basicAuth ? getBasicAuthHeader(extraParams.basicAuth) : {}),
+        ...(headers ? headers : {}),
+      },
+      ...(!['GET', 'HEAD'].includes(method) ? { body: JSON.stringify(body) } : {}),
+    }).catch((e) => {
+      throw new PlatformFault({ code: 'FAULT_API_CALL_NETWORK', detail: e.message }).returnException();
     });
 
-  const response = await fetch(endpoint, {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(extraParams?.basicAuth ? getBasicAuthHeader(extraParams.basicAuth) : {}),
-      ...(headers ? headers : {}),
-    },
-    ...(!['GET', 'HEAD'].includes(method) ? { body: JSON.stringify(body) } : {}),
-  });
-  // eslint-disable-next-line no-console
-  if (!response.ok) console.log(await response.text());
-  if (extraParams?.withoutResponse) return;
-  return (await response.json()) as Api['response'];
+    if (!response.ok) {
+      if (returnErrorAsJson) {
+        const errorResponse: Api['errorResponse'] = await response.json();
+        return { errorResponse };
+      }
+      throw new PlatformFault({ code: 'FAULT_API_CALL_INVALID_RESPONSE', detail: await response.text() });
+    }
+    return (await response.json()) as Api['response'];
+  };
+  return await Tracing.traceableOp(
+    'ApiCall',
+    'FAULT_API_CALL_UNHANDLED',
+    endpointWithQuery,
+    cmd,
+    extraParams.tracingMeta
+  );
 };
 
 const getBasicAuthHeader = (basicAuth: BasicAuth) => {

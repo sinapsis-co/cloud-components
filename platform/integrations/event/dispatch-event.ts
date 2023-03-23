@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { EventBridgeClient, PutEventsCommand, PutEventsRequestEntry } from '@aws-sdk/client-eventbridge';
-import AwsXRay from 'aws-xray-sdk-core';
 import { EventConfig, EventInterface } from '../../catalog/event';
+import { Tracing } from '../../tracing';
 
-// const singleton = new EventBridge();
-const eventBridge = AwsXRay.captureAWSv3Client(new EventBridgeClient({}));
+export const eventBridge = Tracing.captureIntegration(new EventBridgeClient({}));
 
 export type TracingMeta = Record<string, string>;
 
@@ -24,10 +23,6 @@ export const dispatchEvent = async <
     Detail: JSON.stringify(payload),
     Resources: [],
   };
-
-  await AwsXRay.captureAsyncFunc(`Dispatch: ${eventConfig.name}`, async (innerSubsegment) => {
-    if (tracingMeta) Object.keys(tracingMeta).map((t) => innerSubsegment!.addAnnotation(t, tracingMeta[t]));
-    await eventBridge.send(new PutEventsCommand({ Entries: [event] }));
-    innerSubsegment?.close();
-  });
+  const cmd = () => eventBridge.send(new PutEventsCommand({ Entries: [event] }));
+  await Tracing.traceableOp('Dispatch', 'FAULT_EVENT_DISPATCH', eventConfig.name, cmd, tracingMeta);
 };

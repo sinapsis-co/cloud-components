@@ -10,25 +10,12 @@ export type ApiInterfaceKeys = {
   claims: Record<string, unknown>;
 };
 
-export type ApiInterfaceExtendedKeys = ApiInterfaceKeys & {
-  headers: Record<string, unknown>;
-};
-
 export type ApiInterface<keys extends ApiInterfaceKeys = ApiInterfaceKeys> = {
   response: keys['response'];
   body: keys['body'];
   pathParams: keys['pathParams'];
   queryParams: keys['queryParams'];
   claims: keys['claims'];
-};
-
-export type ApiInterfaceExtended<keys extends ApiInterfaceExtendedKeys = ApiInterfaceExtendedKeys> = {
-  response: keys['response'];
-  body: keys['body'];
-  pathParams: keys['pathParams'];
-  queryParams: keys['queryParams'];
-  claims: keys['claims'];
-  headers: keys['headers'];
 };
 
 type OmittedProps<T extends ApiInterfaceKeys> = Pick<ApiInterface<T>, 'response'>;

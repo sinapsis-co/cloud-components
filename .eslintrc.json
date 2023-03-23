@@ -23,7 +23,7 @@
     "space-in-parens": ["error", "never"],
     "space-infix-ops": ["error"],
     "semi-spacing": ["error", { "before": false, "after": true }],
-    "newline-per-chained-call": ["error", { "ignoreChainWithDepth": 3 }],
+    "newline-per-chained-call": ["error", { "ignoreChainWithDepth": 4 }],
     "@typescript-eslint/no-empty-interface": ["warn", { "allowSingleExtends": true }],
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-non-null-assertion": "off"

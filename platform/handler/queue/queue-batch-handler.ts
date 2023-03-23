@@ -1,56 +1,68 @@
 /* eslint-disable no-console */
-import { DeleteMessageCommand } from '@aws-sdk/client-sqs';
 import { SQSEvent, SQSRecord } from 'aws-lambda';
-import { sqs } from '../../integrations/queue';
-import { generateTracing } from '../../tracing';
+import { PlatformError, PlatformFault } from '../../error';
+import { timeoutController } from '../../error/timeout';
+import { HandledException } from '../../error/types';
+import { deleteMessage } from '../../integrations/queue';
+import { Tracing } from '../../tracing';
 
 type Handler<Payload> = (event: SQSEvent, record: SQSRecord, payload: Payload) => Promise<void>;
+
+/**
+ * queueBatchHandler manages the batching of the queue in way that from handler perspective is processing a
+ * single message. Every message in the queue is processed in parallel and the partial failures are handled automatically
+ *
+ * @param handler
+ * @returns void
+ */
 
 export const queueBatchHandler = <Payload>(handler: Handler<Payload>): Handler<Payload> => {
   return async (event: SQSEvent): Promise<void> => {
     const [region, account, name] = event.Records[0].eventSourceARN.split(':').slice(3);
     const url = `https://sqs.${region}.amazonaws.com/${account}/${name}`;
-    let errorCounter = 0;
+    const batchSize = event.Records.length;
     const promises = await Promise.allSettled(
       event.Records.map(async (record) => {
-        const tracing = generateTracing();
+        const tracing = new Tracing();
         try {
           const payload = JSON.parse(record.body);
-          await handler(event, record, payload);
+          await timeoutController(handler(event, record, payload));
           tracing.close();
           return record.receiptHandle;
         } catch (error: any) {
-          errorCounter++;
-          console.log({
-            messageId: record.messageId,
-            retries: record.attributes.ApproximateReceiveCount,
-            detail: error['raw'] || error.message,
-          });
-          tracing.addFaultFlag();
-          tracing.close(error);
-          throw error;
+          const handledException: HandledException =
+            error instanceof PlatformError || error instanceof PlatformFault
+              ? error
+              : new PlatformFault({ code: 'FAULT_UNHANDLED', detail: error.message });
+          tracing.failureClose(handledException);
+          handledException.addMeta({ functionType: process.env.CC_FUNCTION_TYPE, invokeId: record.messageId });
+          handledException.throwInBatchException();
         }
       })
     );
-    if (!promises.find((p) => p.status === 'rejected')) return;
+    // CASE: All messages were processed successfully
+    if (!promises.find((p) => p.status === 'rejected')) {
+      console.log({ namespace: 'QUEUE_BATCH_FINISHED', size: batchSize, processed: batchSize, rejected: 0 });
+      return;
+    }
+    // CASE: All messages were rejected
+    if (!promises.find((p) => p.status === 'fulfilled')) {
+      console.log({ namespace: 'QUEUE_BATCH_FINISHED', size: batchSize, processed: 0, rejected: batchSize });
+      throw new Error('BatchRejected'); //We plain Error used to avoid ErrorMetric duplication
+    }
+    // CASE: Partial success/failure
     else {
       const toDelete: PromiseFulfilledResult<string>[] = promises.filter(
         (p) => p.status === 'fulfilled'
       ) as PromiseFulfilledResult<string>[];
-
+      console.log({
+        namespace: 'QUEUE_BATCH_FINISHED',
+        size: batchSize,
+        processed: toDelete.length,
+        rejected: batchSize - toDelete.length,
+      });
       await Promise.all(toDelete.map((p: PromiseFulfilledResult<string>) => deleteMessage(p.value, url)));
+      throw new Error('BatchRejected'); //We plain Error used to avoid ErrorMetric duplication
     }
-    const error = new Error(`${errorCounter} events rejected of ${event.Records.length}`);
-    error['errorType'] = 'EventsRejected';
-    throw error;
   };
-};
-
-const deleteMessage = async (receiptHandle: string, queueUrl: string): Promise<void> => {
-  await sqs.send(
-    new DeleteMessageCommand({
-      QueueUrl: queueUrl,
-      ReceiptHandle: receiptHandle,
-    })
-  );
 };

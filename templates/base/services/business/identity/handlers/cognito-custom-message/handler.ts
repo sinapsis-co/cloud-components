@@ -1,4 +1,4 @@
-import { getCognitoTemplateName } from '@sinapsis-co/cc-platform/integrations/cognito/notifications/template';
+import { getCognitoTemplateName } from '@sinapsis-co/cc-platform/integrations/notifications/cognito-template';
 import { renderEmailTemplate } from '@sinapsis-co/cc-platform/integrations/notifications/render-template';
 import { CustomMessageTriggerHandler } from 'aws-lambda';
 import { ConfirmationCodeTemplate } from 'notifications/templates/confirmation-code';

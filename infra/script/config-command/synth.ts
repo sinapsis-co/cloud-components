@@ -32,7 +32,7 @@ export const synth: ConfigCommand = async <
       args
     );
 
-    const command = `npx cdk synth \
+    const command = `npx cdk synth --debug -v \
     --require-approval='never' \
     --cloudformation-execution-policies=arn:aws:iam::aws:policy/AdministratorAccess \
     --context env=${envNameInput} \

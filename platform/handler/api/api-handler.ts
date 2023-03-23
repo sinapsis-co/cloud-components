@@ -1,11 +1,12 @@
 import { APIGatewayProxyEventV2WithJWTAuthorizer, APIGatewayProxyResultV2 } from 'aws-lambda';
 import { Schemy } from 'schemy-ts';
 import { ApiConfig, ApiInterface, ApiInterfaceKeys, ApiInterfaceRequest } from '../../catalog/api';
-import { TracedHandler } from '../../tracing';
-import { timeoutController } from '../../tracing/timeout';
-import { HandledError, HandledException, HandledFault } from '../../util/handled-exception';
+import { PlatformError, PlatformFault } from '../../error';
+import { timeoutController } from '../../error/timeout';
+import { HandledException } from '../../error/types';
+import { Tracing } from '../../tracing';
 
-const DEFAULT_MAX_AGE = process.env.CACHE_MAX_AGE ? parseInt(process.env.CACHE_MAX_AGE) : 10;
+const DEFAULT_MAX_AGE = process.env.CC_CACHE_MAX_AGE ? parseInt(process.env.CC_CACHE_MAX_AGE) : 10;
 
 export const DEFAULT_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -27,22 +28,23 @@ export const apiHandler = <T extends ApiInterface>(
 ): Handler<T> => {
   return async (event: APIGatewayProxyEventV2WithJWTAuthorizer): Promise<APIGatewayProxyResultV2> => {
     const headers = { ...DEFAULT_HEADERS, ...customHeaders };
-    const tracing = new TracedHandler();
+    const tracing = new Tracing();
     try {
       const request: ApiInterfaceRequest<T> = await apiParser<T>(event, apiOptions.schema);
       if (apiOptions.authorizationMdw) apiOptions.authorizationMdw(request, apiOptions.scope);
       const result = await timeoutController(handler(event, request));
       tracing.close();
       return {
-        statusCode: statusCode,
         headers,
+        statusCode: statusCode,
         body: JSON.stringify(result),
       };
     } catch (error: any) {
       const handledException: HandledException =
-        error instanceof HandledError || error instanceof HandledFault
+        error instanceof PlatformError || error instanceof PlatformFault
           ? error
-          : new HandledFault({ code: 'FAULT_UNHANDLED', detail: error.message });
+          : new PlatformFault({ code: 'FAULT_UNHANDLED', detail: error.message });
+      handledException.addMeta({ functionType: process.env.CC_FUNCTION_TYPE, invokeId: event.headers['X-Request-ID'] });
       tracing.failureClose(handledException);
       return handledException.returnException(headers);
     }
@@ -65,13 +67,13 @@ const bodyParser = async <BodyType>(body?: string, schema?: Schemy): Promise<Bod
     const parsedBody = JSON.parse(body || '{}');
     if (schema) {
       return await Schemy.validate<BodyType>(parsedBody, schema, false).catch((e) => {
-        throw new HandledError({ code: 'ERROR_BODY_VALIDATION', detail: e });
+        throw new PlatformError({ code: 'ERROR_BODY_VALIDATION', detail: e });
       });
     }
     return parsedBody;
   } catch (e: any) {
-    if (e instanceof HandledError) throw e;
-    throw new HandledError({ code: 'ERROR_MALFORMED_BODY', detail: e.message });
+    if (e instanceof PlatformError) throw e;
+    throw new PlatformError({ code: 'ERROR_MALFORMED_BODY', detail: e.message });
   }
 };
 

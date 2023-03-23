@@ -1,9 +1,9 @@
 import { SendEmailCommand, SESv2Client } from '@aws-sdk/client-sesv2';
-import AwsXRay from 'aws-xray-sdk-core';
 import { createTransport } from 'nodemailer';
 import { Readable } from 'stream';
+import { Tracing } from '../../tracing';
 
-export const ses: SESv2Client = AwsXRay.captureAWSv3Client(new SESv2Client({}) as any);
+export const ses: SESv2Client = Tracing.captureIntegration(new SESv2Client({}) as any);
 
 export type Attachment = {
   filename: string;
@@ -33,10 +33,12 @@ export const deliverEmail = async <TracingMeta extends Record<string, string> = 
   params: DeliverEmailParams,
   tracingMeta?: TracingMeta
 ): Promise<void> => {
-  return AwsXRay.captureAsyncFunc(`SendEmail: ${params.to}`, async (innerSubsegment) => {
-    if (tracingMeta) Object.keys(tracingMeta).map((t) => innerSubsegment!.addAnnotation(t, tracingMeta[t]));
+  const cmd = async () => {
     const transporter = createTransport({ SES: { ses: ses, aws: { SendRawEmailCommand: SendRawEmailCommand } } });
     await transporter.sendMail(params);
-    innerSubsegment?.close();
+  };
+  return await Tracing.traceableOp(cmd, `SendEmail: ${params.to}`, 'FAULT_NOT_DELIVER_EMAIL', {
+    to: params.to,
+    ...tracingMeta,
   });
 };

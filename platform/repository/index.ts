@@ -1,4 +1,3 @@
-import AwsXRay from 'aws-xray-sdk-core';
 import { batchCreateItem } from './operations/batch-create';
 import { batchGetItem } from './operations/batch-get';
 import { checkItemExists } from './operations/check-item-exists';
@@ -15,8 +14,9 @@ import { EntityBuilder, EntityRepositoryConfig, Repository } from './interface';
 
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
-const client = new DynamoDBClient({});
-AwsXRay.captureAWSv3Client(client as any);
+import { Tracing } from '../tracing';
+
+const client: DynamoDBClient = Tracing.captureIntegration(new DynamoDBClient({}) as any);
 export const dynamodb = DynamoDBDocumentClient.from(client);
 
 export const repository = <Builder extends EntityBuilder>(

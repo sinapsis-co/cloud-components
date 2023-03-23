@@ -1,6 +1,6 @@
 import { DynamoDBDocumentClient, PutCommand, PutCommandInput } from '@aws-sdk/lib-dynamodb';
+import { PlatformFault } from '../../error';
 import { dispatchEvent } from '../../integrations/event/dispatch-event';
-import { HandledFault } from '../../util/handled-exception';
 import {
   CreateItemFn,
   Entity,
@@ -29,7 +29,7 @@ export const createItem = <Builder extends EntityBuilder, Omitted extends keyof 
         })
       )
       .catch((e) => {
-        throw new HandledFault({ code: 'FAULT_DYN_CREATE_ITEM', detail: e.message });
+        throw new PlatformFault({ code: 'FAULT_DYN_CREATE_ITEM', detail: e.message });
       });
 
     const entity = repoConfig.entityDeserialize(item);

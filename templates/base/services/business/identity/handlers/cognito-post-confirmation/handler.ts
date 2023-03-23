@@ -1,4 +1,3 @@
-import { updateCognitoUser } from '@sinapsis-co/cc-platform/integrations/cognito/admin-ops/update-user-att';
 import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import { uuid } from '@sinapsis-co/cc-platform/lib/uuid';
 import { PostConfirmationTriggerHandler } from 'aws-lambda';
@@ -6,12 +5,16 @@ import { UserCognito } from 'services/business/identity/entities/user-cognito';
 import { cognitoToProfileMapper, cognitoUpdateCustomMapper } from 'services/business/identity/platform/cognito-mapper';
 import { userProfileRepository } from 'services/business/identity/repository/user-profile-repository';
 
-import { HandledError } from '@sinapsis-co/cc-platform/util/handled-exception';
+import { updateCognitoUser } from '@sinapsis-co/cc-platform/integrations/cognito';
 import { WelcomeTemplate } from 'notifications/templates/welcome';
 import { notificationEvent } from 'services/support/notifications/catalog';
+import { CustomError } from '../../../../../config/error-catalog';
 
 export const handler: PostConfirmationTriggerHandler = async (event) => {
   const { userAttributes } = event.request;
+
+  // Triggers only in ConfirmSignUp
+  if (event.triggerSource !== 'PostConfirmation_ConfirmSignUp') return event;
 
   // HINT: UserCognito can use values from user input or created/overwritten by code.
   const userCognito: UserCognito = {
@@ -28,7 +31,7 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
     },
   };
 
-  // Check if the user has an invite
+  // Check if the user has an invitation
   const [inviteTenantId, inviteId] = userAttributes['custom:companyName'].split('#');
   const userWithInvite = await userProfileRepository
     .deleteItem({
@@ -36,7 +39,7 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
       id: `pending#${inviteId}`,
     })
     .catch((e) => {
-      if (e instanceof HandledError && e.exception.errorCode === 'ITEM_NOT_FOUND') return;
+      if (e instanceof CustomError && e.errorCode === 'ERROR_ITEM_NOT_FOUND') return;
       throw e;
     });
   if (userWithInvite) {

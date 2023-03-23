@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
-import { sendMessages } from '@sinapsis-co/cc-platform/integrations/queue/send-messages';
+import { sendMessages } from '@sinapsis-co/cc-platform/integrations/queue';
 import { ssrLandingMessage } from '../../catalog';
 import { RenderPage, RenderRequest } from '../../entities/render-page';
 import { renderPageTypes } from '../../lib/render-page';

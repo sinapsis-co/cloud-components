@@ -1,6 +1,6 @@
 import { DynamoDBDocumentClient, UpdateCommand, UpdateCommandInput } from '@aws-sdk/lib-dynamodb';
+import { PlatformError, PlatformFault } from '../../error';
 import { dispatchEvent } from '../../integrations/event/dispatch-event';
-import { HandledError, HandledFault } from '../../util/handled-exception';
 import {
   Entity,
   EntityBuilder,
@@ -32,10 +32,10 @@ export const updateItem = <Builder extends EntityBuilder>(
         })
       )
       .catch((e) => {
-        throw new HandledFault({ code: 'FAULT_DYN_UPDATE_ITEM', detail: e.message });
+        throw new PlatformFault({ code: 'FAULT_DYN_UPDATE_ITEM', detail: e.message });
       });
 
-    if (!Attributes) throw new HandledError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
+    if (!Attributes) throw new PlatformError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
 
     const entity: Entity<Builder> = repoConfig.entityDeserialize(Attributes);
 

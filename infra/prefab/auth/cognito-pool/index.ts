@@ -53,6 +53,7 @@ export class CognitoAuthPoolPrefab extends Construct {
       accountRecovery: AccountRecovery.EMAIL_ONLY,
       selfSignUpEnabled: true,
       autoVerify: { email: true },
+      signInCaseSensitive: false,
       passwordPolicy: params.passwordPolicy || { minLength: 8, requireDigits: true },
     };
 

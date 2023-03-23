@@ -1,9 +1,9 @@
-import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
 import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
 import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import { uuid } from '@sinapsis-co/cc-platform/lib/uuid';
 import { identityApi } from 'services/business/identity/catalog';
 import { userProfileRepository } from 'services/business/identity/repository/user-profile-repository';
+import { CustomError } from '../../../../../config/error-catalog';
 import { UserInviteTemplate } from '../../../../../notifications/templates/user-invite';
 import { notificationEvent } from '../../../../support/notifications/catalog';
 
@@ -22,7 +22,7 @@ export const handler = apiHandler<identityApi.memberCreate.Interface>(async (_, 
     }
   );
 
-  if (emailCheck.items.length > 0) throw new ApiError('UserAlreadyExists');
+  if (emailCheck.items.length > 0) throw new CustomError({ code: 'ERROR_IDENTITY_USER_EXISTS' });
 
   const user = userProfileRepository.createItem(
     { tenantId, id: inviteId },

@@ -27,6 +27,7 @@ export class SesDomain extends Construct {
 
   private verifyDomainIdentity(domainName: string): AwsCustomResource {
     return new AwsCustomResource(this, 'VerifyDomainIdentity', {
+      installLatestAwsSdk: true,
       onCreate: {
         service: 'SES',
         action: 'verifyDomainIdentity',
@@ -56,6 +57,7 @@ export class SesDomain extends Construct {
 
   private verifyDomainDkim(domainName: string): AwsCustomResource {
     return new AwsCustomResource(this, 'VerifyDomainDkim', {
+      installLatestAwsSdk: true,
       onCreate: {
         service: 'SES',
         action: 'verifyDomainDkim',
@@ -94,6 +96,7 @@ export class SesDomain extends Construct {
     });
   }
 
+  // Custom Methods
   public useMod(mods: (() => any)[]): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
       mods.map((fn) => fn()(lambda));

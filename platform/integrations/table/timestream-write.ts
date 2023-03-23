@@ -1,10 +1,10 @@
 import { TimestreamWriteClient, WriteRecordsCommand, WriteRecordsCommandInput } from '@aws-sdk/client-timestream-write';
-import AwsXRay from 'aws-xray-sdk-core';
 import { chunkArray } from '../../util/chunk-array';
 
-import { HandledFault } from '../../util/handled-exception';
+import { PlatformFault } from '../../error';
+import { Tracing } from '../../tracing';
 
-const timestream: TimestreamWriteClient = AwsXRay.captureAWSv3Client(new TimestreamWriteClient({}) as any);
+const timestream: TimestreamWriteClient = Tracing.captureIntegration(new TimestreamWriteClient({}) as any);
 
 const MAX_MESSAGE_PER_BATCH = 100;
 
@@ -23,7 +23,7 @@ const timestreamWriteBatch = async (
   TableName: string
 ): Promise<void> => {
   const request: any = timestream.send(new WriteRecordsCommand({ DatabaseName, TableName, Records })).catch((err) => {
-    throw new HandledFault({
+    throw new PlatformFault({
       code: 'FAULT_TS_WRITE',
       detail: err.code === 'RejectedRecordsException' ? request.response.httpResponse.body.toString() : err.message,
     });

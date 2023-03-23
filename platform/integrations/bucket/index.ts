@@ -1,4 +1,4 @@
 import * as S3 from '@aws-sdk/client-s3';
-import AwsXRay from 'aws-xray-sdk-core';
+import { Tracing } from '../../tracing';
 
-export const s3 = AwsXRay.captureAWSv3Client(new S3.S3Client({}));
+export const s3 = Tracing.captureIntegration(new S3.S3Client({}));

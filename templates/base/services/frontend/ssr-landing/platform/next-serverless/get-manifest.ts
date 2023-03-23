@@ -1,5 +1,5 @@
-import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
 import { bucketGetObject } from '@sinapsis-co/cc-platform/integrations/bucket/object';
+import { CustomFault } from '../../../../../config/error-catalog';
 import { ManifestEntryArr, PlainRoutesManifest, RegExpManifest } from '../../entities/next-serverless';
 
 let manifestMemo: RegExpManifest;
@@ -10,7 +10,7 @@ export const getManifest = async (NEXT_MANIFEST_KEY: string, RECIPE_BUCKET_NAME:
       Key: NEXT_MANIFEST_KEY,
       Bucket: RECIPE_BUCKET_NAME,
     });
-    if (!response.Body) throw new ApiError('Missing manifest', 500);
+    if (!response.Body) throw new CustomFault({ code: 'FAULT_SSR_MISSING_MANIFEST' });
     const manifest: PlainRoutesManifest = JSON.parse(response.Body.toString());
     manifestMemo = buildRegExpManifest(manifest);
   }

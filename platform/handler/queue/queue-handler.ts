@@ -1,22 +1,34 @@
 import { SQSEvent } from 'aws-lambda';
-import { generateTracing } from '../../tracing';
+import { PlatformError, PlatformFault } from '../../error';
+import { timeoutController } from '../../error/timeout';
+import { HandledException } from '../../error/types';
+import { Tracing } from '../../tracing';
 
 type Handler<Payload> = (event: SQSEvent, records: Payload[]) => Promise<void>;
 
+/**
+ * queueHandler gives the full responsibility to manage the queue messages to the handler.
+ * It will not delete any message from the queue if a partial failure occurs. Use it only in situations
+ * where you need access to the whole batch or you queue is not batching.
+ *
+ * @param handler
+ * @returns void
+ */
+
 export const queueHandler = <Payload>(handler: Handler<Payload>): Handler<Payload> => {
   return async (event: SQSEvent): Promise<void> => {
-    const tracing = generateTracing();
+    const tracing = new Tracing();
     try {
       const records: Payload[] = event.Records.map((e) => JSON.parse(e.body));
-      const result = handler(event, records);
+      await timeoutController(handler(event, records));
       tracing.close();
-      return result;
     } catch (error: any) {
-      // eslint-disable-next-line no-console
-      console.log(error);
-      tracing.addFaultFlag();
-      tracing.close(error);
-      throw error;
+      const handledException: HandledException =
+        error instanceof PlatformError || error instanceof PlatformFault
+          ? error
+          : new PlatformFault({ code: 'FAULT_UNHANDLED', detail: error.message });
+      tracing.failureClose(handledException);
+      return handledException.throwException();
     }
   };
 };

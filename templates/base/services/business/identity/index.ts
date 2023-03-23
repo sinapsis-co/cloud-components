@@ -17,7 +17,7 @@ import { Notifications } from 'services/support/notifications';
 import { GlobalCoordinator } from '../../../config/config-type';
 import { assetEvent } from '../assets/catalog';
 import { identityApi } from './catalog';
-import { buildCustomAttributes } from './platform/cognito-mapper';
+import { buildCustomAttributes } from './platform/cognito-builder';
 
 /**
  * Name of the user pool
@@ -73,10 +73,6 @@ export class Identity extends Service<GlobalCoordinator> {
             MEDIA_URL: getDomain(this.props.subdomain.assets, this.props, true),
           },
         },
-        profileUpdate: {
-          ...identityApi.profileUpdate.config,
-          modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.updateUserAtt])],
-        },
         memberCreate: {
           ...identityApi.memberCreate.config,
           environment: {
@@ -90,6 +86,10 @@ export class Identity extends Service<GlobalCoordinator> {
           environment: {
             MEDIA_URL: getDomain(this.props.subdomain.assets, this.props, true),
           },
+        },
+        profileUpdate: {
+          ...identityApi.profileUpdate.config,
+          modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.updateUserAtt])],
         },
         memberRoleUpdate: {
           ...identityApi.memberUpdateRole.config,

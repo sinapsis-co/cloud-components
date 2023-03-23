@@ -1,5 +1,5 @@
-import { ApiError } from '@sinapsis-co/cc-platform/handler/api/api-error';
 import { bucketGetObject } from '@sinapsis-co/cc-platform/integrations/bucket/object';
+import { CustomFault } from '../../../../../config/error-catalog';
 
 const recipeMemo: Record<string, string> = {};
 
@@ -9,7 +9,7 @@ export const getRecipe = async (path: string, RECIPE_BUCKET_NAME: string): Promi
       Key: `_next/serverless/${path}`,
       Bucket: RECIPE_BUCKET_NAME,
     });
-    if (!response.Body) throw new ApiError('Missing manifest', 500);
+    if (!response.Body) throw new CustomFault({ code: 'FAULT_SSR_MISSING_RECIPE' });
     recipeMemo.path = response.Body.toString();
   }
   return recipeMemo.path;

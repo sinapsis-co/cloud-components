@@ -1,6 +1,6 @@
 import { DynamoDBDocumentClient, QueryCommand, QueryCommandInput } from '@aws-sdk/lib-dynamodb';
 import { PaginatedResponse } from '../../catalog/api';
-import { HandledFault } from '../../util/handled-exception';
+import { PlatformFault } from '../../error';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from '../../util/pagination';
 import { Entity, EntityBuilder, EntityRepositoryConfig, ListItemFn } from '../interface';
 
@@ -26,7 +26,7 @@ export const listItem = <Builder extends EntityBuilder>(
         })
       )
       .catch((e) => {
-        throw new HandledFault({ code: 'FAULT_DYN_LIST_ITEM', detail: e.message });
+        throw new PlatformFault({ code: 'FAULT_DYN_LIST_ITEM', detail: e.message });
       });
 
     return {

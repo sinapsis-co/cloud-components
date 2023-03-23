@@ -1,10 +1,11 @@
 import { GetSecretValueCommand, SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
 import { SecretConfig, SecretInterface } from '../../../catalog/secret';
-import { HandledFault } from '../../../util/handled-exception';
+import { PlatformFault } from '../../../error';
+import { Tracing } from '../../../tracing';
 
 const _secrets = {};
 
-const sm = new SecretsManagerClient({});
+export const sm: SecretsManagerClient = Tracing.captureIntegration(new SecretsManagerClient({}) as any);
 
 export const getRuntimeSecret = async <Secret extends SecretInterface = SecretInterface>(
   secretName: SecretConfig,
@@ -12,7 +13,7 @@ export const getRuntimeSecret = async <Secret extends SecretInterface = SecretIn
 ): Promise<Secret['payload']> => {
   if (!_secrets[secretName.name]) {
     if (!secretId) secretId = process.env[secretName.name]!;
-    if (!secretId) throw new HandledFault({ code: 'FAULT_SM_MISSING_SECRET', detail: secretId });
+    if (!secretId) throw new PlatformFault({ code: 'FAULT_SM_MISSING_SECRET', detail: secretId });
 
     const response = await sm.send(new GetSecretValueCommand({ SecretId: secretId }));
 

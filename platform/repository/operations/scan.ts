@@ -1,6 +1,6 @@
 import { DynamoDBDocumentClient, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { PaginatedResponse } from '../../catalog/api';
-import { HandledFault } from '../../util/handled-exception';
+import { PlatformFault } from '../../error';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from '../../util/pagination';
 import { Entity, EntityBuilder, EntityRepositoryConfig, ScanTableFn } from '../interface';
 
@@ -22,7 +22,7 @@ export const scanTable = <Builder extends EntityBuilder>(
         })
       )
       .catch((e) => {
-        throw new HandledFault({ code: 'FAULT_DYN_SCAN_TABLE', detail: e.message });
+        throw new PlatformFault({ code: 'FAULT_DYN_SCAN_TABLE', detail: e.message });
       });
 
     return {
