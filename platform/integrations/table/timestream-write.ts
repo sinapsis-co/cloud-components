@@ -12,11 +12,15 @@ export const timestreamWrite = async (
   records: WriteRecordsCommandInput['Records'],
   DatabaseName: string,
   TableName: string
-): Promise<void> => {
-  const chunk = chunkArray(records!, MAX_MESSAGE_PER_BATCH);
-  await Promise.all(chunk.map((c) => timestreamWriteBatch(c, DatabaseName, TableName)));
+): Promise<any[]> => {
+  const cmd = async () => {
+    const chunk = chunkArray(records!, MAX_MESSAGE_PER_BATCH);
+    return Promise.all(chunk.map((c) => timestreamWriteBatch(c, DatabaseName, TableName)));
+  };
+  return Tracing.traceableOp('Write', 'FAULT_TS_WRITE', TableName, cmd);
 };
 
+// Private use only
 const timestreamWriteBatch = async (
   Records: WriteRecordsCommandInput['Records'],
   DatabaseName: string,

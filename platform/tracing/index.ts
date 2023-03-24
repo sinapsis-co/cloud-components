@@ -2,6 +2,7 @@ import { Client } from '@aws-sdk/types';
 import { captureAsyncFunc, captureAWSv3Client, getSegment, Subsegment } from 'aws-xray-sdk-core';
 import { PlatformError, PlatformFault } from '../error';
 import { PlatformFaultCodes } from '../error/catalog';
+import { HandledException } from '../error/types';
 
 const generateTracing = (): Subsegment => {
   const segment = getSegment();
@@ -37,22 +38,18 @@ export class Tracing {
     if (process.env.CC_TRACING) return captureAWSv3Client(client);
     return client;
   }
-  static async traceableOp<T, TracingMeta extends Record<string, string> = Record<string, string>>(
+  static async traceableOp<PromiseReturn, TracingMeta extends Record<string, string> = Record<string, string>>(
     op: string,
     faultCode: PlatformFaultCodes,
     target: string,
-    fn: () => Promise<T>,
+    fn: () => Promise<PromiseReturn>,
     tracingMeta?: TracingMeta
-  ): Promise<T> {
+  ): Promise<PromiseReturn> {
     if (process.env.CC_TRACING) {
-      return captureAsyncFunc<Promise<T>>(`${op}: ${target}`, async (innerSubsegment) => {
+      return captureAsyncFunc<Promise<PromiseReturn>>(`${op}: ${target}`, async (innerSubsegment) => {
         if (tracingMeta) Object.keys(tracingMeta).map((t) => innerSubsegment!.addAnnotation(t, tracingMeta[t]));
         const result = await fn().catch((e) => {
-          const exception =
-            e instanceof PlatformError || e instanceof PlatformFault
-              ? e
-              : new PlatformFault({ code: faultCode, detail: e.message, meta: { op, target, ...tracingMeta } });
-          exception.addMeta({ op, target, ...tracingMeta });
+          const exception = catchException(e, op, faultCode, target, tracingMeta);
           innerSubsegment?.close(exception);
           throw exception;
         });
@@ -61,13 +58,24 @@ export class Tracing {
       });
     } else {
       return fn().catch((e) => {
-        const exception =
-          e instanceof PlatformError || e instanceof PlatformFault
-            ? e
-            : new PlatformFault({ code: faultCode, detail: e.message, meta: { op, target, ...tracingMeta } });
-        exception.addMeta({ op, target, ...tracingMeta, ...exception.meta });
+        const exception = catchException(e, op, faultCode, target, tracingMeta);
         throw exception;
       });
     }
   }
 }
+
+const catchException = <TracingMeta extends Record<string, string> = Record<string, string>>(
+  e: any,
+  op: string,
+  faultCode: PlatformFaultCodes,
+  target: string,
+  tracingMeta?: TracingMeta
+): HandledException => {
+  const exception =
+    e instanceof PlatformError || e instanceof PlatformFault
+      ? e
+      : new PlatformFault({ code: faultCode, detail: e.message, meta: { op, target, ...tracingMeta } });
+  exception.addMeta({ op, target, ...tracingMeta, ...exception.meta });
+  return exception;
+};

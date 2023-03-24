@@ -14,7 +14,7 @@ export interface HandledExceptionOutput {
   stack?: string[];
 }
 
-export interface HandledException {
+export interface HandledException extends Error {
   statusCode: number;
   errorCode: string;
   errorType: string;

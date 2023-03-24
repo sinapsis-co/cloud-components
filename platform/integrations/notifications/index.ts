@@ -37,8 +37,5 @@ export const deliverEmail = async <TracingMeta extends Record<string, string> = 
     const transporter = createTransport({ SES: { ses: ses, aws: { SendRawEmailCommand: SendRawEmailCommand } } });
     await transporter.sendMail(params);
   };
-  return await Tracing.traceableOp(cmd, `SendEmail: ${params.to}`, 'FAULT_NOT_DELIVER_EMAIL', {
-    to: params.to,
-    ...tracingMeta,
-  });
+  return Tracing.traceableOp('SendEmail', 'FAULT_NOT_DELIVER_EMAIL', params.to, cmd, tracingMeta);
 };

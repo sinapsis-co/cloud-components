@@ -1,11 +1,12 @@
 import {
   AdminDeleteUserCommand,
+  AdminDeleteUserCommandOutput,
   AdminUpdateUserAttributesCommand,
   AdminUpdateUserAttributesCommandInput,
+  AdminUpdateUserAttributesCommandOutput,
   CognitoIdentityProviderClient,
 } from '@aws-sdk/client-cognito-identity-provider';
 
-import { PlatformFault } from '@sinapsis-co/cc-platform/error';
 import { Tracing } from '../../tracing';
 
 export const cognito: CognitoIdentityProviderClient = Tracing.captureIntegration(
@@ -14,27 +15,25 @@ export const cognito: CognitoIdentityProviderClient = Tracing.captureIntegration
 
 export type AttributeListType = AdminUpdateUserAttributesCommandInput['UserAttributes'];
 
-export const deleteCognitoUser = async (username: string, userPoolId = process.env.USER_POOL_ID): Promise<void> => {
-  if (!userPoolId) throw new PlatformFault({ code: 'FAULT_COG_INVALID_POOL_ID' });
-  await cognito.send(
-    new AdminDeleteUserCommand({
-      UserPoolId: userPoolId,
-      Username: username,
-    })
-  );
+export const deleteCognitoUser = async (username: string): Promise<AdminDeleteUserCommandOutput> => {
+  const cmd = () => {
+    return cognito.send(new AdminDeleteUserCommand({ UserPoolId: process.env.USER_POOL_ID, Username: username }));
+  };
+  return await Tracing.traceableOp('DeleteCognitoUser', 'FAULT_COG_DELETE_USER', username, cmd);
 };
 
 export const updateCognitoUser = async (
   username: string,
-  attributes: AttributeListType,
-  userPoolId = process.env.USER_POOL_ID
-): Promise<void> => {
-  if (!userPoolId) throw new PlatformFault({ code: 'FAULT_COG_INVALID_POOL_ID' });
-  await cognito.send(
-    new AdminUpdateUserAttributesCommand({
-      UserPoolId: userPoolId,
-      Username: username,
-      UserAttributes: attributes,
-    })
-  );
+  attributes: AttributeListType
+): Promise<AdminUpdateUserAttributesCommandOutput> => {
+  const cmd = () => {
+    return cognito.send(
+      new AdminUpdateUserAttributesCommand({
+        UserPoolId: process.env.USER_POOL_ID,
+        Username: username,
+        UserAttributes: attributes,
+      })
+    );
+  };
+  return await Tracing.traceableOp('UpdateCognitoUser', 'FAULT_COG_UPDATE_USER', username, cmd);
 };

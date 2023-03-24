@@ -18,14 +18,15 @@ export type BasicAuth = {
   pass: string;
 };
 
-export type ExtraParams<TracingMeta> = {
+export type Options<TracingMeta, ErrorResponse> = {
   basicAuth?: BasicAuth;
   tracingMeta: TracingMeta;
+  returnErrorResponse?: ErrorResponse;
 };
 
 type Response<Api extends ApiIntegrationInterface, ErrorResponse extends boolean> = ErrorResponse extends true
-  ? Api['response'] | { errorResponse: Api['errorResponse'] }
-  : Api['response'];
+  ? { response?: Api['response']; errorResponse?: Api['errorResponse']; statusCode: number }
+  : { response: Api['response'] };
 
 export const apiCall = async <
   Api extends ApiIntegrationInterface,
@@ -34,8 +35,7 @@ export const apiCall = async <
 >(
   config: ApiIntegrationConfig<Api>,
   params: ApiParams<Api>,
-  extraParams: ExtraParams<TracingMeta>,
-  returnErrorAsJson?: ErrorResponse
+  options: Options<TracingMeta, ErrorResponse>
 ): Promise<Response<Api, ErrorResponse>> => {
   const { url, method } = config;
   const { pathParams = {}, queryParams = {}, headers = {}, body = {} } = params as Api;
@@ -50,35 +50,32 @@ export const apiCall = async <
         .join('&')}`
     : endpoint;
 
-  const cmd = async () => {
-    const response = await fetch(endpointWithQuery, {
+  const cmd = async (): Promise<Response<Api, ErrorResponse>> => {
+    const callResult = await fetch(endpointWithQuery, {
       method,
       headers: {
         'Content-Type': 'application/json',
-        ...(extraParams?.basicAuth ? getBasicAuthHeader(extraParams.basicAuth) : {}),
+        ...(options?.basicAuth ? getBasicAuthHeader(options.basicAuth) : {}),
         ...(headers ? headers : {}),
       },
       ...(!['GET', 'HEAD'].includes(method) ? { body: JSON.stringify(body) } : {}),
     }).catch((e) => {
       throw new PlatformFault({ code: 'FAULT_API_CALL_NETWORK', detail: e.message }).returnException();
     });
+    const statusCode = callResult.status;
 
-    if (!response.ok) {
-      if (returnErrorAsJson) {
-        const errorResponse: Api['errorResponse'] = await response.json();
-        return { errorResponse };
+    if (!callResult.ok) {
+      if (options.returnErrorResponse) {
+        const errorResponse: Api['errorResponse'] = await callResult.json();
+        return { errorResponse, statusCode } as Response<Api, ErrorResponse>;
       }
-      throw new PlatformFault({ code: 'FAULT_API_CALL_INVALID_RESPONSE', detail: await response.text() });
+      throw new PlatformFault({ code: 'FAULT_API_CALL_INVALID_RESPONSE', detail: await callResult.text() });
     }
-    return (await response.json()) as Api['response'];
+    const response: Api['response'] = await callResult.json();
+    return { response } as Response<Api, ErrorResponse>;
   };
-  return await Tracing.traceableOp(
-    'ApiCall',
-    'FAULT_API_CALL_UNHANDLED',
-    endpointWithQuery,
-    cmd,
-    extraParams.tracingMeta
-  );
+
+  return Tracing.traceableOp('ApiCall', 'FAULT_API_CALL_UNHANDLED', endpointWithQuery, cmd, options.tracingMeta);
 };
 
 const getBasicAuthHeader = (basicAuth: BasicAuth) => {
