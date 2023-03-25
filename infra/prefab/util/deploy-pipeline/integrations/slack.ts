@@ -1,6 +1,8 @@
-import { ApiConfig, ApiInterface, ApiInterfaceExtended, EmptyObject } from '@sinapsis-co/cc-platform/catalog/api';
+import { EmptyObject } from '@sinapsis-co/cc-platform/catalog/api';
+import { ApiIntegrationConfig, ApiIntegrationInterface } from '@sinapsis-co/cc-platform/catalog/integrations';
 
-export type Interface = ApiInterfaceExtended<{
+export type Interface = ApiIntegrationInterface<{
+  errorResponse: { errorCode: string; message: string };
   response: EmptyObject;
   pathParams: { token: string };
   body: {
@@ -12,15 +14,11 @@ export type Interface = ApiInterfaceExtended<{
       fields: { title: string; value: string; short: boolean }[];
     }[];
   };
-  claims: EmptyObject;
   queryParams: EmptyObject;
   headers: EmptyObject;
 }>;
 
-export const config: ApiConfig<ApiInterface> = {
-  name: 'slack-send-message',
+export const config: ApiIntegrationConfig<Interface> = {
   method: 'POST',
-  baseUrl: 'https://hooks.slack.com',
-  basePath: 'services',
-  path: '{token}',
+  url: 'https://hooks.slack.com/services/{token}',
 };

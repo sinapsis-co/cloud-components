@@ -10,13 +10,13 @@ export type Interface = ApiIntegrationInterface<{
     completed: boolean;
   };
   pathParams: EmptyObject;
-  body: EmptyObject;
+  body: { email: string };
   queryParams: EmptyObject;
   headers: { Authorization: string };
 }>;
 
 export const config: ApiIntegrationConfig<Interface> = {
-  method: 'GET',
-  // url: 'https://api.dev.v3base.sinapsis.io/identity/member',
-  url: 'https://jsonplaceholder.typicode.com/todos/1',
+  method: 'POST',
+  url: 'https://api.dev.v3base.sinapsis.io/identity/member',
+  // url: 'https://jsonplaceholder.typicode.com/todos/1',
 };

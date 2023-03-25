@@ -18,6 +18,7 @@ export type ApiHandlerParams = BaseHandlerParams & {
   path: ApiConfig<ApiInterface>['path'];
   method: ApiConfig<ApiInterface>['method'];
   isPublic?: ApiConfig<ApiInterface>['isPublic'];
+  cacheMaxAge?: number;
 };
 
 export type ApiFunctionParams = BaseFunctionParams & {
@@ -34,6 +35,8 @@ export class ApiFunction extends Construct {
       ...params,
       environment: { ...params.environment, CC_FUNCTION_TYPE: 'API' },
     }).lambdaFunction;
+
+    this.lambdaFunction.addEnvironment('CC_CACHE_MAX_AGE', params.cacheMaxAge?.toString() || '10');
 
     if (this.lambdaFunction.timeout && this.lambdaFunction.timeout.toSeconds() > Duration.seconds(28).toSeconds()) {
       throw new SynthError('Lambda timeout must be less than 28 seconds in ApiFunctions', service.props);

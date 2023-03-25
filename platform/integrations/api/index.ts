@@ -22,6 +22,7 @@ export type Options<TracingMeta, ErrorResponse> = {
   basicAuth?: BasicAuth;
   tracingMeta: TracingMeta;
   returnErrorResponse?: ErrorResponse;
+  timeout?: number;
 };
 
 type Response<Api extends ApiIntegrationInterface, ErrorResponse extends boolean> = ErrorResponse extends true
@@ -50,8 +51,13 @@ export const apiCall = async <
         .join('&')}`
     : endpoint;
 
+  const controller = new AbortController();
+  const timeout = options.timeout || parseInt(process.env.CC_FUNCTION_TIMEOUT!) - 1;
+
+  setTimeout(() => controller.abort(), timeout * 1000);
   const cmd = async (): Promise<Response<Api, ErrorResponse>> => {
     const callResult = await fetch(endpointWithQuery, {
+      signal: controller.signal,
       method,
       headers: {
         'Content-Type': 'application/json',
@@ -60,7 +66,10 @@ export const apiCall = async <
       },
       ...(!['GET', 'HEAD'].includes(method) ? { body: JSON.stringify(body) } : {}),
     }).catch((e) => {
-      throw new PlatformFault({ code: 'FAULT_API_CALL_NETWORK', detail: e.message }).returnException();
+      if (e.type === 'aborted') {
+        throw new PlatformFault({ code: 'FAULT_API_CALL_TIMEOUT', detail: `Timeout after ${timeout} seconds` });
+      }
+      throw new PlatformFault({ code: 'FAULT_API_CALL_NETWORK', detail: e.message });
     });
     const statusCode = callResult.status;
 

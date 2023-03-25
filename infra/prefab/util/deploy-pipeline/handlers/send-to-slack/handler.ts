@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { callApi } from '@sinapsis-co/cc-platform/integrations/api';
+import { apiCall } from '@sinapsis-co/cc-platform/integrations/api';
 import { getRuntimeSecret } from '@sinapsis-co/cc-platform/integrations/config/runtime-secret';
 import { SNSHandler } from 'aws-lambda';
 import * as secretCatalog from '../../catalog//secrets/index';
@@ -91,12 +91,12 @@ export const handler: SNSHandler = async (event) => {
 };
 
 const sendToSlack = async (fallback: string, color, fields, slackObject: SlackObject) => {
-  await callApi<Slack.Interface>(
+  await apiCall(
     Slack.config,
     {
       pathParams: { token: slackObject.token },
       body: { attachments: [{ pretext: fallback, fallback, color, fields }], channel: slackObject.channel },
     },
-    { withoutResponse: true }
+    { tracingMeta: {} }
   );
 };

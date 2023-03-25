@@ -1,5 +1,5 @@
 import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
-import { bucketStreamGetObject, bucketStreamUpload } from '@sinapsis-co/cc-platform/integrations/bucket/object';
+import { bucketStreamGetObject, bucketStreamUpload } from '@sinapsis-co/cc-platform/integrations/bucket/streaming';
 import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import sharp from 'sharp';
 import { Readable } from 'stream';
