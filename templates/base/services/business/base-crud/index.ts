@@ -6,6 +6,7 @@ import { CdnApi } from '../../support/cdn-api';
 import { GlobalEventBus } from '../../support/global-event-bus';
 import { Identity } from '../identity';
 import { baseApi } from './catalog';
+import { baseTableBuilder } from './repository/base-table';
 
 type Deps = {
   globalEventBus: GlobalEventBus;
@@ -29,7 +30,7 @@ export class BaseCrud extends Service<GlobalCoordinator> {
       eventBus: deps.globalEventBus.eventBusPrefab,
       cdnApiPrefab: deps.cdnApi.cdnApiPrefab,
       authPool: deps.identity.authPool,
-      autoEventsEnabled: true,
+      tableBuilder: baseTableBuilder,
       handlers: {
         create: baseApi.create.config,
         get: baseApi.get.config,

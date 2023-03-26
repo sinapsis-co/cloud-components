@@ -1,10 +1,11 @@
-import { repository } from '@sinapsis-co/cc-platform/repository';
-import { RepositoryEvent } from '@sinapsis-co/cc-platform/repository/interface';
+import { repository } from '@sinapsis-co/cc-platform/integrations/repository';
+import { RepositoryEvent } from '@sinapsis-co/cc-platform/integrations/repository/interface';
 import { UserProfile, UserProfileBuilder, UserProfileCreate, UserProfileStore } from '../entities/user-profile';
+import { IdentityTableBuilder } from './identity-table';
 
-export const userProfileRepository = repository<UserProfileBuilder>({
-  tableName: process.env.TABLE!,
-  repoName: 'user-profile',
+export const inviteRepository = repository<UserProfileBuilder, IdentityTableBuilder>({
+  tableName: 'identity',
+  repoName: 'invite',
   keySerialize: (key: UserProfileBuilder['key']): UserProfileBuilder['storeMapping']['key'] => {
     return {
       pk: key.tenantId,
@@ -14,7 +15,7 @@ export const userProfileRepository = repository<UserProfileBuilder>({
   entitySerialize: (key: UserProfileBuilder['key'], entityCreate: UserProfileCreate): UserProfileStore => {
     const mappedKey: UserProfileBuilder['storeMapping']['key'] = {
       pk: key.tenantId,
-      sk: entityCreate.isPending ? `pending#${key.id}` : `user#${key.id}`,
+      sk: `invite#${key.id}`,
     };
     const timers: UserProfileBuilder['storeMapping']['timers'] = {
       createdAt: new Date().toISOString(),

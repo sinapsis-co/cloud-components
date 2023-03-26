@@ -1,12 +1,12 @@
 import { eventHandler } from '@sinapsis-co/cc-platform/handler/event/event-handler';
 import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import { assetEvent } from 'services/business/assets/catalog';
-import { userProfileRepository } from 'services/business/identity/repository/user-profile-repository';
+import { inviteRepository } from 'services/business/identity/repository/invite-repository';
 
 export const handler = eventHandler<assetEvent.assetUploaded.Event>(async (event) => {
   const { key, meta } = event.detail;
   const { tenantId, sub } = meta;
-  const { avatar } = await userProfileRepository.updateItem(
+  const { avatar } = await inviteRepository.updateItem(
     { tenantId, id: `user#${sub}` },
     { avatar: key },
     { ReturnValues: 'ALL_OLD' }

@@ -49,7 +49,6 @@ export class Search extends Service<GlobalCoordinator> {
       eventBus: deps.globalEventBus.eventBusPrefab,
       cdnApiPrefab: deps.cdnApi.cdnApiPrefab,
       authPool: deps.identity.authPool,
-      skipTable: true,
       handlers: {
         search: {
           ...searchApi.search.config,

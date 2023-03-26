@@ -56,7 +56,6 @@ export class Assets extends Service<GlobalCoordinator> {
       basePath: 'assets',
       cdnApiPrefab: deps.cdnApi.cdnApiPrefab,
       authPool: deps.identity.authPool,
-      skipTable: true,
       handlers: {
         createPutUrl: {
           ...assetApi.createPutUrl.config,

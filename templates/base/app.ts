@@ -13,7 +13,6 @@ import { DeployPipeline } from './services/support/deploy-pipeline';
 import { DnsDomainRef } from './services/support/dns-domain-ref';
 import { DnsSubdomainCertificate } from './services/support/dns-subdomain-certificate';
 import { DnsSubdomainHostedZone } from './services/support/dns-subdomain-hosted-zone';
-import { EventsAnalytics } from './services/support/events-analytics';
 import { GlobalEventBus } from './services/support/global-event-bus';
 import { Notifications } from './services/support/notifications';
 
@@ -27,7 +26,7 @@ new DnsSubdomainCertificate(coordinator);
 new CdnApi(coordinator);
 new GlobalEventBus(coordinator);
 new Notifications(coordinator);
-new EventsAnalytics(coordinator);
+// new EventsAnalytics(coordinator);
 
 // Business
 new Identity(coordinator);

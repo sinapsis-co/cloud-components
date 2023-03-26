@@ -9,7 +9,6 @@ import { SesDomain } from '@sinapsis-co/cc-infra/prefab/util/ses/ses-domain';
 import { Duration } from 'aws-cdk-lib';
 import { UserPoolOperation } from 'aws-cdk-lib/aws-cognito';
 
-import { AttributeType } from 'aws-cdk-lib/aws-dynamodb';
 import { CdnApi } from 'services/support/cdn-api';
 import { DnsSubdomainCertificate } from 'services/support/dns-subdomain-certificate';
 import { GlobalEventBus } from 'services/support/global-event-bus';
@@ -65,7 +64,6 @@ export class Identity extends Service<GlobalCoordinator> {
       cdnApiPrefab: deps.cdnApi.cdnApiPrefab,
       authPool: this.authPool,
       eventBus: deps.globalEventBus.eventBusPrefab,
-      autoEventsEnabled: true,
       handlers: {
         profileGet: {
           ...identityApi.profileGet.config,
@@ -102,16 +100,16 @@ export class Identity extends Service<GlobalCoordinator> {
       },
     });
 
-    this.apiAggregate.table?.addGlobalSecondaryIndex({
-      indexName: 'byEmail',
-      partitionKey: { name: 'email', type: AttributeType.STRING },
-    });
+    // this.apiAggregate.table?.addGlobalSecondaryIndex({
+    //   indexName: 'byEmail',
+    //   partitionKey: { name: 'email', type: AttributeType.STRING },
+    // });
 
     this.cognitoAggregate = new CognitoAggregate(this, {
       baseFunctionFolder: __dirname,
       userPool: this.authPool.userPool,
       eventBus: deps.globalEventBus.eventBusPrefab,
-      table: this.apiAggregate.table,
+      tablePrefab: this.apiAggregate.tablePrefab,
       handlers: {
         customMessage: {
           name: 'cognito-custom-message',
@@ -144,7 +142,7 @@ export class Identity extends Service<GlobalCoordinator> {
     new EventAggregate(this, {
       baseFunctionFolder: __dirname,
       eventBus: deps.globalEventBus.eventBusPrefab,
-      table: this.apiAggregate.table,
+      tablePrefab: this.apiAggregate.tablePrefab,
       handlers: {
         eventNotificationDispatch: {
           name: 'event-asset-updated',

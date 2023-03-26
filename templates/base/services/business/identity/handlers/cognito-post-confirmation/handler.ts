@@ -3,7 +3,7 @@ import { uuid } from '@sinapsis-co/cc-platform/lib/uuid';
 import { PostConfirmationTriggerHandler } from 'aws-lambda';
 import { UserCognito } from 'services/business/identity/entities/user-cognito';
 import { cognitoToProfileMapper, cognitoUpdateCustomMapper } from 'services/business/identity/platform/cognito-mapper';
-import { userProfileRepository } from 'services/business/identity/repository/user-profile-repository';
+import { inviteRepository } from 'services/business/identity/repository/invite-repository';
 
 import { updateCognitoUser } from '@sinapsis-co/cc-platform/integrations/cognito';
 import { WelcomeTemplate } from 'notifications/templates/welcome';
@@ -33,7 +33,7 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
 
   // Check if the user has an invitation
   const [inviteTenantId, inviteId] = userAttributes['custom:companyName'].split('#');
-  const userWithInvite = await userProfileRepository
+  const userWithInvite = await inviteRepository
     .deleteItem({
       tenantId: inviteTenantId,
       id: `pending#${inviteId}`,
@@ -52,7 +52,7 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
 
   // HINT: If you don't need to send the welcome email, it's just delete it from the array
   await Promise.all([
-    userProfileRepository.createItem({ tenantId, id }, att),
+    inviteRepository.createItem({ tenantId, id }, att),
     updateCognitoUser(event.userName, cognitoUpdateCustomMapper(userCognito.custom), event.userPoolId),
     dispatchEvent<notificationEvent.dispatch.Event<WelcomeTemplate>>(notificationEvent.dispatch.eventConfig, {
       via: 'email',

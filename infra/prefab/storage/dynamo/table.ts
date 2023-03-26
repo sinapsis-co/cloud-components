@@ -1,33 +1,36 @@
 import { RemovalPolicy } from 'aws-cdk-lib';
-import { AttributeType, BillingMode, StreamViewType, Table } from 'aws-cdk-lib/aws-dynamodb';
+import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
 import { TablePermission } from '@sinapsis-co/cc-platform/catalog/api';
+import { parseTableName } from '@sinapsis-co/cc-platform/integrations/repository';
+import { TableBuilder } from '@sinapsis-co/cc-platform/integrations/repository/table-builder';
 import { getLogicalName } from '../../../common/naming/get-logical-name';
 import { getResourceName } from '../../../common/naming/get-resource-name';
 import { Service } from '../../../common/service';
 
-export type ServiceTableParams = {
-  tableName: string;
-  withoutSortKey?: true;
-  timeToLiveAttribute?: string;
-  stream?: StreamViewType;
-};
-
 export class DynamoTablePrefab extends Construct {
   public readonly table: Table;
+  public readonly tableName: string;
 
-  constructor(service: Service, params: ServiceTableParams) {
+  constructor(service: Service, params: TableBuilder) {
     super(service, getLogicalName(DynamoTablePrefab.name, params.tableName));
 
+    this.tableName = params.tableName;
     this.table = new Table(this, params.tableName, {
       tableName: getResourceName(params.tableName, service.props),
-      partitionKey: { name: 'pk', type: AttributeType.STRING },
       billingMode: BillingMode.PAY_PER_REQUEST,
-      timeToLiveAttribute: params.timeToLiveAttribute || 'deleteTTL',
-      ...(params.withoutSortKey ? {} : { sortKey: { name: 'sk', type: AttributeType.STRING } }),
-      stream: params.stream,
+      partitionKey: { name: 'pk', type: AttributeType.STRING },
+      ...(params.ttlAttribute ? { timeToLiveAttribute: 'deleteTTL' } : {}),
+      ...(params.storeMapping.key.sk ? { sortKey: { name: 'sk', type: AttributeType.STRING } } : {}),
+      // stream: params.stream,
+    });
+    params.indexes?.forEach((index) => {
+      this.table.addGlobalSecondaryIndex({
+        indexName: index,
+        partitionKey: { name: index, type: AttributeType.STRING },
+      });
     });
 
     this.table.applyRemovalPolicy(RemovalPolicy.DESTROY);
@@ -74,18 +77,17 @@ export class DynamoTablePrefab extends Construct {
 
   public static addTable(
     lambdaFunction: NodejsFunction,
-    table?: Table,
-    tablePermission?: TablePermission,
-    envName = 'TABLE'
+    tablePrefab?: DynamoTablePrefab,
+    tablePermission?: TablePermission
   ): void {
-    if (table instanceof Table) {
+    if (tablePrefab instanceof DynamoTablePrefab) {
       if (!tablePermission) throw new Error('tablePermission is required when table is used');
-      lambdaFunction.addEnvironment(envName, table.tableName);
+      lambdaFunction.addEnvironment(parseTableName(tablePrefab.tableName), tablePrefab.table.tableName);
       if (tablePermission === 'none') return;
       const permissionMapper = {
-        read: () => table.grantReadData(lambdaFunction),
-        write: () => table.grantWriteData(lambdaFunction),
-        readWrite: () => table.grantReadWriteData(lambdaFunction),
+        read: () => tablePrefab.table.grantReadData(lambdaFunction),
+        write: () => tablePrefab.table.grantWriteData(lambdaFunction),
+        readWrite: () => tablePrefab.table.grantReadWriteData(lambdaFunction),
       };
       permissionMapper[tablePermission]();
     }

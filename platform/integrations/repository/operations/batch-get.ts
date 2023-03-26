@@ -1,36 +1,34 @@
 import { BatchGetCommand, BatchGetCommandInput, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { NativeAttributeValue } from '@aws-sdk/util-dynamodb';
-import { PlatformFault } from '../../error';
-import { chunkArray } from '../../util/chunk-array';
-import { wait } from '../../util/executers';
-import { BatchGetItemFn, Entity, EntityBuilder, EntityRepositoryConfig, EntityStore } from '../interface';
+import { parseTableName } from '..';
+import { PlatformFault } from '../../../error';
+import { chunkArray } from '../../../util/chunk-array';
+import { wait } from '../../../util/executers';
+import { Entity, EntityBuilder, EntityRepositoryConfig, EntityStore } from '../interface';
+import { BatchGetItemFn } from '../op-interface';
+import { TableBuilder } from '../table-builder';
 
 export type BatchGetItemParams = {
   autoRetry?: true;
   tableName?: string;
 };
 
-export const batchGetItem = <Builder extends EntityBuilder>(
-  repoConfig: EntityRepositoryConfig<Builder>,
+export const batchGetItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
+  repoConfig: EntityRepositoryConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient,
   params?: BatchGetItemParams
 ): BatchGetItemFn<Builder> => {
   return async (keys: EntityBuilder<Builder>['key'][]): Promise<Entity<Builder>[] | undefined[]> => {
-    const table = params?.tableName || repoConfig.tableName;
+    const table: string = process.env[parseTableName(repoConfig.tableName)]!;
     const items = keys.map((k) => repoConfig.keySerialize(k));
     const chunk = chunkArray(items, 100);
 
     const result = await Promise.all(
       chunk.map(async (c): Promise<Entity<Builder>[] | []> => {
-        const RequestItems = {
-          [table]: {
-            Keys: c,
-          },
-        };
+        const RequestItems = { [table]: { Keys: c } };
         const response = await call(dynamodb, RequestItems, table, params?.autoRetry);
-
         return response.map((item) => {
-          return repoConfig.entityDeserialize(item as EntityStore<Builder>);
+          return repoConfig.entityDeserialize(item as EntityStore<Builder, Table>);
         });
       })
     );

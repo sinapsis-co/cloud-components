@@ -1,30 +1,34 @@
 import { DynamoDBDocumentClient, UpdateCommand, UpdateCommandInput } from '@aws-sdk/lib-dynamodb';
-import { PlatformError, PlatformFault } from '../../error';
-import { dispatchEvent } from '../../integrations/event/dispatch-event';
+import { parseTableName } from '..';
+import { PlatformError, PlatformFault } from '../../../error';
+import { dispatchEvent } from '../../../integrations/event/dispatch-event';
 import {
   Entity,
   EntityBuilder,
   EntityRepositoryConfig,
+  EntityStore,
   EntityUpdate,
   RepositoryEvent,
-  UpdateItemFn,
 } from '../interface';
+import { UpdateItemFn } from '../op-interface';
+import { TableBuilder } from '../table-builder';
 import { updateMapper } from '../update-mapper';
 
-export const updateItem = <Builder extends EntityBuilder>(
-  repoConfig: EntityRepositoryConfig<Builder>,
+export const updateItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
+  repoConfig: EntityRepositoryConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient
 ): UpdateItemFn<Builder> => {
   return async (
     key: EntityBuilder<Builder>['key'],
     entityUpdate: Partial<EntityUpdate<Builder>>,
-    params?: Partial<UpdateCommandInput>
+    params?: Partial<UpdateCommandInput> & { emitEvent?: boolean }
   ): Promise<Entity<Builder>> => {
+    const TableName = process.env[parseTableName(repoConfig.tableName)];
     const mapper = updateMapper<EntityUpdate<Builder>>(entityUpdate);
     const { Attributes } = await dynamodb
       .send(
         new UpdateCommand({
-          TableName: repoConfig.tableName,
+          TableName,
           Key: repoConfig.keySerialize(key),
           ReturnValues: 'ALL_NEW',
           ...mapper,
@@ -37,9 +41,9 @@ export const updateItem = <Builder extends EntityBuilder>(
 
     if (!Attributes) throw new PlatformError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
 
-    const entity: Entity<Builder> = repoConfig.entityDeserialize(Attributes);
+    const entity: Entity<Builder> = repoConfig.entityDeserialize(Attributes as EntityStore<Builder, Table>);
 
-    if (process.env.AUTO_EVENTS) {
+    if (params?.emitEvent) {
       await dispatchEvent<RepositoryEvent<Builder>['updated']>(
         { name: `app.${repoConfig.repoName}.updated`, source: 'app' },
         entity

@@ -1,9 +1,10 @@
-import { repository } from '@sinapsis-co/cc-platform/repository';
-import { RepositoryEvent } from '@sinapsis-co/cc-platform/repository/interface';
+import { repository } from '@sinapsis-co/cc-platform/integrations/repository';
+import { RepositoryEvent } from '@sinapsis-co/cc-platform/integrations/repository/interface';
 import { Other, OtherBuilder, OtherCreate, OtherStore } from '../entities/other';
+import { OtherTableBuilder } from './other-table';
 
-export const otherRepo = repository<OtherBuilder>({
-  tableName: process.env.TABLE!,
+export const otherRepo = repository<OtherBuilder, OtherTableBuilder>({
+  tableName: 'other',
   repoName: 'other',
   keySerialize: (key: OtherBuilder['key']): OtherBuilder['storeMapping']['key'] => {
     return {

@@ -1,6 +1,5 @@
 import { ApiConfig, ApiInterface, TablePermission } from '@sinapsis-co/cc-platform/catalog/api';
 import { Duration } from 'aws-cdk-lib';
-import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Architecture, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
@@ -24,7 +23,7 @@ export type BaseHandlerParams = NodejsFunctionProps & {
 export type BaseFunctionParams = {
   baseFunctionFolder: string;
   eventBus?: EventBusPrefab;
-  table?: Table;
+  tablePrefab?: DynamoTablePrefab;
   modifiers?: ((lambda: NodejsFunction) => any)[];
   environment?: Record<string, string>;
   compiled?: true;
@@ -65,7 +64,7 @@ export class BaseFunction extends Construct {
 
     params.modifiers?.map((fn) => fn(this.lambdaFunction));
 
-    DynamoTablePrefab.addTable(this.lambdaFunction, params.table, params.tablePermission);
+    DynamoTablePrefab.addTable(this.lambdaFunction, params.tablePrefab, params.tablePermission);
     EventBusPrefab.addBus(this.lambdaFunction, params.eventBus?.bus);
   }
 }

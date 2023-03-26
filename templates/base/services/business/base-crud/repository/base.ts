@@ -1,22 +1,23 @@
-import { repository } from '@sinapsis-co/cc-platform/repository';
-import { RepositoryEvent } from '@sinapsis-co/cc-platform/repository/interface';
+import { repository } from '@sinapsis-co/cc-platform/integrations/repository';
+import { RepositoryEvent } from '@sinapsis-co/cc-platform/integrations/repository/interface';
 import { Base, BaseBuilder, BaseCreate, BaseStore } from '../entities/base';
+import { BaseTableBuilder } from './base-table';
 
-export const baseRepo = repository<BaseBuilder>({
-  tableName: process.env.TABLE!,
+export const baseRepo = repository<BaseBuilder, BaseTableBuilder>({
+  tableName: 'base',
   repoName: 'base',
-  keySerialize: (key: BaseBuilder['key']): BaseBuilder['storeMapping']['key'] => {
+  keySerialize: (key: BaseBuilder['key']): BaseTableBuilder['storeMapping']['key'] => {
     return {
       pk: key.tenantId,
       sk: key.id,
     };
   },
   entitySerialize: (key: BaseBuilder['key'], entityCreate: BaseCreate): BaseStore => {
-    const mappedKey: BaseBuilder['storeMapping']['key'] = {
+    const mappedKey: BaseTableBuilder['storeMapping']['key'] = {
       pk: key.tenantId,
       sk: key.id,
     };
-    const timers: BaseBuilder['storeMapping']['timers'] = {
+    const timers: BaseTableBuilder['storeMapping']['timers'] = {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

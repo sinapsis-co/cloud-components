@@ -2,7 +2,7 @@ import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
 import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import { uuid } from '@sinapsis-co/cc-platform/lib/uuid';
 import { identityApi } from 'services/business/identity/catalog';
-import { userProfileRepository } from 'services/business/identity/repository/user-profile-repository';
+import { inviteRepository } from 'services/business/identity/repository/invite-repository';
 import { CustomError } from '../../../../../config/error-catalog';
 import { UserInviteTemplate } from '../../../../../notifications/templates/user-invite';
 import { notificationEvent } from '../../../../support/notifications/catalog';
@@ -11,11 +11,11 @@ export const handler = apiHandler<identityApi.memberCreate.Interface>(async (_, 
   const { tenantId, companyName } = req.claims;
   const inviteId = uuid();
 
-  const emailCheck = await userProfileRepository.listItem(
-    req.body.email,
+  // We need to run the query because the email is not the primary key
+  const emailCheck = await inviteRepository.listIndex(
+    'email',
     { limit: 50 },
     {
-      IndexName: 'byEmail',
       ExpressionAttributeNames: { '#email': 'email' },
       ExpressionAttributeValues: { ':email': req.body.email },
       KeyConditionExpression: '#email = :email',
@@ -24,7 +24,7 @@ export const handler = apiHandler<identityApi.memberCreate.Interface>(async (_, 
 
   if (emailCheck.items.length > 0) throw new CustomError({ code: 'ERROR_IDENTITY_USER_EXISTS' });
 
-  const user = userProfileRepository.createItem(
+  const user = inviteRepository.createItem(
     { tenantId, id: inviteId },
     {
       isPending: true,

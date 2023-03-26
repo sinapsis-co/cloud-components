@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { apiCall } from '@sinapsis-co/cc-platform/integrations/api';
 import { CustomFault } from '../../../config/error-catalog';
 import { baseIntegrations } from './catalog';
@@ -21,7 +22,6 @@ import { baseIntegrations } from './catalog';
     const response = 'response' in apiCallResult ? apiCallResult.response : undefined;
 
     console.log(response);
-
     console.log('statusCode', apiCallResult.statusCode);
     console.log(errorResponse);
     // console.log(errorResponse?.errorCode);
