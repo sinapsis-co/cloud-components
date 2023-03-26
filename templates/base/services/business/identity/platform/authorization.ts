@@ -1,11 +1,12 @@
 import { ApiConfig, ApiInterface, ApiInterfaceRequest } from '@sinapsis-co/cc-platform/catalog/api';
 import { CustomError } from '../../../../config/error-catalog';
 
-export type AuthScope = 'owner' | 'member';
+export type AuthScope = 'owner' | 'member' | 'user';
 
 export const authScope: Record<AuthScope, string> = {
   owner: '0',
   member: '1',
+  user: '2',
 };
 
 export const authMdw: ApiConfig<ApiInterface>['authorizationMdw'] = (

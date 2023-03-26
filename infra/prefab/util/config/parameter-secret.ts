@@ -2,7 +2,7 @@ import { IStringParameter, StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 
 import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getParameterNamePlain } from '../../../common/naming/get-resource-name';
+import { getResourceName } from '../../../common/naming/get-resource-name';
 import { Service } from '../../../common/service';
 import { SynthError } from '../../../common/synth/synth-error';
 
@@ -31,7 +31,7 @@ export class ParameterSecret extends Construct {
     if (params.name) {
       this.secret = new StringParameter(this, getLogicalName('param', params.name), {
         simpleName: false,
-        parameterName: getParameterNamePlain(params.name, service.props),
+        parameterName: getResourceName(params.name, service.props),
         stringValue: params.value || 'Default value: this need to be changed',
       });
     }

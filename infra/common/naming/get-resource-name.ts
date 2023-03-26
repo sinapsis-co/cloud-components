@@ -6,6 +6,7 @@ type GetResourceNameParams = {
   envName: BaseServiceProps['envName'];
   ephemeralEnvName?: BaseServiceProps['ephemeralEnvName'];
   serviceName: BaseServiceProps['serviceName'];
+  isSingleProjectAccount?: BaseServiceProps['isSingleProjectAccount'];
 };
 
 type GetShortResourceNameParams = {
@@ -13,51 +14,46 @@ type GetShortResourceNameParams = {
   envName: BaseServiceProps['envName'];
   ephemeralEnvName?: BaseServiceProps['ephemeralEnvName'];
   serviceName: BaseServiceProps['serviceName'];
+  isSingleProjectAccount?: BaseServiceProps['isSingleProjectAccount'];
 };
 
 export const getResourceName = (
   resourceName: string,
-  { projectName, envName, ephemeralEnvName, serviceName }: GetResourceNameParams
+  { isSingleProjectAccount, projectName, envName, ephemeralEnvName, serviceName }: GetResourceNameParams
 ): string => {
+  const project = isSingleProjectAccount ? '' : `${toDashCase(projectName)}-`;
   const env = ephemeralEnvName ? `${envName}-${ephemeralEnvName}` : envName;
-  const resource = resourceName && serviceName !== resourceName ? `-${toDashCase(resourceName)}` : '';
-  return `${toDashCase(projectName)}-${toDashCase(env)}-${toDashCase(serviceName)}${resource}`;
+  const resource =
+    resourceName && serviceName.toLocaleLowerCase() !== resourceName.toLocaleLowerCase()
+      ? `-${toDashCase(resourceName)}`
+      : '';
+  return `${project}${toDashCase(env)}-${toDashCase(serviceName)}${resource}`;
 };
 
 export const getShortResourceName = (
   resourceName: string,
-  { projectShortName, envName, ephemeralEnvName, serviceName }: GetShortResourceNameParams
+  { isSingleProjectAccount, projectShortName, envName, ephemeralEnvName, serviceName }: GetShortResourceNameParams
 ): string => {
+  const project = isSingleProjectAccount ? '' : `${toDashCase(projectShortName)}-`;
   const env = ephemeralEnvName ? `${envName}-${ephemeralEnvName}` : envName;
   const shortServiceName = serviceName.toLowerCase().includes('service')
     ? serviceName.toLowerCase().split('service')[0]
     : serviceName;
-  const resource = resourceName && serviceName !== resourceName ? `-${toDashCase(resourceName)}` : '';
-  return `${projectShortName.toLowerCase()}-${toDashCase(env)}-${toDashCase(shortServiceName)}${resource}`;
-};
-
-export const getParameterName = (
-  resourceName: string,
-  { projectName, envName, ephemeralEnvName, serviceName }: GetResourceNameParams
-): string => {
-  const env = ephemeralEnvName ? `${envName}-${ephemeralEnvName}` : envName;
-  return `/${toDashCase(projectName)}/${toDashCase(env)}/${toDashCase(serviceName)}/${toDashCase(resourceName)}`;
-};
-export const getParameterNamePlain = (
-  resourceName: string,
-  { projectName, envName, ephemeralEnvName, serviceName }: GetResourceNameParams
-): string => {
-  const env = ephemeralEnvName ? `${envName}-${ephemeralEnvName}` : envName;
-  return `/${toDashCase(projectName)}/${toDashCase(env)}/${toDashCase(serviceName)}/${resourceName}`;
+  const resource =
+    resourceName && serviceName.toLocaleLowerCase() !== resourceName.toLocaleLowerCase()
+      ? `-${toDashCase(resourceName)}`
+      : '';
+  return `${project}${toDashCase(env)}-${toDashCase(shortServiceName)}${resource}`;
 };
 
 export const getDatabaseName = (
   resourceName: string,
-  { projectName, envName, ephemeralEnvName, serviceName }: GetResourceNameParams
+  { isSingleProjectAccount, projectName, envName, ephemeralEnvName, serviceName }: GetResourceNameParams
 ): string => {
+  const project = isSingleProjectAccount ? '' : `${toDashCase(projectName)}-`;
   const env = ephemeralEnvName ? `${envName}_${ephemeralEnvName}` : envName;
   const resource = resourceName && serviceName !== resourceName ? `_${toSnakeCase(resourceName)}` : '';
-  return `${toSnakeCase(projectName)}_${toSnakeCase(env)}_${toSnakeCase(serviceName)}${resource}`;
+  return `${project}${toSnakeCase(env)}_${toSnakeCase(serviceName)}${resource}`;
 };
 
 export const getCloudFrontName = (

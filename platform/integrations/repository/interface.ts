@@ -12,10 +12,6 @@ export type EntityBuilderKeys = {
   body: Record<string, unknown>;
   key: Record<string, unknown>;
   timers: Record<string, Date>;
-  storeMapping: {
-    key: Record<string, unknown>;
-    timers: Record<string, string>;
-  };
 };
 
 export type EntityBuilder<Builder extends EntityBuilderKeys = EntityBuilderKeys> = {
@@ -23,7 +19,6 @@ export type EntityBuilder<Builder extends EntityBuilderKeys = EntityBuilderKeys>
   key: Builder['key'];
   body: Builder['body'];
   timers: Builder['timers'];
-  storeMapping: Builder['storeMapping'];
 };
 
 export type Entity<Builder extends EntityBuilderKeys> = Builder['body'] & Builder['key'] & Builder['timers'];

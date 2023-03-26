@@ -13,7 +13,6 @@ export class DeployPipeline extends Service<GlobalCoordinator, DeployTargetName>
   build(_deps = {}) {
     new DeployPipelinePrefab(this, {
       preDeployCommands: ['cd templates/base && bash pre-deploy.bash'],
-      // fullClone: true,
       // postDeployCommands: [`yarn deploy-spa ${this.props.envName} webapp`],
     });
   }

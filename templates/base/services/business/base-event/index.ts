@@ -7,6 +7,7 @@ import { GlobalEventBus } from '../../support/global-event-bus';
 import { Identity } from '../identity';
 
 import { otherApi } from './catalog';
+import { otherTableBuilder } from './repository/other-table';
 
 type Deps = {
   globalEventBus: GlobalEventBus;
@@ -29,6 +30,7 @@ export class BaseEvent extends Service<GlobalCoordinator> {
       eventBus: deps.globalEventBus.eventBusPrefab,
       cdnApiPrefab: deps.cdnApi.cdnApiPrefab,
       authPool: deps.identity.authPool,
+      tableBuilder: otherTableBuilder,
       handlers: {
         create: otherApi.create.config,
         get: otherApi.get.config,

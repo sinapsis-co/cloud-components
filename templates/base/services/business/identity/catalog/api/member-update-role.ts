@@ -1,13 +1,13 @@
 import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform/catalog/api';
 import { Schemy } from '@sinapsis-co/cc-platform/lib/schemy';
+import { User } from 'services/business/identity/entities/user';
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
-import { UserProfile } from 'services/business/identity/entities/user-profile';
 import { authMdw, authScope } from '../../platform/authorization';
 
 export type Interface = ApiInterface<{
-  response: UserProfile;
+  response: User;
   pathParams: { id: string };
-  body: Pick<UserProfile, 'role'>;
+  body: Pick<User, 'role'>;
   claims: UserClaims;
   queryParams: EmptyObject;
 }>;

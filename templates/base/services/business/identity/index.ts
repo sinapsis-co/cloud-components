@@ -17,6 +17,7 @@ import { GlobalCoordinator } from '../../../config/config-type';
 import { assetEvent } from '../assets/catalog';
 import { identityApi } from './catalog';
 import { buildCustomAttributes } from './platform/cognito-builder';
+import { identityTableBuilder } from './repository/identity-table';
 
 /**
  * Name of the user pool
@@ -64,6 +65,7 @@ export class Identity extends Service<GlobalCoordinator> {
       cdnApiPrefab: deps.cdnApi.cdnApiPrefab,
       authPool: this.authPool,
       eventBus: deps.globalEventBus.eventBusPrefab,
+      tableBuilder: identityTableBuilder,
       handlers: {
         profileGet: {
           ...identityApi.profileGet.config,
@@ -99,11 +101,6 @@ export class Identity extends Service<GlobalCoordinator> {
         },
       },
     });
-
-    // this.apiAggregate.table?.addGlobalSecondaryIndex({
-    //   indexName: 'byEmail',
-    //   partitionKey: { name: 'email', type: AttributeType.STRING },
-    // });
 
     this.cognitoAggregate = new CognitoAggregate(this, {
       baseFunctionFolder: __dirname,

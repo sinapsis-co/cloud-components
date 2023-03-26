@@ -1,7 +1,7 @@
 import algoliasearch from 'algoliasearch';
 import { CustomError } from '../../../../config/error-catalog';
+import { User } from '../../identity/entities/user';
 import { UserClaims } from '../../identity/entities/user-cognito';
-import { UserProfile } from '../../identity/entities/user-profile';
 import { AlgoliaConfig, AlgoliaSearchResponse, SearchEntity } from '../entities/algolia';
 import { searchTypes } from '../lib/search-type';
 
@@ -11,7 +11,7 @@ export const algoliaIndexSearch = async (
   query: string,
   claims: UserClaims,
   page?: string
-): Promise<AlgoliaSearchResponse<UserProfile>> => {
+): Promise<AlgoliaSearchResponse<User>> => {
   const { ALGOLIA_API_KEY, ALGOLIA_APPLICATION_ID } = algoliaConfig;
   const client = algoliasearch(ALGOLIA_APPLICATION_ID, ALGOLIA_API_KEY);
   const index = client.initIndex(`${process.env.ENV_NAME}_${entityName}`);
@@ -23,7 +23,7 @@ export const algoliaIndexSearch = async (
   if (searchType.searchInTenant) filters.push(`tenantId:${claims.tenantId}`);
 
   const results = await index
-    .search<UserProfile>(query, {
+    .search<User>(query, {
       filters: filters.join(' AND '),
       page: parseInt(page || '0'),
       hitsPerPage: 50,

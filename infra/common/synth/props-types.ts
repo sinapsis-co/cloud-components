@@ -24,6 +24,7 @@ export type BaseGlobalConstConfig<ExtendedConst = {}> = {
   repositoryConnection?: string;
   bootstrappingServices?: string[];
   landingZones: string[];
+  isSingleProjectAccount?: boolean;
 } & ExtendedConst;
 
 export type BaseGlobalEnv<ExtendedEnv = {}> = {

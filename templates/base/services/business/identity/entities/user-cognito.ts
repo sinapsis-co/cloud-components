@@ -1,4 +1,4 @@
-// HINT: These are the properties includes in the access token.
+// HINT: These properties are included in the access token.
 
 import { AuthScope } from '../platform/authorization';
 

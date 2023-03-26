@@ -4,12 +4,12 @@ import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispa
 
 import { assetEvent } from 'services/business/assets/catalog';
 import { identityApi } from 'services/business/identity/catalog';
-import { inviteRepository } from 'services/business/identity/repository/invite-repository';
+import { userRepository } from '../../repository/user-repository';
 
 export const handler = apiHandler<identityApi.memberDelete.Interface>(async (_, req) => {
   const { tenantId } = req.claims;
   const { id } = req.pathParams;
-  const profile = await inviteRepository.deleteItem({ tenantId, id: `user#${id}` });
+  const profile = await userRepository.deleteItem({ tenantId, id });
   await deleteCognitoUser(profile.email);
   if (profile.avatar)
     await dispatchEvent<assetEvent.assetToRemove.Event>(assetEvent.assetToRemove.eventConfig, {

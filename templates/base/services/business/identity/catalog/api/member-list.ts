@@ -1,13 +1,16 @@
 import {
-    ApiConfig, ApiInterface,
-    EmptyObject, PaginatedQueryParams, PaginatedResponse
+  ApiConfig,
+  ApiInterface,
+  EmptyObject,
+  PaginatedQueryParams,
+  PaginatedResponse,
 } from '@sinapsis-co/cc-platform/catalog/api';
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
-import { UserProfile } from '../../entities/user-profile';
+import { User } from '../../entities/user';
 import { authMdw, authScope } from '../../platform/authorization';
 
 export type Interface = ApiInterface<{
-  response: PaginatedResponse<UserProfile>;
+  response: PaginatedResponse<User>;
   pathParams: EmptyObject;
   body: EmptyObject;
   claims: UserClaims;

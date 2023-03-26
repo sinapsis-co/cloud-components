@@ -1,6 +1,6 @@
 import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
 import { identityApi } from 'services/business/identity/catalog';
-import { inviteRepository } from 'services/business/identity/repository/invite-repository';
+import { identityRepository } from '../../repository/identity-repository';
 
 export const handler = apiHandler<identityApi.memberList.Interface>(async (_, req) => {
   const { tenantId } = req.claims;
@@ -19,7 +19,7 @@ export const handler = apiHandler<identityApi.memberList.Interface>(async (_, re
         },
       }
     : {};
-  const { items, ...att } = await inviteRepository.listItem(
+  const { items, ...att } = await identityRepository.listItem(
     tenantId,
     { limit: Number(limit) || 50, nextToken },
     params

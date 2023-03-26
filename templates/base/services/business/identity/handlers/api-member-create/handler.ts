@@ -2,17 +2,18 @@ import { apiHandler } from '@sinapsis-co/cc-platform/handler/api/api-handler';
 import { dispatchEvent } from '@sinapsis-co/cc-platform/integrations/event/dispatch-event';
 import { uuid } from '@sinapsis-co/cc-platform/lib/uuid';
 import { identityApi } from 'services/business/identity/catalog';
-import { inviteRepository } from 'services/business/identity/repository/invite-repository';
+import { pendingRepository } from 'services/business/identity/repository/pending-repository';
 import { CustomError } from '../../../../../config/error-catalog';
 import { UserInviteTemplate } from '../../../../../notifications/templates/user-invite';
 import { notificationEvent } from '../../../../support/notifications/catalog';
+import { identityRepository } from '../../repository/identity-repository';
 
 export const handler = apiHandler<identityApi.memberCreate.Interface>(async (_, req) => {
   const { tenantId, companyName } = req.claims;
   const inviteId = uuid();
 
   // We need to run the query because the email is not the primary key
-  const emailCheck = await inviteRepository.listIndex(
+  const emailCheck = await identityRepository.listIndex(
     'email',
     { limit: 50 },
     {
@@ -24,7 +25,7 @@ export const handler = apiHandler<identityApi.memberCreate.Interface>(async (_, 
 
   if (emailCheck.items.length > 0) throw new CustomError({ code: 'ERROR_IDENTITY_USER_EXISTS' });
 
-  const user = inviteRepository.createItem(
+  const user = pendingRepository.createItem(
     { tenantId, id: inviteId },
     {
       isPending: true,

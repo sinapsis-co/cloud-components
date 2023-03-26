@@ -57,7 +57,12 @@ export class BaseFunction extends Construct {
       entry: getFunctionEntry(params.baseFunctionFolder, params.name, params.compiled),
       architecture: params.architecture || Architecture.ARM_64,
       ...params,
-      environment: { CC_SERVICE: service.props.serviceName, CC_ENV: ccEnv, ...params.environment },
+      environment: {
+        CC_SERVICE: service.props.serviceName,
+        CC_ENV: ccEnv,
+        CC_LOG_LEVEL: 'error',
+        ...params.environment,
+      },
     });
     this.lambdaFunction.addEnvironment('CC_FUNCTION_TIMEOUT', this.lambdaFunction.timeout!.toSeconds().toString());
     if (!params.tracingDisabled) this.lambdaFunction.addEnvironment('CC_TRACING', 'true');

@@ -48,5 +48,5 @@ export const repository = <Builder extends EntityBuilder, Table extends TableBui
 };
 
 export const parseTableName = (tableName: string): string => {
-  return `TABLE-${tableName.toLocaleUpperCase().split('-').join('_')}`;
+  return `TABLE_${tableName.toLocaleUpperCase().split('-').join('_')}`;
 };

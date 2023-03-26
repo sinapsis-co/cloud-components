@@ -42,33 +42,31 @@ export type DeployPipelineProps = {
 export class DeployPipelinePrefab extends Construct {
   constructor(service: Service, params: DeployPipelineProps) {
     super(service, getLogicalName(DeployPipelinePrefab.name));
+    const props = { ...service.props, isDefaultProject: false };
 
-    if (service.props.ephemeralEnvName) return;
+    if (props.ephemeralEnvName) return;
 
     if (!params.buildCommand) {
-      params.buildCommand = [`yarn deploy ${service.props.envName}`];
+      params.buildCommand = [`yarn deploy ${props.envName}`];
     }
 
-    if (
-      !service.props.useRepositoryDefaultConfig &&
-      (!service.props.repositoryOwner || !service.props.repositoryConnection)
-    )
+    if (!props.useRepositoryDefaultConfig && (!props.repositoryOwner || !props.repositoryConnection))
       throw new Error('repositoryOwner and repositoryConnection are required if useRepositoryDefaultConfig is false');
 
-    const repositoryOwner = service.props.useRepositoryDefaultConfig
+    const repositoryOwner = props.useRepositoryDefaultConfig
       ? StringParameter.valueFromLookup(this, 'pipeline-default-repository-owner')
-      : service.props.repositoryOwner!;
-    const repositoryConnection = service.props.useRepositoryDefaultConfig
+      : props.repositoryOwner!;
+    const repositoryConnection = props.useRepositoryDefaultConfig
       ? StringParameter.valueFromLookup(this, 'pipeline-default-repository-connection')
-      : service.props.repositoryConnection!;
+      : props.repositoryConnection!;
 
     const githubTokenParameterName = 'pipeline-default-repository-token';
 
     const sourceCodeArtifact = new Artifact('sourceCode');
     const sourceCodeAction = new CodeStarConnectionsSourceAction({
       actionName: 'FetchRepo',
-      branch: service.props.deployBranch,
-      repo: service.props.repositoryName,
+      branch: props.deployBranch,
+      repo: props.repositoryName,
       output: sourceCodeArtifact,
       owner: repositoryOwner,
       connectionArn: repositoryConnection,
@@ -80,7 +78,7 @@ export class DeployPipelinePrefab extends Construct {
     deploymentRole.addManagedPolicy(policy);
 
     const codebuildProject = new Project(this, 'CodebuildProject', {
-      projectName: getResourceName('', service.props),
+      projectName: getResourceName('', props),
       role: deploymentRole,
       environment: {
         computeType: ComputeType.MEDIUM,
@@ -125,11 +123,11 @@ export class DeployPipelinePrefab extends Construct {
 
     const pipeline = new Pipeline(this, 'Pipeline', {
       artifactBucket: new Bucket(this, 'bucket', {
-        bucketName: getBucketName('bucket', service.props),
+        bucketName: getBucketName('bucket', props),
         autoDeleteObjects: true,
         removalPolicy: RemovalPolicy.DESTROY,
       }),
-      pipelineName: getResourceName('', service.props),
+      pipelineName: getResourceName('', props),
       crossAccountKeys: false,
       stages: [
         {
@@ -143,26 +141,26 @@ export class DeployPipelinePrefab extends Construct {
       ],
     });
 
-    if (service.props.clientNotificationSlack || !service.props.defaultSlackDestinationDisabled) {
+    if (props.clientNotificationSlack || !props.defaultSlackDestinationDisabled) {
       const modifierTopicFunction = [getPipelineExecution()];
       let environmentTopicFunction: Record<string, string> = {
         REPOSITORY_OWNER: repositoryOwner,
-        REPOSITORY_NAME: service.props.repositoryName,
+        REPOSITORY_NAME: props.repositoryName,
       };
 
-      if (!service.props.defaultSlackDestinationDisabled) {
-        const slackToken = service.props.useRepositoryDefaultConfig
+      if (!props.defaultSlackDestinationDisabled) {
+        const slackToken = props.useRepositoryDefaultConfig
           ? StringParameter.valueFromLookup(this, 'pipeline-default-slack-token')
           : (params.slackToken as string);
-        if (!slackToken) throw new SynthError('MissingSlackToken', service.props);
+        if (!slackToken) throw new SynthError('MissingSlackToken', props);
         environmentTopicFunction = {
           ...environmentTopicFunction,
-          SLACK_CHANNEL: service.props.pipelineNotificationSlackChannel || '',
+          SLACK_CHANNEL: props.pipelineNotificationSlackChannel || '',
           SLACK_TOKEN: slackToken,
         };
       }
 
-      if (service.props.clientNotificationSlack) {
+      if (props.clientNotificationSlack) {
         const secret = new RuntimeSecret(service, {
           secretConfig: slackToken.secretConfig,
         });
@@ -176,7 +174,7 @@ export class DeployPipelinePrefab extends Construct {
       const topicFunction = new TopicFunction(service, {
         name: 'send-to-slack',
         baseFunctionFolder: __dirname,
-        ...(service.props.isDemoProject ? {} : { compiled: true }),
+        ...(props.isDemoProject ? {} : { compiled: true }),
         environment: environmentTopicFunction,
         modifiers: modifierTopicFunction,
         customTopicParams: {

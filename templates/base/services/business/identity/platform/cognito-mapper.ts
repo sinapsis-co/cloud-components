@@ -1,10 +1,10 @@
 // import { AttributeListType } from '@sinapsis-co/cc-platform/integrations/cognito';
 import { AttributeListType } from '@sinapsis-co/cc-platform/integrations/cognito';
 
+import { User } from '../entities/user';
 import { UserCognito } from '../entities/user-cognito';
-import { UserProfile } from '../entities/user-profile';
 
-export const cognitoToProfileMapper = (userCognito: UserCognito): UserProfile => {
+export const cognitoToProfileMapper = (userCognito: UserCognito): User => {
   return {
     tenantId: userCognito.custom.tenantId,
     companyName: userCognito.custom.companyName,
@@ -18,7 +18,7 @@ export const cognitoToProfileMapper = (userCognito: UserCognito): UserProfile =>
   };
 };
 
-export const cognitoUpdateStandardMapper = (userProfile: Partial<UserProfile>): AttributeListType => {
+export const cognitoUpdateStandardMapper = (userProfile: Partial<User>): AttributeListType => {
   const mapper = {
     sub: userProfile.id,
     given_name: userProfile.givenName,

@@ -12,7 +12,7 @@ export const listItem = <Builder extends EntityBuilder, Table extends TableBuild
   dynamodb: DynamoDBDocumentClient
 ): ListItemFn<Builder> => {
   return async (
-    pk: string,
+    pk: Table['storeMapping']['key']['pk'],
     queryParams: { limit: number; nextToken?: string },
     params?: Partial<QueryCommandInput>
   ): Promise<PaginatedResponse<Entity<Builder>>> => {

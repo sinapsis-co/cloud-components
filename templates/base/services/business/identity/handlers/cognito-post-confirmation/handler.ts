@@ -3,12 +3,14 @@ import { uuid } from '@sinapsis-co/cc-platform/lib/uuid';
 import { PostConfirmationTriggerHandler } from 'aws-lambda';
 import { UserCognito } from 'services/business/identity/entities/user-cognito';
 import { cognitoToProfileMapper, cognitoUpdateCustomMapper } from 'services/business/identity/platform/cognito-mapper';
-import { inviteRepository } from 'services/business/identity/repository/invite-repository';
+import { pendingRepository } from 'services/business/identity/repository/pending-repository';
 
 import { updateCognitoUser } from '@sinapsis-co/cc-platform/integrations/cognito';
 import { WelcomeTemplate } from 'notifications/templates/welcome';
 import { notificationEvent } from 'services/support/notifications/catalog';
 import { CustomError } from '../../../../../config/error-catalog';
+import { identityEvent } from '../../catalog';
+import { userRepository } from '../../repository/user-repository';
 
 export const handler: PostConfirmationTriggerHandler = async (event) => {
   const { userAttributes } = event.request;
@@ -33,15 +35,10 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
 
   // Check if the user has an invitation
   const [inviteTenantId, inviteId] = userAttributes['custom:companyName'].split('#');
-  const userWithInvite = await inviteRepository
-    .deleteItem({
-      tenantId: inviteTenantId,
-      id: `pending#${inviteId}`,
-    })
-    .catch((e) => {
-      if (e instanceof CustomError && e.errorCode === 'ERROR_ITEM_NOT_FOUND') return;
-      throw e;
-    });
+  const userWithInvite = await pendingRepository.deleteItem({ tenantId: inviteTenantId, id: inviteId }).catch((e) => {
+    if (e instanceof CustomError && e.errorCode === 'ERROR_ITEM_NOT_FOUND') return;
+    throw e;
+  });
   if (userWithInvite) {
     userCognito.custom.tenantId = userWithInvite.tenantId;
     userCognito.custom.companyName = userWithInvite.companyName;
@@ -52,7 +49,12 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
 
   // HINT: If you don't need to send the welcome email, it's just delete it from the array
   await Promise.all([
-    inviteRepository.createItem({ tenantId, id }, att),
+    userRepository.createItem({ tenantId, id }, att),
+    ...[
+      userWithInvite
+        ? dispatchEvent(identityEvent.memberCreated.eventConfig, { tenantId, id, ...att })
+        : dispatchEvent(identityEvent.tenantCreated.eventConfig, { tenantId, id, ...att }),
+    ],
     updateCognitoUser(event.userName, cognitoUpdateCustomMapper(userCognito.custom), event.userPoolId),
     dispatchEvent<notificationEvent.dispatch.Event<WelcomeTemplate>>(notificationEvent.dispatch.eventConfig, {
       via: 'email',

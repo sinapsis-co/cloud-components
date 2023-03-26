@@ -1,15 +1,16 @@
 import { GlobalConstConfig, GlobalDeployTargetConfig, GlobalEnvConfig } from './config-type';
 
 export const globalConstConfig: GlobalConstConfig = {
-  projectName: 'v3base',
-  projectShortName: 'v3base',
+  projectName: 'base',
+  projectShortName: 'base',
   useRepositoryDefaultConfig: true,
   repositoryName: 'cloud-components',
   pipelineNotificationSlackChannel: 'cloud-components',
   defaultSlackDestinationDisabled: false,
-  bootstrappingServices: ['DeployPipeline', 'DnsSubdomainHostedZone'],
+  bootstrappingServices: ['DnsSubdomainHostedZone'],
   landingZones: ['sinapsis'],
   isDemoProject: true,
+  isSingleProjectAccount: true,
   subdomain: {
     ssrLanding: '',
     spaWebapp: 'app',
@@ -24,8 +25,8 @@ export const globalEnvConfig: GlobalEnvConfig = {
     deployBranch: 'dev',
     roleName: 'SinapsisDevRole',
     hostedZoneName: 'sinapsis.io',
-    baseDomainName: 'v3base.sinapsis.io',
-    envDomainName: 'dev.v3base.sinapsis.io',
+    baseDomainName: 'base.sinapsis.io',
+    envDomainName: 'dev.base.sinapsis.io',
     emailSender: 'no-reply',
     wafEnabled: false,
     clientNotificationSlack: false,
@@ -46,7 +47,7 @@ export const globalDeployTargetConfig: GlobalDeployTargetConfig = {
   dev: {
     services: {
       region: 'us-east-1',
-      account: 'demos-dev',
+      account: 'v3-dev',
     },
     deployPipeline: {
       region: 'us-east-1',
@@ -60,7 +61,7 @@ export const globalDeployTargetConfig: GlobalDeployTargetConfig = {
   staging: {
     services: {
       region: 'us-east-1',
-      account: 'demos-dev',
+      account: 'v3-dev',
     },
     deployPipeline: {
       region: 'us-east-1',

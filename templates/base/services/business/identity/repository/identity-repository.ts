@@ -1,29 +1,30 @@
 import { repository } from '@sinapsis-co/cc-platform/integrations/repository';
 import { RepositoryEvent } from '@sinapsis-co/cc-platform/integrations/repository/interface';
-import { UserProfile, UserProfileBuilder, UserProfileCreate, UserProfileStore } from '../entities/user-profile';
+import { User, UserBuilder, UserCreate, UserStore } from '../entities/user';
 import { IdentityTableBuilder } from './identity-table';
 
-export const inviteRepository = repository<UserProfileBuilder, IdentityTableBuilder>({
+// This repo maps to the whole table for list and index usage
+export const identityRepository = repository<UserBuilder, IdentityTableBuilder>({
   tableName: 'identity',
-  repoName: 'member',
-  keySerialize: (key: UserProfileBuilder['key']): UserProfileBuilder['storeMapping']['key'] => {
+  repoName: 'user',
+  keySerialize: (key: UserBuilder['key']): IdentityTableBuilder['storeMapping']['key'] => {
     return {
       pk: key.tenantId,
       sk: key.id,
     };
   },
-  entitySerialize: (key: UserProfileBuilder['key'], entityCreate: UserProfileCreate): UserProfileStore => {
-    const mappedKey: UserProfileBuilder['storeMapping']['key'] = {
+  entitySerialize: (key: UserBuilder['key'], entityCreate: UserCreate): UserStore => {
+    const mappedKey: IdentityTableBuilder['storeMapping']['key'] = {
       pk: key.tenantId,
-      sk: `member#${key.id}`,
+      sk: entityCreate.isPending ? `pending#${key.id}` : `user#${key.id}`,
     };
-    const timers: UserProfileBuilder['storeMapping']['timers'] = {
+    const timers: IdentityTableBuilder['storeMapping']['timers'] = {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
     return { ...mappedKey, ...entityCreate, ...timers };
   },
-  entityDeserialize: (entityStore: UserProfileStore): UserProfile => {
+  entityDeserialize: (entityStore: UserStore): User => {
     const { pk, sk, createdAt, updatedAt, ...att } = entityStore;
     const [type, id] = sk.split('#');
     return {
@@ -36,4 +37,4 @@ export const inviteRepository = repository<UserProfileBuilder, IdentityTableBuil
     };
   },
 });
-export type UserProfileRepoEvent = RepositoryEvent<UserProfileBuilder>;
+export type UserProfileRepoEvent = RepositoryEvent<UserBuilder>;

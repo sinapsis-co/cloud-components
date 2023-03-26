@@ -1,27 +1,22 @@
 import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-platform/catalog/api';
-import { Schemy } from '@sinapsis-co/cc-platform/lib/schemy';
+import { User } from 'services/business/identity/entities/user';
 import { UserClaims } from 'services/business/identity/entities/user-cognito';
-import { UserProfile, UserProfileUpdate } from 'services/business/identity/entities/user-profile';
 import { authMdw, authScope } from '../../platform/authorization';
 
 export type Interface = ApiInterface<{
-  response: UserProfile;
+  response: User;
   pathParams: EmptyObject;
-  body: UserProfileUpdate;
+  body: EmptyObject;
   claims: UserClaims;
   queryParams: EmptyObject;
 }>;
 
 export const config: ApiConfig<Interface> = {
-  name: 'api-profile-update',
-  method: 'PUT',
+  name: 'api-user-get',
+  method: 'GET',
   basePath: 'identity',
-  path: '/me',
-  tablePermission: 'write',
+  path: '/user',
+  tablePermission: 'read',
   scope: authScope.member,
   authorizationMdw: authMdw,
-  schema: Schemy.schema<Interface['body']>({
-    givenName: { type: String, required: true },
-    familyName: { type: String, required: true },
-  }),
 };

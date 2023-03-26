@@ -32,5 +32,10 @@
   "hosted-zone:account=913838861210:domainName=dev.v3base.sinapsis.io:region=us-east-1": {
     "Id": "/hostedzone/Z0041780YFT0BCQHQJKL",
     "Name": "dev.v3base.sinapsis.io."
+  },
+  "ssm:account=331183547525:parameterName=dev-dns-subdomain-hosted-zone-hosted-zone-name-servers:region=us-east-1": "ns-1840.awsdns-38.co.uk,ns-1508.awsdns-60.org,ns-296.awsdns-37.com,ns-589.awsdns-09.net",
+  "hosted-zone:account=331183547525:domainName=dev.base.sinapsis.io:region=us-east-1": {
+    "Id": "/hostedzone/Z06332123QNKZV5I8H527",
+    "Name": "dev.base.sinapsis.io."
   }
 }
