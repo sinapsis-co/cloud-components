@@ -22,7 +22,7 @@ export const deleteCognitoUser = async (
   const cmd = () => {
     return cognito.send(new AdminDeleteUserCommand({ UserPoolId: userPoolId, Username: username }));
   };
-  return await Tracing.traceableOp('DeleteCognitoUser', 'FAULT_COG_DELETE_USER', username, cmd);
+  return Tracing.traceableOp('DeleteCognitoUser', 'FAULT_COG_DELETE_USER', username, cmd);
 };
 
 export const updateCognitoUser = async (
@@ -39,5 +39,5 @@ export const updateCognitoUser = async (
       })
     );
   };
-  return await Tracing.traceableOp('UpdateCognitoUser', 'FAULT_COG_UPDATE_USER', username, cmd);
+  return Tracing.traceableOp('UpdateCognitoUser', 'FAULT_COG_UPDATE_USER', username, cmd);
 };

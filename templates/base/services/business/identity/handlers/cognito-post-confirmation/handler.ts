@@ -49,12 +49,12 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
 
   // HINT: If you don't need to send the welcome email, it's just delete it from the array
   await Promise.all([
-    userRepository.createItem({ tenantId, id }, att),
     ...[
       userWithInvite
         ? dispatchEvent(identityEvent.memberCreated.eventConfig, { tenantId, id, ...att })
         : dispatchEvent(identityEvent.tenantCreated.eventConfig, { tenantId, id, ...att }),
     ],
+    userRepository.createItem({ tenantId, id }, att),
     updateCognitoUser(event.userName, cognitoUpdateCustomMapper(userCognito.custom), event.userPoolId),
     dispatchEvent<notificationEvent.dispatch.Event<WelcomeTemplate>>(notificationEvent.dispatch.eventConfig, {
       via: 'email',
