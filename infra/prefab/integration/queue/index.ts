@@ -1,11 +1,16 @@
 import { Duration } from 'aws-cdk-lib';
-import { Queue } from 'aws-cdk-lib/aws-sqs';
+import { Queue, QueueProps } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { getLogicalName } from '../../../common/naming/get-logical-name';
 import { getResourceName } from '../../../common/naming/get-resource-name';
 import { Service } from '../../../common/service';
+
+export type FifoProperties = Pick<
+  QueueProps,
+  'contentBasedDeduplication' | 'deduplicationScope' | 'fifoThroughputLimit'
+>;
 
 export type QueuePrefabParams = {
   name: string;
@@ -14,6 +19,7 @@ export type QueuePrefabParams = {
   visibilityTimeout?: Duration;
   deliveryDelay?: Duration;
   dlq?: Queue;
+  fifo?: FifoProperties;
 };
 
 export class QueuePrefab extends Construct {
@@ -34,6 +40,7 @@ export class QueuePrefab extends Construct {
       queueName: getResourceName(params.name, service.props),
       visibilityTimeout: params.visibilityTimeout || Duration.seconds(30),
       deliveryDelay: params.deliveryDelay || Duration.seconds(0),
+      ...(params.fifo ? { fifo: true, ...params.fifo } : {}),
       deadLetterQueue: {
         queue: this.dlq,
         maxReceiveCount: params.maxRetries || 3,
