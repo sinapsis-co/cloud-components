@@ -17,7 +17,7 @@ type Handler<Payload> = (event: SQSEvent, records: Payload[]) => Promise<void>;
 
 export const queueHandler = <Payload>(handler: Handler<Payload>): Handler<Payload> => {
   return async (event: SQSEvent): Promise<void> => {
-    const tracing = new Tracing();
+    const tracing = new Tracing(event);
     try {
       const records: Payload[] = event.Records.map((e) => JSON.parse(e.body));
       await timeoutController(handler(event, records));

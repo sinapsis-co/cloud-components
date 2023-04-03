@@ -17,7 +17,7 @@ export const timestreamWrite = async (
     const chunk = chunkArray(records!, MAX_MESSAGE_PER_BATCH);
     return Promise.all(chunk.map((c) => timestreamWriteBatch(c, DatabaseName, TableName)));
   };
-  return Tracing.traceableOp('Write', 'FAULT_TS_WRITE', TableName, cmd);
+  return Tracing.capture('Write', 'FAULT_TS_WRITE', TableName, cmd);
 };
 
 // Private use only

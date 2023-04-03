@@ -1,15 +1,8 @@
 import { DynamoDBDocumentClient, PutCommand, PutCommandInput } from '@aws-sdk/lib-dynamodb';
 import { parseTableName } from '..';
-import { PlatformFault } from '../../../error';
-import { dispatchEvent } from '../../../integrations/event/dispatch-event';
-import {
-  Entity,
-  EntityBuilder,
-  EntityCreate,
-  EntityRepositoryConfig,
-  EntityStore,
-  RepositoryEvent,
-} from '../interface';
+import { Tracing } from '../../../tracing';
+import { dispatchEvent } from '../../event/dispatch-event';
+import { Entity, EntityBuilder, EntityCreate, EntityRepositoryConfig, RepositoryEvent } from '../interface';
 import { CreateItemFn } from '../op-interface';
 import { TableBuilder } from '../table-builder';
 
@@ -26,20 +19,22 @@ export const createItem = <
     entityCreate: EntityCreate<Builder, Omitted>,
     params?: Partial<PutCommandInput> & { emitEvent?: boolean }
   ): Promise<Entity<Builder>> => {
-    const TableName = process.env[parseTableName(repoConfig.tableName)];
-    const item = repoConfig.entitySerialize(key, entityCreate);
-    await dynamodb.send(new PutCommand({ TableName, Item: item, ...params })).catch((e) => {
-      throw new PlatformFault({ code: 'FAULT_DYN_CREATE_ITEM', detail: e.message });
-    });
+    const tableName = process.env[parseTableName(repoConfig.tableName)];
+    const serializedItem = repoConfig.entitySerialize(key, entityCreate);
 
-    const entity = repoConfig.entityDeserialize(item as EntityStore<Builder, Table>);
+    const cmd = async () => {
+      await dynamodb.send(new PutCommand({ TableName: tableName, Item: serializedItem, ...params }));
+      const entity = repoConfig.entityDeserialize(serializedItem);
+      if (params?.emitEvent) {
+        await dispatchEvent<RepositoryEvent<Builder>['created']>(
+          { name: `app.${repoConfig.repoName}.created`, source: 'app' },
+          entity
+        );
+      }
+      return entity;
+    };
 
-    if (params?.emitEvent) {
-      await dispatchEvent<RepositoryEvent<Builder>['created']>(
-        { name: `app.${repoConfig.repoName}.created`, source: 'app' },
-        entity
-      );
-    }
-    return entity;
+    const meta = { tableName, rawKey: key, serializedItem, params };
+    return Tracing.capture('createItem', 'FAULT_DYN_CREATE_ITEM', JSON.stringify(key), cmd, meta);
   };
 };

@@ -2,6 +2,7 @@ import { DynamoDBDocumentClient, UpdateCommand, UpdateCommandInput } from '@aws-
 import { parseTableName } from '..';
 import { PlatformError, PlatformFault } from '../../../error';
 import { dispatchEvent } from '../../../integrations/event/dispatch-event';
+import { Tracing } from '../../../tracing';
 import {
   Entity,
   EntityBuilder,
@@ -23,33 +24,40 @@ export const updateItem = <Builder extends EntityBuilder, Table extends TableBui
     entityUpdate: Partial<EntityUpdate<Builder>>,
     params?: Partial<UpdateCommandInput> & { emitEvent?: boolean }
   ): Promise<Entity<Builder>> => {
-    const TableName = process.env[parseTableName(repoConfig.tableName)];
+    const tableName = process.env[parseTableName(repoConfig.tableName)];
+    const serializedKey = repoConfig.keySerialize(key);
     const mapper = updateMapper<EntityUpdate<Builder>>(entityUpdate);
-    const { Attributes } = await dynamodb
-      .send(
-        new UpdateCommand({
-          TableName,
-          Key: repoConfig.keySerialize(key),
-          ReturnValues: 'ALL_NEW',
-          ...mapper,
-          ...params,
-        })
-      )
-      .catch((e) => {
-        throw new PlatformFault({ code: 'FAULT_DYN_UPDATE_ITEM', detail: e.message });
-      });
 
-    if (!Attributes) throw new PlatformError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
+    const cmd = async () => {
+      const { Attributes } = await dynamodb
+        .send(
+          new UpdateCommand({
+            TableName: tableName,
+            Key: serializedKey,
+            ReturnValues: 'ALL_NEW',
+            ...mapper,
+            ...params,
+          })
+        )
+        .catch((e) => {
+          throw new PlatformFault({ code: 'FAULT_DYN_UPDATE_ITEM', detail: e.message });
+        });
 
-    const entity: Entity<Builder> = repoConfig.entityDeserialize(Attributes as EntityStore<Builder, Table>);
+      if (!Attributes) throw new PlatformError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
 
-    if (params?.emitEvent) {
-      await dispatchEvent<RepositoryEvent<Builder>['updated']>(
-        { name: `app.${repoConfig.repoName}.updated`, source: 'app' },
-        entity
-      );
-    }
+      const entity: Entity<Builder> = repoConfig.entityDeserialize(Attributes as EntityStore<Builder, Table>);
 
-    return entity;
+      if (params?.emitEvent) {
+        await dispatchEvent<RepositoryEvent<Builder>['updated']>(
+          { name: `app.${repoConfig.repoName}.updated`, source: 'app' },
+          entity
+        );
+      }
+
+      return entity;
+    };
+
+    const meta = { tableName, rawKey: key, serializedKey, mapper, params };
+    return Tracing.capture('updateItem', 'FAULT_DYN_SOFT_DELETE_ITEM', JSON.stringify(key), cmd, meta);
   };
 };

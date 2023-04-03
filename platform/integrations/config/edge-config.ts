@@ -12,5 +12,5 @@ export const getConfig = async <T>(): Promise<T> => {
     const config: T = JSON.parse(Parameter.Value);
     return config;
   };
-  return Tracing.traceableOp('GetEdgeConfig', 'FAULT_SSM_GET_EDGE_CONFIG', Name, cmd);
+  return Tracing.capture('GetEdgeConfig', 'FAULT_SSM_GET_EDGE_CONFIG', Name, cmd);
 };

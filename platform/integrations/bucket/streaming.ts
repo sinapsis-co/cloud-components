@@ -16,7 +16,7 @@ export const bucketStreamUpload = async <TracingMeta extends Record<string, stri
     inputPipe.pipe(middleware).pipe(pass);
     await uploader.done();
   };
-  return Tracing.traceableOp('StreamUpload', 'FAULT_S3_STREAM_UPLOAD', params.Bucket!, cmd, {
+  return Tracing.capture('StreamUpload', 'FAULT_S3_STREAM_UPLOAD', params.Bucket!, cmd, {
     key: params.Key!,
     ...tracingMeta,
   });
@@ -27,7 +27,7 @@ export const bucketStreamGetObject = async <TracingMeta extends Record<string, s
   tracingMeta?: TracingMeta
 ): Promise<S3.GetObjectOutput> => {
   const cmd = () => s3.send(new S3.GetObjectCommand(params));
-  return Tracing.traceableOp('StreamGetObject', 'FAULT_S3_STREAM_GET_OBJECT', params.Bucket!, cmd, {
+  return Tracing.capture('StreamGetObject', 'FAULT_S3_STREAM_GET_OBJECT', params.Bucket!, cmd, {
     key: params.Key!,
     ...tracingMeta,
   });

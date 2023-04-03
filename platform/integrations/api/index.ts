@@ -84,7 +84,7 @@ export const apiCall = async <
     return { response } as Response<Api, ErrorResponse>;
   };
 
-  return Tracing.traceableOp('ApiCall', 'FAULT_API_CALL_UNHANDLED', endpointWithQuery, cmd, options.tracingMeta);
+  return Tracing.capture('ApiCall', 'FAULT_API_CALL_UNHANDLED', endpointWithQuery, cmd, options.tracingMeta);
 };
 
 const getBasicAuthHeader = (basicAuth: BasicAuth) => {

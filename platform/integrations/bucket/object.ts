@@ -8,7 +8,7 @@ export const bucketPutObject = async <TracingMeta extends Record<string, string>
   tracingMeta?: TracingMeta
 ): Promise<S3.PutObjectOutput> => {
   const cmd = () => s3.send(new S3.PutObjectCommand(params));
-  return Tracing.traceableOp('PutObject', 'FAULT_S3_PUT_OBJECT', params.Bucket!, cmd, {
+  return Tracing.capture('PutObject', 'FAULT_S3_PUT_OBJECT', params.Bucket!, cmd, {
     key: params.Key!,
     ...tracingMeta,
   });
@@ -19,7 +19,7 @@ export const bucketHeadObject = async <TracingMeta extends Record<string, string
   tracingMeta?: TracingMeta
 ): Promise<S3.HeadObjectOutput> => {
   const cmd = () => s3.send(new S3.HeadObjectCommand(params));
-  return Tracing.traceableOp('HeadObject', 'FAULT_S3_HEAD_OBJECT', params.Bucket!, cmd, {
+  return Tracing.capture('HeadObject', 'FAULT_S3_HEAD_OBJECT', params.Bucket!, cmd, {
     key: params.Key!,
     ...tracingMeta,
   });
@@ -42,7 +42,7 @@ export const bucketGetObject = async <TracingMeta extends Record<string, string>
     const bodyContents: string = await streamToString(Body as Readable);
     return { Body: bodyContents, ...att };
   };
-  return Tracing.traceableOp('GetObject', 'FAULT_S3_GET_OBJECT', params.Bucket!, cmd, {
+  return Tracing.capture('GetObject', 'FAULT_S3_GET_OBJECT', params.Bucket!, cmd, {
     key: params.Key!,
     ...tracingMeta,
   });
@@ -53,7 +53,7 @@ export const bucketDeleteObject = async <TracingMeta extends Record<string, stri
   tracingMeta?: TracingMeta
 ): Promise<S3.DeleteObjectOutput> => {
   const cmd = () => s3.send(new S3.DeleteObjectCommand(params));
-  return Tracing.traceableOp('DeleteObject', 'FAULT_S3_DELETE_OBJECT', params.Bucket!, cmd, {
+  return Tracing.capture('DeleteObject', 'FAULT_S3_DELETE_OBJECT', params.Bucket!, cmd, {
     key: params.Key!,
     ...tracingMeta,
   });
@@ -64,5 +64,5 @@ export const bucketListObjects = async <TracingMeta extends Record<string, strin
   tracingMeta?: TracingMeta
 ): Promise<S3.ListObjectsV2Output> => {
   const cmd = () => s3.send(new S3.ListObjectsV2Command(params));
-  return Tracing.traceableOp('ListObjects', 'FAULT_S3_LIST_OBJECT', params.Bucket!, cmd, tracingMeta);
+  return Tracing.capture('ListObjects', 'FAULT_S3_LIST_OBJECT', params.Bucket!, cmd, tracingMeta);
 };

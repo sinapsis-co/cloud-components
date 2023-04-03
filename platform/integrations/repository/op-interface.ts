@@ -6,7 +6,7 @@ import { TableBuilder } from './table-builder';
 export type CreateItemFn<Builder extends EntityBuilder, EntityCreate = Builder['body']> = (
   key: EntityBuilder<Builder>['key'],
   entityCreate: EntityCreate,
-  params?: Partial<Dynamo.PutCommandInput>
+  params?: Partial<Dynamo.PutCommandInput> & { emitEvent?: boolean }
 ) => Promise<Entity<Builder>>;
 
 export type BatchCreateItemFn<Builder extends EntityBuilder> = (
@@ -40,24 +40,24 @@ export type ListItemFn<Builder extends EntityBuilder> = (
 
 export type DeleteItemFn<Builder extends EntityBuilder> = (
   key: EntityBuilder<Builder>['key'],
-  params?: Partial<Dynamo.DeleteCommandInput>
+  params?: Partial<Dynamo.DeleteCommandInput> & { emitEvent?: boolean }
 ) => Promise<Entity<Builder>>;
 
 export type SoftDeleteItemFn<Builder extends EntityBuilder> = (
   key: EntityBuilder<Builder>['key'],
-  params?: Dynamo.UpdateCommandInput,
+  params?: Dynamo.UpdateCommandInput & { deleteAfter?: TimeToDelete; emitEvent?: boolean },
   deleteAfter?: TimeToDelete
 ) => Promise<Entity<Builder>>;
 
 export type UpdateItemFn<Builder extends EntityBuilder> = (
   key: EntityBuilder<Builder>['key'],
   entityUpdate: Partial<EntityUpdate<Builder>>,
-  params?: Partial<Dynamo.UpdateCommandInput>
+  params?: Partial<Dynamo.UpdateCommandInput> & { emitEvent?: boolean }
 ) => Promise<Entity<Builder>>;
 
 export type RecoverItemFn<Builder extends EntityBuilder> = (
   key: EntityBuilder<Builder>['key'],
-  params?: Dynamo.GetCommandInput
+  params?: Dynamo.GetCommandInput & { emitEvent?: boolean }
 ) => Promise<Entity<Builder>>;
 
 export type ScanTableFn<Builder extends EntityBuilder> = (

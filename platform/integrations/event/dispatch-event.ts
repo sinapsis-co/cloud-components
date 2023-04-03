@@ -24,5 +24,5 @@ export const dispatchEvent = async <
     Resources: [],
   };
   const cmd = () => eventBridge.send(new PutEventsCommand({ Entries: [event] }));
-  await Tracing.traceableOp('Dispatch', 'FAULT_EVENT_DISPATCH', eventConfig.name, cmd, tracingMeta);
+  await Tracing.capture('Dispatch', 'FAULT_EVENT_DISPATCH', eventConfig.name, cmd, tracingMeta);
 };

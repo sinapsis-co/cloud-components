@@ -21,5 +21,5 @@ export const getRuntimeSecret = async <Secret extends SecretInterface = SecretIn
     }
     return _secrets[secretName.name];
   };
-  return Tracing.traceableOp('GetRuntimeSecret', 'FAULT_SM_GET_RUNTIME_SECRET', secretName.name, cmd);
+  return Tracing.capture('GetRuntimeSecret', 'FAULT_SM_GET_RUNTIME_SECRET', secretName.name, cmd);
 };

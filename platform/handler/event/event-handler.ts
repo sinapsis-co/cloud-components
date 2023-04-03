@@ -11,7 +11,7 @@ type Handler<Event extends EventInterface> = (
 
 export const eventHandler = <Event extends EventInterface>(handler: Handler<Event>): Handler<Event> => {
   return async (event: EventBridgeEvent<Event['name'], Event['payload']>): Promise<void> => {
-    const tracing = new Tracing();
+    const tracing = new Tracing(event);
     try {
       await timeoutController(handler(event));
       tracing.close();

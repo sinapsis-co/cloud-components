@@ -23,14 +23,14 @@ export const sendMessages = async <T>(
     const messagesChucked = chunkArray(messages, MAX_MESSAGE_PER_BATCH);
     return Promise.all(messagesChucked.map((messageChucked) => sendMessagesBatch(messageChucked, queueUrl, params)));
   };
-  return Tracing.traceableOp('SendMessages', 'FAULT_SQS_SEND_MESSAGES', queueUrl, cmd);
+  return Tracing.capture('SendMessages', 'FAULT_SQS_SEND_MESSAGES', queueUrl, cmd);
 };
 
 export const deleteMessage = async (receiptHandle: string, queueUrl: string): Promise<DeleteMessageCommandOutput> => {
   const cmd = async () => {
     return sqs.send(new DeleteMessageCommand({ QueueUrl: queueUrl, ReceiptHandle: receiptHandle }));
   };
-  return Tracing.traceableOp('DeleteMessage', 'FAULT_SQS_DELETE_MESSAGE', receiptHandle, cmd);
+  return Tracing.capture('DeleteMessage', 'FAULT_SQS_DELETE_MESSAGE', receiptHandle, cmd);
 };
 
 // Private use only

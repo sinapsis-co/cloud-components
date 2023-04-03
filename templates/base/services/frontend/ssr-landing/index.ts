@@ -6,7 +6,6 @@ import { PrivateBucketPrefab } from '@sinapsis-co/cc-infra/prefab/storage/bucket
 
 import { GlobalCoordinator } from '../../../config/config-type';
 import { baseRepo } from '../../business/base-crud/repository/base';
-import { otherRepo } from '../../business/base-event/repository/other';
 import { Identity } from '../../business/identity';
 import { CdnApi } from '../../support/cdn-api';
 import { DnsSubdomainCertificate } from '../../support/dns-subdomain-certificate';
@@ -71,7 +70,7 @@ export class SsrLanding extends Service<GlobalCoordinator> {
       handlers: {
         entityChanged: {
           name: 'event-entity-changed',
-          eventConfig: [...Object.values(baseRepo.events), ...Object.values(otherRepo.events)],
+          eventConfig: [...Object.values(baseRepo.events)],
           modifiers: [this.queueFunction.customQueue.useModWriter()],
         },
         deployTriggered: {

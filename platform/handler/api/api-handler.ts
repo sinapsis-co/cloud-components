@@ -28,12 +28,12 @@ export const apiHandler = <T extends ApiInterface>(
 ): Handler<T> => {
   return async (event: APIGatewayProxyEventV2WithJWTAuthorizer): Promise<APIGatewayProxyResultV2> => {
     const headers = { ...DEFAULT_HEADERS, ...customHeaders };
-    const tracing = new Tracing();
+    const tracing = new Tracing(event);
     try {
       const request: ApiInterfaceRequest<T> = await apiParser<T>(event, apiOptions.schema);
       if (apiOptions.authorizationMdw) apiOptions.authorizationMdw(request, apiOptions.scope);
       const result = await timeoutController(handler(event, request));
-      tracing.close();
+      tracing.close(result);
       return {
         headers,
         statusCode: statusCode,

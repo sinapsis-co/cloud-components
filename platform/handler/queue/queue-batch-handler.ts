@@ -23,7 +23,7 @@ export const queueBatchHandler = <Payload>(handler: Handler<Payload>): Handler<P
     const batchSize = event.Records.length;
     const promises = await Promise.allSettled(
       event.Records.map(async (record) => {
-        const tracing = new Tracing();
+        const tracing = new Tracing(record);
         try {
           const payload = JSON.parse(record.body);
           await timeoutController(handler(event, record, payload));

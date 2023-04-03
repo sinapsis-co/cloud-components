@@ -20,7 +20,7 @@ export const publishMessages = async <T>(
     const messagesChucked = chunkArray(messages, MAX_MESSAGE_PER_BATCH);
     return Promise.all(messagesChucked.map((messageChucked) => publishMessagesBatch(messageChucked, topicArn)));
   };
-  return Tracing.traceableOp('PushMessages', 'FAULT_SNS_SEND_MESSAGES', topicArn, cmd);
+  return Tracing.capture('PushMessages', 'FAULT_SNS_SEND_MESSAGES', topicArn, cmd);
 };
 
 // Private use only
