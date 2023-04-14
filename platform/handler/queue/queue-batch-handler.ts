@@ -1,12 +1,11 @@
 /* eslint-disable no-console */
-import { SQSEvent, SQSRecord } from 'aws-lambda';
+import { SQSBatchResponse, SQSEvent, SQSRecord } from 'aws-lambda';
 import { PlatformError, PlatformFault } from '../../error';
 import { timeoutController } from '../../error/timeout';
 import { HandledException } from '../../error/types';
-import { deleteMessage } from '../../integrations/queue';
 import { Tracing } from '../../tracing';
 
-type Handler<Payload> = (event: SQSEvent, record: SQSRecord, payload: Payload) => Promise<void>;
+type Handler<Payload> = (event: SQSEvent, record: SQSRecord, payload: Payload) => Promise<SQSBatchResponse>;
 
 /**
  * queueBatchHandler manages the batching of the queue in way that from handler perspective is processing a
@@ -17,9 +16,7 @@ type Handler<Payload> = (event: SQSEvent, record: SQSRecord, payload: Payload) =
  */
 
 export const queueBatchHandler = <Payload>(handler: Handler<Payload>): Handler<Payload> => {
-  return async (event: SQSEvent): Promise<void> => {
-    const [region, account, name] = event.Records[0].eventSourceARN.split(':').slice(3);
-    const url = `https://sqs.${region}.amazonaws.com/${account}/${name}`;
+  return async (event: SQSEvent): Promise<SQSBatchResponse> => {
     const batchSize = event.Records.length;
     const promises = await Promise.allSettled(
       event.Records.map(async (record) => {
@@ -28,7 +25,7 @@ export const queueBatchHandler = <Payload>(handler: Handler<Payload>): Handler<P
           const payload = JSON.parse(record.body);
           await timeoutController(handler(event, record, payload));
           tracing.close();
-          return record.receiptHandle;
+          return record.messageId;
         } catch (error: any) {
           const handledException: HandledException =
             error instanceof PlatformError || error instanceof PlatformFault
@@ -43,7 +40,7 @@ export const queueBatchHandler = <Payload>(handler: Handler<Payload>): Handler<P
     // CASE: All messages were processed successfully
     if (!promises.find((p) => p.status === 'rejected')) {
       console.log({ namespace: 'QUEUE_BATCH_FINISHED', size: batchSize, processed: batchSize, rejected: 0 });
-      return;
+      return { batchItemFailures: [] };
     }
     // CASE: All messages were rejected
     if (!promises.find((p) => p.status === 'fulfilled')) {
@@ -61,8 +58,7 @@ export const queueBatchHandler = <Payload>(handler: Handler<Payload>): Handler<P
         processed: toDelete.length,
         rejected: batchSize - toDelete.length,
       });
-      await Promise.all(toDelete.map((p: PromiseFulfilledResult<string>) => deleteMessage(p.value, url)));
-      throw new Error('BatchRejected'); //We plain Error used to avoid ErrorMetric duplication
+      return { batchItemFailures: toDelete.map((p) => ({ itemIdentifier: p.value })) };
     }
   };
 };

@@ -37,6 +37,7 @@ export class QueueFunction extends Construct {
         ...(params.maxConcurrency ? { maxConcurrency: params.maxConcurrency } : {}),
         batchSize: params.batchSize || 10,
         maxBatchingWindow: params.batchWindow,
+        reportBatchItemFailures: true,
       })
     );
 
