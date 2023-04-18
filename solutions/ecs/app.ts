@@ -1,22 +1,32 @@
 /* eslint-disable no-console */
-import { getGlobalProps } from '@sinapsis-co/cc-core/common/synth/get-global-props';
-import { App } from 'aws-cdk-lib';
 import { globalConstConfig, globalDeployTargetConfig, globalEnvConfig } from './config';
 
-import { BusinessServices } from './services/business';
-import { SupportServices } from './services/support';
+import { Coordinator } from '@sinapsis-co/cc-core/common/coordinator';
+import { ContainerService } from './services/business/base-container-one';
+import { BaseCrud } from './services/business/base-crud';
+import { CdnApi } from './services/support/cdn-api';
+import { DeployPipeline } from './services/support/deploy-pipeline';
+import { DnsDomainRef } from './services/support/dns-domain-ref';
+import { DnsSubdomainCertificate } from './services/support/dns-subdomain-certificate';
+import { DnsSubdomainHostedZone } from './services/support/dns-subdomain-hosted-zone';
+import { EnvAlb } from './services/support/env-alb';
+import { EnvCluster } from './services/support/env-cluster';
+import { EnvVpc } from './services/support/env-vpc';
 
-try {
-  const app = new App();
-  const globalProps = getGlobalProps(app, globalConstConfig, globalEnvConfig, globalDeployTargetConfig);
+const coordinator = new Coordinator(globalConstConfig, globalEnvConfig, globalDeployTargetConfig);
 
-  const supportServices = new SupportServices(app, globalProps);
+// Support Services
+new DeployPipeline(coordinator);
+new DnsSubdomainHostedZone(coordinator);
+new DnsDomainRef(coordinator);
+new DnsSubdomainCertificate(coordinator);
+new EnvVpc(coordinator);
+new EnvAlb(coordinator);
+new EnvCluster(coordinator);
+new CdnApi(coordinator);
 
-  new BusinessServices(app, globalProps, supportServices);
+// Business Services
+new ContainerService(coordinator);
+new BaseCrud(coordinator);
 
-  app.synth();
-} catch (error: any) {
-  console.log(error);
-  console.log(`Synth Error: ${error.message}`);
-  process.exit(1);
-}
+coordinator.build();

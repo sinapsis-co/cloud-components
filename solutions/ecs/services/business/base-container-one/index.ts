@@ -1,48 +1,41 @@
-import { Construct, Service } from '@sinapsis-co/cc-core/common/service';
-import { ParameterSecret } from '@sinapsis-co/cc-core/prefab/config/parameter-secret';
-import { ApiAggregate } from '@sinapsis-co/cc-core/prefab/function/api-function/api-aggregate';
-import { FargateContainerConstruct, FargatePerformanceTunning } from '@sinapsis-co/cc-core/services/fargate-container';
+import { Service } from '@sinapsis-co/cc-core/common/service';
+import { FargateServicePrefab } from '@sinapsis-co/cc-core/prefab/compute/fargate/service';
+import { ApiAggregate } from '@sinapsis-co/cc-core/prefab/compute/function/api-function/api-aggregate';
+import { ParameterSecret } from '@sinapsis-co/cc-core/prefab/util/config/parameter-secret';
 import { Duration } from 'aws-cdk-lib';
 import { Secret } from 'aws-cdk-lib/aws-ecs';
 
-import { GlobalServiceDependencies } from '..';
-import { AllowedEnvName, GlobalProps } from '../../../config/config-type';
+import { GlobalCoordinator } from '../../../config/config-type';
+import { DnsSubdomainCertificate } from '../../support/dns-subdomain-certificate';
+import { EnvAlb } from '../../support/env-alb';
+import { EnvCluster } from '../../support/env-cluster';
+import { EnvVpc } from '../../support/env-vpc';
+import { performanceTunningMapper } from './config';
 
-export type ContainerServiceParams = GlobalServiceDependencies;
+type Deps = {
+  envVpc: EnvVpc;
+  envAlb: EnvAlb;
+  envCluster: EnvCluster;
+  dnsSubdomainCertificate: DnsSubdomainCertificate;
+};
+const depsNames: Array<keyof Deps> = ['envVpc', 'envAlb', 'envCluster', 'dnsSubdomainCertificate'];
 
-export class ContainerService extends Service<GlobalProps, ContainerServiceParams> {
+export class ContainerService extends Service<GlobalCoordinator> {
   public readonly apiAggregate: ApiAggregate;
 
-  constructor(scope: Construct, globalProps: GlobalProps, params: ContainerServiceParams) {
-    super(scope, ContainerService.name, globalProps, { params });
+  constructor(coordinator: GlobalCoordinator) {
+    super(coordinator, ContainerService.name, depsNames);
+    coordinator.addService(this);
+  }
 
-    const performanceTunningMapper: Record<AllowedEnvName, FargatePerformanceTunning> = {
-      dev: {
-        taskCpu: '256',
-        taskMemory: '512',
-        containerDesiredCount: 1,
-        taskAutoScaleMin: 1,
-        taskAutoScaleMax: 2,
-        taskAutoScalePercent: 75,
-        containerMaxMemory: 75,
-      },
-      staging: {
-        taskCpu: '256',
-        taskMemory: '512',
-        containerDesiredCount: 1,
-        taskAutoScaleMin: 1,
-        taskAutoScaleMax: 1,
-        taskAutoScalePercent: 75,
-        containerMaxMemory: 75,
-      },
-    };
-
-    new FargateContainerConstruct(this, {
+  build(deps: Deps) {
+    new FargateServicePrefab(this, {
       name: 'serviceOne',
       basePath: '/container/one',
-      vpcConstruct: params.envVpc.vpcConstruct,
-      albConstruct: params.envAlb.albConstruct,
-      certificate: params.dnsSubdomainCertificate.certificate,
+      fargateClusterPrefab: deps.envCluster.fargateClusterPrefab,
+      vpcPrefab: deps.envVpc.vpcPrefab,
+      albPrefab: deps.envAlb.albPrefab,
+      certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,
       containerHealthCheck: {
         startPeriod: Duration.seconds(2),
         interval: Duration.seconds(5),
@@ -50,6 +43,7 @@ export class ContainerService extends Service<GlobalProps, ContainerServiceParam
       },
       containerSecrets: { aSecret: Secret.fromSsmParameter(new ParameterSecret(this, { name: 'aSecret' }).secret) },
       containerEnv: { ENV_NAME: this.props.envName },
+      // externalRepository: { repositoryName: 'container-two-image', tag: 'latest' },
       dockerBuildFolder: `${__dirname}/container-image`,
       mappingPort: 8080,
       healthCheckPath: '/api/status',

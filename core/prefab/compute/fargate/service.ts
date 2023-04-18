@@ -11,6 +11,7 @@ import { Service } from '../../../common/service';
 import { SynthError } from '../../../common/synth/synth-error';
 import { PublicAlbPrefab } from '../../gateway/alb-public';
 import { VpcPrefab } from '../../networking/vpc';
+import { FargateClusterPrefab } from './cluster';
 
 export type FargateContainerHealthCheck = HealthCheck;
 
@@ -24,10 +25,11 @@ export type FargatePerformanceTunning = {
   containerMaxMemory: number;
 };
 
-export type FargateContainerConstructParams = {
+export type FargateServicePrefabParams = {
   name: string;
-  vpcConstruct: VpcPrefab;
-  albConstruct: PublicAlbPrefab;
+  fargateClusterPrefab: FargateClusterPrefab;
+  vpcPrefab: VpcPrefab;
+  albPrefab: PublicAlbPrefab;
   mappingPort: number;
   basePath: string;
   fixedPriority?: number;
@@ -44,12 +46,12 @@ export type FargateContainerConstructParams = {
   performanceTunning: FargatePerformanceTunning;
 };
 
-export class FargateClusterPrefab extends Construct {
+export class FargateServicePrefab extends Construct {
   public readonly repository: IRepository;
   public readonly targetGroup: awsALB.ApplicationTargetGroup;
 
-  constructor(service: Service, params: FargateContainerConstructParams) {
-    super(service, getLogicalName(params.name, FargateClusterPrefab.name));
+  constructor(service: Service, params: FargateServicePrefabParams) {
+    super(service, getLogicalName(params.name, FargateServicePrefab.name));
 
     if (!params.dockerBuildFolder && !params.externalRepository)
       throw new SynthError('dockerBuildFolder or externalRepository should exist');
@@ -61,13 +63,6 @@ export class FargateClusterPrefab extends Construct {
         params.externalRepository.repositoryName
       );
     }
-
-    // CLUSTER
-    const cluster = new awsECS.Cluster(this, getLogicalName(params.name, 'cluster'), {
-      containerInsights: true,
-      clusterName: getResourceName('cluster', { ...service.props, serviceName: params.name }),
-      vpc: params.vpcConstruct.vpc,
-    });
 
     // CONTAINER TASK DEFINITION
     const taskDefinition = new awsECS.TaskDefinition(this, getLogicalName(params.name, 'taskDefinition'), {
@@ -92,14 +87,14 @@ export class FargateClusterPrefab extends Construct {
     });
     if (params.externalRepository) this.repository.grantPull(taskDefinition.taskRole);
 
-    // FARGATE
+    // FARGATE SERVICE
     const fargateService = new awsECS.FargateService(this, getLogicalName(params.name, 'fargateService'), {
       serviceName: getResourceName('service', { ...service.props, serviceName: params.name }),
       platformVersion: FargatePlatformVersion.LATEST,
-      cluster,
+      cluster: params.fargateClusterPrefab.cluster,
       desiredCount: params.performanceTunning.containerDesiredCount,
       taskDefinition,
-      securityGroups: [params.albConstruct.getAlbToClusterSG()],
+      securityGroups: [params.albPrefab.getAlbToClusterSG()],
       assignPublicIp: true,
       circuitBreaker: { rollback: true },
       capacityProviderStrategies: [{ capacityProvider: 'FARGATE' }],
@@ -118,6 +113,6 @@ export class FargateClusterPrefab extends Construct {
     });
 
     // CONNECT TO ALB
-    params.albConstruct.appendTargetGroup({ ...params, fargateService });
+    params.albPrefab.appendTargetGroup({ ...params, fargateService });
   }
 }

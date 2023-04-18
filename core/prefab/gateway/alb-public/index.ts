@@ -12,7 +12,7 @@ import { Service } from '../../../common/service';
 import { SynthError } from '../../../common/synth/synth-error';
 import { CdnApiPrefab } from '../cdn-api';
 
-export type PublicAlbConstructParams = {
+export type PublicAlbPrefabParams = {
   name: string;
   vpc: IVpc;
   certificate: ICertificate;
@@ -34,7 +34,7 @@ export class PublicAlbPrefab extends Construct {
   private priorityIndex: number;
   private service: Service;
 
-  constructor(service: Service, params: PublicAlbConstructParams) {
+  constructor(service: Service, params: PublicAlbPrefabParams) {
     super(service, getLogicalName(PublicAlbPrefab.name));
 
     this.service = service;

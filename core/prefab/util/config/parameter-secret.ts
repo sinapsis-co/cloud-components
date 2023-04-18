@@ -6,7 +6,7 @@ import { getResourceName } from '../../../common/naming/get-resource-name';
 import { Service } from '../../../common/service';
 import { SynthError } from '../../../common/synth/synth-error';
 
-export type ParameterSecretProps = {
+export type ParameterSecretParams = {
   name?: string;
   existingName?: string;
   value?: string;
@@ -15,7 +15,7 @@ export type ParameterSecretProps = {
 export class ParameterSecret extends Construct {
   public readonly secret: IStringParameter;
 
-  constructor(service: Service, params: ParameterSecretProps) {
+  constructor(service: Service, params: ParameterSecretParams) {
     super(service, getLogicalName(ParameterSecret.name, params.name || params.existingName));
 
     if (!params.existingName && !params.name) throw new SynthError('name or existingName are required');
@@ -30,7 +30,6 @@ export class ParameterSecret extends Construct {
 
     if (params.name) {
       this.secret = new StringParameter(this, getLogicalName('param', params.name), {
-        simpleName: false,
         parameterName: getResourceName(params.name, service.props),
         stringValue: params.value || 'Default value: this need to be changed',
       });

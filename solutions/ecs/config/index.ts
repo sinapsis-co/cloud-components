@@ -8,6 +8,7 @@ export const globalConstConfig: GlobalConstConfig = {
   pipelineNotificationSlackChannel: 'cloud-components',
   defaultSlackDestinationDisabled: false,
   bootstrappingServices: ['DeployPipeline', 'DnsSubdomainHostedZone'],
+  landingZones: ['sinapsis'],
   isDemoProject: true,
   subdomain: {
     webappNext: '',
@@ -24,9 +25,9 @@ export const globalEnvConfig: GlobalEnvConfig = {
   dev: {
     deployBranch: 'dev',
     roleName: 'SinapsisDevRole',
-    hostedZoneName: 'sinapsis.co',
-    baseDomainName: 'ecs-demo.sinapsis.co',
-    envDomainName: 'dev.ecs-demo.sinapsis.co',
+    hostedZoneName: 'sinapsis.io',
+    baseDomainName: 'ecs.sinapsis.io',
+    envDomainName: 'dev.ecs.sinapsis.io',
     emailSender: 'no-reply',
     wafEnabled: false,
     clientNotificationSlack: false,
@@ -34,9 +35,9 @@ export const globalEnvConfig: GlobalEnvConfig = {
   staging: {
     deployBranch: 'staging',
     roleName: 'SinapsisDevRole',
-    hostedZoneName: 'sinapsis.co',
-    baseDomainName: 'ecs-demo.sinapsis.co',
-    envDomainName: 'staging.ecs-demo.sinapsis.co',
+    hostedZoneName: 'sinapsis.io',
+    baseDomainName: 'ecs.sinapsis.io',
+    envDomainName: 'staging.ecs.sinapsis.io',
     emailSender: 'no-reply',
     wafEnabled: false,
     clientNotificationSlack: false,
@@ -47,29 +48,29 @@ export const globalDeployTargetConfig: GlobalDeployTargetConfig = {
   dev: {
     services: {
       region: 'us-east-1',
-      account: 'demos-dev',
+      account: 'v3-dev',
     },
-    deploy: {
+    deployPipeline: {
       region: 'us-east-1',
-      account: 'sinapsis-shared',
+      account: 'sinapsis-noprod',
     },
     dnsShared: {
       region: 'us-east-1',
-      account: 'sinapsis-shared',
+      account: 'sinapsis-noprod',
     },
   },
   staging: {
     services: {
       region: 'us-east-1',
-      account: 'demos-dev',
+      account: 'v3-dev',
     },
-    deploy: {
+    deployPipeline: {
       region: 'us-east-1',
-      account: 'sinapsis-shared',
+      account: 'sinapsis-noprod',
     },
     dnsShared: {
       region: 'us-east-1',
-      account: 'sinapsis-shared',
+      account: 'sinapsis-noprod',
     },
   },
 };

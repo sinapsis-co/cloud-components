@@ -1,18 +1,23 @@
-import { Construct, Service } from '@sinapsis-co/cc-core/common/service';
-import { DnsSubdomainHostedZoneConstruct } from '@sinapsis-co/cc-core/services/dns-subdomain-hosted-zone';
-import { GlobalProps } from '../../../config/config-type';
+import { Service } from '@sinapsis-co/cc-core/common/service';
+import { DnsSubdomainHostedZonePrefab } from '@sinapsis-co/cc-core/prefab/networking/dns-subdomain-hosted-zone';
+import { GlobalCoordinator } from '../../../config/config-type';
 
-export class DnsSubdomainHostedZone extends Service<GlobalProps> {
-  public readonly hostedZoneNS: string;
+type Deps = Record<string, never>;
+const depsNames: Array<keyof Deps> = [];
 
-  constructor(scope: Construct, globalProps: GlobalProps) {
-    super(scope, DnsSubdomainHostedZone.name, globalProps, {});
+export class DnsSubdomainHostedZone extends Service<GlobalCoordinator> {
+  public subdomainHostedZonePrefab: DnsSubdomainHostedZonePrefab;
 
+  constructor(coordinator: GlobalCoordinator) {
+    super(coordinator, DnsSubdomainHostedZone.name, depsNames);
+    coordinator.addService(this);
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  build(_deps = {}) {
     const isBootstrapping = this.node.tryGetContext('isBootstrapping') === 'true' ? true : false;
 
-    if (this.props.envName !== 'prod')
-      this.hostedZoneNS = new DnsSubdomainHostedZoneConstruct(this, {
-        isBootstrapping,
-      }).hostedZoneNS;
+    if (this.props.envName !== 'prod') {
+      this.subdomainHostedZonePrefab = new DnsSubdomainHostedZonePrefab(this, { isBootstrapping });
+    }
   }
 }

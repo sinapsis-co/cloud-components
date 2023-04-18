@@ -1,16 +1,21 @@
-import { Construct, Service } from '@sinapsis-co/cc-core/common/service';
-import { VpcConstruct } from '@sinapsis-co/cc-core/services/vpc';
+import { Service } from '@sinapsis-co/cc-core/common/service';
+import { VpcPrefab } from '@sinapsis-co/cc-core/prefab/networking/vpc';
 
-import { GlobalProps } from '../../../config/config-type';
+import { GlobalCoordinator } from '../../../config/config-type';
 
-export type EnvVpcParams = Record<string, never>;
+type Deps = Record<string, never>;
+const depsNames: Array<keyof Deps> = [];
 
-export class EnvVpc extends Service<GlobalProps, EnvVpcParams> {
-  public readonly vpcConstruct: VpcConstruct;
+export class EnvVpc extends Service<GlobalCoordinator> {
+  public vpcPrefab: VpcPrefab;
 
-  constructor(scope: Construct, globalProps: GlobalProps, params: EnvVpcParams) {
-    super(scope, EnvVpc.name, globalProps, { params });
+  constructor(coordinator: GlobalCoordinator) {
+    super(coordinator, EnvVpc.name, depsNames);
+    coordinator.addService(this);
+  }
 
-    this.vpcConstruct = new VpcConstruct(this, { name: this.props.envName });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  build(_deps = {}) {
+    this.vpcPrefab = new VpcPrefab(this, { name: this.props.envName });
   }
 }

@@ -1,27 +1,29 @@
-import { Construct, Service } from '@sinapsis-co/cc-core/common/service';
-import { ApiCdnApiParams } from '@sinapsis-co/cc-core/prefab/function/api-function/api-aggregate';
-import { PublicAlbConstruct } from '@sinapsis-co/cc-core/services/alb-public';
-import { VpcConstruct } from '@sinapsis-co/cc-core/services/vpc';
+import { Service } from '@sinapsis-co/cc-core/common/service';
 
-import { GlobalProps } from '../../../config/config-type';
+import { PublicAlbPrefab } from '@sinapsis-co/cc-core/prefab/gateway/alb-public';
+import { GlobalCoordinator } from '../../../config/config-type';
 import { DnsSubdomainCertificate } from '../dns-subdomain-certificate';
+import { EnvVpc } from '../env-vpc';
 
-export type EnvAlbParams = {
-  vpcService: VpcConstruct;
-  certificateService: DnsSubdomainCertificate;
-  cdnApi?: ApiCdnApiParams;
+type Deps = {
+  envVpc: EnvVpc;
+  dnsSubdomainCertificate: DnsSubdomainCertificate;
 };
+const depsNames: Array<keyof Deps> = ['envVpc', 'dnsSubdomainCertificate'];
 
-export class EnvAlb extends Service<GlobalProps, EnvAlbParams> {
-  public readonly albConstruct: PublicAlbConstruct;
+export class EnvAlb extends Service<GlobalCoordinator> {
+  public albPrefab: PublicAlbPrefab;
 
-  constructor(scope: Construct, globalProps: GlobalProps, params: EnvAlbParams) {
-    super(scope, EnvAlb.name, globalProps, { params });
+  constructor(coordinator: GlobalCoordinator) {
+    super(coordinator, EnvAlb.name, depsNames);
+    coordinator.addService(this);
+  }
 
-    this.albConstruct = new PublicAlbConstruct(this, {
+  build(deps: Deps) {
+    this.albPrefab = new PublicAlbPrefab(this, {
       name: 'global-alb',
-      vpc: params.vpcService.vpc,
-      certificate: params.certificateService.certificate,
+      vpc: deps.envVpc.vpcPrefab.vpc,
+      certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,
     });
   }
 }

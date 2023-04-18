@@ -1,29 +1,36 @@
-import { Construct, Service } from '@sinapsis-co/cc-core/common/service';
-import { ApiAggregate } from '@sinapsis-co/cc-core/prefab/function/api-function/api-aggregate';
-import { BaseFunction } from '@sinapsis-co/cc-core/prefab/function/base-function';
+import { Service } from '@sinapsis-co/cc-core/common/service';
+import { ApiAggregate } from '@sinapsis-co/cc-core/prefab/compute/function/api-function/api-aggregate';
+import { BaseFunction } from '@sinapsis-co/cc-core/prefab/compute/function/base-function';
 
-import { GlobalServiceDependencies } from '..';
-import { GlobalProps } from '../../../config/config-type';
+import { GlobalCoordinator } from '../../../config/config-type';
+import { CdnApi } from '../../support/cdn-api';
+import { EnvVpc } from '../../support/env-vpc';
 import { baseApi } from './catalog';
 
-export type BaseCrudParams = GlobalServiceDependencies;
+type Deps = {
+  cdnApi: CdnApi;
+  envVpc: EnvVpc;
+};
+const depsNames: Array<keyof Deps> = ['cdnApi', 'envVpc'];
+export class BaseCrud extends Service<GlobalCoordinator> {
+  public apiAggregate: ApiAggregate;
 
-export class BaseCrud extends Service<GlobalProps, BaseCrudParams> {
-  public readonly apiAggregate: ApiAggregate;
+  constructor(coordinator: GlobalCoordinator) {
+    super(coordinator, BaseCrud.name, depsNames);
+    coordinator.addService(this);
+  }
 
-  constructor(scope: Construct, globalProps: GlobalProps, params: BaseCrudParams) {
-    super(scope, BaseCrud.name, globalProps, { params });
-
+  build(deps: Deps) {
     const customAuthorizerHandler = new BaseFunction(this, {
       name: 'authorizer',
       baseFunctionFolder: __dirname,
-      vpc: params.envVpc.vpcConstruct.vpc,
+      vpc: deps.envVpc.vpcPrefab.vpc,
     }).lambdaFunction;
 
     this.apiAggregate = new ApiAggregate(this, {
       basePath: 'base',
       baseFunctionFolder: __dirname,
-      cdnApi: this.props.cdnApi,
+      cdnApiPrefab: deps.cdnApi.cdnApiPrefab,
       customAuthorizerHandler,
       handlers: {
         create: baseApi.create.config,

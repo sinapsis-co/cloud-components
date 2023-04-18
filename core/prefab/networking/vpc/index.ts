@@ -4,7 +4,7 @@ import { getLogicalName } from '../../../common/naming/get-logical-name';
 
 import { Service } from '../../../common/service';
 
-export type VpcConstructParams = {
+export type VpcPrefabParams = {
   name: string;
   maxAzs?: number;
   existingResource?: {
@@ -18,7 +18,7 @@ export type VpcConstructParams = {
 export class VpcPrefab extends Construct {
   public readonly vpc: IVpc;
 
-  constructor(service: Service, params: VpcConstructParams) {
+  constructor(service: Service, params: VpcPrefabParams) {
     super(service, getLogicalName(VpcPrefab.name));
 
     if (params.existingResource) {

@@ -4,7 +4,8 @@ import {
   EntityCreate,
   EntityStore,
   EntityUpdate,
-} from '@sinapsis-co/cc-sdk/repository/interface';
+} from '@sinapsis-co/cc-sdk/integration/repository/interface';
+import { BaseTableBuilder } from '../repository/base-table';
 
 export type BaseBuilder = EntityBuilder<{
   name: 'base';
@@ -21,21 +22,11 @@ export type BaseBuilder = EntityBuilder<{
     createdAt: Date;
     updatedAt: Date;
   };
-  storeMapping: {
-    key: {
-      pk: string;
-      sk: string;
-    };
-    timers: {
-      createdAt: string;
-      updatedAt: string;
-    };
-  };
 }>;
 
 export type Base = Entity<BaseBuilder>;
 
-export type BaseStore = EntityStore<BaseBuilder>;
+export type BaseStore = EntityStore<BaseBuilder, BaseTableBuilder>;
 
 export type BaseCreate = EntityCreate<BaseBuilder>;
 

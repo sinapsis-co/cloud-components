@@ -1,15 +1,19 @@
-import { Construct, Service } from '@sinapsis-co/cc-core/common/service';
-import { DeployPipelineConstruct } from '@sinapsis-co/cc-core/services/deploy-pipeline';
+import { Service } from '@sinapsis-co/cc-core/common/service';
+import { DeployPipelinePrefab } from '@sinapsis-co/cc-core/prefab/util/deploy-pipeline';
 
-import { GlobalProps } from '../../../config/config-type';
+import { DeployTargetName, GlobalCoordinator } from '../../../config/config-type';
 
-export class DeployPipeline extends Service<GlobalProps> {
-  constructor(scope: Construct, globalProps: GlobalProps) {
-    super(scope, DeployPipeline.name, globalProps, { deployConfigName: 'deploy' });
-
-    new DeployPipelineConstruct(this, {
-      // fullClone: true,
-      preDeployCommands: ['cd templates/ecs && bash pre-deploy.bash'],
+type Deps = Record<string, never>;
+const depsNames: Array<keyof Deps> = [];
+export class DeployPipeline extends Service<GlobalCoordinator, DeployTargetName> {
+  constructor(coordinator: GlobalCoordinator) {
+    super(coordinator, DeployPipeline.name, depsNames, 'deployPipeline');
+    coordinator.addService(this);
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  build(_deps = {}) {
+    new DeployPipelinePrefab(this, {
+      preDeployCommands: ['cd templates/base && bash pre-deploy.bash'],
       // postDeployCommands: [`yarn deploy-spa ${this.props.envName} webapp`],
     });
   }
