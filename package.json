@@ -1,14 +1,17 @@
 {
   "name": "@sinapsis-co/cloud-components",
-  "description": "Developer utils",
+  "description": "Cloud Components Framework",
   "author": "sinapsis.co",
   "license": "MIT",
-  "repository": "git://github.com/sinapsis-co/co.sinapsis.cloud-components.git",
+  "repository": "git://github.com/sinapsis-co/cloud-components.git",
   "private": true,
-  "workspaces": [
-    "platform",
-    "infra"
-  ],
+  "workspaces": {
+    "packages": [
+      "sdk/",
+      "core/",
+      "solutions/*"
+    ]
+  },
   "scripts": {
     "verify": "npx tsc --pretty --noEmit && npx eslint . --ext .ts && npx prettier -c . && npx cspell '**/*.ts'",
     "release": "bash release.bash"

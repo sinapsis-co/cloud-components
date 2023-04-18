@@ -25,5 +25,8 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "[dockerfile]": {
     "editor.defaultFormatter": "ms-azuretools.vscode-docker"
+  },
+  "[properties]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
   }
 }

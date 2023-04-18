@@ -11,6 +11,8 @@
     "build": "rm -rf .dist && npx tsc"
   },
   "devDependencies": {
+    "@types/html-minifier-terser": "^6.1.0",
+    "@types/nodemailer": "^6.4.7",
     "@types/aws-lambda": "^8.10.108",
     "@types/node": "^18.11.7"
   },
@@ -32,8 +34,6 @@
     "@aws-sdk/lib-storage": "^3.282.0",
     "@aws-sdk/s3-presigned-post": "^3.284.0",
     "@aws-sdk/s3-request-presigner": "^3.282.0",
-    "@types/html-minifier-terser": "^6.1.0",
-    "@types/nodemailer": "^6.4.7",
     "aws-lambda": "^1.0.7",
     "aws-xray-sdk-core": "^3.4.1",
     "dayjs": "^1.11.0",

@@ -5,7 +5,7 @@ import { HandledException } from '../../error/types';
 import { Tracing } from '../../tracing';
 import { timeoutController } from '../../util/timeout';
 
-type Handler<Payload> = (event: SQSEvent, record: SQSRecord, payload: Payload) => Promise<SQSBatchResponse>;
+type Handler<Payload> = (event: SQSEvent, record: SQSRecord, payload: Payload) => Promise<void>;
 
 /**
  * queueBatchHandler manages the batching of the queue in way that from handler perspective is processing a
@@ -15,7 +15,9 @@ type Handler<Payload> = (event: SQSEvent, record: SQSRecord, payload: Payload) =
  * @returns void
  */
 
-export const queueBatchHandler = <Payload>(handler: Handler<Payload>): Handler<Payload> => {
+export const queueBatchHandler = <Payload>(
+  handler: Handler<Payload>
+): ((event: SQSEvent) => Promise<SQSBatchResponse>) => {
   return async (event: SQSEvent): Promise<SQSBatchResponse> => {
     const batchSize = event.Records.length;
     const promises = await Promise.allSettled(
