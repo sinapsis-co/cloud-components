@@ -17,6 +17,7 @@
     "eventbridge",
     "Fargate",
     "fullname",
+    "hstore",
     "ingestions",
     "invisipay",
     "kinesisfirehose",

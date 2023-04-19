@@ -31,7 +31,7 @@ type ApiCallFaults =
   | 'FAULT_API_CALL_INVALID_RESPONSE'
   | 'FAULT_API_CALL_TIMEOUT';
 
-type AuroraFaults = 'FAULT_AURORA_CONNECT';
+type AuroraFaults = 'FAULT_AURORA_CONNECT' | 'FAULT_AURORA_INVALID_HOST';
 
 export type PlatformFaultCodes =
   | DynamoFaults

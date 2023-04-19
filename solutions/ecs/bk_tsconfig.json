@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    // "baseUrl": ".",
     "target": "es2019",
     "lib": ["es2019", "DOM"],
     "module": "commonjs",
@@ -29,11 +29,11 @@
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": ".dist",
-    "typeRoots": ["../node_modules/@types"],
-    "paths": {
-      "@webapp/*": ["./frontend/webapp/src/*"],
-      "services/*": ["services/*"]
-    }
+    "typeRoots": ["../node_modules/@types"]
+    // "paths": {
+    //   "@webapp/*": ["./frontend/webapp/src/*"],
+    //   "services/*": ["services/*"]
+    // }
   },
   "include": ["./**/*.ts", "jest.config.ts"],
   "exclude": ["cdk.out", "node_modules/**/*", "dist/**/*"]

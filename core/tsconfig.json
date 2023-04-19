@@ -4,12 +4,7 @@
     "outDir": ".dist",
     "typeRoots": ["../node_modules/@types"],
     "rootDir": ".",
-    "baseUrl": ".",
-    "preserveSymlinks": true,
-    "paths": {
-      "common/*": ["./common/*"],
-      "prefab/*": ["./prefab/*"]
-    }
+    "baseUrl": ".."
   },
   "include": ["./**/*.ts"],
   "exclude": ["cdk.out", "node_modules/**/*", ".dist/**/*"]

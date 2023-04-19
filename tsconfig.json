@@ -27,6 +27,20 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "common/*": ["./core/common/*"],
+      "prefab/*": ["./core/prefab/*"],
+      "catalog/*": ["./sdk/catalog/*"],
+      "error/*": ["./sdk/error/*"],
+      "handler/*": ["./sdk/handler/*"],
+      "integration/*": ["./sdk/integration/*"],
+      "lib/*": ["./sdk/lib/*"],
+      "logger": ["./sdk/logger"],
+      "error": ["./sdk/error"],
+      "tracing": ["./sdk/tracing"],
+      "util/*": ["./sdk/util/*"]
+    }
   }
 }

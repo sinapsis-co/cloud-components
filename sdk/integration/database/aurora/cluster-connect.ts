@@ -1,6 +1,8 @@
-import { SecretConfig, SecretInterface } from '@sinapsis-co/cc-sdk/catalog/secret';
-import { getRuntimeSecret } from 'integration/config/runtime-secret';
 import { Sequelize } from 'sequelize';
+
+import { SecretConfig, SecretInterface } from 'catalog/secret';
+import { log } from 'console';
+import { getRuntimeSecret } from 'integration/config/runtime-secret';
 import { Tracing } from 'tracing';
 
 export type Secret = SecretInterface<{
@@ -18,21 +20,16 @@ export const secretConfig: SecretConfig<Secret> = {
   name: 'connection',
 };
 
+let sequelize: Sequelize | undefined;
+
 export const auroraClusterConnect = async (secretArn: string): Promise<Sequelize> => {
   const cmd = async () => {
-    const { username, host, port, password } = await getRuntimeSecret<Secret>(secretConfig, secretArn);
-
-    const sequelize = new Sequelize({ username, host, port, password, dialect: 'postgres' });
-
-    await sequelize.authenticate();
-
+    if (!sequelize) {
+      const { username, host, port, password } = await getRuntimeSecret<Secret>(secretConfig, secretArn);
+      log(username, host, port, password);
+      sequelize = new Sequelize({ username, host, port, password, dialect: 'postgres' });
+    }
     return sequelize;
   };
   return Tracing.capture('Connect', 'FAULT_AURORA_CONNECT', 'Connect', cmd);
 };
-
-(async () => {
-  await auroraClusterConnect(
-    'arn:aws:secretsmanager:us-east-1:331183547525:secret:ecs-template-dev-rds-demo-demo-wDF5V8'
-  );
-})();

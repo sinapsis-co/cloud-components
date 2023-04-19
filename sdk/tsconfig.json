@@ -4,18 +4,7 @@
     "outDir": ".dist",
     "typeRoots": ["../node_modules/@types"],
     "rootDir": ".",
-    "baseUrl": ".",
-    "preserveSymlinks": true,
-    "paths": {
-      "catalog/*": ["./catalog/*"],
-      "error/*": ["./error/*"],
-      "handler/*": ["./handler/*"],
-      "integration/*": ["./integration/*"],
-      "lib/*": ["./lib/*"],
-      "logger/*": ["./logger/*"],
-      "tracing/*": ["./tracing/*"],
-      "util/*": ["./util/*"]
-    }
+    "baseUrl": ".."
   },
   "include": ["./**/*.ts"],
   "exclude": ["cdk.out", "node_modules/**/*", ".dist/**/*"]

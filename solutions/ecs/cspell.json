@@ -3,6 +3,7 @@
   "language": "en",
   "words": [
     "algoliasearch",
+    "ASINS",
     "backoffice",
     "backofficeauth",
     "browserslist",
@@ -14,6 +15,7 @@
     "fargate",
     "forceatlas",
     "fullname",
+    "millis",
     "noprod",
     "passwordless",
     "schemy",
@@ -21,6 +23,7 @@
     "SIGNIN",
     "sinapsis",
     "siteverify",
+    "skus",
     "stepfunctions",
     "Topup",
     "TTFB"
