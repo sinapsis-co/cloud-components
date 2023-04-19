@@ -1,31 +1,23 @@
 import { CfnOutput } from 'aws-cdk-lib';
 import { RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
-import {
-  AllowedMethods,
-  BehaviorOptions,
-  CachePolicy,
-  CacheQueryStringBehavior,
-  Distribution,
-  OriginRequestPolicy,
-  PriceClass,
-  ViewerProtocolPolicy,
-} from 'aws-cdk-lib/aws-cloudfront';
+import * as awsCloudfront from 'aws-cdk-lib/aws-cloudfront';
 import { HttpOrigin, HttpOriginProps, LoadBalancerV2Origin, RestApiOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { ApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { Construct } from 'constructs';
 
-import { getDomain } from '../../../common/naming/get-domain';
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getCloudFrontName, getResourceName } from '../../../common/naming/get-resource-name';
-import { Service } from '../../../common/service';
-import { SynthError } from '../../../common/synth/synth-error';
-import { WafPrefab } from '../../networking/waf';
-import { PrivateBucketPrefab } from '../../storage/bucket/private-bucket';
-import { PublicAlbPrefab } from '../alb-public';
-import { ApiRestPrefab } from '../api/api-rest';
+import { getDomain } from 'common/naming/get-domain';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getCloudFrontName, getResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
+import { SynthError } from 'common/synth/synth-error';
+
+import { PublicAlbPrefab } from 'prefab/gateway/alb-public';
+import { ApiRestPrefab } from 'prefab/gateway/api/api-rest';
+import { WafPrefab } from 'prefab/networking/waf';
+import { PrivateBucketPrefab } from 'prefab/storage/bucket/private-bucket';
 
 export type CdnApiConstructParams = {
   subDomain: string;
@@ -40,11 +32,11 @@ export class CdnApiPrefab extends Construct {
   public readonly domain: string;
   public readonly baseUrl: string;
   private readonly service: Service;
-  private readonly distribution: Distribution;
-  private readonly apiGatewayRequestPolicy: OriginRequestPolicy;
-  private readonly apiGatewayCachePolicy: CachePolicy;
-  private readonly apiGatewayBehaviorOptions: Omit<BehaviorOptions, 'origin'>;
-  private readonly unrestrictedBehaviorOptions: Omit<BehaviorOptions, 'origin'>;
+  private readonly distribution: awsCloudfront.Distribution;
+  private readonly apiGatewayRequestPolicy: awsCloudfront.OriginRequestPolicy;
+  private readonly apiGatewayCachePolicy: awsCloudfront.CachePolicy;
+  private readonly apiGatewayBehaviorOptions: Omit<awsCloudfront.BehaviorOptions, 'origin'>;
+  private readonly unrestrictedBehaviorOptions: Omit<awsCloudfront.BehaviorOptions, 'origin'>;
 
   constructor(service: Service, params: CdnApiConstructParams) {
     super(service, getLogicalName(CdnApiPrefab.name, params.subDomain));
@@ -56,15 +48,15 @@ export class CdnApiPrefab extends Construct {
     if (params.albDefaultBehavior && params.restApiDefaultBehavior)
       throw new SynthError('Only alb or api can be default behavior', service.props);
 
-    this.apiGatewayCachePolicy = new CachePolicy(this, 'CachePolicy', {
+    this.apiGatewayCachePolicy = new awsCloudfront.CachePolicy(this, 'CachePolicy', {
       cachePolicyName: getCloudFrontName('ApiGateway', 'CachePolicy', this.service.props),
-      queryStringBehavior: CacheQueryStringBehavior.all(),
+      queryStringBehavior: awsCloudfront.CacheQueryStringBehavior.all(),
       headerBehavior: {
         behavior: 'whitelist',
         headers: ['Authorization'],
       },
     });
-    this.apiGatewayRequestPolicy = new OriginRequestPolicy(this, 'OriginRequestPolicy', {
+    this.apiGatewayRequestPolicy = new awsCloudfront.OriginRequestPolicy(this, 'OriginRequestPolicy', {
       originRequestPolicyName: getCloudFrontName('ApiGateway', 'RequestPolicy', this.service.props),
       headerBehavior: {
         behavior: 'whitelist',
@@ -82,19 +74,19 @@ export class CdnApiPrefab extends Construct {
       compress: true,
       cachePolicy: this.apiGatewayCachePolicy,
       originRequestPolicy: this.apiGatewayRequestPolicy,
-      allowedMethods: AllowedMethods.ALLOW_ALL,
-      viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      allowedMethods: awsCloudfront.AllowedMethods.ALLOW_ALL,
+      viewerProtocolPolicy: awsCloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
     };
 
     this.unrestrictedBehaviorOptions = {
       compress: true,
-      cachePolicy: CachePolicy.CACHING_DISABLED,
-      originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
-      allowedMethods: AllowedMethods.ALLOW_ALL,
-      viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      cachePolicy: awsCloudfront.CachePolicy.CACHING_DISABLED,
+      originRequestPolicy: awsCloudfront.OriginRequestPolicy.ALL_VIEWER,
+      allowedMethods: awsCloudfront.AllowedMethods.ALLOW_ALL,
+      viewerProtocolPolicy: awsCloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
     };
 
-    let defaultBehavior: BehaviorOptions = {
+    let defaultBehavior: awsCloudfront.BehaviorOptions = {
       origin: new HttpOrigin(
         new PrivateBucketPrefab(service, { bucketName: 'default-origin' }).bucket.bucketDomainName,
         { originId: getCloudFrontName('Origin', 'Default', this.service.props) }
@@ -120,13 +112,13 @@ export class CdnApiPrefab extends Construct {
       };
     }
 
-    this.distribution = new Distribution(this, 'Distribution', {
+    this.distribution = new awsCloudfront.Distribution(this, 'Distribution', {
       enabled: true,
       comment: getResourceName('cdn', service.props),
       certificate: params.certificate,
       domainNames: [this.domain],
       defaultBehavior,
-      ...(service.props.envName !== 'prod' ? { priceClass: PriceClass.PRICE_CLASS_100 } : {}),
+      ...(service.props.envName !== 'prod' ? { priceClass: awsCloudfront.PriceClass.PRICE_CLASS_100 } : {}),
       webAclId: params.waf?.webACL?.attrArn,
     });
 

@@ -1,12 +1,13 @@
+import { EventConfig } from '@sinapsis-co/cc-sdk/catalog/event';
 import { Rule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
-import { EventConfig } from '@sinapsis-co/cc-sdk/catalog/event';
-import { getLogicalName } from '../../../../common/naming/get-logical-name';
-import { getShortResourceName } from '../../../../common/naming/get-resource-name';
-import { Service } from '../../../../common/service';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getShortResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
+
 import { BaseFunction, BaseFunctionParams, BaseHandlerParams } from '../base-function';
 
 export type EventHandlerParams = BaseHandlerParams & {

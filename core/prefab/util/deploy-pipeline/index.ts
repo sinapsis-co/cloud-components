@@ -1,28 +1,23 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { RemovalPolicy } from 'aws-cdk-lib';
+import * as awsCodebuild from 'aws-cdk-lib/aws-codebuild';
 import { Artifact, Pipeline } from 'aws-cdk-lib/aws-codepipeline';
 import { CodeBuildAction, CodeStarConnectionsSourceAction } from 'aws-cdk-lib/aws-codepipeline-actions';
+import { DetailType, NotificationRule } from 'aws-cdk-lib/aws-codestarnotifications';
 import { IManagedPolicy, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs/lib';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
+import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 
-import {
-  BuildEnvironmentVariableType,
-  BuildSpec,
-  ComputeType,
-  LinuxBuildImage,
-  Project,
-  ProjectProps,
-} from 'aws-cdk-lib/aws-codebuild';
-import { DetailType, NotificationRule } from 'aws-cdk-lib/aws-codestarnotifications';
-import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs/lib';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getBucketName, getResourceName } from '../../../common/naming/get-resource-name';
-import { Service } from '../../../common/service';
-import { SynthError } from '../../../common/synth/synth-error';
-import { TopicFunction } from '../../compute/function/topic-function';
-import { RuntimeSecret } from '../config/runtime-secret';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getBucketName, getResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
+import { SynthError } from 'common/synth/synth-error';
+
+import { TopicFunction } from 'prefab/compute/function/topic-function';
+import { RuntimeSecret } from 'prefab/util/config/runtime-secret';
+
 import { slackToken } from './catalog/secrets';
 
 export type SlackObject = {
@@ -36,7 +31,7 @@ export type DeployPipelineProps = {
   postDeployCommands?: string[];
   slackToken?: string;
   buildCommand?: string[];
-  codeBuildProjectParams?: Partial<ProjectProps>;
+  codeBuildProjectParams?: Partial<awsCodebuild.ProjectProps>;
 };
 
 export class DeployPipelinePrefab extends Construct {
@@ -77,20 +72,20 @@ export class DeployPipelinePrefab extends Construct {
     const policy: IManagedPolicy = ManagedPolicy.fromAwsManagedPolicyName('AdministratorAccess');
     deploymentRole.addManagedPolicy(policy);
 
-    const codebuildProject = new Project(this, 'CodebuildProject', {
+    const codebuildProject = new awsCodebuild.Project(this, 'CodebuildProject', {
       projectName: getResourceName('', props),
       role: deploymentRole,
       environment: {
-        computeType: ComputeType.MEDIUM,
-        buildImage: LinuxBuildImage.STANDARD_6_0,
+        computeType: awsCodebuild.ComputeType.MEDIUM,
+        buildImage: awsCodebuild.LinuxBuildImage.STANDARD_6_0,
       },
       environmentVariables: {
         GITHUB_TOKEN: {
-          type: BuildEnvironmentVariableType.PARAMETER_STORE,
+          type: awsCodebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
           value: githubTokenParameterName,
         },
       },
-      buildSpec: BuildSpec.fromObject({
+      buildSpec: awsCodebuild.BuildSpec.fromObject({
         version: '0.2',
         phases: {
           install: {
@@ -165,10 +160,6 @@ export class DeployPipelinePrefab extends Construct {
           secretConfig: slackToken.secretConfig,
         });
         modifierTopicFunction.push(secret.useModReader());
-        environmentTopicFunction = {
-          ...environmentTopicFunction,
-          CLIENT_SLACK_SECRET: secret.secret.name || '',
-        };
       }
 
       const topicFunction = new TopicFunction(service, {

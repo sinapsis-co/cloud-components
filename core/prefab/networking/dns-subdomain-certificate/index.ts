@@ -3,9 +3,9 @@ import { Certificate, CertificateValidation, ICertificate } from 'aws-cdk-lib/aw
 import { HostedZone } from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
 
-import { getDomain } from '../../../common/naming/get-domain';
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { Service } from '../../../common/service';
+import { getDomain } from 'common/naming/get-domain';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { Service } from 'common/service';
 
 export type DnsSubdomainCertificateConstructParams = {
   certificateArn?: string;

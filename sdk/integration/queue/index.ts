@@ -6,9 +6,9 @@ import {
   SendMessageBatchRequestEntry,
   SQSClient,
 } from '@aws-sdk/client-sqs';
-import { PlatformFault } from '../../error';
-import { Tracing } from '../../tracing';
-import { chunkArray } from '../../util/chunk-array';
+import { PlatformFault } from 'error';
+import { Tracing } from 'tracing';
+import { chunkArray } from 'util/chunk-array';
 
 export const sqs = Tracing.captureIntegration(new SQSClient({}));
 

@@ -1,7 +1,7 @@
 import { SendEmailCommand, SESv2Client } from '@aws-sdk/client-sesv2';
 import { createTransport } from 'nodemailer';
 import { Readable } from 'stream';
-import { Tracing } from '../../tracing';
+import { Tracing } from 'tracing';
 
 export const ses: SESv2Client = Tracing.captureIntegration(new SESv2Client({}) as any);
 

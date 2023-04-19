@@ -1,10 +1,11 @@
-import { APIGatewayProxyEventV2WithJWTAuthorizer, APIGatewayProxyResultV2 } from 'aws-lambda';
+import type { APIGatewayProxyEventV2WithJWTAuthorizer, APIGatewayProxyResultV2 } from 'aws-lambda';
 import { Schemy } from 'schemy-ts';
-import { ApiConfig, ApiInterface, ApiInterfaceKeys, ApiInterfaceRequest } from '../../catalog/api';
-import { PlatformError, PlatformFault } from '../../error';
-import { HandledException } from '../../error/types';
-import { Tracing } from '../../tracing';
-import { timeoutController } from '../../util/timeout';
+
+import { ApiConfig, ApiInterface, ApiInterfaceKeys, ApiInterfaceRequest } from 'catalog/api';
+import { PlatformError, PlatformFault } from 'error';
+import { HandledException } from 'error/types';
+import { Tracing } from 'tracing';
+import { timeoutController } from 'util/timeout';
 
 const DEFAULT_MAX_AGE = process.env.CC_CACHE_MAX_AGE ? parseInt(process.env.CC_CACHE_MAX_AGE) : 10;
 

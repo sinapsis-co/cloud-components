@@ -1,6 +1,6 @@
 import { GetParameterCommand, SSMClient } from '@aws-sdk/client-ssm';
-import { PlatformFault } from '../../error';
-import { Tracing } from '../../tracing';
+import { PlatformFault } from 'error';
+import { Tracing } from 'tracing';
 
 export const ssm = Tracing.captureIntegration(new SSMClient({ region: 'us-east-1' }));
 

@@ -1,8 +1,8 @@
+import { EmptyObject } from 'catalog/api';
+import { ApiIntegrationConfig, ApiIntegrationInterface } from 'catalog/api-integration';
+import { PlatformFault } from 'error';
 import fetch from 'node-fetch';
-import { EmptyObject } from '../../catalog/api';
-import { ApiIntegrationConfig, ApiIntegrationInterface } from '../../catalog/api-integration';
-import { PlatformFault } from '../../error';
-import { Tracing } from '../../tracing';
+import { Tracing } from 'tracing';
 
 type NotEmptyObjects<T> = {
   [P in keyof T]: Exclude<T[P], undefined> extends EmptyObject ? never : P;

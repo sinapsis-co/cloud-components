@@ -7,9 +7,9 @@ import { Topic } from 'aws-cdk-lib/aws-sns';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getBucketName } from '../../../common/naming/get-resource-name';
-import { Service } from '../../../common/service';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getBucketName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
 
 export type PrivateBucketParams = {
   bucketName: string;

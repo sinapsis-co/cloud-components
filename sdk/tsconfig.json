@@ -3,7 +3,19 @@
   "compilerOptions": {
     "outDir": ".dist",
     "typeRoots": ["../node_modules/@types"],
-    "rootDir": "."
+    "rootDir": ".",
+    "baseUrl": ".",
+    "preserveSymlinks": true,
+    "paths": {
+      "catalog/*": ["./catalog/*"],
+      "error/*": ["./error/*"],
+      "handler/*": ["./handler/*"],
+      "integration/*": ["./integration/*"],
+      "lib/*": ["./lib/*"],
+      "logger/*": ["./logger/*"],
+      "tracing/*": ["./tracing/*"],
+      "util/*": ["./util/*"]
+    }
   },
   "include": ["./**/*.ts"],
   "exclude": ["cdk.out", "node_modules/**/*", ".dist/**/*"]

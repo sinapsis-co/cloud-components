@@ -1,9 +1,10 @@
 import { EventBridgeEvent } from 'aws-lambda';
-import { EventInterface } from '../../catalog/event';
-import { PlatformError, PlatformFault } from '../../error';
-import { HandledException } from '../../error/types';
-import { Tracing } from '../../tracing';
-import { timeoutController } from '../../util/timeout';
+
+import { EventInterface } from 'catalog/event';
+import { PlatformError, PlatformFault } from 'error';
+import { HandledException } from 'error/types';
+import { Tracing } from 'tracing';
+import { timeoutController } from 'util/timeout';
 
 type Handler<Event extends EventInterface> = (
   event: EventBridgeEvent<Event['name'], Event['payload']>

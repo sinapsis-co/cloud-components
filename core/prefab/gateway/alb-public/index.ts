@@ -6,11 +6,12 @@ import * as awsALB from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { ApplicationListener, ListenerAction, ListenerCondition } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Construct } from 'constructs';
 
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../common/naming/get-resource-name';
-import { Service } from '../../../common/service';
-import { SynthError } from '../../../common/synth/synth-error';
-import { CdnApiPrefab } from '../cdn-api';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
+import { SynthError } from 'common/synth/synth-error';
+
+import { CdnApiPrefab } from 'prefab/gateway/cdn-api';
 
 export type PublicAlbPrefabParams = {
   name: string;

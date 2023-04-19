@@ -1,17 +1,18 @@
-import { TableBuilder } from '@sinapsis-co/cc-sdk/integration/repository/table-builder';
+import { TableBuilder } from '@sinapsis-co/cc-sdk/integration/database/dynamo/table-builder';
 import { UserPool, UserPoolClient } from 'aws-cdk-lib/aws-cognito';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
-import { getLogicalName } from '../../../../common/naming/get-logical-name';
-import { ApiHttpPrefab } from '../../../gateway/api/api-http';
-import { DynamoTablePrefab } from '../../../storage/dynamo/table';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { Service } from 'common/service';
+import { SynthError } from 'common/synth/synth-error';
 
-import { Service } from '../../../../common/service';
-import { SynthError } from '../../../../common/synth/synth-error';
-import { ApiRestPrefab } from '../../../gateway/api/api-rest';
-import { CdnApiPrefab } from '../../../gateway/cdn-api';
+import { ApiHttpPrefab } from 'prefab/gateway/api/api-http';
+import { ApiRestPrefab } from 'prefab/gateway/api/api-rest';
+import { CdnApiPrefab } from 'prefab/gateway/cdn-api';
+import { DynamoTablePrefab } from 'prefab/storage/dynamo/table';
+
 import { BaseFunctionParams } from '../base-function';
 import { ApiFunction, ApiHandlerParams } from './api-function';
 

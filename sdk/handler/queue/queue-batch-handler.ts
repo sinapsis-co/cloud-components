@@ -1,9 +1,10 @@
-/* eslint-disable no-console */
 import { SQSBatchResponse, SQSEvent, SQSRecord } from 'aws-lambda';
-import { PlatformError, PlatformFault } from '../../error';
-import { HandledException } from '../../error/types';
-import { Tracing } from '../../tracing';
-import { timeoutController } from '../../util/timeout';
+
+import { PlatformError, PlatformFault } from 'error';
+import { HandledException } from 'error/types';
+import { info } from 'logger';
+import { Tracing } from 'tracing';
+import { timeoutController } from 'util/timeout';
 
 type Handler<Payload> = (event: SQSEvent, record: SQSRecord, payload: Payload) => Promise<void>;
 
@@ -41,12 +42,12 @@ export const queueBatchHandler = <Payload>(
     );
     // CASE: All messages were processed successfully
     if (!promises.find((p) => p.status === 'rejected')) {
-      console.log({ namespace: 'QUEUE_BATCH_FINISHED', size: batchSize, processed: batchSize, rejected: 0 });
+      info({ namespace: 'QUEUE_BATCH_FINISHED', size: batchSize, processed: batchSize, rejected: 0 });
       return { batchItemFailures: [] };
     }
     // CASE: All messages were rejected
     if (!promises.find((p) => p.status === 'fulfilled')) {
-      console.log({ namespace: 'QUEUE_BATCH_FINISHED', size: batchSize, processed: 0, rejected: batchSize });
+      info({ namespace: 'QUEUE_BATCH_FINISHED', size: batchSize, processed: 0, rejected: batchSize });
       throw new Error('BatchRejected'); //We plain Error used to avoid ErrorMetric duplication
     }
     // CASE: Partial success/failure
@@ -54,7 +55,7 @@ export const queueBatchHandler = <Payload>(
       const toDelete: PromiseFulfilledResult<string>[] = promises.filter(
         (p) => p.status === 'fulfilled'
       ) as PromiseFulfilledResult<string>[];
-      console.log({
+      info({
         namespace: 'QUEUE_BATCH_FINISHED',
         size: batchSize,
         processed: toDelete.length,

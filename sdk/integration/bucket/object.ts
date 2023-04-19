@@ -1,7 +1,7 @@
 import * as S3 from '@aws-sdk/client-s3';
 import { Readable } from 'stream';
+import { Tracing } from 'tracing';
 import { s3 } from '.';
-import { Tracing } from '../../tracing';
 
 export const bucketPutObject = async <TracingMeta extends Record<string, string> = Record<string, string>>(
   params: S3.PutObjectRequest,

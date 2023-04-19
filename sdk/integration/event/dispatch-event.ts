@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { EventBridgeClient, PutEventsCommand, PutEventsRequestEntry } from '@aws-sdk/client-eventbridge';
-import { EventConfig, EventInterface } from '../../catalog/event';
-import { Tracing } from '../../tracing';
+import { EventConfig, EventInterface } from 'catalog/event';
+import { Tracing } from 'tracing';
 
 export const eventBridge = Tracing.captureIntegration(new EventBridgeClient({}));
 

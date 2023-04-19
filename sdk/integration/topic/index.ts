@@ -4,9 +4,9 @@ import {
   PublishBatchCommandOutput,
   SNSClient,
 } from '@aws-sdk/client-sns';
-import { PlatformFault } from '../../error';
-import { Tracing } from '../../tracing';
-import { chunkArray } from '../../util/chunk-array';
+import { PlatformFault } from 'error';
+import { Tracing } from 'tracing';
+import { chunkArray } from 'util/chunk-array';
 
 const sns: SNSClient = Tracing.captureIntegration(new SNSClient({}) as any);
 

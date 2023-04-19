@@ -1,8 +1,8 @@
 import * as S3 from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import stream, { Readable } from 'stream';
+import { Tracing } from 'tracing';
 import { s3 } from '.';
-import { Tracing } from '../../tracing';
 
 export const bucketStreamUpload = async <TracingMeta extends Record<string, string> = Record<string, string>>(
   inputPipe: Readable,

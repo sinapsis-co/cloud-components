@@ -1,10 +1,10 @@
 import { IStringParameter, StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../common/naming/get-resource-name';
-import { Service } from '../../../common/service';
-import { SynthError } from '../../../common/synth/synth-error';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
+import { SynthError } from 'common/synth/synth-error';
 
 export type ParameterSecretParams = {
   name?: string;

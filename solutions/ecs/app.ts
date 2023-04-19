@@ -2,8 +2,8 @@
 import { globalConstConfig, globalDeployTargetConfig, globalEnvConfig } from './config';
 
 import { Coordinator } from '@sinapsis-co/cc-core/common/coordinator';
-import { ContainerService } from './services/business/base-container-one';
 import { BaseCrud } from './services/business/base-crud';
+import { RdsDemo } from './services/business/rds-demo';
 import { CdnApi } from './services/support/cdn-api';
 import { DeployPipeline } from './services/support/deploy-pipeline';
 import { DnsDomainRef } from './services/support/dns-domain-ref';
@@ -26,7 +26,8 @@ new EnvCluster(coordinator);
 new CdnApi(coordinator);
 
 // Business Services
-new ContainerService(coordinator);
+// new ContainerService(coordinator);
 new BaseCrud(coordinator);
+new RdsDemo(coordinator);
 
 coordinator.build();

@@ -1,39 +1,29 @@
 import { CfnOutput, Fn } from 'aws-cdk-lib';
-import {
-  AccountRecovery,
-  CfnUserPool,
-  PasswordPolicy,
-  UserPool,
-  UserPoolClient,
-  UserPoolClientProps,
-  UserPoolDomain,
-  UserPoolDomainProps,
-  UserPoolProps,
-} from 'aws-cdk-lib/aws-cognito';
+import * as awsCognito from 'aws-cdk-lib/aws-cognito';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Construct } from 'constructs';
-
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { UserPoolDomainTarget } from 'aws-cdk-lib/aws-route53-targets';
-import { getDomain } from '../../../common/naming/get-domain';
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../common/naming/get-resource-name';
-import { Service } from '../../../common/service';
+import { Construct } from 'constructs';
+
+import { getDomain } from 'common/naming/get-domain';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
 
 export type AuthPoolParams = {
-  userPool?: Partial<UserPoolProps>;
-  userPoolClient?: Partial<UserPoolClientProps>;
-  userPoolDomain?: Partial<UserPoolDomainProps>;
-  emailConfiguration?: CfnUserPool.EmailConfigurationProperty;
+  userPool?: Partial<awsCognito.UserPoolProps>;
+  userPoolClient?: Partial<awsCognito.UserPoolClientProps>;
+  userPoolDomain?: Partial<awsCognito.UserPoolDomainProps>;
+  emailConfiguration?: awsCognito.CfnUserPool.EmailConfigurationProperty;
   callbackUrl?: string;
-  passwordPolicy?: PasswordPolicy;
+  passwordPolicy?: awsCognito.PasswordPolicy;
 };
 
 export class CognitoAuthPoolPrefab extends Construct {
-  public readonly userPool: UserPool;
-  public readonly userPoolClient: UserPoolClient;
-  public readonly userPoolDomain: UserPoolDomain;
+  public readonly userPool: awsCognito.UserPool;
+  public readonly userPoolClient: awsCognito.UserPoolClient;
+  public readonly userPoolDomain: awsCognito.UserPoolDomain;
   public readonly frontendRefs: Record<string, string>;
 
   /**
@@ -45,12 +35,12 @@ export class CognitoAuthPoolPrefab extends Construct {
    */
   constructor(service: Service, params: AuthPoolParams) {
     super(service, getLogicalName(CognitoAuthPoolPrefab.name));
-
+    //
     const callbackUrl = params.callbackUrl || getDomain('app', service.props, true);
 
-    const defaultUserPoolProps: UserPoolProps = {
+    const defaultUserPoolProps: awsCognito.UserPoolProps = {
       userPoolName: getResourceName('', service.props),
-      accountRecovery: AccountRecovery.EMAIL_ONLY,
+      accountRecovery: awsCognito.AccountRecovery.EMAIL_ONLY,
       selfSignUpEnabled: true,
       autoVerify: { email: true },
       signInCaseSensitive: false,
@@ -59,12 +49,12 @@ export class CognitoAuthPoolPrefab extends Construct {
 
     const defaultEmailConfiguration = { emailSendingAccount: 'COGNITO_DEFAULT' };
 
-    const userPool = new UserPool(this, 'UserPool', { ...defaultUserPoolProps, ...params.userPool });
+    const userPool = new awsCognito.UserPool(this, 'UserPool', { ...defaultUserPoolProps, ...params.userPool });
 
-    const cfnUserPool = userPool.node.defaultChild as CfnUserPool;
+    const cfnUserPool = userPool.node.defaultChild as awsCognito.CfnUserPool;
     cfnUserPool.emailConfiguration = params.emailConfiguration || defaultEmailConfiguration;
 
-    const defaultUserClientProps: Partial<UserPoolClientProps> = {
+    const defaultUserClientProps: Partial<awsCognito.UserPoolClientProps> = {
       userPoolClientName: getResourceName('', service.props),
       authFlows: {
         custom: true,
@@ -84,13 +74,13 @@ export class CognitoAuthPoolPrefab extends Construct {
       supportedIdentityProviders: [],
     };
 
-    const userPoolClient = new UserPoolClient(this, 'UserPoolClient', {
+    const userPoolClient = new awsCognito.UserPoolClient(this, 'UserPoolClient', {
       userPool,
       ...defaultUserClientProps,
       ...params.userPoolClient,
     });
 
-    const userPoolDomain = new UserPoolDomain(this, 'UserPoolDomain', {
+    const userPoolDomain = new awsCognito.UserPoolDomain(this, 'UserPoolDomain', {
       userPool,
       ...(!service.props.ephemeralEnvName && params.userPoolDomain
         ? params.userPoolDomain
@@ -128,7 +118,7 @@ export class CognitoAuthPoolPrefab extends Construct {
     };
   }
 
-  public useMod(mods: ((userPool: UserPool) => any)[]): (lambda: NodejsFunction) => void {
+  public useMod(mods: ((userPool: awsCognito.UserPool) => any)[]): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
       lambda.addEnvironment('USER_POOL_ID', this.userPool.userPoolId);
       lambda.addEnvironment('USER_POOL_CLIENT_ID', this.userPoolClient.userPoolClientId);

@@ -1,5 +1,7 @@
 import { NativeAttributeValue } from '@aws-sdk/util-dynamodb';
+
 export type LastEvaluatedKey = Record<string, NativeAttributeValue>;
+
 export const encodeLastEvaluatedKey = (lastEvaluatedKey?: LastEvaluatedKey): string | null => {
   if (!lastEvaluatedKey) return null;
 

@@ -1,16 +1,17 @@
 import { ApiConfig, ApiInterface, TablePermission } from '@sinapsis-co/cc-sdk/catalog/api';
 import { Duration } from 'aws-cdk-lib';
-import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Architecture, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
-import { getFunctionEntry } from '../../../../common/naming/get-function-entry';
-import { getLogicalName } from '../../../../common/naming/get-logical-name';
-import { getShortResourceName } from '../../../../common/naming/get-resource-name';
-import { Service } from '../../../../common/service';
-import { EventBusPrefab } from '../../../integration/event-bus';
-import { DynamoTablePrefab } from '../../../storage/dynamo/table';
+import { getFunctionEntry } from 'common/naming/get-function-entry';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getShortResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
+
+import { EventBusPrefab } from 'prefab/integration/event-bus';
+import { DynamoTablePrefab } from 'prefab/storage/dynamo/table';
 
 export type BaseHandlerParams = NodejsFunctionProps & {
   name: ApiConfig<ApiInterface>['name'];
@@ -66,6 +67,21 @@ export class BaseFunction extends Construct {
     });
     this.lambdaFunction.addEnvironment('CC_FUNCTION_TIMEOUT', this.lambdaFunction.timeout!.toSeconds().toString());
     if (!params.tracingDisabled) this.lambdaFunction.addEnvironment('CC_TRACING', 'true');
+
+    if (params.vpc) {
+      role.addToPolicy(
+        new PolicyStatement({
+          actions: [
+            'ec2:DescribeNetworkInterfaces',
+            'ec2:CreateNetworkInterface',
+            'ec2:DeleteNetworkInterface',
+            'ec2:DescribeInstances',
+            'ec2:AttachNetworkInterface',
+          ],
+          resources: ['*'],
+        })
+      );
+    }
 
     params.modifiers?.map((fn) => fn(this.lambdaFunction));
 

@@ -6,11 +6,13 @@ import { HttpMethod } from 'aws-cdk-lib/aws-events';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
-import { getLogicalName } from '../../../../common/naming/get-logical-name';
-import { Service } from '../../../../common/service';
-import { SynthError } from '../../../../common/synth/synth-error';
-import { ApiHttpPrefab } from '../../../gateway/api/api-http';
-import { ApiRestPrefab } from '../../../gateway/api/api-rest';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { Service } from 'common/service';
+import { SynthError } from 'common/synth/synth-error';
+
+import { ApiHttpPrefab } from 'prefab/gateway/api/api-http';
+import { ApiRestPrefab } from 'prefab/gateway/api/api-rest';
+
 import { BaseFunction, BaseFunctionParams, BaseHandlerParams } from '../base-function';
 
 export type ApiHandlerParams = BaseHandlerParams & {

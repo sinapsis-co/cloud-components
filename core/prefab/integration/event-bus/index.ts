@@ -2,9 +2,9 @@ import { EventBus, IEventBus } from 'aws-cdk-lib/aws-events';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../common/naming/get-resource-name';
-import { Service } from '../../../common/service';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
 
 export type EventBusPrefabParams = {
   defaultEventBus?: true;

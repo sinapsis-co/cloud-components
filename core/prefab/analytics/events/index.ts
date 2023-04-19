@@ -1,11 +1,4 @@
 import { CfnOutput, Duration, RemovalPolicy } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
-
-import { getDeployConfig } from '../../../common/naming/get-deploy-config';
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getBucketName, getDatabaseName, getResourceName } from '../../../common/naming/get-resource-name';
-import { Service } from '../../../common/service';
-
 import { CfnWorkGroup } from 'aws-cdk-lib/aws-athena';
 import { Rule } from 'aws-cdk-lib/aws-events';
 import { KinesisFirehoseStream } from 'aws-cdk-lib/aws-events-targets';
@@ -13,8 +6,15 @@ import { CfnCrawler, CfnCrawlerProps, CfnDatabase } from 'aws-cdk-lib/aws-glue';
 import { Effect, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { CfnDeliveryStream } from 'aws-cdk-lib/aws-kinesisfirehose';
 import { BlockPublicAccess, Bucket, BucketEncryption, StorageClass } from 'aws-cdk-lib/aws-s3';
-import { BaseFunction } from '../../compute/function/base-function';
-import { EventBusPrefab } from '../../integration/event-bus';
+import { Construct } from 'constructs';
+
+import { getDeployConfig } from 'common/naming/get-deploy-config';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getBucketName, getDatabaseName, getResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
+
+import { BaseFunction } from 'prefab/compute/function/base-function';
+import { EventBusPrefab } from 'prefab/integration/event-bus';
 
 export type EventsAnalyticsParams = {
   eventBus: EventBusPrefab;

@@ -24,9 +24,7 @@ export const getResourceName = (
   const project = isSingleProjectAccount ? '' : `${toDashCase(projectName)}-`;
   const env = ephemeralEnvName ? `${envName}-${ephemeralEnvName}` : envName;
   const resource =
-    resourceName && serviceName.toLocaleLowerCase() !== resourceName.toLocaleLowerCase()
-      ? `-${toDashCase(resourceName)}`
-      : '';
+    resourceName && serviceName.toLowerCase() !== resourceName.toLowerCase() ? `-${toDashCase(resourceName)}` : '';
   return `${project}${toDashCase(env)}-${toDashCase(serviceName)}${resource}`;
 };
 
@@ -40,9 +38,7 @@ export const getShortResourceName = (
     ? serviceName.toLowerCase().split('service')[0]
     : serviceName;
   const resource =
-    resourceName && serviceName.toLocaleLowerCase() !== resourceName.toLocaleLowerCase()
-      ? `-${toDashCase(resourceName)}`
-      : '';
+    resourceName && serviceName.toLowerCase() !== resourceName.toLowerCase() ? `-${toDashCase(resourceName)}` : '';
   return `${project}${toDashCase(env)}-${toDashCase(shortServiceName)}${resource}`;
 };
 

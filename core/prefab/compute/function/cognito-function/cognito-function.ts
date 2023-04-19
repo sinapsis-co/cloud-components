@@ -3,9 +3,10 @@ import { UserPool, UserPoolOperation } from 'aws-cdk-lib/aws-cognito';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
-import { getLogicalName } from '../../../../common/naming/get-logical-name';
-import { Service } from '../../../../common/service';
-import { SynthError } from '../../../../common/synth/synth-error';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { Service } from 'common/service';
+import { SynthError } from 'common/synth/synth-error';
+
 import { BaseFunction, BaseFunctionParams, BaseHandlerParams } from '../base-function';
 
 export type CognitoHandlerParams = BaseHandlerParams & {

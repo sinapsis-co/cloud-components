@@ -28,7 +28,7 @@
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": ".dist",
-    "typeRoots": ["./node_modules/@types"]
+    "typeRoots": ["../node_modules/@types"]
   },
   "include": ["./**/*.ts"],
   "exclude": ["cdk.out", "node_modules/**/*", "dist/**/*"],

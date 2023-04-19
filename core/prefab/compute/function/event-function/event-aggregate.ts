@@ -1,10 +1,12 @@
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
-import { getLogicalName } from '../../../../common/naming/get-logical-name';
-import { Service } from '../../../../common/service';
-import { EventBusPrefab } from '../../../integration/event-bus';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { Service } from 'common/service';
+
+import { EventBusPrefab } from 'prefab/integration/event-bus';
 import { BaseFunctionParams } from '../base-function';
+
 import { EventFunction, EventHandlerParams } from './event-function';
 
 export type EventAggregateParams<HandlerName extends string = string> = BaseFunctionParams & {

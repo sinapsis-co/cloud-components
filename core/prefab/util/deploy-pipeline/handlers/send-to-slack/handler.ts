@@ -61,7 +61,7 @@ export const handler: SNSHandler = async (event) => {
         });
       }
 
-      if (process.env.CLIENT_SLACK_SECRET) {
+      if (process.env[secretCatalog.slackToken.secretConfig.name]) {
         const clientSecretSlackTokens = await getRuntimeSecret<secretCatalog.slackToken.SecretSlack>(
           secretCatalog.slackToken.secretConfig
         );

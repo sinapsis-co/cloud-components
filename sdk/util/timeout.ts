@@ -1,6 +1,6 @@
 // import { performance } from 'perf_hooks';
 
-import { PlatformFault } from '../error';
+import { PlatformFault } from 'error';
 import { wait } from './executers';
 
 export type ResponseRecordsFunc<T> = (result: T) => number;

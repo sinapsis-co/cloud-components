@@ -1,6 +1,7 @@
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 
-import { Service } from '../../../common/service';
+import { Service } from 'common/service';
+
 import { PrivateBucketParams, PrivateBucketPrefab } from './private-bucket';
 
 export type AssetBucketParams = PrivateBucketParams & {

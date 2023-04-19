@@ -5,6 +5,7 @@
     "lib": ["es2019", "DOM"],
     "module": "commonjs",
     "moduleResolution": "node",
+    "preserveSymlinks": true,
     "declaration": true,
     "strict": true,
     "noImplicitAny": false,
@@ -28,12 +29,12 @@
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": ".dist",
-    "typeRoots": ["./node_modules/@types"],
+    "typeRoots": ["../node_modules/@types"],
     "paths": {
       "@webapp/*": ["./frontend/webapp/src/*"],
       "services/*": ["services/*"]
     }
   },
-  "include": ["./**/*.ts", "jest.config.ts", "tree/deps.js"],
+  "include": ["./**/*.ts", "jest.config.ts"],
   "exclude": ["cdk.out", "node_modules/**/*", "dist/**/*"]
 }

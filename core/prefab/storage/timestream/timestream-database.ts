@@ -3,9 +3,9 @@ import { RemovalPolicy } from 'aws-cdk-lib';
 import { CfnDatabase } from 'aws-cdk-lib/aws-timestream';
 import { Construct } from 'constructs';
 
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../common/naming/get-resource-name';
-import { Service } from '../../../common/service';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
 
 export type TimeStreamDBParams = {
   databaseName: string;

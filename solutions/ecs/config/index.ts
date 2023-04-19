@@ -4,7 +4,7 @@ export const globalConstConfig: GlobalConstConfig = {
   projectName: 'ecs-template',
   projectShortName: 'ecs',
   useRepositoryDefaultConfig: true,
-  repositoryName: 'v2.cloud-components',
+  repositoryName: 'cloud-components',
   pipelineNotificationSlackChannel: 'cloud-components',
   defaultSlackDestinationDisabled: false,
   bootstrappingServices: ['DeployPipeline', 'DnsSubdomainHostedZone'],

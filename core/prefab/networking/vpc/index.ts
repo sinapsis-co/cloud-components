@@ -1,8 +1,8 @@
 import { IVpc, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
-import { getLogicalName } from '../../../common/naming/get-logical-name';
 
-import { Service } from '../../../common/service';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { Service } from 'common/service';
 
 export type VpcPrefabParams = {
   name: string;

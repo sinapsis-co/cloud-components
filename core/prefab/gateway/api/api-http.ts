@@ -1,9 +1,5 @@
 import { CorsHttpMethod, HttpApi, HttpMethod, IHttpRouteAuthorizer } from '@aws-cdk/aws-apigatewayv2-alpha';
-import {
-  HttpLambdaAuthorizer,
-  HttpLambdaResponseType,
-  HttpUserPoolAuthorizer,
-} from '@aws-cdk/aws-apigatewayv2-authorizers-alpha';
+import * as awsApigatewayv2AuthorizersAlpha from '@aws-cdk/aws-apigatewayv2-authorizers-alpha';
 import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
 import { ApiConfig, ApiInterface } from '@sinapsis-co/cc-sdk/catalog/api';
 import { CfnOutput, Duration, Fn } from 'aws-cdk-lib';
@@ -11,10 +7,11 @@ import { UserPool, UserPoolClient } from 'aws-cdk-lib/aws-cognito';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../common/naming/get-resource-name';
-import { Service } from '../../../common/service';
-import { CdnApiPrefab } from '../cdn-api';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
+
+import { CdnApiPrefab } from 'prefab/gateway/cdn-api';
 
 export type ApiHttpParams = {
   basePath: string;
@@ -32,15 +29,19 @@ export class ApiHttpPrefab extends Construct {
     super(service, getLogicalName(ApiHttpPrefab.name));
 
     if (params.userPool && params.userPoolClient)
-      this.authorizer = new HttpUserPoolAuthorizer('Authorizer', params.userPool, {
+      this.authorizer = new awsApigatewayv2AuthorizersAlpha.HttpUserPoolAuthorizer('Authorizer', params.userPool, {
         userPoolClients: [params.userPoolClient],
         identitySource: ['$request.header.Authorization'],
       });
 
     if (params.customAuthorizerHandler)
-      this.authorizer = new HttpLambdaAuthorizer('LambdaAuthorizer', params.customAuthorizerHandler, {
-        responseTypes: [HttpLambdaResponseType.SIMPLE],
-      });
+      this.authorizer = new awsApigatewayv2AuthorizersAlpha.HttpLambdaAuthorizer(
+        'LambdaAuthorizer',
+        params.customAuthorizerHandler,
+        {
+          responseTypes: [awsApigatewayv2AuthorizersAlpha.HttpLambdaResponseType.SIMPLE],
+        }
+      );
 
     this.api = new HttpApi(this, 'HttpApi', {
       apiName: getResourceName('', service.props),

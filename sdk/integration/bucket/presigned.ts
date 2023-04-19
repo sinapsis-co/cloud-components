@@ -1,8 +1,8 @@
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { createPresignedPost, PresignedPost } from '@aws-sdk/s3-presigned-post';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { Tracing } from 'tracing';
 import { s3 } from '.';
-import { Tracing } from '../../tracing';
 
 export type { PresignedPost } from '@aws-sdk/s3-presigned-post';
 

@@ -1,46 +1,48 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Aspects } from 'aws-cdk-lib';
+import { InstanceType, Peer, Port, SecurityGroup, SubnetType } from 'aws-cdk-lib/aws-ec2';
+import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import * as awsRds from 'aws-cdk-lib/aws-rds';
 import { CfnDatabase } from 'aws-cdk-lib/aws-timestream';
 import { Construct } from 'constructs';
 
-import { Aspects } from 'aws-cdk-lib';
-import { InstanceType, Peer, Port, SecurityGroup, SubnetType } from 'aws-cdk-lib/aws-ec2';
-import { AccountPrincipal, Role } from 'aws-cdk-lib/aws-iam';
-import {
-  AuroraPostgresEngineVersion,
-  CfnDBCluster,
-  DatabaseCluster,
-  DatabaseClusterEngine,
-  DatabaseProxy,
-  ProxyTarget,
-} from 'aws-cdk-lib/aws-rds';
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { Service } from '../../../common/service';
-import { VpcPrefab } from '../../networking/vpc';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
 
-export type TimeStreamDBParams = {
-  databaseName: string;
+import { VpcPrefab } from 'prefab/networking/vpc';
+
+export type AuroraPerformanceTunning = {
+  instances: number;
+  minCapacity: number;
+  maxCapacity: number;
+};
+
+export type AuroraServerlessV2PrefabParams = {
+  clusterName: string;
   vpcPrefab: VpcPrefab;
+  performanceTunning: AuroraPerformanceTunning;
 };
 
 export class AuroraServerlessV2Prefab extends Construct {
   public readonly database: CfnDatabase;
 
-  constructor(service: Service, params: TimeStreamDBParams) {
-    super(service, getLogicalName(AuroraServerlessV2Prefab.name, params.databaseName));
+  constructor(service: Service, params: AuroraServerlessV2PrefabParams) {
+    super(service, getLogicalName(AuroraServerlessV2Prefab.name, params.clusterName));
 
     const sg = new SecurityGroup(this, 'ClusterSecurityGroup', {
       vpc: params.vpcPrefab.vpc,
       allowAllOutbound: true,
     });
-    sg.addIngressRule(
-      Peer.anyIpv4(),
-      Port.tcp(5432), // allow inbound traffic on port 5432 (postgres)
-      'allow inbound traffic from anywhere to the db on port 5432'
-    );
+    sg.addIngressRule(Peer.anyIpv4(), Port.tcp(5432), 'allow inbound traffic from anywhere to the db on port 5432');
 
-    const cluster = new DatabaseCluster(this, 'Cluster', {
-      engine: DatabaseClusterEngine.auroraPostgres({
-        version: AuroraPostgresEngineVersion.VER_15_2,
+    const cluster = new awsRds.DatabaseCluster(this, 'Cluster', {
+      clusterIdentifier: getResourceName(params.clusterName, service.props),
+      engine: awsRds.DatabaseClusterEngine.auroraPostgres({
+        version: awsRds.AuroraPostgresEngineVersion.VER_15_2,
+      }),
+      credentials: awsRds.Credentials.fromGeneratedSecret('postgres', {
+        secretName: getResourceName(params.clusterName, service.props),
       }),
       instanceProps: {
         vpc: params.vpcPrefab.vpc,
@@ -50,29 +52,35 @@ export class AuroraServerlessV2Prefab extends Construct {
         securityGroups: [sg],
         vpcSubnets: params.vpcPrefab.vpc.selectSubnets({ subnetType: SubnetType.PUBLIC }),
       },
-      instances: 1,
-      port: 5432, // use port 5432 instead of 3306
+      instances: params.performanceTunning.instances,
+      port: 5432, // Default port for postgres
     });
 
-    // add capacity to the db cluster to enable scaling
+    // Capacity
     Aspects.of(cluster).add({
       visit(node) {
-        if (node instanceof CfnDBCluster) {
+        if (node instanceof awsRds.CfnDBCluster) {
           node.serverlessV2ScalingConfiguration = {
-            minCapacity: 0.5, // min capacity is 0.5 vCPU
-            maxCapacity: 2, // max capacity is 1 vCPU (default)
+            minCapacity: params.performanceTunning.minCapacity,
+            maxCapacity: params.performanceTunning.maxCapacity,
           };
         }
       },
     });
 
-    const proxy = new DatabaseProxy(this, 'Proxy', {
-      proxyTarget: ProxyTarget.fromCluster(cluster),
-      secrets: [cluster.secret!],
-      vpc: params.vpcPrefab.vpc,
+    // RDS Proxy
+    const rdsRole = new Role(this, 'ProxyRole', {
+      roleName: getResourceName('proxy', service.props),
+      assumedBy: new ServicePrincipal('rds.amazonaws.com'),
     });
-
-    const role = new Role(this, 'ProxyRole', { assumedBy: new AccountPrincipal(service.account) });
-    proxy.grantConnect(role, 'admin');
+    const proxy = new awsRds.DatabaseProxy(this, 'Proxy', {
+      dbProxyName: getResourceName('proxy', service.props),
+      proxyTarget: awsRds.ProxyTarget.fromCluster(cluster),
+      secrets: [cluster.secret!],
+      iamAuth: true,
+      vpc: params.vpcPrefab.vpc,
+      role: rdsRole,
+    });
+    proxy.grantConnect(rdsRole);
   }
 }

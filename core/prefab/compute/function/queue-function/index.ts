@@ -3,9 +3,11 @@ import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
-import { getLogicalName } from '../../../../common/naming/get-logical-name';
-import { Service } from '../../../../common/service';
-import { QueuePrefab, QueuePrefabParams } from '../../../integration/queue';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { Service } from 'common/service';
+
+import { QueuePrefab, QueuePrefabParams } from 'prefab/integration/queue';
+
 import { BaseFunction, BaseFunctionParams, BaseHandlerParams } from '../base-function';
 
 export type QueueHandlerParams = BaseHandlerParams & {

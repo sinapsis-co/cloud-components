@@ -1,8 +1,8 @@
 import { SQSEvent } from 'aws-lambda';
-import { PlatformError, PlatformFault } from '../../error';
-import { HandledException } from '../../error/types';
-import { Tracing } from '../../tracing';
-import { timeoutController } from '../../util/timeout';
+import { PlatformError, PlatformFault } from 'error';
+import { HandledException } from 'error/types';
+import { Tracing } from 'tracing';
+import { timeoutController } from 'util/timeout';
 
 type Handler<Payload> = (event: SQSEvent, records: Payload[]) => Promise<void>;
 

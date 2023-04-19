@@ -31,10 +31,13 @@ type ApiCallFaults =
   | 'FAULT_API_CALL_INVALID_RESPONSE'
   | 'FAULT_API_CALL_TIMEOUT';
 
+type AuroraFaults = 'FAULT_AURORA_CONNECT';
+
 export type PlatformFaultCodes =
   | DynamoFaults
   | S3Faults
   | ApiCallFaults
+  | AuroraFaults
   | 'FAULT_UNHANDLED'
   | 'FAULT_TIMEOUT'
   | 'FAULT_MAX_RETRY_REACHED'

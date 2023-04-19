@@ -1,7 +1,9 @@
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
-import { getLogicalName } from '../../../../common/naming/get-logical-name';
-import { Service } from '../../../../common/service';
+
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { Service } from 'common/service';
+
 import { BaseFunctionParams } from '../base-function';
 import { CronFunction, CronHandlerParams } from './cron-function';
 

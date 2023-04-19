@@ -3,10 +3,10 @@ import { HostedZone } from 'aws-cdk-lib/aws-route53';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 
-import { getDomain } from '../../../common/naming/get-domain';
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../common/naming/get-resource-name';
-import { Service } from '../../../common/service';
+import { getDomain } from 'common/naming/get-domain';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
 
 export type DnsSubdomainHostedZoneParams = { isBootstrapping: boolean };
 

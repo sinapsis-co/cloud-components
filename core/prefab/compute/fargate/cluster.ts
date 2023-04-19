@@ -1,23 +1,11 @@
 import * as awsECS from 'aws-cdk-lib/aws-ecs';
-import { HealthCheck } from 'aws-cdk-lib/aws-ecs';
 import { Construct } from 'constructs';
 
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../common/naming/get-resource-name';
-import { Service } from '../../../common/service';
-import { VpcPrefab } from '../../networking/vpc';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
 
-export type FargateContainerHealthCheck = HealthCheck;
-
-export type FargatePerformanceTunning = {
-  taskCpu: string;
-  taskMemory: string;
-  containerDesiredCount: number;
-  taskAutoScaleMin: number;
-  taskAutoScaleMax: number;
-  taskAutoScalePercent: number;
-  containerMaxMemory: number;
-};
+import { VpcPrefab } from 'prefab/networking/vpc';
 
 export type FargateClusterPrefabParams = {
   name: string;

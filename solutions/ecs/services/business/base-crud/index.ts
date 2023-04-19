@@ -6,6 +6,7 @@ import { GlobalCoordinator } from '../../../config/config-type';
 import { CdnApi } from '../../support/cdn-api';
 import { EnvVpc } from '../../support/env-vpc';
 import { baseApi } from './catalog';
+import { baseTableBuilder } from './repository/base-table';
 
 type Deps = {
   cdnApi: CdnApi;
@@ -32,6 +33,7 @@ export class BaseCrud extends Service<GlobalCoordinator> {
       baseFunctionFolder: __dirname,
       cdnApiPrefab: deps.cdnApi.cdnApiPrefab,
       customAuthorizerHandler,
+      tableBuilder: baseTableBuilder,
       handlers: {
         create: baseApi.create.config,
         get: baseApi.get.config,

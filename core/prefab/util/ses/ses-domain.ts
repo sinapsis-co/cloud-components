@@ -1,14 +1,14 @@
+import { CfnUserPool } from 'aws-cdk-lib/aws-cognito/lib';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs/lib/function';
 import { CnameRecord, HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53';
 import { AwsCustomResource, AwsCustomResourcePolicy, PhysicalResourceId } from 'aws-cdk-lib/custom-resources';
 import { Construct } from 'constructs';
 
-import { CfnUserPool } from 'aws-cdk-lib/aws-cognito/lib';
-import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs/lib/function';
-import { getDomain } from '../../../common/naming/get-domain';
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { Service } from '../../../common/service';
-import { BaseGlobalProps } from '../../../common/synth/props-types';
+import { getDomain } from 'common/naming/get-domain';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { Service } from 'common/service';
+import { BaseGlobalProps } from 'common/synth/props-types';
 
 export class SesDomain extends Construct {
   constructor(service: Service) {

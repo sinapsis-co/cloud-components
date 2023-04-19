@@ -1,4 +1,4 @@
-import { NotificationTemplate } from '../../catalog/notification';
+import { NotificationTemplate } from 'catalog/notification';
 
 export const getCognitoTemplateName = <Template extends NotificationTemplate>(
   triggerSource: string

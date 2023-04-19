@@ -1,13 +1,6 @@
 import { CfnOutput, Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
-import {
-  AllowedMethods,
-  CachePolicy,
-  Distribution,
-  OriginRequestPolicy,
-  PriceClass,
-  ViewerProtocolPolicy,
-} from 'aws-cdk-lib/aws-cloudfront';
+import * as awsCloudfront from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
@@ -15,14 +8,15 @@ import { HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 
-import { getDomain } from '../../../common/naming/get-domain';
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getCloudFrontName, getResourceName } from '../../../common/naming/get-resource-name';
-import { Service } from '../../../common/service';
-import { SynthError } from '../../../common/synth/synth-error';
-import { WafPrefab } from '../../networking/waf';
-import { PrivateBucketPrefab } from '../../storage/bucket/private-bucket';
-import { FrontendEnvBuilder } from '../../util/config/frontend-env-builder';
+import { getDomain } from 'common/naming/get-domain';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getCloudFrontName, getResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
+import { SynthError } from 'common/synth/synth-error';
+
+import { WafPrefab } from 'prefab/networking/waf';
+import { PrivateBucketPrefab } from 'prefab/storage/bucket/private-bucket';
+import { FrontendEnvBuilder } from 'prefab/util/config/frontend-env-builder';
 
 export type SpaPrefabParams = {
   subDomain: string;
@@ -40,7 +34,7 @@ export type SpaPrefabParams = {
 export class SpaPrefab extends Construct {
   private readonly domain: string;
   private readonly baseUrl: string;
-  private readonly distribution: Distribution;
+  private readonly distribution: awsCloudfront.Distribution;
 
   constructor(service: Service, params: SpaPrefabParams) {
     super(service, getLogicalName(SpaPrefab.name, params.subDomain));
@@ -68,17 +62,17 @@ export class SpaPrefab extends Construct {
       origin: new S3Origin(privateBucketPrefab.bucket, {
         originId: getCloudFrontName('Origin', 'Default', service.props),
       }),
-      originRequestPolicy: new OriginRequestPolicy(this, 'OriginRequestPolicy', {
+      originRequestPolicy: new awsCloudfront.OriginRequestPolicy(this, 'OriginRequestPolicy', {
         originRequestPolicyName: getCloudFrontName('Bucket', 'RequestPolicy', service.props),
         headerBehavior: {
           behavior: 'whitelist',
           headers: ['Access-Control-Allow-Origin', 'Access-Control-Allow-Headers', 'Origin'],
         },
       }),
-      cachePolicy: CachePolicy.CACHING_OPTIMIZED,
-      cachedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
-      allowedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
-      viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      cachePolicy: awsCloudfront.CachePolicy.CACHING_OPTIMIZED,
+      cachedMethods: awsCloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+      allowedMethods: awsCloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+      viewerProtocolPolicy: awsCloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
     };
 
     const domains = [this.domain];
@@ -88,7 +82,7 @@ export class SpaPrefab extends Construct {
       domains.push(`www.${this.domain}`);
     }
 
-    this.distribution = new Distribution(this, 'Distribution', {
+    this.distribution = new awsCloudfront.Distribution(this, 'Distribution', {
       enabled: true,
       comment: getResourceName('cdn', service.props),
       certificate: params.certificate,
@@ -109,7 +103,7 @@ export class SpaPrefab extends Construct {
         },
       ],
       defaultBehavior: behaviorOptions,
-      ...(service.props.envName !== 'prod' ? { priceClass: PriceClass.PRICE_CLASS_100 } : {}),
+      ...(service.props.envName !== 'prod' ? { priceClass: awsCloudfront.PriceClass.PRICE_CLASS_100 } : {}),
       webAclId: params.waf?.webACL?.attrArn,
     });
 

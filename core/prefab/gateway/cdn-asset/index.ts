@@ -1,26 +1,19 @@
 import { CfnOutput } from 'aws-cdk-lib';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
-import {
-  AllowedMethods,
-  BehaviorOptions,
-  CachePolicy,
-  Distribution,
-  OriginRequestPolicy,
-  PriceClass,
-  ViewerProtocolPolicy,
-} from 'aws-cdk-lib/aws-cloudfront';
+import * as awsCloudfront from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
+import { HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 
-import { HttpMethods } from 'aws-cdk-lib/aws-s3';
-import { getDomain } from '../../../common/naming/get-domain';
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getCloudFrontName, getResourceName } from '../../../common/naming/get-resource-name';
-import { Service } from '../../../common/service';
-import { WafPrefab } from '../../networking/waf';
-import { AssetBucketParams, AssetBucketPrefab } from '../../storage/bucket/asset-bucket';
+import { getDomain } from 'common/naming/get-domain';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getCloudFrontName, getResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
+
+import { WafPrefab } from 'prefab/networking/waf';
+import { AssetBucketParams, AssetBucketPrefab } from 'prefab/storage/bucket/asset-bucket';
 
 export type CdnAssetConstructProps = {
   subDomain: string;
@@ -34,8 +27,8 @@ export class CdnAssetPrefab extends Construct {
   public readonly bucketPrefab: AssetBucketPrefab;
   public readonly domain: string;
   public readonly baseUrl: string;
-  public readonly distribution: Distribution;
-  public readonly behaviorOptions: Omit<BehaviorOptions, 'origin'>;
+  public readonly distribution: awsCloudfront.Distribution;
+  public readonly behaviorOptions: Omit<awsCloudfront.BehaviorOptions, 'origin'>;
 
   constructor(service: Service, params: CdnAssetConstructProps) {
     super(service, getLogicalName(CdnAssetPrefab.name, params.subDomain));
@@ -53,20 +46,20 @@ export class CdnAssetPrefab extends Construct {
 
     this.behaviorOptions = {
       compress: true,
-      originRequestPolicy: new OriginRequestPolicy(this, 'OriginRequestPolicy', {
+      originRequestPolicy: new awsCloudfront.OriginRequestPolicy(this, 'OriginRequestPolicy', {
         originRequestPolicyName: getCloudFrontName('Bucket', 'RequestPolicy', service.props),
         headerBehavior: {
           behavior: 'whitelist',
           headers: ['Access-Control-Allow-Origin', 'Access-Control-Allow-Headers', 'Origin'],
         },
       }),
-      cachePolicy: CachePolicy.CACHING_OPTIMIZED,
-      allowedMethods: AllowedMethods.ALLOW_ALL,
-      viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      cachePolicy: awsCloudfront.CachePolicy.CACHING_OPTIMIZED,
+      allowedMethods: awsCloudfront.AllowedMethods.ALLOW_ALL,
+      viewerProtocolPolicy: awsCloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
     };
 
     const domains = [this.domain];
-    this.distribution = new Distribution(this, 'Distribution', {
+    this.distribution = new awsCloudfront.Distribution(this, 'Distribution', {
       enabled: true,
       comment: getResourceName('cdn', service.props),
       certificate: params.certificate,
@@ -77,7 +70,7 @@ export class CdnAssetPrefab extends Construct {
         }),
         ...this.behaviorOptions,
       },
-      ...(service.props.envName !== 'prod' ? { priceClass: PriceClass.PRICE_CLASS_100 } : {}),
+      ...(service.props.envName !== 'prod' ? { priceClass: awsCloudfront.PriceClass.PRICE_CLASS_100 } : {}),
       webAclId: params.waf?.webACL?.attrArn,
     });
 

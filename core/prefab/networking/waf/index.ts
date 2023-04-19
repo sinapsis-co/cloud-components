@@ -1,10 +1,10 @@
 import { CfnWebACL } from 'aws-cdk-lib/aws-wafv2';
 import { Construct } from 'constructs';
 
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../common/naming/get-resource-name';
-import { Service } from '../../../common/service';
-import { BaseServiceProps } from '../../../common/synth/props-types';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
+import { BaseServiceProps } from 'common/synth/props-types';
 
 export type WafProps = {
   wafEnabled: boolean;

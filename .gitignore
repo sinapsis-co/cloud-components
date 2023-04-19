@@ -3,7 +3,6 @@ cdk.out
 .env*
 .DS_Store
 yarn-error.log
-query.ts
 .editorconfig
 .eslintcache
 .dist

@@ -9,6 +9,7 @@
     "strict": true,
     "noImplicitAny": false,
     "strictNullChecks": true,
+    "preserveSymlinks": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
     "noUnusedLocals": false,

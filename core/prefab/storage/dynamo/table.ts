@@ -1,14 +1,14 @@
+import { TablePermission } from '@sinapsis-co/cc-sdk/catalog/api';
+import { parseTableName } from '@sinapsis-co/cc-sdk/integration/database/dynamo';
+import { TableBuilder } from '@sinapsis-co/cc-sdk/integration/database/dynamo/table-builder';
 import { RemovalPolicy } from 'aws-cdk-lib';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
-import { TablePermission } from '@sinapsis-co/cc-sdk/catalog/api';
-import { parseTableName } from '@sinapsis-co/cc-sdk/integration/repository';
-import { TableBuilder } from '@sinapsis-co/cc-sdk/integration/repository/table-builder';
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../common/naming/get-resource-name';
-import { Service } from '../../../common/service';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
 
 export class DynamoTablePrefab extends Construct {
   public readonly table: Table;

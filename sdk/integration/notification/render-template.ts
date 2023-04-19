@@ -1,7 +1,7 @@
+import { NotificationTemplate } from 'catalog/notification';
+import { PlatformFault } from 'error';
 import { minify } from 'html-minifier-terser';
 import mustache from 'mustache';
-import { NotificationTemplate } from '../../catalog/notification';
-import { PlatformFault } from '../../error';
 import { bucketGetObject } from '../bucket/object';
 
 export const renderEmailTemplate = async <Template extends NotificationTemplate = NotificationTemplate>(

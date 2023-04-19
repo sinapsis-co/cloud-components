@@ -5,12 +5,13 @@ import { FargatePlatformVersion, HealthCheck, Secret } from 'aws-cdk-lib/aws-ecs
 import * as awsALB from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Construct } from 'constructs';
 
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../common/naming/get-resource-name';
-import { Service } from '../../../common/service';
-import { SynthError } from '../../../common/synth/synth-error';
-import { PublicAlbPrefab } from '../../gateway/alb-public';
-import { VpcPrefab } from '../../networking/vpc';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
+import { SynthError } from 'common/synth/synth-error';
+
+import { PublicAlbPrefab } from 'prefab/gateway/alb-public';
+import { VpcPrefab } from 'prefab/networking/vpc';
 import { FargateClusterPrefab } from './cluster';
 
 export type FargateContainerHealthCheck = HealthCheck;

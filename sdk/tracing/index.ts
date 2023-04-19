@@ -1,10 +1,10 @@
 import { Client } from '@aws-sdk/types';
 import { captureAsyncFunc, captureAWSv3Client, getSegment, Subsegment } from 'aws-xray-sdk-core';
+import { PlatformFaultCodes } from 'error/catalog';
+import { HandledException } from 'error/types';
+import { uuid } from 'lib/uuid';
+import { debug } from 'logger';
 import { PlatformError, PlatformFault } from '../error';
-import { PlatformFaultCodes } from '../error/catalog';
-import { HandledException } from '../error/types';
-import { uuid } from '../lib/uuid';
-import { debug } from '../logger';
 
 const generateTracing = (): Subsegment => {
   const segment = getSegment();
@@ -62,10 +62,11 @@ export class Tracing {
     debug({ op, phase: 'input', id, ...tracingMeta });
     if (process.env.CC_TRACING) {
       return captureAsyncFunc<Promise<PromiseReturn>>(`${op}: ${target}`, async (innerSubsegment) => {
-        if (tracingMeta)
+        if (tracingMeta) {
           Object.keys(tracingMeta).forEach((t) => {
             if (typeof t === 'string') innerSubsegment?.addAnnotation(t, tracingMeta[t]);
           });
+        }
         const result = await fn().catch((e) => {
           const exception = catchException(e, op, faultCode, target, tracingMeta);
           innerSubsegment?.close(exception);
@@ -76,7 +77,7 @@ export class Tracing {
         return result;
       });
     } else {
-      const result = fn().catch((e) => {
+      const result = await fn().catch((e) => {
         const exception = catchException(e, op, faultCode, target, tracingMeta);
         throw exception;
       });

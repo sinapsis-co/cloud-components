@@ -1,19 +1,19 @@
 import { SecretConfig } from '@sinapsis-co/cc-sdk/catalog/secret';
-import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { CfnSecret } from 'aws-cdk-lib/aws-secretsmanager';
+import { ISecret, Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
 
-import { getLogicalName } from '../../../common/naming/get-logical-name';
-import { getResourceName } from '../../../common/naming/get-resource-name';
-import { Service } from '../../../common/service';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { getResourceName } from 'common/naming/get-resource-name';
+import { Service } from 'common/service';
 
 export type RuntimeSecretBuilderProps = {
   secretConfig: SecretConfig;
+  fromSecret?: ISecret;
 };
 
 export class RuntimeSecret extends Construct {
-  public readonly secret: CfnSecret;
+  public readonly secret: ISecret;
   public readonly secretName: string;
 
   constructor(service: Service, params: RuntimeSecretBuilderProps) {
@@ -21,14 +21,16 @@ export class RuntimeSecret extends Construct {
 
     this.secretName = params.secretConfig.name;
 
-    this.secret = new CfnSecret(this, 'Secret', {
-      name: getResourceName(this.secretName, service.props),
-    });
+    this.secret = params.fromSecret
+      ? Secret.fromSecretCompleteArn(this, 'Secret', params.fromSecret.secretArn)
+      : new Secret(this, 'Secret', {
+          secretName: getResourceName(this.secretName, service.props),
+        });
   }
 
-  public useMod(mods: ((secret: CfnSecret) => any)[]): (lambda: NodejsFunction) => void {
+  public useMod(mods: ((secret: ISecret) => any)[]): (lambda: NodejsFunction) => void {
     return (lambda: NodejsFunction): void => {
-      lambda.addEnvironment(this.secretName, this.secret.ref);
+      lambda.addEnvironment(this.secretName, this.secret.secretArn);
       mods.map((fn) => fn(this.secret)(lambda));
     };
   }
@@ -38,15 +40,9 @@ export class RuntimeSecret extends Construct {
   }
 
   public static modifier = {
-    reader: (secret: CfnSecret): ((lambda: NodejsFunction) => void) => {
+    reader: (secret: ISecret): ((lambda: NodejsFunction) => void) => {
       return (lambda: NodejsFunction): void => {
-        lambda.addToRolePolicy(
-          new PolicyStatement({
-            effect: Effect.ALLOW,
-            actions: ['secretsmanager:GetSecretValue', 'secretsmanager:DescribeSecret'],
-            resources: [secret.ref],
-          })
-        );
+        secret.grantRead(lambda);
       };
     },
   };

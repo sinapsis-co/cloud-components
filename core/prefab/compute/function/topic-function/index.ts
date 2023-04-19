@@ -3,9 +3,11 @@ import { SnsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
-import { getLogicalName } from '../../../../common/naming/get-logical-name';
-import { Service } from '../../../../common/service';
-import { CustomTopicParams, TopicPrefab } from '../../../integration/topic';
+import { getLogicalName } from 'common/naming/get-logical-name';
+import { Service } from 'common/service';
+
+import { CustomTopicParams, TopicPrefab } from 'prefab/integration/topic';
+
 import { BaseFunction, BaseFunctionParams, BaseHandlerParams } from '../base-function';
 
 export type TopicHandlerParams = BaseHandlerParams & {
