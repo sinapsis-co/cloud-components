@@ -1,4 +1,4 @@
-import { BaseDeployTargetName, BaseGlobalProps, DeployConfig } from '../synth/props-types';
+import { BaseDeployTargetName, BaseGlobalProps, DeployConfig } from 'common/synth/props-types';
 
 export const getDeployConfig = (
   deployTarget: BaseGlobalProps,

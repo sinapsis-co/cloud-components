@@ -1,6 +1,6 @@
 {
   "name": "@sinapsis-co/cc-core",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "author": "sinapsis.co",
   "license": "MIT",
   "repository": "git://github.com/sinapsis-co/cloud-components.git",
@@ -8,7 +8,7 @@
     "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
-    "build": "rm -rf .dist && npx tsc"
+    "build": "rm -rf .dist && npx tsc && npx tsc-alias"
   },
   "dependencies": {
     "@aws-cdk/aws-apigatewayv2-alpha": "^2.24.1-alpha.0",
