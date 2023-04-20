@@ -1,5 +1,5 @@
 import { DynamoDBDocumentClient, GetCommand, GetCommandInput } from '@aws-sdk/lib-dynamodb';
-import { Tracing } from 'tracing/index';
+import { Tracing } from 'tracing';
 import { parseTableName } from '..';
 import { Entity, EntityBuilder, EntityRepositoryConfig, EntityStore } from '../interface';
 import { CheckItemExistsFn } from '../op-interface';

@@ -3,13 +3,13 @@ import { Aspects } from 'aws-cdk-lib';
 import { InstanceType, Peer, Port, SecurityGroup, SubnetType } from 'aws-cdk-lib/aws-ec2';
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import * as awsRds from 'aws-cdk-lib/aws-rds';
-import { CfnDatabase } from 'aws-cdk-lib/aws-timestream';
 import { Construct } from 'constructs';
 
 import { getLogicalName } from 'common/naming/get-logical-name';
 import { getResourceName } from 'common/naming/get-resource-name';
 import { Service } from 'common/service';
 
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { VpcPrefab } from 'prefab/networking/vpc';
 
 export type AuroraPerformanceTunning = {
@@ -25,7 +25,7 @@ export type AuroraServerlessV2PrefabParams = {
 };
 
 export class AuroraServerlessV2Prefab extends Construct {
-  public readonly database: CfnDatabase;
+  public readonly proxy: awsRds.DatabaseProxy;
 
   constructor(service: Service, params: AuroraServerlessV2PrefabParams) {
     super(service, getLogicalName(AuroraServerlessV2Prefab.name, params.clusterName));
@@ -73,7 +73,7 @@ export class AuroraServerlessV2Prefab extends Construct {
       roleName: getResourceName('proxy', service.props),
       assumedBy: new ServicePrincipal('rds.amazonaws.com'),
     });
-    const proxy = new awsRds.DatabaseProxy(this, 'Proxy', {
+    this.proxy = new awsRds.DatabaseProxy(this, 'Proxy', {
       dbProxyName: getResourceName('proxy', service.props),
       proxyTarget: awsRds.ProxyTarget.fromCluster(cluster),
       secrets: [cluster.secret!],
@@ -81,6 +81,26 @@ export class AuroraServerlessV2Prefab extends Construct {
       vpc: params.vpcPrefab.vpc,
       role: rdsRole,
     });
-    proxy.grantConnect(rdsRole);
+    // this.proxy.grantConnect(rdsRole);
   }
+
+  public useMod(variableName = 'DB', mods: ((proxy: awsRds.DatabaseProxy) => any)[]): (lambda: NodejsFunction) => void {
+    return (lambda: NodejsFunction): void => {
+      lambda.addEnvironment(variableName, this.proxy.endpoint);
+      mods.map((fn) => fn(this.proxy)(lambda));
+    };
+  }
+
+  public useModWriter(variableName = 'DB'): (lambda: NodejsFunction) => void {
+    return this.useMod(variableName, [AuroraServerlessV2Prefab.modifier.connect]);
+  }
+
+  public static modifier = {
+    connect: (proxy: awsRds.DatabaseProxy): ((lambda: NodejsFunction) => NodejsFunction) => {
+      return (lambda: NodejsFunction): NodejsFunction => {
+        proxy.grantConnect(lambda);
+        return lambda;
+      };
+    },
+  };
 }

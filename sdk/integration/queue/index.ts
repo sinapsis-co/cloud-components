@@ -17,7 +17,7 @@ const MAX_MESSAGE_PER_BATCH = 10;
 export const sendMessages = async <T>(
   messages: Array<T>,
   queueUrl: string,
-  params: Pick<SendMessageBatchRequestEntry, 'DelaySeconds' | 'MessageDeduplicationId' | 'MessageGroupId'>
+  params?: Pick<SendMessageBatchRequestEntry, 'DelaySeconds' | 'MessageDeduplicationId' | 'MessageGroupId'>
 ): Promise<Array<SendMessageBatchCommandOutput>> => {
   const cmd = async () => {
     const messagesChucked = chunkArray(messages, MAX_MESSAGE_PER_BATCH);
@@ -37,7 +37,7 @@ export const deleteMessage = async (receiptHandle: string, queueUrl: string): Pr
 const sendMessagesBatch = async <T>(
   messages: Array<T>,
   queueUrl: string,
-  params: Pick<SendMessageBatchRequestEntry, 'DelaySeconds' | 'MessageDeduplicationId' | 'MessageGroupId'>
+  params?: Pick<SendMessageBatchRequestEntry, 'DelaySeconds' | 'MessageDeduplicationId' | 'MessageGroupId'>
 ): Promise<SendMessageBatchCommandOutput> => {
   const entries: SendMessageBatchRequestEntry[] = messages.map((message, index) => {
     return { Id: String(index), MessageBody: JSON.stringify(message), ...params };

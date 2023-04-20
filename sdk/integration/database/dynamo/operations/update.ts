@@ -1,9 +1,9 @@
 import { DynamoDBDocumentClient, UpdateCommand, UpdateCommandInput } from '@aws-sdk/lib-dynamodb';
 import { parseTableName } from '..';
 
-import { PlatformError, PlatformFault } from 'error/index';
+import { PlatformError, PlatformFault } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
-import { Tracing } from 'tracing/index';
+import { Tracing } from 'tracing';
 import {
   Entity,
   EntityBuilder,

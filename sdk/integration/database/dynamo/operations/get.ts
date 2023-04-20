@@ -1,7 +1,7 @@
 import { DynamoDBDocumentClient, GetCommand, GetCommandInput } from '@aws-sdk/lib-dynamodb';
 
-import { PlatformError } from 'error/index';
-import { Tracing } from 'tracing/index';
+import { PlatformError } from 'error';
+import { Tracing } from 'tracing';
 import { parseTableName } from '..';
 import { Entity, EntityBuilder, EntityRepositoryConfig, EntityStore } from '../interface';
 import { GetItemFn } from '../op-interface';

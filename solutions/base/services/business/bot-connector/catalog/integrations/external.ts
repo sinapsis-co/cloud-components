@@ -1,5 +1,5 @@
 import { EmptyObject } from '@sinapsis-co/cc-sdk/catalog/api';
-import { ApiIntegrationConfig, ApiIntegrationInterface } from '@sinapsis-co/cc-sdk/catalog/integrations';
+import { ApiIntegrationConfig, ApiIntegrationInterface } from '@sinapsis-co/cc-sdk/catalog/api-integration';
 
 export type Interface = ApiIntegrationInterface<{
   errorResponse: { errorCode: string; message: string };

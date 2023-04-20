@@ -6,7 +6,7 @@ import { baseIntegrations } from './catalog';
 
 (async () => {
   try {
-    const apiCallResult = await apiCall(
+    const apiCallResult = await apiCall<baseIntegrations.external.Interface>(
       baseIntegrations.external.config,
       {
         headers: {
@@ -15,14 +15,14 @@ import { baseIntegrations } from './catalog';
         },
         body: { email: 'andres+a6@sinapsis.co' },
       },
-      { tracingMeta: { tenantId: '123' }, returnErrorResponse: true }
+      { tracingMeta: { tenantId: '123' } }
     );
 
     const errorResponse = 'errorResponse' in apiCallResult ? apiCallResult.errorResponse : undefined;
     const response = 'response' in apiCallResult ? apiCallResult.response : undefined;
 
     console.log(response);
-    console.log('statusCode', apiCallResult.statusCode);
+    // console.log('statusCode', apiCallResult.statusCode);
     console.log(errorResponse);
     // console.log(errorResponse?.errorCode);
   } catch (error) {

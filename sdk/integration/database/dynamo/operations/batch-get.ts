@@ -1,6 +1,6 @@
 import { BatchGetCommand, BatchGetCommandInput, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { NativeAttributeValue } from '@aws-sdk/util-dynamodb';
-import { PlatformFault } from 'error/index';
+import { PlatformFault } from 'error';
 import { chunkArray } from 'util/chunk-array';
 import { wait } from 'util/executers';
 import { parseTableName } from '..';

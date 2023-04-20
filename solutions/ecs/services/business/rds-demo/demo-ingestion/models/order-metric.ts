@@ -1,6 +1,6 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
 
-class OrderMetric extends Model {}
+export class OrderMetric extends Model {}
 
 export const builder = (sequelize: Sequelize) => {
   OrderMetric.init(
@@ -26,5 +26,5 @@ export const builder = (sequelize: Sequelize) => {
       currency: DataTypes.STRING,
     },
     { sequelize }
-  ).sync();
+  );
 };

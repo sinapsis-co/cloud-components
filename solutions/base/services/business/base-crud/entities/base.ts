@@ -4,7 +4,7 @@ import {
   EntityCreate,
   EntityStore,
   EntityUpdate,
-} from '@sinapsis-co/cc-sdk/integration/repository/interface';
+} from '@sinapsis-co/cc-sdk/integration/database/dynamo/interface';
 import { BaseTableBuilder } from '../repository/base-table';
 
 export type BaseBuilder = EntityBuilder<{

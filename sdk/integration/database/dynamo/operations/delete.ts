@@ -1,8 +1,8 @@
 import { DeleteCommand, DeleteCommandInput, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 
-import { PlatformError } from 'error/index';
+import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
-import { Tracing } from 'tracing/index';
+import { Tracing } from 'tracing';
 import { parseTableName } from '..';
 import { Entity, EntityBuilder, EntityRepositoryConfig, EntityStore, RepositoryEvent } from '../interface';
 import { DeleteItemFn } from '../op-interface';

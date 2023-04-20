@@ -91,7 +91,7 @@ export const handler: SNSHandler = async (event) => {
 };
 
 const sendToSlack = async (fallback: string, color, fields, slackObject: SlackObject) => {
-  await apiCall(
+  await apiCall<Slack.Interface>(
     Slack.config,
     {
       pathParams: { token: slackObject.token },

@@ -1,4 +1,4 @@
-import { NotificationTemplate } from '@sinapsis-co/cc-sdk/catalog/notifications';
+import { NotificationTemplate } from '@sinapsis-co/cc-sdk/catalog/notification';
 
 export type WaitListTemplate = NotificationTemplate<{
   templateName: 'wait-list';

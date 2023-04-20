@@ -1,4 +1,4 @@
-import { NotificationMessage } from '@sinapsis-co/cc-sdk/catalog/notifications';
+import { NotificationMessage } from '@sinapsis-co/cc-sdk/catalog/notification';
 import { eventHandler } from '@sinapsis-co/cc-sdk/handler/event/event-handler';
 import { sendMessages } from '@sinapsis-co/cc-sdk/integration/queue';
 import { notificationEvent } from '../../catalog';

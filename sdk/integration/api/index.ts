@@ -1,8 +1,9 @@
-import { EmptyObject } from 'catalog/api';
-import { ApiIntegrationConfig, ApiIntegrationInterface } from 'catalog/api-integration';
-import { PlatformFault } from 'error';
 import fetch from 'node-fetch';
-import { Tracing } from 'tracing';
+
+import { EmptyObject } from '@sinapsis-co/cc-sdk/catalog/api';
+import { ApiIntegrationConfig, ApiIntegrationInterface } from '@sinapsis-co/cc-sdk/catalog/api-integration';
+import { PlatformFault } from '@sinapsis-co/cc-sdk/error';
+import { Tracing } from '@sinapsis-co/cc-sdk/tracing';
 
 type NotEmptyObjects<T> = {
   [P in keyof T]: Exclude<T[P], undefined> extends EmptyObject ? never : P;
@@ -31,7 +32,7 @@ type Response<Api extends ApiIntegrationInterface, ErrorResponse extends boolean
 
 export const apiCall = async <
   Api extends ApiIntegrationInterface,
-  TracingMeta extends Record<string, string>,
+  TracingMeta extends Record<string, string> = Record<string, string>,
   ErrorResponse extends boolean = false
 >(
   config: ApiIntegrationConfig<Api>,

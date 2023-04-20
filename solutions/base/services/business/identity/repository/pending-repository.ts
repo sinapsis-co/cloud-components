@@ -1,5 +1,5 @@
-import { repository } from '@sinapsis-co/cc-sdk/integration/repository';
-import { RepositoryEvent } from '@sinapsis-co/cc-sdk/integration/repository/interface';
+import { repository } from '@sinapsis-co/cc-sdk/integration/database/dynamo';
+import { RepositoryEvent } from '@sinapsis-co/cc-sdk/integration/database/dynamo/interface';
 import { User, UserBuilder, UserCreate, UserStore } from '../entities/user';
 import { IdentityTableBuilder } from './identity-table';
 

@@ -1,7 +1,7 @@
 import { DynamoDBDocumentClient, PutCommand, PutCommandInput } from '@aws-sdk/lib-dynamodb';
 
 import { dispatchEvent } from 'integration/event/dispatch-event';
-import { Tracing } from 'tracing/index';
+import { Tracing } from 'tracing';
 import { parseTableName } from '..';
 import { Entity, EntityBuilder, EntityCreate, EntityRepositoryConfig, RepositoryEvent } from '../interface';
 import { CreateItemFn } from '../op-interface';

@@ -1,4 +1,4 @@
-import { NotificationTemplate } from '@sinapsis-co/cc-sdk/catalog/notifications';
+import { NotificationTemplate } from '@sinapsis-co/cc-sdk/catalog/notification';
 
 export type PaymentFailedTemplate = NotificationTemplate<{
   templateName: 'payment-failed';

@@ -1,7 +1,7 @@
 import { DynamoDBDocumentClient, QueryCommand, QueryCommandInput } from '@aws-sdk/lib-dynamodb';
 
 import { PaginatedResponse } from 'catalog/api';
-import { Tracing } from 'tracing/index';
+import { Tracing } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
 import { parseTableName } from '..';
 import { Entity, EntityBuilder, EntityRepositoryConfig, EntityStore } from '../interface';

@@ -1,5 +1,5 @@
-import { repository } from '@sinapsis-co/cc-sdk/integration/repository';
-import { RepositoryEvent } from '@sinapsis-co/cc-sdk/integration/repository/interface';
+import { repository } from '@sinapsis-co/cc-sdk/integration/database/dynamo';
+import { RepositoryEvent } from '@sinapsis-co/cc-sdk/integration/database/dynamo/interface';
 import { Base, BaseBuilder, BaseCreate, BaseStore } from '../entities/base';
 import { BaseTableBuilder } from './base-table';
 

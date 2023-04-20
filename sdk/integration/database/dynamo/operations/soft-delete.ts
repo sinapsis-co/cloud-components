@@ -2,9 +2,9 @@ import { DynamoDBDocumentClient, UpdateCommand, UpdateCommandInput } from '@aws-
 import dayjs from 'dayjs';
 import { parseTableName } from '..';
 
-import { PlatformError } from 'error/index';
+import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
-import { Tracing } from 'tracing/index';
+import { Tracing } from 'tracing';
 import * as _interface from '../interface';
 import { SoftDeleteItemFn } from '../op-interface';
 import { TableBuilder } from '../table-builder';
