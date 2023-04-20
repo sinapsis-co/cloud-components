@@ -1,6 +1,6 @@
 {
   "name": "@sinapsis-co/cc-sdk",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "author": "sinapsis.co",
   "license": "MIT",
   "repository": "git://github.com/sinapsis-co/cloud-components.git",
@@ -8,7 +8,7 @@
     "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
-    "build": "rm -rf .dist && npx tsc"
+    "build": "rm -rf .dist && npx tsc && npx tsc-alias"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.108",
