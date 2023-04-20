@@ -2026,10 +2026,10 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@sinapsis-co/cc-sdk@^3.0.4":
-  version "3.0.4"
-  resolved "https://npm.pkg.github.com/download/@sinapsis-co/cc-sdk/3.0.4/bfc3f698af4205d3e4c84ab201613179be95b934#bfc3f698af4205d3e4c84ab201613179be95b934"
-  integrity sha512-QvFe446pAPlo51Y2aUh16qnsm32GfsK0p8lwlP4N/2YfMPad7coGhtMOmQC8fm/a3Y/wa1VD1nHQ0+2anuBwFQ==
+"@sinapsis-co/cc-sdk@^3.0.7":
+  version "3.0.7"
+  resolved "https://npm.pkg.github.com/download/@sinapsis-co/cc-sdk/3.0.7/595d65fb50386327d6eb0a520532a1ad4f312faf#595d65fb50386327d6eb0a520532a1ad4f312faf"
+  integrity sha512-8vyH9i1p13Q0dFxzgLvPcB9zCV/6CLEo8zGP537H20ae2FMf3M+/T1wpgiY4BuSC82IviIzfVi1YXmNrkekLOg==
   dependencies:
     "@aws-sdk/client-cloudfront" "^3.295.0"
     "@aws-sdk/client-codepipeline" "^3.295.0"
