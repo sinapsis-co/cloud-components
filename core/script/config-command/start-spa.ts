@@ -70,7 +70,7 @@ export const startSPA: ConfigCommand = async <
 
     console.log('>> STEP: (3/3) => STARTING');
 
-    const command = `yarn && yarn build ${envNameInput}`;
+    const command = `yarn && yarn start ${envNameInput}`;
 
     execSync(command, { stdio: 'inherit', cwd: `${process.cwd()}/${baseDir}` });
   } catch (error: any) {
