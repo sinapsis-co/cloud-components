@@ -24,12 +24,15 @@
     "skipLibCheck": true,
     "allowJs": true,
     "noEmit": false,
+    "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
+      "@sinapsis-co/cc-sdk/*": ["./sdk/*"],
+      "@sinapsis-co/cc-core/*": ["./core/*"],
       "common/*": ["./core/common/*"],
       "prefab/*": ["./core/prefab/*"],
       "catalog/*": ["./sdk/catalog/*"],
@@ -37,10 +40,10 @@
       "handler/*": ["./sdk/handler/*"],
       "integration/*": ["./sdk/integration/*"],
       "lib/*": ["./sdk/lib/*"],
+      "util/*": ["./sdk/util/*"],
       "logger": ["./sdk/logger"],
       "error": ["./sdk/error"],
-      "tracing": ["./sdk/tracing"],
-      "util/*": ["./sdk/util/*"]
+      "tracing": ["./sdk/tracing"]
     }
   }
 }

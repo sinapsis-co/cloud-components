@@ -32,6 +32,8 @@
     "spawebapp",
     "spreedly",
     "timestream",
+    "tspm",
+    "typeorm",
     "wafv2"
   ],
   "ignorePaths": [

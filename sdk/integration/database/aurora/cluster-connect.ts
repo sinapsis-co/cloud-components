@@ -1,7 +1,7 @@
-import { Sequelize } from 'sequelize';
+import { DataSource } from 'typeorm';
+import { BaseDataSourceOptions } from 'typeorm/data-source/BaseDataSourceOptions';
 
 import { SecretConfig, SecretInterface } from 'catalog/secret';
-import { log } from 'console';
 import { getRuntimeSecret } from 'integration/config/runtime-secret';
 import { Tracing } from 'tracing';
 
@@ -20,16 +20,31 @@ export const secretConfig: SecretConfig<Secret> = {
   name: 'connection',
 };
 
-let sequelize: Sequelize | undefined;
+let dataSource: DataSource | undefined;
 
-export const auroraClusterConnect = async (secretArn: string): Promise<Sequelize> => {
+export const auroraClusterConnect = async (
+  secretArn: string,
+  { entities }: Pick<BaseDataSourceOptions, 'entities' | 'migrations'>
+): Promise<DataSource> => {
   const cmd = async () => {
-    if (!sequelize) {
+    if (!dataSource) {
       const { username, host, port, password } = await getRuntimeSecret<Secret>(secretConfig, secretArn);
-      log(username, host, port, password);
-      sequelize = new Sequelize({ username, host, port, password, dialect: 'postgres' });
+      dataSource = new DataSource({
+        type: 'postgres',
+        database: 'postgres',
+        host,
+        port,
+        username,
+        password,
+        entities,
+        // database: 'test',
+        // entities: [Photo],
+        // synchronize: true,
+        // logging: false,
+      });
+      await dataSource.initialize();
     }
-    return sequelize;
+    return dataSource;
   };
   return Tracing.capture('Connect', 'FAULT_AURORA_CONNECT', 'Connect', cmd);
 };

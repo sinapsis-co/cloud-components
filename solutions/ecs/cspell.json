@@ -26,7 +26,8 @@
     "skus",
     "stepfunctions",
     "Topup",
-    "TTFB"
+    "TTFB",
+    "typeorm"
   ],
   "ignorePaths": [
     "**/node_modules/**",

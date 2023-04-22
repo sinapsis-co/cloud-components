@@ -13,7 +13,7 @@ export {};
     if (error instanceof PlatformError || error instanceof PlatformFault) {
       console.error(error.returnException());
     } else {
-      console.error(error);
+      new PlatformFault({ code: 'FAULT_UNHANDLED', detail: error.message }).returnException();
     }
   }
 })();

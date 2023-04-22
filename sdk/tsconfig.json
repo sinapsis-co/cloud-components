@@ -4,8 +4,7 @@
     "outDir": ".dist",
     "typeRoots": ["../node_modules/@types"],
     "rootDir": ".",
-    "baseUrl": ".."
   },
   "include": ["./**/*.ts"],
-  "exclude": ["cdk.out", "node_modules/**/*", ".dist/**/*"]
+  "exclude": ["cdk.out", "node_modules/**/*", ".dist/**/*"] 
 }

@@ -1,4 +1,4 @@
-import { TableBuilder } from '@sinapsis-co/cc-sdk/integration/repository/table-builder';
+import { TableBuilder } from '@sinapsis-co/cc-sdk/integration/database/dynamo/table-builder';
 
 export type BaseTableBuilder = TableBuilder<{
   tableName: 'base';

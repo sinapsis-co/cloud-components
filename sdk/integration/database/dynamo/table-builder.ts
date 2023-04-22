@@ -1,7 +1,7 @@
 export type TableBuilderKeys = {
   tableName: string;
   ttlAttribute: boolean | undefined;
-  indexes: readonly string[] | undefined;
+  indexes: readonly string[] | undefined;  
   storeMapping: {
     key: { pk: string; sk?: string };
     timers?: Record<string, string>;
