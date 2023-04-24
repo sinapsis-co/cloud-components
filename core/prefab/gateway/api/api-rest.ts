@@ -12,7 +12,7 @@ import { CdnApiPrefab } from 'prefab/gateway/cdn-api';
 
 export type ApiRestParams = {
   basePath: string;
-  cdnApiPrefab: CdnApiPrefab;
+  cdnApiPrefab?: CdnApiPrefab;
   userPool?: UserPool;
   customAuthorizerHandler?: IFunction;
   existingRestApiId?: string;
@@ -63,7 +63,7 @@ export class ApiRestPrefab extends Construct {
 
     this.basePath = this.api.root.resourceForPath(params.basePath);
 
-    params.cdnApiPrefab.addApiGateway(params.basePath, apiUrl, {
+    params.cdnApiPrefab?.addApiGateway(params.basePath, apiUrl, {
       originPath: `/${this.api.deploymentStage.stageName}`,
     });
 
