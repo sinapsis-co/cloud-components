@@ -1,0 +1,41 @@
+{
+  "exclude": ["node_modules/**/*"],
+  "include": ["*.ts"],
+  "compilerOptions": {
+    "rootDir": ".",
+    "target": "es2019",
+    "lib": ["es2019"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "declaration": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "preserveSymlinks": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": false,
+    "inlineSourceMap": false,
+    "inlineSources": false,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "noEmit": false,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "services/*": ["./services/*"],
+      "config/*": ["./config/*"],
+      "templates/*": ["./notifications/templates/*"]
+    }
+  }
+}

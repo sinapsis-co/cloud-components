@@ -14,7 +14,8 @@
     ]
   },
   "scripts": {
-    "release": "bash release.bash"
+    "release": "bash ./tools/scripts/release.bash",
+    "generate": "bash ./tools/scripts/generate.bash"
   },
   "lint-staged": {
     "*.ts": [

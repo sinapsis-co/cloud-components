@@ -45,17 +45,13 @@ export class Coordinator<
   public build() {
     try {
       const ordererServiceList = this.orderDependencies();
-      console.log(ordererServiceList);
-
       ordererServiceList.map((l) => {
         const service = this.services[l];
-
         const deps: Record<string, Service> = service.depsNames.reduce((memo, cu) => {
           const name = `${cu.charAt(0).toLowerCase()}${cu.slice(1)}`;
           memo[name] = this.services[cu];
           return memo;
         }, {});
-
         service.build(deps);
       });
 
