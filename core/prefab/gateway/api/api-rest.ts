@@ -10,12 +10,14 @@ import { Service } from 'common/service';
 
 import { CdnApiPrefab } from 'prefab/gateway/cdn-api';
 
+type RestApiAttributes = Pick<awsApigateway.RestApiAttributes, 'restApiId' | 'restApiName' | 'rootResourceId'>;
+
 export type ApiRestParams = {
   basePath: string;
   cdnApiPrefab?: CdnApiPrefab;
   userPool?: UserPool;
   customAuthorizerHandler?: IFunction;
-  existingRestApiId?: string;
+  existingRestApi?: RestApiAttributes;
 };
 
 export class ApiRestPrefab extends Construct {
@@ -39,8 +41,8 @@ export class ApiRestPrefab extends Construct {
       });
     }
 
-    if (params.existingRestApiId)
-      this.api = awsApigateway.RestApi.fromRestApiId(this, 'RestApi', params.existingRestApiId);
+    if (params.existingRestApi)
+      this.api = awsApigateway.RestApi.fromRestApiAttributes(this, 'RestApi', params.existingRestApi);
     else {
       this.api = new awsApigateway.RestApi(this, 'RestApi', {
         restApiName: getResourceName('', service.props),
