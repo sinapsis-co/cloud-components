@@ -66,9 +66,10 @@ export class ApiRestPrefab extends Construct {
 
     this.basePath = this.api.root.resourceForPath(params.basePath);
 
-    params.cdnApiPrefab?.addApiGateway(params.basePath, apiUrl, {
-      originPath: `/${this.api.deploymentStage.stageName}`,
-    });
+    if (params.cdnApiPrefab)
+      params.cdnApiPrefab.addApiGateway(params.basePath, apiUrl, {
+        originPath: `/${this.api.deploymentStage.stageName}`,
+      });
 
     new CfnOutput(this, 'RestApiUrl', { value: apiUrl });
   }
