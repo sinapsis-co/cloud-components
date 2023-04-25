@@ -1,46 +1,55 @@
 {
-  "name": "@sinapsis-co/cloud-components",
-  "description": "Cloud Components Framework",
+  "name": "@sinapsis-co/cc-sdk",
+  "version": "3.0.8",
   "author": "sinapsis.co",
   "license": "MIT",
   "repository": "git://github.com/sinapsis-co/cloud-components.git",
-  "private": true,
-  "workspaces": {
-    "packages": [
-      "sdk/",
-      "core/",
-      "solutions/base",
-      "solutions/ecs"
-    ]
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
-    "release": "bash release.bash"
-  },
-  "lint-staged": {
-    "*.ts": [
-      "tsc --pretty --noEmit --esModuleInterop",
-      "eslint . --ext .ts",
-      "prettier --write",
-      "npx cspell '**/*.ts'"
-    ],
-    "*.json": "prettier --write",
-    "*.js": "eslint --cache --fix",
-    "*.{js,css,md}": "prettier --write"
-  },
-  "dependencies": {
-    "@types/aws-lambda": "^8.10.108",
-    "@types/node": "^18.11.7",
-    "@typescript-eslint/eslint-plugin": "^5.54.0",
-    "@typescript-eslint/parser": "^5.54.0",
-    "cspell": "^5.13.3",
-    "eslint": "^7.30.0",
-    "husky": "^7.0.4",
-    "lint-staged": ">=10",
-    "prettier": "^2.3.2",
-    "ts-node": "^10.7.0",
-    "typescript": "^5.0.2"
+    "build": "rm -rf .dist && npx tsc && npx tsc-alias",
+    "verify": "npx tsc --pretty --noEmit && npx eslint . --ext .ts && npx prettier -c . && npx cspell '**/*.ts'"
   },
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.108",
+    "@types/html-minifier-terser": "^6.1.0",
+    "@types/node": "^18.11.7",
+    "@types/nodemailer": "^6.4.7",
     "tsconfig-paths": "^4.2.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cloudfront": "^3.295.0",
+    "@aws-sdk/client-codepipeline": "^3.295.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.295.0",
+    "@aws-sdk/client-dynamodb": "^3.294.0",
+    "@aws-sdk/client-eventbridge": "^3.282.0",
+    "@aws-sdk/client-s3": "^3.282.0",
+    "@aws-sdk/client-secrets-manager": "^3.295.0",
+    "@aws-sdk/client-sesv2": "^3.295.0",
+    "@aws-sdk/client-sns": "^3.295.0",
+    "@aws-sdk/client-sqs": "^3.282.0",
+    "@aws-sdk/client-ssm": "^3.282.0",
+    "@aws-sdk/client-sts": "^3.295.0",
+    "@aws-sdk/client-timestream-query": "^3.315.0",
+    "@aws-sdk/client-timestream-write": "^3.295.0",
+    "@aws-sdk/lib-dynamodb": "^3.294.0",
+    "@aws-sdk/lib-storage": "^3.282.0",
+    "@aws-sdk/rds-signer": "^3.315.0",
+    "@aws-sdk/s3-presigned-post": "^3.284.0",
+    "@aws-sdk/s3-request-presigner": "^3.282.0",
+    "@sinapsis-co/cc-sdk": "^3.0.7",
+    "aws-lambda": "^1.0.7",
+    "aws-xray-sdk-core": "^3.4.1",
+    "dayjs": "^1.11.0",
+    "html-minifier-terser": "^7.0.0-alpha.1",
+    "mustache": "^4.2.0",
+    "node-fetch": "2.6.6",
+    "nodemailer": "^6.7.5",
+    "pg": "^8.10.0",
+    "reflect-metadata": "^0.1.13",
+    "schemy-ts": "^1.5.6",
+    "typeorm": "^0.3.15",
+    "uuid": "^8.3.2"
   }
 }

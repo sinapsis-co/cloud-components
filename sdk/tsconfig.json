@@ -1,10 +1,17 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "outDir": ".dist",
-    "typeRoots": ["../node_modules/@types"],
-    "rootDir": "..",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "catalog/*": ["./catalog/*"],
+      "error/*": ["./error/*"],
+      "handler/*": ["./handler/*"],
+      "integration/*": ["./integration/*"],
+      "lib/*": ["./lib/*"],
+      "util/*": ["./util/*"]
+    }
   },
   "include": ["./**/*.ts"],
-  "exclude": ["cdk.out", "node_modules/**/*", ".dist/**/*"] 
+  "exclude": ["cdk.out", "node_modules/**/*", ".dist/**/*"]
 }
