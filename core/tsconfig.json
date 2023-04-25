@@ -4,7 +4,11 @@
     "outDir": ".dist",
     "typeRoots": ["../node_modules/@types"],
     "rootDir": ".",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "common/*": ["./common/*"],
+      "prefab/*": ["./prefab/*"]
+    }
   },
   "include": ["./**/*.ts"],
   "exclude": ["cdk.out", "node_modules/**/*", ".dist/**/*"]
