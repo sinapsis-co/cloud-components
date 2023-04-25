@@ -1,8 +1,8 @@
 import { apiHandler } from '@sinapsis-co/cc-sdk/handler/api/api-handler';
 import { createGetPresignedUrl } from '@sinapsis-co/cc-sdk/integration/bucket/presigned';
-import { assetsTypes } from 'services/business/assets/lib/assets-type';
 import { CustomError } from '../../../../../config/error-catalog';
 import { assetApi } from '../../catalog';
+import { assetsTypes } from '../../lib/assets-type';
 
 export const handler = apiHandler<assetApi.createGetUrl.Interface>(async (event, request) => {
   const { assetType, key } = request.body;

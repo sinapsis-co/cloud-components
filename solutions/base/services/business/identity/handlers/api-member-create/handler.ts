@@ -1,18 +1,20 @@
 import { apiHandler } from '@sinapsis-co/cc-sdk/handler/api/api-handler';
 import { dispatchEvent } from '@sinapsis-co/cc-sdk/integration/event/dispatch-event';
 import { uuid } from '@sinapsis-co/cc-sdk/lib/uuid';
-import { identityApi } from 'services/business/identity/catalog';
-import { pendingRepository } from 'services/business/identity/repository/pending-repository';
+
 import { CustomError } from '../../../../../config/error-catalog';
 import { UserInviteTemplate } from '../../../../../notifications/templates/user-invite';
 import { notificationEvent } from '../../../../support/notifications/catalog';
-import { identityRepository } from '../../repository/identity-repository';
+import { identityApi } from '../../catalog';
+import { inviteRepository } from '../../repository/repo-invite';
+import { identityRepository } from '../../repository/ro-repo-identity';
 
 export const handler = apiHandler<identityApi.memberCreate.Interface>(async (_, req) => {
   const { tenantId, companyName } = req.claims;
   const inviteId = uuid();
 
-  // We need to run the query because the email is not the primary key
+  // We need to run the query because the email is not the primary key, and we use identityRepository because
+  // we want to find coincides in both cases (users or invites)
   const emailCheck = await identityRepository.listIndex(
     'email',
     { limit: 50 },
@@ -25,14 +27,11 @@ export const handler = apiHandler<identityApi.memberCreate.Interface>(async (_, 
 
   if (emailCheck.items.length > 0) throw new CustomError({ code: 'ERROR_IDENTITY_USER_EXISTS' });
 
-  const user = pendingRepository.createItem(
+  const invite = await inviteRepository.createItem(
     { tenantId, id: inviteId },
     {
-      isPending: true,
       inviteId,
       email: req.body.email,
-      givenName: 'pending',
-      familyName: 'pending',
       companyName: companyName,
       role: 'member',
     }
@@ -53,5 +52,5 @@ export const handler = apiHandler<identityApi.memberCreate.Interface>(async (_, 
     },
   });
 
-  return user;
+  return invite;
 }, identityApi.memberCreate.config);

@@ -4,7 +4,7 @@ import { dispatchEvent } from '@sinapsis-co/cc-sdk/integration/event/dispatch-ev
 
 import { assetEvent } from 'services/business/assets/catalog';
 import { identityApi } from 'services/business/identity/catalog';
-import { userRepository } from '../../repository/user-repository';
+import { userRepository } from '../../repository/repo-user';
 
 export const handler = apiHandler<identityApi.memberDelete.Interface>(async (_, req) => {
   const { tenantId } = req.claims;

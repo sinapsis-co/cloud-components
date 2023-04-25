@@ -16,6 +16,7 @@
     "fullname",
     "nodenext",
     "noprod",
+    "parens",
     "passwordless",
     "schemy",
     "sesv",
@@ -26,12 +27,5 @@
     "Topup",
     "TTFB"
   ],
-  "ignorePaths": [
-    "**/node_modules/**",
-    "cdk.out/**",
-    "dist/**",
-    "package.json",
-    "yarn.lock",
-    ".yarnrc"
-  ]
+  "ignorePaths": ["**/node_modules/**", "cdk.out/**", "dist/**", "frontend/**", "package.json", "yarn.lock", ".yarnrc"]
 }

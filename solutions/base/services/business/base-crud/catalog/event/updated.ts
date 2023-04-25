@@ -1,5 +1,5 @@
 import { EventConfig, EventInterface } from '@sinapsis-co/cc-sdk/catalog/event';
-import { BaseRepoEvent, baseRepo } from '../../repository/base';
+import { BaseRepoEvent, baseRepo } from '../../repository/repo-base';
 
 export type Event = EventInterface<BaseRepoEvent['updated']>;
 

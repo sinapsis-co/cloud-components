@@ -11,7 +11,7 @@ import { TableBuilder } from '../table-builder';
 import { updateMapper } from '../update-mapper';
 
 export const softDeleteItem = <Builder extends _interface.EntityBuilder, Table extends TableBuilder = TableBuilder>(
-  repoConfig: _interface.EntityRepositoryConfig<Builder, Table>,
+  repoConfig: _interface.RepositoryConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient
 ): SoftDeleteItemFn<Builder> => {
   return async (

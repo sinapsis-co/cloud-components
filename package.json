@@ -8,7 +8,9 @@
   "workspaces": {
     "packages": [
       "sdk/",
-      "core/"
+      "core/",
+      "solutions/base",
+      "solutions/ecs"
     ]
   },
   "scripts": {

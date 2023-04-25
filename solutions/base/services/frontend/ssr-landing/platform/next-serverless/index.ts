@@ -16,5 +16,13 @@ export const nextServerlessRender = async (uri: string, querystring: string): Pr
     console.log({ type: 'ERROR_NO_MATCH', uri });
     return;
   }
-  await generateRenderer(uri, querystring, match.handler, DISTRO_BUCKET_NAME, RECIPE_BUCKET_NAME, NEXT_ENV_KEY, CF_CACHE_MAX_AGE);
+  await generateRenderer(
+    uri,
+    querystring,
+    match.handler,
+    DISTRO_BUCKET_NAME,
+    RECIPE_BUCKET_NAME,
+    NEXT_ENV_KEY,
+    CF_CACHE_MAX_AGE
+  );
 };

@@ -1,16 +1,16 @@
+import { updateCognitoUser } from '@sinapsis-co/cc-sdk/integration/cognito';
 import { dispatchEvent } from '@sinapsis-co/cc-sdk/integration/event/dispatch-event';
 import { uuid } from '@sinapsis-co/cc-sdk/lib/uuid';
 import { PostConfirmationTriggerHandler } from 'aws-lambda';
 import { UserCognito } from 'services/business/identity/entities/user-cognito';
 import { cognitoToProfileMapper, cognitoUpdateCustomMapper } from 'services/business/identity/platform/cognito-mapper';
-import { pendingRepository } from 'services/business/identity/repository/pending-repository';
 
-import { updateCognitoUser } from '@sinapsis-co/cc-sdk/integration/cognito';
-import { WelcomeTemplate } from 'notifications/templates/welcome';
+import { CustomError } from 'config/error-catalog';
 import { notificationEvent } from 'services/support/notifications/catalog';
-import { CustomError } from '../../../../../config/error-catalog';
+import { WelcomeTemplate } from 'templates/welcome';
 import { identityEvent } from '../../catalog';
-import { userRepository } from '../../repository/user-repository';
+import { inviteRepository } from '../../repository/repo-invite';
+import { userRepository } from '../../repository/repo-user';
 
 export const handler: PostConfirmationTriggerHandler = async (event) => {
   const { userAttributes } = event.request;
@@ -35,7 +35,7 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
 
   // Check if the user has an invitation
   const [inviteTenantId, inviteId] = userAttributes['custom:companyName'].split('#');
-  const userWithInvite = await pendingRepository.deleteItem({ tenantId: inviteTenantId, id: inviteId }).catch((e) => {
+  const userWithInvite = await inviteRepository.deleteItem({ tenantId: inviteTenantId, id: inviteId }).catch((e) => {
     if (e instanceof CustomError && e.errorCode === 'ERROR_ITEM_NOT_FOUND') return;
     throw e;
   });

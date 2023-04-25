@@ -6,9 +6,9 @@ import { AssetBucketPrefab } from '@sinapsis-co/cc-core/prefab/storage/bucket/as
 import { PrivateBucketPrefab } from '@sinapsis-co/cc-core/prefab/storage/bucket/private-bucket';
 import { SesDomain } from '@sinapsis-co/cc-core/prefab/util/ses/ses-domain';
 
-import { DnsDomainRef } from 'services/support/dns-domain-ref';
-import { DnsSubdomainHostedZone } from 'services/support/dns-subdomain-hosted-zone';
-import { GlobalEventBus } from 'services/support/global-event-bus';
+import { DnsDomainRef } from '../dns-domain-ref';
+import { DnsSubdomainHostedZone } from '../dns-subdomain-hosted-zone';
+import { GlobalEventBus } from '../global-event-bus';
 import { notificationEvent } from './catalog';
 
 type Deps = {

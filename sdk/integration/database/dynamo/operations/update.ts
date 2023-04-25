@@ -4,20 +4,13 @@ import { parseTableName } from '..';
 import { PlatformError, PlatformFault } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
 import { Tracing } from 'tracing';
-import {
-  Entity,
-  EntityBuilder,
-  EntityRepositoryConfig,
-  EntityStore,
-  EntityUpdate,
-  RepositoryEvent,
-} from '../interface';
+import { Entity, EntityBuilder, EntityStore, EntityUpdate, RepositoryConfig, RepositoryEvent } from '../interface';
 import { UpdateItemFn } from '../op-interface';
 import { TableBuilder } from '../table-builder';
 import { updateMapper } from '../update-mapper';
 
 export const updateItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
-  repoConfig: EntityRepositoryConfig<Builder, Table>,
+  repoConfig: RepositoryConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient
 ): UpdateItemFn<Builder> => {
   return async (

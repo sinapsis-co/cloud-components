@@ -14,14 +14,14 @@ import { updateItem } from './operations/update';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { Tracing } from 'tracing';
-import { EntityBuilder, EntityRepositoryConfig, Repository } from './interface';
+import { EntityBuilder, ReadOnlyRepository, ReadOnlyRepositoryConfig, Repository, RepositoryConfig } from './interface';
 import { TableBuilder } from './table-builder';
 
 const client: DynamoDBClient = Tracing.captureIntegration(new DynamoDBClient({}) as any);
 export const dynamodb = DynamoDBDocumentClient.from(client);
 
 export const repository = <Builder extends EntityBuilder, Table extends TableBuilder>(
-  repoConfig: EntityRepositoryConfig<Builder, Table>
+  repoConfig: RepositoryConfig<Builder, Table>
 ): Repository<Builder, Table> => {
   return {
     events: {
@@ -42,6 +42,20 @@ export const repository = <Builder extends EntityBuilder, Table extends TableBui
     batchGetItem: batchGetItem(repoConfig, dynamodb),
     softDeleteItem: softDeleteItem(repoConfig, dynamodb),
     recoverItem: recoverItem(repoConfig, dynamodb),
+    scanTable: scanTable(repoConfig, dynamodb),
+    listIndex: listIndex(repoConfig, dynamodb),
+  };
+};
+
+export const readOnlyRepository = <Builder extends EntityBuilder, Table extends TableBuilder>(
+  repoConfig: ReadOnlyRepositoryConfig<Builder, Table>
+): ReadOnlyRepository<Builder, Table> => {
+  return {
+    entityDeserialize: repoConfig.entityDeserialize,
+    checkItemExists: checkItemExists(repoConfig, dynamodb),
+    batchGetItem: batchGetItem(repoConfig, dynamodb),
+    getItem: getItem(repoConfig, dynamodb),
+    listItem: listItem(repoConfig, dynamodb),
     scanTable: scanTable(repoConfig, dynamodb),
     listIndex: listIndex(repoConfig, dynamodb),
   };

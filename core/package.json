@@ -8,7 +8,8 @@
     "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
-    "build": "rm -rf .dist && npx tsc && npx tsc-alias"
+    "build": "rm -rf .dist && npx tsc && npx tsc-alias",
+    "verify": "npx tsc --pretty --noEmit && npx eslint . --ext .ts && npx prettier -c . && npx cspell '**/*.ts'"
   },
   "dependencies": {
     "@aws-cdk/aws-apigatewayv2-alpha": "^2.24.1-alpha.0",

@@ -6,7 +6,7 @@ import { CdnApi } from '../../support/cdn-api';
 import { GlobalEventBus } from '../../support/global-event-bus';
 import { Identity } from '../identity';
 import { baseApi } from './catalog';
-import { baseTableBuilder } from './repository/base-table';
+import { baseTableBuilder } from './repository/table-base';
 
 type Deps = {
   globalEventBus: GlobalEventBus;

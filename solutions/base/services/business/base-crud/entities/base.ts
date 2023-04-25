@@ -5,9 +5,9 @@ import {
   EntityStore,
   EntityUpdate,
 } from '@sinapsis-co/cc-sdk/integration/database/dynamo/interface';
-import { BaseTableBuilder } from '../repository/base-table';
+import { BaseTableBuilder } from '../repository/table-base';
 
-export type BaseBuilder = EntityBuilder<{
+export type BaseEntity = EntityBuilder<{
   name: 'base';
   body: {
     name: string;
@@ -24,10 +24,10 @@ export type BaseBuilder = EntityBuilder<{
   };
 }>;
 
-export type Base = Entity<BaseBuilder>;
+export type Base = Entity<BaseEntity>;
 
-export type BaseStore = EntityStore<BaseBuilder, BaseTableBuilder>;
+export type BaseStore = EntityStore<BaseEntity, BaseTableBuilder>;
 
-export type BaseCreate = EntityCreate<BaseBuilder>;
+export type BaseCreate = EntityCreate<BaseEntity>;
 
-export type BaseUpdate = Pick<EntityUpdate<BaseBuilder>, 'updatableAtt'>;
+export type BaseUpdate = Pick<EntityUpdate<BaseEntity>, 'updatableAtt'>;

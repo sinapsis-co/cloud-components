@@ -1,6 +1,6 @@
 import { eventHandler } from '@sinapsis-co/cc-sdk/handler/event/event-handler';
 import { getRuntimeSecret } from '@sinapsis-co/cc-sdk/integration/config/runtime-secret';
-import { BaseRepoEvent } from '../../../base-crud/repository/base';
+import { BaseRepoEvent } from '../../../base-crud/repository/repo-base';
 import { searchSecret } from '../../catalog';
 import { algoliaSyncEntity } from '../../platform/index-sync';
 

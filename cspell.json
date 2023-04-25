@@ -33,11 +33,9 @@
     "spreedly",
     "timestream",
     "tspm",
+    "valueof",
     "typeorm",
     "wafv2"
   ],
-  "ignorePaths": [
-    "*/node_modules/**",
-    "*/cdk.out/**"
-  ]
+  "ignorePaths": ["*/node_modules/**", "*/cdk.out/**"]
 }

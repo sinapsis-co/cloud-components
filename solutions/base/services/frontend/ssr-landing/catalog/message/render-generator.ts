@@ -1,1 +1,1 @@
-export type Message = { uri: string, querystring: string };
+export type Message = { uri: string; querystring: string };

@@ -3,7 +3,7 @@ import { DynamoDBDocumentClient, PutCommand, PutCommandInput } from '@aws-sdk/li
 import { dispatchEvent } from 'integration/event/dispatch-event';
 import { Tracing } from 'tracing';
 import { parseTableName } from '..';
-import { Entity, EntityBuilder, EntityCreate, EntityRepositoryConfig, RepositoryEvent } from '../interface';
+import { Entity, EntityBuilder, EntityCreate, RepositoryConfig, RepositoryEvent } from '../interface';
 import { CreateItemFn } from '../op-interface';
 import { TableBuilder } from '../table-builder';
 
@@ -12,7 +12,7 @@ export const createItem = <
   Table extends TableBuilder = TableBuilder,
   Omitted extends keyof Builder['body'] = ''
 >(
-  repoConfig: EntityRepositoryConfig<Builder, Table, EntityCreate<Builder, Omitted>>,
+  repoConfig: RepositoryConfig<Builder, Table, EntityCreate<Builder, Omitted>>,
   dynamodb: DynamoDBDocumentClient
 ): CreateItemFn<Builder, EntityCreate<Builder, Omitted>> => {
   return async (

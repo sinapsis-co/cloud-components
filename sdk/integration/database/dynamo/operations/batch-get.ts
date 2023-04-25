@@ -4,7 +4,7 @@ import { PlatformFault } from 'error';
 import { chunkArray } from 'util/chunk-array';
 import { wait } from 'util/executers';
 import { parseTableName } from '..';
-import { Entity, EntityBuilder, EntityRepositoryConfig, EntityStore } from '../interface';
+import { Entity, EntityBuilder, EntityStore, ReadOnlyRepositoryConfig, RepositoryConfig } from '../interface';
 import { BatchGetItemFn } from '../op-interface';
 import { TableBuilder } from '../table-builder';
 
@@ -14,7 +14,7 @@ export type BatchGetItemParams = {
 };
 
 export const batchGetItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
-  repoConfig: EntityRepositoryConfig<Builder, Table>,
+  repoConfig: RepositoryConfig<Builder, Table> | ReadOnlyRepositoryConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient,
   params?: BatchGetItemParams
 ): BatchGetItemFn<Builder> => {

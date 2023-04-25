@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import 'reflect-metadata';
 
 import { auroraClusterConnect } from '@sinapsis-co/cc-sdk/integration/database/aurora/cluster-connect';

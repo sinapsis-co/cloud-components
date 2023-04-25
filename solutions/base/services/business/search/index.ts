@@ -5,7 +5,7 @@ import { RuntimeSecret } from '@sinapsis-co/cc-core/prefab/util/config/runtime-s
 import { GlobalCoordinator } from '../../../config/config-type';
 import { CdnApi } from '../../support/cdn-api';
 import { GlobalEventBus } from '../../support/global-event-bus';
-import { baseRepo } from '../base-crud/repository/base';
+import { baseRepo } from '../base-crud/repository/repo-base';
 import { Identity } from '../identity';
 import { searchApi, searchSecret } from './catalog';
 

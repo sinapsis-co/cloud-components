@@ -4,12 +4,12 @@ import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
 import { Tracing } from 'tracing';
 import { parseTableName } from '..';
-import { Entity, EntityBuilder, EntityRepositoryConfig, EntityStore, RepositoryEvent } from '../interface';
+import { Entity, EntityBuilder, EntityStore, RepositoryConfig, RepositoryEvent } from '../interface';
 import { DeleteItemFn } from '../op-interface';
 import { TableBuilder } from '../table-builder';
 
 export const deleteItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
-  repoConfig: EntityRepositoryConfig<Builder, Table>,
+  repoConfig: RepositoryConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient
 ): DeleteItemFn<Builder> => {
   return async (

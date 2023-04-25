@@ -1,6 +1,6 @@
 import { apiHandler } from '@sinapsis-co/cc-sdk/handler/api/api-handler';
-import { identityApi } from 'services/business/identity/catalog';
-import { identityRepository } from '../../repository/identity-repository';
+import { identityApi } from '../../catalog';
+import { identityRepository } from '../../repository/ro-repo-identity';
 
 export const handler = apiHandler<identityApi.memberList.Interface>(async (_, req) => {
   const { tenantId } = req.claims;
@@ -26,7 +26,7 @@ export const handler = apiHandler<identityApi.memberList.Interface>(async (_, re
   );
   return {
     items: items.map((profile) => {
-      if (profile.avatar) profile.avatar = `${process.env.MEDIA_URL}/${profile.avatar}`;
+      if (profile['avatar']) profile['avatar'] = `${process.env.MEDIA_URL}/${profile['avatar']}`;
       return profile;
     }),
     ...att,

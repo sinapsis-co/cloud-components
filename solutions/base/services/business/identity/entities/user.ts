@@ -1,8 +1,8 @@
 import * as _interface from '@sinapsis-co/cc-sdk/integration/database/dynamo/interface';
 import { AuthScope } from '../platform/authorization';
-import { IdentityTableBuilder } from '../repository/identity-table';
+import { IdentityTable } from '../repository/table-identity';
 
-export type UserBuilder = _interface.EntityBuilder<{
+export type UserEntity = _interface.EntityBuilder<{
   name: 'user';
   body: {
     email: string;
@@ -11,8 +11,6 @@ export type UserBuilder = _interface.EntityBuilder<{
     companyName: string;
     role: AuthScope;
     avatar?: string;
-    isPending?: boolean;
-    inviteId?: string;
     location?: FullLocation;
   };
   key: {
@@ -25,13 +23,13 @@ export type UserBuilder = _interface.EntityBuilder<{
   };
 }>;
 
-export type User = _interface.Entity<UserBuilder>;
+export type User = _interface.Entity<UserEntity>;
 
-export type UserStore = _interface.EntityStore<UserBuilder, IdentityTableBuilder>;
+export type UserStore = _interface.EntityStore<UserEntity, IdentityTable>;
 
-export type UserCreate = _interface.EntityCreate<UserBuilder>;
+export type UserCreate = _interface.EntityCreate<UserEntity>;
 
-export type UserUpdate = Pick<_interface.EntityUpdate<UserBuilder>, 'givenName' | 'familyName'>;
+export type UserUpdate = Pick<_interface.EntityUpdate<UserEntity>, 'givenName' | 'familyName'>;
 
 export type FullLocation = Partial<{
   address: string;

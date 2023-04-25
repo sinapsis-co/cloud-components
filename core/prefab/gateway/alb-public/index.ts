@@ -91,7 +91,7 @@ export class PublicAlbPrefab extends Construct {
     this.albToClusterSG.connections.allowFrom(this.upstreamSG, Port.allTcp(), 'Outbound traffic from ALB to Cluster');
     Tags.of(this.albToClusterSG).add('Name', getResourceName('downstream', service.props));
 
-    // ADD PATH TO CDN DISTRO
+    // ADD PATH TO CDN DISTRIBUTION
     if (params.cdnApiPrefab) {
       if (!params.basePath) throw new SynthError('basePath is required when cdnApi is enabled');
       params.cdnApiPrefab.addAlb(params.basePath, this.alb);

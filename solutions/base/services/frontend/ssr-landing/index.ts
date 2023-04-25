@@ -5,7 +5,7 @@ import { SsrPrefab } from '@sinapsis-co/cc-core/prefab/frontend/ssr';
 import { PrivateBucketPrefab } from '@sinapsis-co/cc-core/prefab/storage/bucket/private-bucket';
 
 import { GlobalCoordinator } from '../../../config/config-type';
-import { baseRepo } from '../../business/base-crud/repository/base';
+import { baseRepo } from '../../business/base-crud/repository/repo-base';
 import { Identity } from '../../business/identity';
 import { CdnApi } from '../../support/cdn-api';
 import { DnsSubdomainCertificate } from '../../support/dns-subdomain-certificate';

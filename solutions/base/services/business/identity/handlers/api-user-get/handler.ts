@@ -1,6 +1,6 @@
 import { apiHandler } from '@sinapsis-co/cc-sdk/handler/api/api-handler';
 import { identityApi } from 'services/business/identity/catalog';
-import { userRepository } from '../../repository/user-repository';
+import { userRepository } from '../../repository/repo-user';
 
 export const handler = apiHandler<identityApi.profileGet.Interface>(async (_, req) => {
   const { tenantId, sub } = req.claims;

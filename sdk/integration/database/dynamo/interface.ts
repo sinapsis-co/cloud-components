@@ -35,7 +35,7 @@ export type EntityStore<Builder extends EntityBuilderKeys, Table extends TableBu
   Table['storeMapping']['key'] &
   Table['storeMapping']['timers'];
 
-export type EntityRepositoryConfig<
+export type RepositoryConfig<
   Builder extends EntityBuilder,
   Table extends TableBuilder,
   Create = EntityCreate<Builder>
@@ -44,6 +44,13 @@ export type EntityRepositoryConfig<
   repoName: Builder['name'];
   keySerialize: (key: EntityBuilder<Builder>['key']) => Table['storeMapping']['key'];
   entitySerialize: (key: EntityBuilder<Builder>['key'], entityCreate: Create) => EntityStore<Builder, Table>;
+  entityDeserialize: (entityStore: EntityStore<Builder, Table>) => Entity<Builder>;
+};
+
+export type ReadOnlyRepositoryConfig<Builder extends EntityBuilder, Table extends TableBuilder> = {
+  tableName: Table['tableName'];
+  repoName: Builder['name'];
+  keySerialize: (key: EntityBuilder<Builder>['key']) => Table['storeMapping']['key'];
   entityDeserialize: (entityStore: EntityStore<Builder, Table>) => Entity<Builder>;
 };
 
@@ -85,8 +92,8 @@ export type Repository<Builder extends EntityBuilder, Table extends TableBuilder
       name: `app.${Builder['name']}.recovered`;
     };
   };
-  entitySerialize: EntityRepositoryConfig<Builder, Table>['entitySerialize'];
-  entityDeserialize: EntityRepositoryConfig<Builder, Table>['entityDeserialize'];
+  entitySerialize: RepositoryConfig<Builder, Table>['entitySerialize'];
+  entityDeserialize: RepositoryConfig<Builder, Table>['entityDeserialize'];
   createItem: opInterface.CreateItemFn<Builder>;
   checkItemExists: opInterface.CheckItemExistsFn<Builder>;
   getItem: opInterface.GetItemFn<Builder>;
@@ -97,6 +104,16 @@ export type Repository<Builder extends EntityBuilder, Table extends TableBuilder
   batchGetItem: opInterface.BatchGetItemFn<Builder>;
   softDeleteItem: opInterface.SoftDeleteItemFn<Builder>;
   recoverItem: opInterface.RecoverItemFn<Builder>;
+  scanTable: opInterface.ScanTableFn<Builder>;
+  listIndex: opInterface.ListIndexFn<Builder, Table>;
+};
+
+export type ReadOnlyRepository<Builder extends EntityBuilder, Table extends TableBuilder> = {
+  entityDeserialize: RepositoryConfig<Builder, Table>['entityDeserialize'];
+  checkItemExists: opInterface.CheckItemExistsFn<Builder>;
+  getItem: opInterface.GetItemFn<Builder>;
+  listItem: opInterface.ListItemFn<Builder>;
+  batchGetItem: opInterface.BatchGetItemFn<Builder>;
   scanTable: opInterface.ScanTableFn<Builder>;
   listIndex: opInterface.ListIndexFn<Builder, Table>;
 };

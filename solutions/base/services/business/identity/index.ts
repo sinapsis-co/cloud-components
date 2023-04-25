@@ -17,7 +17,7 @@ import { GlobalCoordinator } from '../../../config/config-type';
 import { assetEvent } from '../assets/catalog';
 import { identityApi } from './catalog';
 import { buildCustomAttributes } from './platform/cognito-builder';
-import { identityTableBuilder } from './repository/identity-table';
+import { identityTableBuilder } from './repository/table-identity';
 
 /**
  * Name of the user pool

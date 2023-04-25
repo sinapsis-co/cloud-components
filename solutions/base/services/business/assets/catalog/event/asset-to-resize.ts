@@ -1,6 +1,6 @@
 import { EventConfig, EventInterface } from '@sinapsis-co/cc-sdk/catalog/event';
-import { AssetKeyGeneratorParams, ResizeMiddleware } from 'services/business/assets/entities/asset';
-import { AssetType } from 'services/business/assets/lib/assets-type';
+import { AssetKeyGeneratorParams, ResizeMiddleware } from '../../entities/asset';
+import { AssetType } from '../../lib/assets-type';
 
 export type Event = EventInterface<{
   name: 'app.asset.resize';

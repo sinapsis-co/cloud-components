@@ -3,7 +3,7 @@ import { PlatformFault } from 'error';
 import { chunkArray } from 'util/chunk-array';
 import { wait } from 'util/executers';
 import { parseTableName } from '..';
-import { Entity, EntityBuilder, EntityCreate, EntityRepositoryConfig, EntityStore } from '../interface';
+import { Entity, EntityBuilder, EntityCreate, EntityStore, RepositoryConfig } from '../interface';
 import { BatchCreateItemFn } from '../op-interface';
 import { TableBuilder } from '../table-builder';
 
@@ -13,7 +13,7 @@ export type BatchCreateItemParams = {
 };
 
 export const batchCreateItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
-  repoConfig: EntityRepositoryConfig<Builder, Table>,
+  repoConfig: RepositoryConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient,
   params?: BatchCreateItemParams
 ): BatchCreateItemFn<Builder> => {

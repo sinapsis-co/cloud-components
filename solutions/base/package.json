@@ -44,7 +44,7 @@
     "@fast-csv/format": "^4.3.5",
     "@types/aws-lambda": "^8.10.108",
     "@types/node": "^18.11.7",
-    "algoliasearch": "^4.13.1",
+    "algoliasearch": "^4.17.0",
     "aws-lambda": "^1.0.7",
     "cdk": "^2.75.0-alpha.0",
     "esbuild": "^0.14.43",
@@ -55,9 +55,5 @@
     "sharp": "^0.31.3",
     "stripe": "^11.6.0",
     "twilio": "^3.84.1"
-  },
-  "resolutions": {
-    "@types/react": "17.0.2",
-    "@types/react-dom": "17.0.2"
   }
 }

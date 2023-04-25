@@ -1,11 +1,11 @@
 import { apiHandler } from '@sinapsis-co/cc-sdk/handler/api/api-handler';
 import { updateCognitoUser } from '@sinapsis-co/cc-sdk/integration/cognito';
 
-import { identityApi } from 'services/business/identity/catalog';
-import { CustomError } from '../../../../../config/error-catalog';
+import { CustomError } from 'solutions/base/config/error-catalog';
+import { identityApi } from '../../catalog';
 import { authScope } from '../../platform/authorization';
 import { cognitoUpdateCustomMapper } from '../../platform/cognito-mapper';
-import { userRepository } from '../../repository/user-repository';
+import { userRepository } from '../../repository/repo-user';
 
 export const handler = apiHandler<identityApi.memberUpdateRole.Interface>(async (_, req) => {
   const { tenantId } = req.claims;

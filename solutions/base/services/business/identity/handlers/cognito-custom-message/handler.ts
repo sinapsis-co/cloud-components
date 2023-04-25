@@ -1,7 +1,8 @@
 import { getCognitoTemplateName } from '@sinapsis-co/cc-sdk/integration/notification/cognito-template';
 import { renderEmailTemplate } from '@sinapsis-co/cc-sdk/integration/notification/render-template';
 import { CustomMessageTriggerHandler } from 'aws-lambda';
-import { ConfirmationCodeTemplate } from 'notifications/templates/confirmation-code';
+
+import { ConfirmationCodeTemplate } from 'templates/confirmation-code';
 
 export const handler: CustomMessageTriggerHandler = async (event) => {
   const email = await renderEmailTemplate<ConfirmationCodeTemplate>(process.env.TEMPLATES_BUCKET!, {

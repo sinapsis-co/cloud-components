@@ -1,5 +1,5 @@
 import { EventConfig, EventInterface } from '@sinapsis-co/cc-sdk/catalog/event';
-import { AssetKeyGeneratorParams } from 'services/business/assets/entities/asset';
+import { AssetKeyGeneratorParams } from '../../entities/asset';
 
 export type Event = EventInterface<{
   name: 'app.asset.uploaded';

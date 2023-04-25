@@ -1,5 +1,5 @@
 import { EventConfig, EventInterface } from '@sinapsis-co/cc-sdk/catalog/event';
-import { AssetType } from 'services/business/assets/lib/assets-type';
+import { AssetType } from '../../lib/assets-type';
 
 export type Event = EventInterface<{
   name: 'app.asset.remove';
