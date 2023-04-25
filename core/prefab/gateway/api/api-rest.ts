@@ -41,18 +41,19 @@ export class ApiRestPrefab extends Construct {
 
     if (params.existingRestApiId)
       this.api = awsApigateway.RestApi.fromRestApiId(this, 'RestApi', params.existingRestApiId);
-
-    this.api = new awsApigateway.RestApi(this, 'RestApi', {
-      restApiName: getResourceName('', service.props),
-      deploy: true,
-      deployOptions: {
-        tracingEnabled: true,
-        stageName: 'default',
-      },
-      defaultCorsPreflightOptions: {
-        allowOrigins: awsApigateway.Cors.ALL_ORIGINS,
-      },
-    });
+    else {
+      this.api = new awsApigateway.RestApi(this, 'RestApi', {
+        restApiName: getResourceName('', service.props),
+        deploy: true,
+        deployOptions: {
+          tracingEnabled: true,
+          stageName: 'default',
+        },
+        defaultCorsPreflightOptions: {
+          allowOrigins: awsApigateway.Cors.ALL_ORIGINS,
+        },
+      });
+    }
 
     const apiUrl: string = Fn.join('', [
       this.api.restApiId,

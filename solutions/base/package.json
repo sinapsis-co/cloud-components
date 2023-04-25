@@ -4,7 +4,8 @@
   "license": "MIT",
   "private": true,
   "cpu": [
-    "arm64"
+    "arm64",
+    "x64"
   ],
   "engines": {
     "npm": "please-use-yarn",
