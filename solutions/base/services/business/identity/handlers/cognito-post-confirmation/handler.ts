@@ -1,10 +1,10 @@
-import { updateCognitoUser } from '@sinapsis-co/cc-sdk/integration/cognito';
 import { dispatchEvent } from '@sinapsis-co/cc-sdk/integration/event/dispatch-event';
 import { uuid } from '@sinapsis-co/cc-sdk/lib/uuid';
 import { PostConfirmationTriggerHandler } from 'aws-lambda';
 import { UserCognito } from 'services/business/identity/entities/user-cognito';
 import { cognitoToProfileMapper, cognitoUpdateCustomMapper } from 'services/business/identity/platform/cognito-mapper';
 
+import { updateCognitoUser } from '@sinapsis-co/cc-sdk/integration/cognito';
 import { CustomError } from 'config/error-catalog';
 import { notificationEvent } from 'services/support/notifications/catalog';
 import { WelcomeTemplate } from 'templates/welcome';
@@ -54,7 +54,7 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
         ? dispatchEvent(identityEvent.memberCreated.eventConfig, { tenantId, id, ...att })
         : dispatchEvent(identityEvent.tenantCreated.eventConfig, { tenantId, id, ...att }),
     ],
-    userRepository.createItem({ tenantId, id }, att),
+    userRepository.createItem({ tenantId, id }, { ...att, ...(userWithInvite ? {} : { tenantOwner: true }) }),
     updateCognitoUser(event.userName, cognitoUpdateCustomMapper(userCognito.custom), event.userPoolId),
     dispatchEvent<notificationEvent.dispatch.Event<WelcomeTemplate>>(notificationEvent.dispatch.eventConfig, {
       via: 'email',

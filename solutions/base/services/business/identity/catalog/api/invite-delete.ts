@@ -1,26 +1,22 @@
 import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-sdk/catalog/api';
-import { Schemy } from '@sinapsis-co/cc-sdk/lib/schemy';
 import { Invite } from '../../entities/invite';
 import { UserClaims } from '../../entities/user-cognito';
 import { authMdw, authScope } from '../../platform/authorization';
 
 export type Interface = ApiInterface<{
   response: Invite;
-  pathParams: EmptyObject;
-  body: { email: string };
+  pathParams: { id: string };
+  body: EmptyObject;
   claims: UserClaims;
   queryParams: EmptyObject;
 }>;
 
 export const config: ApiConfig<Interface> = {
-  name: 'api-member-create',
-  method: 'POST',
+  name: 'api-invite-delete',
+  method: 'DELETE',
   basePath: 'identity',
-  path: '/member',
-  tablePermission: 'readWrite',
+  path: '/invite/{id}',
+  tablePermission: 'write',
   scope: authScope.owner,
   authorizationMdw: authMdw,
-  schema: Schemy.schema<Interface['body']>({
-    email: { type: String, required: true },
-  }),
 };

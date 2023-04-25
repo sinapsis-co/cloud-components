@@ -14,7 +14,6 @@
     ]
   },
   "scripts": {
-    "verify": "npx tsc --pretty --noEmit && npx eslint . --ext .ts && npx prettier -c . && npx cspell '**/*.ts'",
     "release": "bash release.bash"
   },
   "lint-staged": {

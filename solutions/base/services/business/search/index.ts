@@ -2,7 +2,8 @@ import { Service } from '@sinapsis-co/cc-core/common/service';
 import { ApiAggregate } from '@sinapsis-co/cc-core/prefab/compute/function/api-function/api-aggregate';
 import { EventAggregate } from '@sinapsis-co/cc-core/prefab/compute/function/event-function/event-aggregate';
 import { RuntimeSecret } from '@sinapsis-co/cc-core/prefab/util/config/runtime-secret';
-import { GlobalCoordinator } from '../../../config/config-type';
+
+import { GlobalCoordinator } from 'config/config-type';
 import { CdnApi } from '../../support/cdn-api';
 import { GlobalEventBus } from '../../support/global-event-bus';
 import { baseRepo } from '../base-crud/repository/repo-base';

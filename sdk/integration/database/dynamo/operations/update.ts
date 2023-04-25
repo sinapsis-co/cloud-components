@@ -1,7 +1,7 @@
 import { DynamoDBDocumentClient, UpdateCommand, UpdateCommandInput } from '@aws-sdk/lib-dynamodb';
 import { parseTableName } from '..';
 
-import { PlatformError, PlatformFault } from 'error';
+import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
 import { Tracing } from 'tracing';
 import { Entity, EntityBuilder, EntityStore, EntityUpdate, RepositoryConfig, RepositoryEvent } from '../interface';
@@ -34,7 +34,9 @@ export const updateItem = <Builder extends EntityBuilder, Table extends TableBui
           })
         )
         .catch((e) => {
-          throw new PlatformFault({ code: 'FAULT_DYN_UPDATE_ITEM', detail: e.message });
+          if (e.name === 'ConditionalCheckFailedException')
+            throw new PlatformError({ code: 'ERROR_CONDITIONAL_CHECK_FAILED', statusCode: 400 });
+          else throw e;
         });
 
       if (!Attributes) throw new PlatformError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
@@ -52,6 +54,6 @@ export const updateItem = <Builder extends EntityBuilder, Table extends TableBui
     };
 
     const meta = { tableName, rawKey: key, serializedKey, mapper, params };
-    return Tracing.capture('updateItem', 'FAULT_DYN_SOFT_DELETE_ITEM', JSON.stringify(key), cmd, meta);
+    return Tracing.capture('updateItem', 'FAULT_DYN_UPDATE_ITEM', JSON.stringify(key), cmd, meta);
   };
 };

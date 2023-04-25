@@ -4,7 +4,7 @@ import { identityApi } from 'services/business/identity/catalog';
 import { cognitoUpdateStandardMapper } from '../../platform/cognito-mapper';
 import { userRepository } from '../../repository/repo-user';
 
-export const handler = apiHandler<identityApi.profileUpdate.Interface>(async (_, req) => {
+export const handler = apiHandler<identityApi.userUpdate.Interface>(async (_, req) => {
   const { tenantId, sub, email } = req.claims;
 
   const [profile] = await Promise.all([
@@ -12,4 +12,4 @@ export const handler = apiHandler<identityApi.profileUpdate.Interface>(async (_,
     updateCognitoUser(email, cognitoUpdateStandardMapper(req.body)),
   ]);
   return profile;
-}, identityApi.profileUpdate.config);
+}, identityApi.userUpdate.config);

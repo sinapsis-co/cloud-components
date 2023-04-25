@@ -2,7 +2,6 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": ".dist",
-    "typeRoots": ["../node_modules/@types"],
     "paths": {
       "services/*": ["./solutions/base/services/*"],
       "config/*": ["./solutions/base/config/*"],

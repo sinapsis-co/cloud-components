@@ -9,6 +9,7 @@ export type UserEntity = _interface.EntityBuilder<{
     givenName: string;
     familyName: string;
     companyName: string;
+    tenantOwner?: true;
     role: AuthScope;
     avatar?: string;
     location?: FullLocation;

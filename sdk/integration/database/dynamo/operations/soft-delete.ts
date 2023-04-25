@@ -27,15 +27,21 @@ export const softDeleteItem = <Builder extends _interface.EntityBuilder, Table e
     });
 
     const cmd = async () => {
-      const { Attributes } = await dynamodb.send(
-        new UpdateCommand({
-          TableName: tableName,
-          Key: serializedKey,
-          ReturnValues: 'ALL_NEW',
-          ...mapper,
-          ...params,
-        })
-      );
+      const { Attributes } = await dynamodb
+        .send(
+          new UpdateCommand({
+            TableName: tableName,
+            Key: serializedKey,
+            ReturnValues: 'ALL_NEW',
+            ...mapper,
+            ...params,
+          })
+        )
+        .catch((e) => {
+          if (e.name === 'ConditionalCheckFailedException')
+            throw new PlatformError({ code: 'ERROR_CONDITIONAL_CHECK_FAILED', statusCode: 400 });
+          else throw e;
+        });
 
       if (!Attributes) throw new PlatformError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
 

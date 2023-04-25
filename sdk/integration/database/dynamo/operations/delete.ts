@@ -20,14 +20,20 @@ export const deleteItem = <Builder extends EntityBuilder, Table extends TableBui
     const serializedKey = repoConfig.keySerialize(key);
 
     const cmd = async () => {
-      const { Attributes } = await dynamodb.send(
-        new DeleteCommand({
-          TableName: tableName,
-          Key: serializedKey,
-          ReturnValues: 'ALL_OLD',
-          ...params,
-        })
-      );
+      const { Attributes } = await dynamodb
+        .send(
+          new DeleteCommand({
+            TableName: tableName,
+            Key: serializedKey,
+            ReturnValues: 'ALL_OLD',
+            ...params,
+          })
+        )
+        .catch((e) => {
+          if (e.name === 'ConditionalCheckFailedException')
+            throw new PlatformError({ code: 'ERROR_CONDITIONAL_CHECK_FAILED', statusCode: 400 });
+          else throw e;
+        });
 
       if (!Attributes) throw new PlatformError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
 

@@ -67,37 +67,46 @@ export class Identity extends Service<GlobalCoordinator> {
       eventBus: deps.globalEventBus.eventBusPrefab,
       tableBuilder: identityTableBuilder,
       handlers: {
-        profileGet: {
-          ...identityApi.profileGet.config,
-          environment: {
-            MEDIA_URL: getDomain(this.props.subdomain.assets, this.props, true),
-          },
-        },
-        memberCreate: {
-          ...identityApi.memberCreate.config,
+        inviteCreate: {
+          ...identityApi.inviteCreate.config,
           environment: {
             PROJECT_NAME: this.props.projectName,
             WEBAPP_URL: getDomain(this.props.subdomain.spaWebapp, this.props),
             MEDIA_URL: getDomain(this.props.subdomain.assets, this.props),
           },
         },
+        inviteResend: {
+          ...identityApi.inviteResend.config,
+          environment: {
+            PROJECT_NAME: this.props.projectName,
+            WEBAPP_URL: getDomain(this.props.subdomain.spaWebapp, this.props),
+            MEDIA_URL: getDomain(this.props.subdomain.assets, this.props),
+          },
+        },
+        inviteDelete: identityApi.inviteDelete.config,
         memberList: {
           ...identityApi.memberList.config,
           environment: {
             MEDIA_URL: getDomain(this.props.subdomain.assets, this.props, true),
           },
         },
-        profileUpdate: {
-          ...identityApi.profileUpdate.config,
-          modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.updateUserAtt])],
-        },
         memberRoleUpdate: {
           ...identityApi.memberUpdateRole.config,
           modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.updateUserAtt])],
         },
-        profileDelete: {
+        memberDelete: {
           ...identityApi.memberDelete.config,
           modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.deleteUser])],
+        },
+        userGet: {
+          ...identityApi.userGet.config,
+          environment: {
+            MEDIA_URL: getDomain(this.props.subdomain.assets, this.props, true),
+          },
+        },
+        userUpdate: {
+          ...identityApi.userUpdate.config,
+          modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.updateUserAtt])],
         },
       },
     });

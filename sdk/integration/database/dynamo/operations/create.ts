@@ -1,5 +1,6 @@
 import { DynamoDBDocumentClient, PutCommand, PutCommandInput } from '@aws-sdk/lib-dynamodb';
 
+import { PlatformError } from '@sinapsis-co/cc-sdk/error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
 import { Tracing } from 'tracing';
 import { parseTableName } from '..';
@@ -24,7 +25,11 @@ export const createItem = <
     const serializedItem = repoConfig.entitySerialize(key, entityCreate);
 
     const cmd = async () => {
-      await dynamodb.send(new PutCommand({ TableName: tableName, Item: serializedItem, ...params }));
+      await dynamodb.send(new PutCommand({ TableName: tableName, Item: serializedItem, ...params })).catch((e) => {
+        if (e.name === 'ConditionalCheckFailedException')
+          throw new PlatformError({ code: 'ERROR_CONDITIONAL_CHECK_FAILED', statusCode: 400 });
+        else throw e;
+      });
       const entity = repoConfig.entityDeserialize(serializedItem);
       if (params?.emitEvent) {
         await dispatchEvent<RepositoryEvent<Builder>['created']>(

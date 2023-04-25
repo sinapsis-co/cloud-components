@@ -2,14 +2,14 @@ import { apiHandler } from '@sinapsis-co/cc-sdk/handler/api/api-handler';
 import { dispatchEvent } from '@sinapsis-co/cc-sdk/integration/event/dispatch-event';
 import { uuid } from '@sinapsis-co/cc-sdk/lib/uuid';
 
-import { CustomError } from '../../../../../config/error-catalog';
-import { UserInviteTemplate } from '../../../../../notifications/templates/user-invite';
-import { notificationEvent } from '../../../../support/notifications/catalog';
+import { CustomError } from 'config/error-catalog';
+import { notificationEvent } from 'services/support/notifications/catalog';
+import { UserInviteTemplate } from 'templates/user-invite';
 import { identityApi } from '../../catalog';
 import { inviteRepository } from '../../repository/repo-invite';
 import { identityRepository } from '../../repository/ro-repo-identity';
 
-export const handler = apiHandler<identityApi.memberCreate.Interface>(async (_, req) => {
+export const handler = apiHandler<identityApi.inviteCreate.Interface>(async (_, req) => {
   const { tenantId, companyName } = req.claims;
   const inviteId = uuid();
 
@@ -53,4 +53,4 @@ export const handler = apiHandler<identityApi.memberCreate.Interface>(async (_, 
   });
 
   return invite;
-}, identityApi.memberCreate.config);
+}, identityApi.inviteCreate.config);
