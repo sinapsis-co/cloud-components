@@ -108,6 +108,7 @@ export class CdnApiPrefab extends Construct {
           originId: getCloudFrontName('Origin', 'Default', this.service.props),
         }),
         ...this.unrestrictedBehaviorOptions,
+        originRequestPolicy: awsCloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
       };
     }
 
