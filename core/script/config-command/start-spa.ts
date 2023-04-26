@@ -29,12 +29,15 @@ export const startSPA: ConfigCommand = async <
   try {
     console.log('<< Start SPA Script >>');
 
-    const { envName, ephemeralEnvName, servicesNamesInput, envNameInput, roleName, accountMap } = await preScript(
-      globalConstConfig,
-      globalEnvConfig,
-      globalDeployTargetConfig,
-      args
-    );
+    const {
+      envName,
+      ephemeralEnvName,
+      servicesNamesInput,
+      envNameInput,
+      roleName,
+      accountMap,
+      isSingleProjectAccount,
+    } = await preScript(globalConstConfig, globalEnvConfig, globalDeployTargetConfig, args);
 
     console.log('>> STEP: (1/3) => LOADING CONFIGS');
     const projectName = globalConstConfig.projectName;
@@ -50,9 +53,16 @@ export const startSPA: ConfigCommand = async <
 
     console.log('>> STEP: (2/3) => RENDERING ENV');
     const getParamName = (name: string) =>
-      getResourceName(name, { projectName, envName, ephemeralEnvName, serviceName: servicesNamesInput[0] });
+      getResourceName(name, {
+        projectName,
+        envName,
+        ephemeralEnvName,
+        isSingleProjectAccount,
+        serviceName: servicesNamesInput[0],
+      });
 
     const ssm = new SSMClient(role);
+
     const deployConfig = await ssm.send(new GetParameterCommand({ Name: getParamName('config') }));
 
     if (!deployConfig.Parameter?.Value) throw new Error('Invalid Config');

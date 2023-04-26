@@ -24,6 +24,7 @@ export const preScript = async <
   globalDeployTargetConfig: BaseGlobalDeployTargetConfig<AllowedEnv, DeployTargetName>,
   args: string[]
 ): Promise<{
+  isSingleProjectAccount?: boolean;
   servicesNamesInput: string[];
   envNameInput: string;
   ephemeralEnvName: string;
@@ -69,6 +70,7 @@ export const preScript = async <
       : '';
 
     return {
+      isSingleProjectAccount: props.isSingleProjectAccount,
       servicesNamesInput,
       envName,
       envNameInput,

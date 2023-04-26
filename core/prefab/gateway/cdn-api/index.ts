@@ -1,5 +1,4 @@
 import { CfnOutput } from 'aws-cdk-lib';
-import { RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import * as awsCloudfront from 'aws-cdk-lib/aws-cloudfront';
 import { HttpOrigin, HttpOriginProps, LoadBalancerV2Origin, RestApiOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
@@ -105,7 +104,7 @@ export class CdnApiPrefab extends Construct {
 
     if (params.restApiDefaultBehavior) {
       defaultBehavior = {
-        origin: new RestApiOrigin(params.restApiDefaultBehavior.api as RestApi, {
+        origin: new RestApiOrigin(params.restApiDefaultBehavior.api, {
           originId: getCloudFrontName('Origin', 'Default', this.service.props),
         }),
         ...this.unrestrictedBehaviorOptions,
