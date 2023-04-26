@@ -64,7 +64,7 @@ export class ApiRestPrefab extends Construct {
     this.basePath = this.api.root.resourceForPath(params.basePath);
 
     if (params.httpProxyIntegrationUrl) {
-      this.basePath.addProxy().addMethod('ANY', new awsApigateway.HttpIntegration(params.httpProxyIntegrationUrl));
+      this.basePath.addMethod('ANY', new awsApigateway.HttpIntegration(params.httpProxyIntegrationUrl));
     }
 
     if (params.cdnApiPrefab)
