@@ -7,7 +7,7 @@ import { notificationEvent } from 'services/support/notifications/catalog';
 import { UserInviteTemplate } from 'templates/user-invite';
 import { identityApi } from '../../catalog';
 import { inviteRepository } from '../../repository/repo-invite';
-import { identityRepository } from '../../repository/ro-repo-identity';
+import { identityView } from '../../repository/view-identity';
 
 export const handler = apiHandler<identityApi.inviteCreate.Interface>(async (_, req) => {
   const { tenantId, companyName } = req.claims;
@@ -15,7 +15,7 @@ export const handler = apiHandler<identityApi.inviteCreate.Interface>(async (_, 
 
   // We need to run the query because the email is not the primary key, and we use identityRepository because
   // we want to find coincides in both cases (users or invites)
-  const emailCheck = await identityRepository.listIndex(
+  const emailCheck = await identityView.listIndex(
     'email',
     { limit: 50 },
     {

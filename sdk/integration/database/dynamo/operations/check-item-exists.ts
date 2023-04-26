@@ -1,12 +1,12 @@
 import { DynamoDBDocumentClient, GetCommand, GetCommandInput } from '@aws-sdk/lib-dynamodb';
 import { Tracing } from 'tracing';
 import { parseTableName } from '..';
-import { Entity, EntityBuilder, EntityStore, ReadOnlyRepositoryConfig, RepositoryConfig } from '../interface';
+import { Entity, EntityBuilder, EntityStore, RepositoryConfig } from '../interface';
 import { CheckItemExistsFn } from '../op-interface';
 import { TableBuilder } from '../table-builder';
 
 export const checkItemExists = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
-  repoConfig: RepositoryConfig<Builder, Table> | ReadOnlyRepositoryConfig<Builder, Table>,
+  repoConfig: RepositoryConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient
 ): CheckItemExistsFn<Builder> => {
   return async (

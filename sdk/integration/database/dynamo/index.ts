@@ -14,7 +14,7 @@ import { updateItem } from './operations/update';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { Tracing } from 'tracing';
-import { EntityBuilder, ReadOnlyRepository, ReadOnlyRepositoryConfig, Repository, RepositoryConfig } from './interface';
+import { EntityBuilder, Repository, RepositoryConfig, View, ViewConfig } from './interface';
 import { TableBuilder } from './table-builder';
 
 const client: DynamoDBClient = Tracing.captureIntegration(new DynamoDBClient({}) as any);
@@ -47,14 +47,11 @@ export const repository = <Builder extends EntityBuilder, Table extends TableBui
   };
 };
 
-export const readOnlyRepository = <Builder extends EntityBuilder, Table extends TableBuilder>(
-  repoConfig: ReadOnlyRepositoryConfig<Builder, Table>
-): ReadOnlyRepository<Builder, Table> => {
+export const view = <Builder extends EntityBuilder, Table extends TableBuilder>(
+  repoConfig: ViewConfig<Builder, Table>
+): View<Builder, Table> => {
   return {
     entityDeserialize: repoConfig.entityDeserialize,
-    checkItemExists: checkItemExists(repoConfig, dynamodb),
-    batchGetItem: batchGetItem(repoConfig, dynamodb),
-    getItem: getItem(repoConfig, dynamodb),
     listItem: listItem(repoConfig, dynamodb),
     scanTable: scanTable(repoConfig, dynamodb),
     listIndex: listIndex(repoConfig, dynamodb),

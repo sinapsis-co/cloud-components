@@ -47,10 +47,8 @@ export type RepositoryConfig<
   entityDeserialize: (entityStore: EntityStore<Builder, Table>) => Entity<Builder>;
 };
 
-export type ReadOnlyRepositoryConfig<Builder extends EntityBuilder, Table extends TableBuilder> = {
+export type ViewConfig<Builder extends EntityBuilder, Table extends TableBuilder> = {
   tableName: Table['tableName'];
-  repoName: Builder['name'];
-  keySerialize: (key: EntityBuilder<Builder>['key']) => Table['storeMapping']['key'];
   entityDeserialize: (entityStore: EntityStore<Builder, Table>) => Entity<Builder>;
 };
 
@@ -108,12 +106,9 @@ export type Repository<Builder extends EntityBuilder, Table extends TableBuilder
   listIndex: opInterface.ListIndexFn<Builder, Table>;
 };
 
-export type ReadOnlyRepository<Builder extends EntityBuilder, Table extends TableBuilder> = {
+export type View<Builder extends EntityBuilder, Table extends TableBuilder> = {
   entityDeserialize: RepositoryConfig<Builder, Table>['entityDeserialize'];
-  checkItemExists: opInterface.CheckItemExistsFn<Builder>;
-  getItem: opInterface.GetItemFn<Builder>;
   listItem: opInterface.ListItemFn<Builder>;
-  batchGetItem: opInterface.BatchGetItemFn<Builder>;
   scanTable: opInterface.ScanTableFn<Builder>;
   listIndex: opInterface.ListIndexFn<Builder, Table>;
 };

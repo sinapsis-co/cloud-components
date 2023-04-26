@@ -3,12 +3,12 @@ import { DynamoDBDocumentClient, GetCommand, GetCommandInput } from '@aws-sdk/li
 import { PlatformError } from 'error';
 import { Tracing } from 'tracing';
 import { parseTableName } from '..';
-import { Entity, EntityBuilder, EntityStore, ReadOnlyRepositoryConfig, RepositoryConfig } from '../interface';
+import { Entity, EntityBuilder, EntityStore, RepositoryConfig } from '../interface';
 import { GetItemFn } from '../op-interface';
 import { TableBuilder } from '../table-builder';
 
 export const getItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
-  repoConfig: RepositoryConfig<Builder, Table> | ReadOnlyRepositoryConfig<Builder, Table>,
+  repoConfig: RepositoryConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient
 ): GetItemFn<Builder> => {
   return async (key: EntityBuilder<Builder>['key'], params?: Partial<GetCommandInput>): Promise<Entity<Builder>> => {

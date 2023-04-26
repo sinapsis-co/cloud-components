@@ -1,19 +1,11 @@
-import { readOnlyRepository } from '@sinapsis-co/cc-sdk/integration/database/dynamo';
-import { RepositoryEvent } from '@sinapsis-co/cc-sdk/integration/database/dynamo/interface';
+import { view } from '@sinapsis-co/cc-sdk/integration/database/dynamo';
 import { Invite, InviteEntity, InviteStore } from '../entities/invite';
 import { User, UserEntity, UserStore } from '../entities/user';
 import { IdentityTable } from './table-identity';
 
-// This repo maps to the whole table for listing and index queries
-export const identityRepository = readOnlyRepository<UserEntity | InviteEntity, IdentityTable>({
+// This view maps to the whole table for listing and index queries
+export const identityView = view<UserEntity | InviteEntity, IdentityTable>({
   tableName: 'identity',
-  repoName: 'user',
-  keySerialize: (key: UserEntity['key'] | UserEntity['key']): IdentityTable['storeMapping']['key'] => {
-    return {
-      pk: key.tenantId,
-      sk: key.id,
-    };
-  },
   // We must map every entity mapped in the table
   entityDeserialize: (entityStore: UserStore | InviteStore): User | Invite => {
     const { pk, sk, createdAt, updatedAt, ...att } = entityStore;
@@ -28,4 +20,3 @@ export const identityRepository = readOnlyRepository<UserEntity | InviteEntity, 
     };
   },
 });
-export type UserProfileRepoEvent = RepositoryEvent<UserEntity>;

@@ -5,12 +5,12 @@ import { PaginatedResponse } from 'catalog/api';
 import { PlatformFault } from 'error';
 import { Tracing } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
-import { Entity, EntityBuilder, EntityStore, ReadOnlyRepositoryConfig, RepositoryConfig } from '../interface';
+import { Entity, EntityBuilder, EntityStore, RepositoryConfig, ViewConfig } from '../interface';
 import { ScanTableFn } from '../op-interface';
 import { TableBuilder } from '../table-builder';
 
 export const scanTable = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
-  repoConfig: RepositoryConfig<Builder, Table> | ReadOnlyRepositoryConfig<Builder, Table>,
+  repoConfig: RepositoryConfig<Builder, Table> | ViewConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient
 ): ScanTableFn<Builder> => {
   return async (
