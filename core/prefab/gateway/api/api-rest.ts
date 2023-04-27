@@ -18,6 +18,7 @@ export type ApiRestParams = {
   stageName?: string;
   stageVariables?: Record<string, string>;
   httpProxyIntegrationUrl?: string;
+  apiKeyRequired?: boolean;
 };
 
 export class ApiRestPrefab extends Construct {
@@ -64,7 +65,15 @@ export class ApiRestPrefab extends Construct {
     this.basePath = this.api.root.resourceForPath(params.basePath);
 
     if (params.httpProxyIntegrationUrl) {
-      this.basePath.addProxy({ defaultIntegration: new awsApigateway.HttpIntegration(params.httpProxyIntegrationUrl) });
+      this.basePath.addProxy({ anyMethod: false }).addMethod(
+        'ANY',
+        new awsApigateway.HttpIntegration(params.httpProxyIntegrationUrl, {
+          httpMethod: 'ANY',
+          proxy: true,
+          options: { requestParameters: { 'integration.request.path.proxy': 'method.request.path.proxy' } },
+        }),
+        { requestParameters: { 'method.request.path.proxy': true }, apiKeyRequired: params.apiKeyRequired }
+      );
     }
 
     if (params.cdnApiPrefab)
