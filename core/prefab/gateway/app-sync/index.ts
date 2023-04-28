@@ -11,12 +11,14 @@ import { mergeTypeDefs } from '@graphql-tools/merge';
 import { print } from 'graphql';
 import path, { join } from 'path';
 
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { getDomain } from 'common/naming/get-domain';
 import { getLogicalName } from 'common/naming/get-logical-name';
 import { getResourceName } from 'common/naming/get-resource-name';
 import { Service } from 'common/service';
 import { info } from 'console';
 import { writeFileSync } from 'fs';
+import { DynamoTablePrefab } from 'prefab/storage/dynamo/table';
 
 export type AppSyncPrefabParams = {
   name: string;
@@ -72,6 +74,10 @@ export class AppSyncPrefab extends Construct {
       schema: schema,
       authorizationConfig: { defaultAuthorization },
       domainName: domainConfig,
+      logConfig: {
+        fieldLogLevel: awsAppsync.FieldLogLevel.ALL,
+        retention: RetentionDays.ONE_MONTH,
+      },
     });
 
     if (params.domainConfig) {
@@ -84,6 +90,12 @@ export class AppSyncPrefab extends Construct {
     }
     new CfnOutput(this, 'Domain', { value: domainConfig?.domainName || this.api.graphqlUrl });
   }
+
+  addDynamoTableDataSource = (tablePrefab: DynamoTablePrefab): awsAppsync.DynamoDbDataSource => {
+    return this.api.addDynamoDbDataSource(tablePrefab.tableName, tablePrefab.table, {
+      name: `${tablePrefab.tableName}TableDataSource`,
+    });
+  };
 
   addFunctionResolver = (params: FunctionResolverParams): void => {
     new awsAppsync.Resolver(this, getLogicalName('pipeline', params.fieldName), {

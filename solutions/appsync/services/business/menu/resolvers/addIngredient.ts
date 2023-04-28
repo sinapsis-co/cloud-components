@@ -1,15 +1,15 @@
-import { Context, DynamoDBGetItemRequest, util } from '@aws-appsync/utils';
+import { Context, DynamoDBPutItemRequest, util } from '@aws-appsync/utils';
 
-export function request(ctx: Context): DynamoDBGetItemRequest {
-  const {
-    args: { id },
-  } = ctx;
+export function request(ctx: Context): DynamoDBPutItemRequest {
+  const { input } = ctx.args;
   return {
-    operation: 'GetItem',
-    key: util.dynamodb.toMapValues({ id }),
+    operation: 'PutItem',
+    key: util.dynamodb.toMapValues({ pk: util.autoId() }),
+    attributeValues: util.dynamodb.toMapValues(input)!,
   };
 }
 
 export function response(ctx: Context) {
-  return ctx.result;
+  const { pk, ...att } = ctx.result;
+  return { id: pk, ...att };
 }

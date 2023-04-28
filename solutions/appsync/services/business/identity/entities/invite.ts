@@ -1,6 +1,6 @@
 import * as _interface from '@sinapsis-co/cc-sdk/integration/database/dynamo/interface';
 import { AuthScope } from '../platform/authorization';
-import { IdentityTable } from '../repository/table-identity';
+import { IdentityTable } from '../table/table-identity';
 
 export type InviteEntity = _interface.EntityBuilder<{
   name: 'invite';

@@ -1,5 +1,6 @@
 type Query {
-  getIngredients(limit: Int, nextToken: String): [IngredientConnection]
+  listIngredients(limit: Int, nextToken: String): IngredientConnection
+  getIngredient(id: ID!): Ingredient
 }
 
 type Mutation {
@@ -26,7 +27,7 @@ enum Measurement {
 }
 
 type IngredientConnection {
-  ingredients: [Ingredient]
+  items: [Ingredient]
   nextToken: String
 }
 

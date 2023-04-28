@@ -1,7 +1,7 @@
 import { repository } from '@sinapsis-co/cc-sdk/integration/database/dynamo';
 import { RepositoryEvent } from '@sinapsis-co/cc-sdk/integration/database/dynamo/interface';
 import { User, UserCreate, UserEntity, UserStore } from '../entities/user';
-import { IdentityTable } from './table-identity';
+import { IdentityTable } from '../table/table-identity';
 
 // This repo maps to pending users
 export const userRepository = repository<UserEntity, IdentityTable>({

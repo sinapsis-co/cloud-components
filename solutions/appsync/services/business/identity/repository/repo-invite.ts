@@ -1,7 +1,7 @@
 import { repository } from '@sinapsis-co/cc-sdk/integration/database/dynamo';
 import { RepositoryEvent } from '@sinapsis-co/cc-sdk/integration/database/dynamo/interface';
 import { Invite, InviteCreate, InviteEntity, InviteStore } from '../entities/invite';
-import { IdentityTable } from './table-identity';
+import { IdentityTable } from '../table/table-identity';
 
 // This repo maps to confirm users
 export const inviteRepository = repository<InviteEntity, IdentityTable>({

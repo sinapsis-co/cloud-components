@@ -15,7 +15,7 @@ type Deps = {
 const depsNames: Array<keyof Deps> = ['globalEventBus', 'dnsSubdomainCertificate'];
 
 export class GraphqlApi extends Service<GlobalCoordinator> {
-  public api: AppSyncPrefab;
+  public appSyncPrefab: AppSyncPrefab;
 
   constructor(coordinator: GlobalCoordinator) {
     super(coordinator, GraphqlApi.name, depsNames);
@@ -23,7 +23,7 @@ export class GraphqlApi extends Service<GlobalCoordinator> {
   }
 
   build(deps: Deps) {
-    this.api = new AppSyncPrefab(this, {
+    this.appSyncPrefab = new AppSyncPrefab(this, {
       name: 'graphql',
       baseApiFolder: __dirname,
       domainConfig: {

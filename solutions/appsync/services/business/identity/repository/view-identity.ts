@@ -1,7 +1,7 @@
 import { view } from '@sinapsis-co/cc-sdk/integration/database/dynamo';
 import { Invite, InviteEntity, InviteStore } from '../entities/invite';
 import { User, UserEntity, UserStore } from '../entities/user';
-import { IdentityTable } from './table-identity';
+import { IdentityTable } from '../table/table-identity';
 
 // This view maps to the whole table for listing and index queries
 export const identityView = view<UserEntity | InviteEntity, IdentityTable>({
