@@ -10,7 +10,7 @@ import { Service } from 'common/service';
 
 import { CdnApiPrefab } from 'prefab/gateway/cdn-api';
 
-export type ApiRestParams = {
+export type ApiRestPrefabParams = {
   basePath: string;
   cdnApiPrefab?: CdnApiPrefab;
   userPool?: UserPool;
@@ -26,7 +26,7 @@ export class ApiRestPrefab extends Construct {
   public readonly authorizer: awsApigateway.IAuthorizer;
   public readonly basePath: awsApigateway.Resource;
 
-  constructor(service: Service, params: ApiRestParams) {
+  constructor(service: Service, params: ApiRestPrefabParams) {
     super(service, getLogicalName(ApiRestPrefab.name));
 
     if (params.userPool) {

@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@webapp/*": ["./src/*"],
+      "@service/*": ["../../service/*"]
+    }
+  }
+}

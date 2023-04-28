@@ -23,6 +23,13 @@ export class SingleCrud extends Service<GlobalCoordinator> {
   }
 
   build(deps: Deps) {
+    // new ApiRestPrefab(this, {
+    //   basePath: '',
+    //   stageName: this.props.envName,
+    //   stageVariables: { environment: this.props.envName },
+    //   httpProxyIntegrationUrl: 'https://lb.api.stage.trywecare.com/{proxy}',
+    // });
+
     const customAuthorizerHandler = new BaseFunction(this, {
       name: 'authorizer',
       baseFunctionFolder: __dirname,

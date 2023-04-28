@@ -1,0 +1,31 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "algoliasearch",
+    "backoffice",
+    "backofficeauth",
+    "browserslist",
+    "Bugsnag",
+    "certificatemanager",
+    "cognitoidentityserviceprovider",
+    "DISTRO",
+    "esbuild",
+    "fargate",
+    "forceatlas",
+    "fullname",
+    "nodenext",
+    "noprod",
+    "parens",
+    "passwordless",
+    "schemy",
+    "sesv",
+    "SIGNIN",
+    "sinapsis",
+    "siteverify",
+    "stepfunctions",
+    "Topup",
+    "TTFB"
+  ],
+  "ignorePaths": ["**/node_modules/**", "cdk.out/**", "dist/**", "frontend/**", "package.json", "yarn.lock", ".yarnrc"]
+}

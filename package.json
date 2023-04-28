@@ -10,6 +10,7 @@
       "sdk/",
       "core/",
       "solutions/base",
+      "solutions/appsync",
       "solutions/ecs"
     ]
   },

@@ -1,0 +1,26 @@
+type Mutation {
+  addFood(input: FoodInput!): Food
+}
+
+type Food {
+  id: ID!
+  name: String!
+  ingredients: [IngredientPortion]!
+  description: String
+}
+
+type IngredientPortion {
+  ingredient: Ingredient!
+  quantity: Float!
+}
+
+input IngredientPortionInput {
+  ingredientId: ID!
+  quantity: Float!
+}
+
+input FoodInput {
+  name: String!
+  ingredients: [IngredientPortionInput]!
+  description: String
+}

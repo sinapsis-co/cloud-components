@@ -1,0 +1,39 @@
+type Query {
+  getIngredients(limit: Int, nextToken: String): [IngredientConnection]
+}
+
+type Mutation {
+  addIngredient(input: IngredientInput!): Ingredient
+  # addFood(input: FoodInput!): Food
+}
+
+type Ingredient {
+  id: ID!
+  name: String!
+  measurement: Measurement!
+  price: Float!
+  category: String!
+  description: String
+  image: String
+}
+
+enum Measurement {
+  unit
+  kg
+  g
+  l
+  ml
+}
+
+type IngredientConnection {
+  ingredients: [Ingredient]
+  nextToken: String
+}
+
+input IngredientInput {
+  name: String!
+  measurement: String!
+  price: Float!
+  category: String!
+  description: String
+}

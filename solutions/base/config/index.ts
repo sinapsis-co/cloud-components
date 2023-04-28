@@ -34,9 +34,9 @@ export const globalEnvConfig: GlobalEnvConfig = {
   staging: {
     deployBranch: 'staging',
     roleName: 'SinapsisDevRole',
-    hostedZoneName: 'sinapsis.co',
-    baseDomainName: 'base.sinapsis.co',
-    envDomainName: 'staging.base.sinapsis.co',
+    hostedZoneName: 'sinapsis.io',
+    baseDomainName: 'base.sinapsis.io',
+    envDomainName: 'staging.base.sinapsis.io',
     emailSender: 'no-reply',
     wafEnabled: false,
     clientNotificationSlack: false,

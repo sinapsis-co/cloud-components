@@ -7,3 +7,4 @@ yarn-error.log
 .eslintcache
 .dist
 .next
+merged.graphql

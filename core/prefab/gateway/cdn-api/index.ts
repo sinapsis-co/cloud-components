@@ -18,7 +18,7 @@ import { ApiRestPrefab } from 'prefab/gateway/api/api-rest';
 import { WafPrefab } from 'prefab/networking/waf';
 import { PrivateBucketPrefab } from 'prefab/storage/bucket/private-bucket';
 
-export type CdnApiConstructParams = {
+export type CdnApiPrefabParams = {
   subDomain: string;
   certificate: ICertificate;
   albDefaultBehavior?: PublicAlbPrefab;
@@ -37,7 +37,7 @@ export class CdnApiPrefab extends Construct {
   private readonly apiGatewayBehaviorOptions: Omit<awsCloudfront.BehaviorOptions, 'origin'>;
   private readonly unrestrictedBehaviorOptions: Omit<awsCloudfront.BehaviorOptions, 'origin'>;
 
-  constructor(service: Service, params: CdnApiConstructParams) {
+  constructor(service: Service, params: CdnApiPrefabParams) {
     super(service, getLogicalName(CdnApiPrefab.name, params.subDomain));
 
     this.service = service;

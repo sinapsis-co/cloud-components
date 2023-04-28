@@ -19,6 +19,7 @@
     "deploy-spa": "npx ts-node script-manager.ts deploy-spa",
     "deploy-ssr": "npx ts-node script-manager.ts deploy-ssr",
     "start-spa": "npx ts-node script-manager.ts start-spa",
+    "start-ssr": "npx ts-node script-manager.ts start-ssr",
     "destroy": "npx ts-node script-manager.ts destroy",
     "create-user": "npx ts-node script-manager.ts create-user",
     "gen-postman-env": "npx ts-node script-manager.ts gen-postman-env",

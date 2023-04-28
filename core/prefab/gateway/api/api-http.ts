@@ -13,7 +13,7 @@ import { Service } from 'common/service';
 
 import { CdnApiPrefab } from 'prefab/gateway/cdn-api';
 
-export type ApiHttpParams = {
+export type ApiHttPrefabParams = {
   basePath: string;
   cdnApiPrefab: CdnApiPrefab;
   userPool?: UserPool;
@@ -25,7 +25,7 @@ export class ApiHttpPrefab extends Construct {
   public readonly api: HttpApi;
   public readonly authorizer: IHttpRouteAuthorizer;
 
-  constructor(service: Service, params: ApiHttpParams) {
+  constructor(service: Service, params: ApiHttPrefabParams) {
     super(service, getLogicalName(ApiHttpPrefab.name));
 
     if (params.userPool && params.userPoolClient)
