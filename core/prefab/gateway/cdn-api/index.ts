@@ -23,6 +23,7 @@ export type CdnApiPrefabParams = {
   certificate: ICertificate;
   albDefaultBehavior?: PublicAlbPrefab;
   restApiDefaultBehavior?: ApiRestPrefab;
+  headersWhitelist?: string[];
   waf?: WafPrefab;
   skipRecord?: true;
 };
@@ -47,6 +48,7 @@ export class CdnApiPrefab extends Construct {
     if (params.albDefaultBehavior && params.restApiDefaultBehavior)
       throw new SynthError('Only alb or api can be default behavior', service.props);
 
+    // Api Gateway Policies
     this.apiGatewayCachePolicy = new awsCloudfront.CachePolicy(this, 'CachePolicy', {
       cachePolicyName: getCloudFrontName('ApiGateway', 'CachePolicy', this.service.props),
       queryStringBehavior: awsCloudfront.CacheQueryStringBehavior.all(),
@@ -58,7 +60,18 @@ export class CdnApiPrefab extends Construct {
 
     this.apiGatewayRequestPolicy = new awsCloudfront.OriginRequestPolicy(this, 'OriginRequestPolicy', {
       originRequestPolicyName: getCloudFrontName('ApiGateway', 'RequestPolicy', this.service.props),
-      headerBehavior: awsCloudfront.OriginRequestHeaderBehavior.all(),
+      // headerBehavior: awsCloudfront.OriginRequestHeaderBehavior.all('Authorization'),
+      headerBehavior: {
+        behavior: 'whitelist',
+        headers: [
+          ...(params.headersWhitelist || []),
+          'Access-Control-Allow-Origin',
+          'Access-Control-Request-Method',
+          'Access-Control-Allow-Headers',
+          'Access-Control-Request-Headers',
+          'Origin',
+        ],
+      },
       queryStringBehavior: awsCloudfront.OriginRequestQueryStringBehavior.all(),
     });
 
@@ -70,6 +83,7 @@ export class CdnApiPrefab extends Construct {
       viewerProtocolPolicy: awsCloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
     };
 
+    // Integrations Policies
     this.unrestrictedBehaviorOptions = {
       compress: true,
       cachePolicy: awsCloudfront.CachePolicy.CACHING_DISABLED,
@@ -78,6 +92,7 @@ export class CdnApiPrefab extends Construct {
       viewerProtocolPolicy: awsCloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
     };
 
+    // Default Behavior
     let defaultBehavior: awsCloudfront.BehaviorOptions = {
       origin: new HttpOrigin(
         new PrivateBucketPrefab(service, { bucketName: 'default-origin' }).bucket.bucketDomainName,
@@ -105,6 +120,7 @@ export class CdnApiPrefab extends Construct {
       };
     }
 
+    // Distribution
     this.distribution = new awsCloudfront.Distribution(this, 'Distribution', {
       enabled: true,
       comment: getResourceName('cdn', service.props),
@@ -115,6 +131,7 @@ export class CdnApiPrefab extends Construct {
       webAclId: params.waf?.webACL?.attrArn,
     });
 
+    // Route53
     if (!params.skipRecord) {
       const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', service.props) });
       new ARecord(service, 'Record', {

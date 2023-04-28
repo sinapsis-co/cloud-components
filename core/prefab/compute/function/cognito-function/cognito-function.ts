@@ -30,7 +30,7 @@ export class CognitoFunction extends Construct {
     }).lambdaFunction;
 
     if (this.lambdaFunction.timeout && this.lambdaFunction.timeout.toSeconds() > Duration.seconds(5).toSeconds()) {
-      throw new SynthError('Lambda timeout must be less than 5 seconds CognitoFunction ApiFunctions', service.props);
+      throw new SynthError('Lambda timeout must be less than 5 seconds in CognitoFunction', service.props);
     }
 
     params.userPool.addTrigger(params.operation, this.lambdaFunction);
