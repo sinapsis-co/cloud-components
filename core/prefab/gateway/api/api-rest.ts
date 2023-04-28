@@ -65,7 +65,17 @@ export class ApiRestPrefab extends Construct {
     this.basePath = this.api.root.resourceForPath(params.basePath);
 
     if (params.httpProxyIntegrationUrl) {
-      this.basePath.addProxy({ anyMethod: false }).addMethod(
+      const proxy = this.basePath.addProxy({
+        anyMethod: false,
+        defaultCorsPreflightOptions: {
+          allowOrigins: ['*'],
+          allowHeaders: ['*'],
+          allowMethods: awsApigateway.Cors.ALL_METHODS,
+          statusCode: 200,
+          exposeHeaders: ['*'],
+        },
+      });
+      proxy.addMethod(
         'ANY',
         new awsApigateway.HttpIntegration(params.httpProxyIntegrationUrl, {
           httpMethod: 'ANY',
@@ -74,6 +84,24 @@ export class ApiRestPrefab extends Construct {
         }),
         { requestParameters: { 'method.request.path.proxy': true }, apiKeyRequired: params.apiKeyRequired }
       );
+
+      // proxy.addMethod(
+      //   'OPTIONS',
+      //   new awsApigateway.MockIntegration({
+      //     passthroughBehavior: awsApigateway.PassthroughBehavior.NEVER,
+      //     requestTemplates: { 'application/json': '{ "statusCode": 200 }' },
+      //     integrationResponses: [
+      //       {
+      //         statusCode: '200',
+      //         responseParameters: {
+      //           'method.response.header.Access-Control-Allow-Headers': '*',
+      //           'method.response.header.Access-Control-Allow-Origin': '*',
+      //           'method.response.header.Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
+      //         },
+      //       },
+      //     ],
+      //   })
+      // );
     }
 
     if (params.cdnApiPrefab)

@@ -141,6 +141,18 @@ export class CdnApiPrefab extends Construct {
       this.apiGatewayBehaviorOptions
     );
   }
+
+  public addAppSync(apiUrl: string, originOptions?: HttpOriginProps): void {
+    this.distribution.addBehavior(
+      '/graphql*',
+      new HttpOrigin(apiUrl, {
+        originId: getCloudFrontName('Origin', 'graphql', this.service.props),
+        ...originOptions,
+      }),
+      this.apiGatewayBehaviorOptions
+    );
+  }
+
   public addAlb(basePath: string, alb: ApplicationLoadBalancer): void {
     this.distribution.addBehavior(
       `/${basePath}/*`,

@@ -16,14 +16,17 @@ import { getDomain } from 'common/naming/get-domain';
 import { getLogicalName } from 'common/naming/get-logical-name';
 import { getResourceName } from 'common/naming/get-resource-name';
 import { Service } from 'common/service';
+import { SynthError } from 'common/synth/synth-error';
 import { info } from 'console';
 import { writeFileSync } from 'fs';
 import { DynamoTablePrefab } from 'prefab/storage/dynamo/table';
+import { CdnApiPrefab } from '../cdn-api';
 
 export type AppSyncPrefabParams = {
   name: string;
   baseApiFolder: string;
   userPool?: UserPool;
+  cdnApiPrefab?: CdnApiPrefab;
   domainConfig?: {
     certificate: ICertificate;
     subdomain: string;
@@ -45,6 +48,9 @@ export class AppSyncPrefab extends Construct {
     super(service, getLogicalName(AppSyncPrefab.name));
 
     this.baseApiFolder = params.baseApiFolder;
+
+    if (params.cdnApiPrefab && params.domainConfig)
+      throw new SynthError('Cannot use cdnApi and custom domain at the same time');
 
     const defaultAuthorization: awsAppsync.AuthorizationMode = params.userPool
       ? {
@@ -87,6 +93,9 @@ export class AppSyncPrefab extends Construct {
         recordName: domainConfig?.domainName,
         domainName: this.api.appSyncDomainName,
       });
+    }
+    if (params.cdnApiPrefab) {
+      params.cdnApiPrefab.addAppSync(this.api.graphqlUrl);
     }
     new CfnOutput(this, 'Domain', { value: domainConfig?.domainName || this.api.graphqlUrl });
   }
