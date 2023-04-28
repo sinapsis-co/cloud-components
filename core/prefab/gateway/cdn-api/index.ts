@@ -1,4 +1,4 @@
-import { CfnOutput } from 'aws-cdk-lib';
+import { CfnOutput, Fn } from 'aws-cdk-lib';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import * as awsCloudfront from 'aws-cdk-lib/aws-cloudfront';
 import { HttpOrigin, HttpOriginProps, LoadBalancerV2Origin, RestApiOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
@@ -55,18 +55,11 @@ export class CdnApiPrefab extends Construct {
         headers: ['Authorization'],
       },
     });
+
     this.apiGatewayRequestPolicy = new awsCloudfront.OriginRequestPolicy(this, 'OriginRequestPolicy', {
       originRequestPolicyName: getCloudFrontName('ApiGateway', 'RequestPolicy', this.service.props),
-      headerBehavior: {
-        behavior: 'whitelist',
-        headers: [
-          'Access-Control-Allow-Origin',
-          'Access-Control-Request-Method',
-          'Access-Control-Allow-Headers',
-          'Access-Control-Request-Headers',
-          'Origin',
-        ],
-      },
+      headerBehavior: awsCloudfront.OriginRequestHeaderBehavior.all(),
+      queryStringBehavior: awsCloudfront.OriginRequestQueryStringBehavior.all(),
     });
 
     this.apiGatewayBehaviorOptions = {
@@ -145,11 +138,11 @@ export class CdnApiPrefab extends Construct {
   public addAppSync(apiUrl: string, originOptions?: HttpOriginProps): void {
     this.distribution.addBehavior(
       '/graphql*',
-      new HttpOrigin(apiUrl, {
+      new HttpOrigin(Fn.select(2, Fn.split('/', apiUrl)), {
         originId: getCloudFrontName('Origin', 'graphql', this.service.props),
         ...originOptions,
       }),
-      this.apiGatewayBehaviorOptions
+      this.unrestrictedBehaviorOptions
     );
   }
 
