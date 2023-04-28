@@ -65,16 +65,8 @@ export class ApiRestPrefab extends Construct {
     this.basePath = this.api.root.resourceForPath(params.basePath);
 
     if (params.httpProxyIntegrationUrl) {
-      const proxy = this.basePath.addProxy({
-        anyMethod: false,
-        defaultCorsPreflightOptions: {
-          allowOrigins: ['*'],
-          allowHeaders: ['*'],
-          allowMethods: awsApigateway.Cors.ALL_METHODS,
-          statusCode: 200,
-          exposeHeaders: ['*'],
-        },
-      });
+      const proxy = this.basePath.addProxy({ anyMethod: false });
+
       proxy.addMethod(
         'ANY',
         new awsApigateway.HttpIntegration(params.httpProxyIntegrationUrl, {
@@ -84,24 +76,19 @@ export class ApiRestPrefab extends Construct {
         }),
         { requestParameters: { 'method.request.path.proxy': true }, apiKeyRequired: params.apiKeyRequired }
       );
+      // I'm sorry for this, but there isn't a better way to do this...
+      this.api.methods
+        .filter((method) => method.httpMethod === 'OPTIONS')
+        .forEach((m) => {
+          proxy.node.tryRemoveChild(m.node.id);
+        });
 
-      // proxy.addMethod(
-      //   'OPTIONS',
-      //   new awsApigateway.MockIntegration({
-      //     passthroughBehavior: awsApigateway.PassthroughBehavior.NEVER,
-      //     requestTemplates: { 'application/json': '{ "statusCode": 200 }' },
-      //     integrationResponses: [
-      //       {
-      //         statusCode: '200',
-      //         responseParameters: {
-      //           'method.response.header.Access-Control-Allow-Headers': '*',
-      //           'method.response.header.Access-Control-Allow-Origin': '*',
-      //           'method.response.header.Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
-      //         },
-      //       },
-      //     ],
-      //   })
-      // );
+      proxy.addCorsPreflight({
+        allowOrigins: ['*'],
+        allowHeaders: ['*'],
+        allowMethods: awsApigateway.Cors.ALL_METHODS,
+        statusCode: 204,
+      });
     }
 
     if (params.cdnApiPrefab)
