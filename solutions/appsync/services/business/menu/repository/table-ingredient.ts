@@ -1,4 +1,4 @@
-import { TableBuilder } from '@sinapsis-co/cc-sdk/integration/database/dynamo/table-builder';
+import { TableBuilder } from '@sinapsis-co/cc-sdk/integration/database/dynamo/types/table-builder';
 
 export type IngredientsTableBuilder = TableBuilder<{
   tableName: 'ingredients';

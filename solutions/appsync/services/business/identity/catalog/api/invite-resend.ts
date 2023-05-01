@@ -1,6 +1,6 @@
 import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-sdk/catalog/api';
-import { Invite } from '../../entities/invite';
 import { UserClaims } from '../../entities/user-cognito';
+import { Invite } from '../../model/invite';
 import { authMdw, authScope } from '../../platform/authorization';
 
 export type Interface = ApiInterface<{

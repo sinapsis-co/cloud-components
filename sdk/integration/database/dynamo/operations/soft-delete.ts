@@ -3,12 +3,12 @@ import dayjs from 'dayjs';
 
 import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
+import { Entity, EntityBuilder, EntityEvents, EntityKey, EntityStore, EntityUpdate } from 'model';
 import { Tracing } from 'tracing';
-import { parseTableName } from '../repository';
-import { Entity, EntityBuilder, EntityStore, EntityUpdate } from '../types/entity-builder';
 import { SoftDeleteItemFn } from '../types/operations';
-import { RepositoryConfig, RepositoryEvent } from '../types/repository';
+import { RepositoryConfig } from '../types/repository';
 import { TableBuilder } from '../types/table-builder';
+import { parseTableName } from '../util/parse-name';
 import { updateMapper } from '../util/update-mapper';
 
 export type TimeToDelete = {
@@ -21,16 +21,19 @@ export const softDeleteItem = <EBuilder extends EntityBuilder, TBuilder extends 
   dynamodb: DynamoDBDocumentClient
 ): SoftDeleteItemFn<EBuilder> => {
   return async (
-    key: EntityBuilder<EBuilder>['key'],
+    key: EntityKey<EBuilder>,
     params?: Partial<UpdateCommandInput> & { emitEvent?: boolean; deleteAfter?: TimeToDelete }
   ): Promise<Entity<EBuilder>> => {
     const tableName = process.env[parseTableName(repoConfig.tableName)];
     const serializedKey = repoConfig.keySerialize(key);
     const ttl = params?.deleteAfter || { amount: 30, period: 'days' };
-    const mapper = updateMapper<EntityUpdate<EBuilder>>({
-      deleted: true,
-      deleteTTL: dayjs().add(ttl.amount, ttl.period).unix(),
-    });
+    const mapper = updateMapper<EntityUpdate<EBuilder>>(
+      {},
+      {
+        deleted: true,
+        deleteTTL: dayjs().add(ttl.amount, ttl.period).unix(),
+      }
+    );
 
     const cmd = async () => {
       const { Attributes } = await dynamodb
@@ -54,7 +57,7 @@ export const softDeleteItem = <EBuilder extends EntityBuilder, TBuilder extends 
       const entity = repoConfig.entityDeserialize(Attributes as EntityStore<EBuilder, TBuilder>);
 
       if (params?.emitEvent) {
-        await dispatchEvent<RepositoryEvent<EBuilder>['deleted']>(
+        await dispatchEvent<EntityEvents<EBuilder>['deleted']>(
           { name: `app.${repoConfig.repoName}.deleted`, source: 'app' },
           entity
         );

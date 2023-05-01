@@ -1,5 +1,5 @@
 import { Context, DynamoDBPutItemRequest, util } from '@aws-appsync/utils';
-import type { IngredientInput, IngredientSchema } from '../schemas/ingredient';
+import type { IngredientInput, IngredientSchema } from '../schema/ingredient';
 
 type UnitMutationContextReq<Input> = (ctx: Context<{ input: Input }>) => DynamoDBPutItemRequest;
 type UnitMutationContextRes<Result, Response> = (ctx: Context<any, any, any, any, Result>) => Response;

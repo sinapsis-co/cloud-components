@@ -16,6 +16,7 @@
       "integration/*": ["./sdk/integration/*"],
       "lib/*": ["./sdk/lib/*"],
       "util/*": ["./sdk/util/*"],
+      "model/*": ["./sdk/model/*"],
       "logger": ["./sdk/logger"],
       "error": ["./sdk/error"],
       "tracing": ["./sdk/tracing"]

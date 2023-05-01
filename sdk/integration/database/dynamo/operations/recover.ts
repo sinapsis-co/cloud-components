@@ -2,19 +2,19 @@ import { DynamoDBDocumentClient, UpdateCommand, UpdateCommandInput } from '@aws-
 
 import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
+import { Entity, EntityBuilder, EntityEvents, EntityKey, EntityStore } from 'model';
 import { Tracing } from 'tracing';
-import { parseTableName } from '../repository';
-import { Entity, EntityBuilder, EntityStore } from '../types/entity-builder';
 import { RecoverItemFn } from '../types/operations';
-import { RepositoryConfig, RepositoryEvent } from '../types/repository';
+import { RepositoryConfig } from '../types/repository';
 import { TableBuilder } from '../types/table-builder';
+import { parseTableName } from '../util/parse-name';
 
 export const recoverItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
   repoConfig: RepositoryConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient
 ): RecoverItemFn<Builder> => {
   return async (
-    key: EntityBuilder<Builder>['key'],
+    key: EntityKey<Builder>,
     params?: Partial<UpdateCommandInput> & { emitEvent?: boolean }
   ): Promise<Entity<Builder>> => {
     const tableName = process.env[parseTableName(repoConfig.tableName)];
@@ -42,7 +42,7 @@ export const recoverItem = <Builder extends EntityBuilder, Table extends TableBu
 
       const entity = repoConfig.entityDeserialize(Attributes as EntityStore<Builder, Table>);
       if (params?.emitEvent) {
-        await dispatchEvent<RepositoryEvent<Builder>['recovered']>(
+        await dispatchEvent<EntityEvents<Builder>['recovered']>(
           { name: `app.${repoConfig.repoName}.recovered`, source: 'app' },
           entity
         );

@@ -1,8 +1,8 @@
 import * as api from '@sinapsis-co/cc-sdk/catalog/api';
 
-import { Invite } from '../../entities/invite';
-import { User } from '../../entities/user';
 import { UserClaims } from '../../entities/user-cognito';
+import { Invite } from '../../model/invite';
+import { User } from '../../model/user';
 import { authMdw, authScope } from '../../platform/authorization';
 
 export type Interface = api.ApiInterface<{

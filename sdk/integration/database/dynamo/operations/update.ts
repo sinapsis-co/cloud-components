@@ -2,12 +2,12 @@ import { DynamoDBDocumentClient, UpdateCommand, UpdateCommandInput } from '@aws-
 
 import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
+import { Entity, EntityBuilder, EntityEvents, EntityKey, EntityStore, EntityUpdate } from 'model';
 import { Tracing } from 'tracing';
-import { parseTableName } from '../repository';
-import { Entity, EntityBuilder, EntityStore, EntityUpdate } from '../types/entity-builder';
 import { UpdateItemFn } from '../types/operations';
-import { RepositoryConfig, RepositoryEvent } from '../types/repository';
+import { RepositoryConfig } from '../types/repository';
 import { TableBuilder } from '../types/table-builder';
+import { parseTableName } from '../util/parse-name';
 import { updateMapper } from '../util/update-mapper';
 
 export const updateItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
@@ -15,8 +15,8 @@ export const updateItem = <Builder extends EntityBuilder, Table extends TableBui
   dynamodb: DynamoDBDocumentClient
 ): UpdateItemFn<Builder> => {
   return async (
-    key: EntityBuilder<Builder>['key'],
-    entityUpdate: Partial<EntityUpdate<Builder>>,
+    key: EntityKey<Builder>,
+    entityUpdate: EntityUpdate<Builder>,
     params?: Partial<UpdateCommandInput> & { emitEvent?: boolean }
   ): Promise<Entity<Builder>> => {
     const tableName = process.env[parseTableName(repoConfig.tableName)];
@@ -45,7 +45,7 @@ export const updateItem = <Builder extends EntityBuilder, Table extends TableBui
       const entity: Entity<Builder> = repoConfig.entityDeserialize(Attributes as EntityStore<Builder, Table>);
 
       if (params?.emitEvent) {
-        await dispatchEvent<RepositoryEvent<Builder>['updated']>(
+        await dispatchEvent<EntityEvents<Builder>['updated']>(
           { name: `app.${repoConfig.repoName}.updated`, source: 'app' },
           entity
         );

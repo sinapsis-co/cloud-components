@@ -14,8 +14,8 @@ import { updateItem } from './operations/update';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { Tracing } from 'tracing';
-import { EntityBuilder } from './types/entity-builder';
-import { Repository, RepositoryConfig, View, ViewConfig } from './types/repository';
+import { EntityBuilder } from '../../../model';
+import { Repository, RepositoryConfig } from './types/repository';
 import { TableBuilder } from './types/table-builder';
 
 const client: DynamoDBClient = Tracing.captureIntegration(new DynamoDBClient({}) as any);
@@ -47,19 +47,4 @@ export const repository = <Builder extends EntityBuilder, Table extends TableBui
     scanTable: scanTable(repoConfig, dynamodb),
     listIndex: listIndex(repoConfig, dynamodb),
   };
-};
-
-export const view = <Builder extends EntityBuilder, Table extends TableBuilder>(
-  repoConfig: ViewConfig<Builder, Table>
-): View<Builder, Table> => {
-  return {
-    entityDeserialize: repoConfig.entityDeserialize,
-    listItem: listItem(repoConfig, dynamodb),
-    scanTable: scanTable(repoConfig, dynamodb),
-    listIndex: listIndex(repoConfig, dynamodb),
-  };
-};
-
-export const parseTableName = (tableName: string): string => {
-  return `TABLE_${tableName.toLocaleUpperCase().split('-').join('_')}`;
 };

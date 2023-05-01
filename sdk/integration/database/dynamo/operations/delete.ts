@@ -2,12 +2,12 @@ import { DeleteCommand, DeleteCommandInput, DynamoDBDocumentClient } from '@aws-
 
 import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
+import { Entity, EntityBuilder, EntityEvents, EntityStore } from 'model';
 import { Tracing } from 'tracing';
-import { parseTableName } from '../repository';
-import { Entity, EntityBuilder, EntityStore } from '../types/entity-builder';
 import { DeleteItemFn } from '../types/operations';
-import { RepositoryConfig, RepositoryEvent } from '../types/repository';
+import { RepositoryConfig } from '../types/repository';
 import { TableBuilder } from '../types/table-builder';
+import { parseTableName } from '../util/parse-name';
 
 export const deleteItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
   repoConfig: RepositoryConfig<Builder, Table>,
@@ -41,7 +41,7 @@ export const deleteItem = <Builder extends EntityBuilder, Table extends TableBui
       const entity = repoConfig.entityDeserialize(Attributes as EntityStore<Builder, Table>);
 
       if (params?.emitEvent) {
-        await dispatchEvent<RepositoryEvent<Builder>['deleted']>(
+        await dispatchEvent<EntityEvents<Builder>['deleted']>(
           { name: `app.${repoConfig.repoName}.deleted`, source: 'app' },
           entity
         );

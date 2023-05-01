@@ -37,6 +37,7 @@
       "common/*": ["./core/common/*"],
       "prefab/*": ["./core/prefab/*"],
       "catalog/*": ["./sdk/catalog/*"],
+      "model/*": ["./sdk/model/*"],
       "error/*": ["./sdk/error/*"],
       "handler/*": ["./sdk/handler/*"],
       "integration/*": ["./sdk/integration/*"],

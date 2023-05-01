@@ -2,13 +2,13 @@ import { DynamoDBDocumentClient, QueryCommand, QueryCommandInput } from '@aws-sd
 
 import { PaginatedResponse } from 'catalog/api';
 import { PlatformFault } from 'error';
+import { Entity, EntityBuilder, EntityStore } from 'model';
 import { Tracing } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
-import { parseTableName } from '../repository';
-import { Entity, EntityBuilder, EntityStore } from '../types/entity-builder';
 import { ListItemFn } from '../types/operations';
 import { RepositoryConfig, ViewConfig } from '../types/repository';
 import { TableBuilder } from '../types/table-builder';
+import { parseTableName } from '../util/parse-name';
 
 export const listItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
   repoConfig: RepositoryConfig<Builder, Table> | ViewConfig<Builder, Table>,

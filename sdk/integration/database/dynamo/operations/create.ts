@@ -1,13 +1,13 @@
 import { DynamoDBDocumentClient, PutCommand, PutCommandInput } from '@aws-sdk/lib-dynamodb';
 
-import { PlatformError } from '@sinapsis-co/cc-sdk/error';
+import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
+import { Entity, EntityBuilder, EntityCreate, EntityEvents, EntityKey } from 'model';
 import { Tracing } from 'tracing';
-import { parseTableName } from '../repository';
-import { Entity, EntityBuilder, EntityCreate } from '../types/entity-builder';
 import { CreateItemFn } from '../types/operations';
-import { RepositoryConfig, RepositoryEvent } from '../types/repository';
+import { RepositoryConfig } from '../types/repository';
 import { TableBuilder } from '../types/table-builder';
+import { parseTableName } from '../util/parse-name';
 
 export const createItem = <
   Builder extends EntityBuilder,
@@ -18,7 +18,7 @@ export const createItem = <
   dynamodb: DynamoDBDocumentClient
 ): CreateItemFn<Builder, EntityCreate<Builder, Omitted>> => {
   return async (
-    key: EntityBuilder<Builder>['key'],
+    key: EntityKey<Builder>,
     entityCreate: EntityCreate<Builder, Omitted>,
     params?: Partial<PutCommandInput> & { emitEvent?: boolean }
   ): Promise<Entity<Builder>> => {
@@ -33,7 +33,7 @@ export const createItem = <
       });
       const entity = repoConfig.entityDeserialize(serializedItem);
       if (params?.emitEvent) {
-        await dispatchEvent<RepositoryEvent<Builder>['created']>(
+        await dispatchEvent<EntityEvents<Builder>['created']>(
           { name: `app.${repoConfig.repoName}.created`, source: 'app' },
           entity
         );

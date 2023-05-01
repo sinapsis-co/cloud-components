@@ -2,28 +2,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { Arg, Field, ID, InputType, Mutation, ObjectType, Query, Resolver, registerEnumType } from 'type-graphql';
-import { SerializableEntity, SerializeKeyMapper } from '../decorators';
-import { Ingredient, Measurement } from '../entities/ingredient';
-
-export interface SerializableEntity<Original, Mapped> {
-  serialize: (data: Entity<Original>) => Entity<Mapped>;
-  deserialize: (data: Entity<Mapped>) => Entity<Original>;
-}
-
-export type Entity<T> = Omit<T, 'serialize' | 'deserialize'>;
+import { Ingredient, IngredientCreate, Measurement } from '../model/ingredient';
 
 // Entities
 @ObjectType()
-@SerializableEntity
-export class IngredientSchema implements Ingredient, SerializableEntity<IngredientSchema, any> {
-  @SerializeKeyMapper('pk')
+export class IngredientSchema implements Ingredient {
   @Field((type) => ID)
   public id: string;
 
-  @SerializeKeyMapper('sk')
   @Field()
   public name: string;
-
   @Field({ nullable: true })
   public description?: string;
   @Field((type) => Measurement)
@@ -38,9 +26,9 @@ export class IngredientSchema implements Ingredient, SerializableEntity<Ingredie
   public updatedAt: Date;
   // @Field(() => [String])
   // ingredients: string[];
-  serialize: (p: Entity<IngredientSchema>) => any;
-  deserialize: (data: any) => Entity<IngredientSchema>;
 }
+
+registerEnumType(Measurement, { name: 'Measurement' });
 
 @ObjectType()
 export class IngredientQueryResult {
@@ -50,11 +38,9 @@ export class IngredientQueryResult {
   nextToken?: string;
 }
 
-registerEnumType(Measurement, { name: 'Measurement' });
-
 // Inputs
 @InputType()
-export class IngredientInput {
+export class IngredientInput implements IngredientCreate {
   @Field()
   name: string;
   @Field({ nullable: true })

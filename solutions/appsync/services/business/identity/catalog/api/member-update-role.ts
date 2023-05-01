@@ -1,8 +1,8 @@
 import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-sdk/catalog/api';
 import { Schemy } from '@sinapsis-co/cc-sdk/lib/schemy';
 
-import { User } from '../../entities/user';
 import { UserClaims } from '../../entities/user-cognito';
+import { User } from '../../model/user';
 import { authMdw, authScope } from '../../platform/authorization';
 
 export type Interface = ApiInterface<{

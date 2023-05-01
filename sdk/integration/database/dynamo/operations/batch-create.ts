@@ -1,13 +1,13 @@
 import { BatchWriteCommand, BatchWriteCommandInput, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 
 import { PlatformFault } from 'error';
+import { Entity, EntityBuilder, EntityCreate, EntityKey, EntityStore } from 'model';
 import { chunkArray } from 'util/chunk-array';
 import { wait } from 'util/executers';
-import { parseTableName } from '../repository';
-import { Entity, EntityBuilder, EntityCreate, EntityStore } from '../types/entity-builder';
 import { BatchCreateItemFn } from '../types/operations';
 import { RepositoryConfig } from '../types/repository';
 import { TableBuilder } from '../types/table-builder';
+import { parseTableName } from '../util/parse-name';
 
 export type BatchCreateItemParams = {
   autoRetry?: true;
@@ -20,7 +20,7 @@ export const batchCreateItem = <Builder extends EntityBuilder, Table extends Tab
   params?: BatchCreateItemParams
 ): BatchCreateItemFn<Builder> => {
   return async (
-    items: { key: EntityBuilder<Builder>['key']; entityCreate: EntityCreate<Builder> }[]
+    items: { key: EntityKey<Builder>; entityCreate: EntityCreate<Builder> }[]
   ): Promise<Entity<Builder>[]> => {
     const table = process.env[parseTableName(repoConfig.tableName)]!;
     const entities: EntityStore<Builder, Table>[] = items.map((e) => repoConfig.entitySerialize(e.key, e.entityCreate));

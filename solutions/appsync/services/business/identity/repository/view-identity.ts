@@ -1,13 +1,16 @@
-import { view } from '@sinapsis-co/cc-sdk/integration/database/dynamo';
-import { Invite, InviteEntity, InviteStore } from '../entities/invite';
-import { User, UserEntity, UserStore } from '../entities/user';
-import { IdentityTable } from '../table/table-identity';
+import { View } from '@sinapsis-co/cc-sdk/integration/database/dynamo/types/repository';
+import { view } from '@sinapsis-co/cc-sdk/integration/database/dynamo/view';
+import { InviteModel } from '../model/invite';
+import { UserModel } from '../model/user';
 
-// This view maps to the whole table for listing and index queries
-export const identityView = view<UserEntity | InviteEntity, IdentityTable>({
+type EntityBuilderView = UserModel['Builder'] | InviteModel['Builder'];
+type StoreBuilderView = UserModel['StoreBuilder'] | InviteModel['StoreBuilder'];
+type EntityView = UserModel['Entity'] | InviteModel['Entity'];
+type StoreView = UserModel['Store'] | InviteModel['Store'];
+
+export const identityView: View<EntityBuilderView, StoreBuilderView> = view({
   tableName: 'identity',
-  // We must map every entity mapped in the table
-  entityDeserialize: (entityStore: UserStore | InviteStore): User | Invite => {
+  entityDeserialize: (entityStore: StoreView): EntityView => {
     const { pk, sk, createdAt, updatedAt, ...att } = entityStore;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, id] = sk.split('#');

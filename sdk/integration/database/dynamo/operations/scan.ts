@@ -2,13 +2,13 @@ import { DynamoDBDocumentClient, ScanCommand, ScanCommandInput } from '@aws-sdk/
 
 import { PaginatedResponse } from 'catalog/api';
 import { PlatformFault } from 'error';
+import { Entity, EntityBuilder, EntityStore } from 'model';
 import { Tracing } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
-import { parseTableName } from '../repository';
-import { Entity, EntityBuilder, EntityStore } from '../types/entity-builder';
 import { ScanTableFn } from '../types/operations';
 import { RepositoryConfig, ViewConfig } from '../types/repository';
 import { TableBuilder } from '../types/table-builder';
+import { parseTableName } from '../util/parse-name';
 
 export const scanTable = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
   repoConfig: RepositoryConfig<Builder, Table> | ViewConfig<Builder, Table>,

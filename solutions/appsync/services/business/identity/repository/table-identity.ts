@@ -1,6 +1,6 @@
-import { TableBuilder } from '@sinapsis-co/cc-sdk/integration/database/dynamo/table-builder';
+import { TableBuilder } from '@sinapsis-co/cc-sdk/integration/database/dynamo/types/table-builder';
 
-export type IdentityTable = TableBuilder<{
+export type IdentityTableBuilder = TableBuilder<{
   tableName: 'identity';
   indexes: ['email'];
   ttlAttribute: true;
@@ -16,7 +16,7 @@ export type IdentityTable = TableBuilder<{
   };
 }>;
 
-export const identityTableBuilder: IdentityTable = {
+export const identityTableBuilder: IdentityTableBuilder = {
   tableName: 'identity',
   indexes: ['email'],
   ttlAttribute: true,

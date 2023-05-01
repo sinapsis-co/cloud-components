@@ -1,5 +1,5 @@
 import { EventConfig, EventInterface } from '@sinapsis-co/cc-sdk/catalog/event';
-import { User } from '../../entities/user';
+import { User } from '../../model/user';
 
 export type Event = EventInterface<{
   name: 'app.tenant.created';

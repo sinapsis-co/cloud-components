@@ -1,6 +1,6 @@
 import { TablePermission } from '@sinapsis-co/cc-sdk/catalog/api';
-import { parseTableName } from '@sinapsis-co/cc-sdk/integration/database/dynamo';
-import { TableBuilder } from '@sinapsis-co/cc-sdk/integration/database/dynamo/table-builder';
+import { TableBuilder } from '@sinapsis-co/cc-sdk/integration/database/dynamo/types/table-builder';
+import { parseTableName } from '@sinapsis-co/cc-sdk/integration/database/dynamo/util/parse-name';
 import { RemovalPolicy } from 'aws-cdk-lib';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';

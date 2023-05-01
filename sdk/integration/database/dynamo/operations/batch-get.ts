@@ -2,13 +2,13 @@ import { BatchGetCommand, BatchGetCommandInput, DynamoDBDocumentClient } from '@
 import { NativeAttributeValue } from '@aws-sdk/util-dynamodb';
 
 import { PlatformFault } from 'error';
+import { Entity, EntityBuilder, EntityKey, EntityStore } from 'model';
 import { chunkArray } from 'util/chunk-array';
 import { wait } from 'util/executers';
-import { parseTableName } from '../repository';
-import { Entity, EntityBuilder, EntityStore } from '../types/entity-builder';
 import { BatchGetItemFn } from '../types/operations';
 import { RepositoryConfig } from '../types/repository';
 import { TableBuilder } from '../types/table-builder';
+import { parseTableName } from '../util/parse-name';
 
 export type BatchGetItemParams = {
   autoRetry?: true;
@@ -20,7 +20,7 @@ export const batchGetItem = <Builder extends EntityBuilder, Table extends TableB
   dynamodb: DynamoDBDocumentClient,
   params?: BatchGetItemParams
 ): BatchGetItemFn<Builder> => {
-  return async (keys: EntityBuilder<Builder>['key'][]): Promise<Entity<Builder>[] | undefined[]> => {
+  return async (keys: EntityKey<Builder>[]): Promise<Entity<Builder>[] | undefined[]> => {
     const table: string = process.env[parseTableName(repoConfig.tableName)]!;
     const items = keys.map((k) => repoConfig.keySerialize(k));
     const chunk = chunkArray(items, 100);
