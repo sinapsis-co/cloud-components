@@ -34,22 +34,22 @@ export type EntityStore<EBuilderKeys extends EntityBuilderKeys, TBuilder extends
   TBuilder['storeMapping']['key'] &
   TBuilder['storeMapping']['timers'];
 
-export type EntityEvents<EBuilder extends EntityBuilder> = {
+export type EntityEvents<EBuilderKeys extends EntityBuilderKeys> = {
   created: {
-    name: `app.${EBuilder['name']}.created`;
-    payload: Entity<EBuilder>;
+    name: `app.${EBuilderKeys['name']}.created`;
+    payload: Entity<EBuilderKeys>;
   };
   updated: {
-    name: `app.${EBuilder['name']}.updated`;
-    payload: Entity<EBuilder>;
+    name: `app.${EBuilderKeys['name']}.updated`;
+    payload: Entity<EBuilderKeys>;
   };
   deleted: {
-    name: `app.${EBuilder['name']}.deleted`;
-    payload: Entity<EBuilder>;
+    name: `app.${EBuilderKeys['name']}.deleted`;
+    payload: Entity<EBuilderKeys>;
   };
   recovered: {
-    name: `app.${EBuilder['name']}.recovered`;
-    payload: Entity<EBuilder>;
+    name: `app.${EBuilderKeys['name']}.recovered`;
+    payload: Entity<EBuilderKeys>;
   };
 };
 

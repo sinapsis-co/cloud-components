@@ -6,8 +6,9 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { Tracing } from 'tracing';
 import { EntityBuilder } from '../../../model';
-import { View, ViewConfig } from './types/repository';
+import { ViewConfig } from './types/repository';
 import { TableBuilder } from './types/table-builder';
+import { View } from './types/view';
 
 const client: DynamoDBClient = Tracing.captureIntegration(new DynamoDBClient({}) as any);
 export const dynamodb = DynamoDBDocumentClient.from(client);

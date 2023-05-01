@@ -66,10 +66,3 @@ export type Repository<EBuilder extends EntityBuilder, TBuilder extends TableBui
   scanTable: ScanTableFn<EBuilder>;
   listIndex: ListIndexFn<EBuilder, TBuilder>;
 };
-
-export type View<EBuilder extends EntityBuilder, TBuilder extends TableBuilder> = {
-  entityDeserialize: RepositoryConfig<EBuilder, TBuilder>['entityDeserialize'];
-  listItem: ListItemFn<EBuilder>;
-  scanTable: ScanTableFn<EBuilder>;
-  listIndex: ListIndexFn<EBuilder, TBuilder>;
-};

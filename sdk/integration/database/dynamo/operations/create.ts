@@ -14,7 +14,7 @@ export const createItem = <
   Table extends TableBuilder = TableBuilder,
   Omitted extends keyof Builder['body'] = ''
 >(
-  repoConfig: RepositoryConfig<Builder, Table, EntityCreate<Builder, Omitted>>,
+  repoConfig: RepositoryConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient
 ): CreateItemFn<Builder, EntityCreate<Builder, Omitted>> => {
   return async (

@@ -52,7 +52,7 @@ export type SoftDeleteItemFn<Builder extends EntityBuilder> = (
 
 export type UpdateItemFn<Builder extends EntityBuilder> = (
   key: EntityKey<Builder>,
-  entityUpdate: Partial<EntityUpdate<Builder>>,
+  entityUpdate: EntityUpdate<Builder>,
   params?: Partial<Dynamo.UpdateCommandInput> & { emitEvent?: boolean }
 ) => Promise<Entity<Builder>>;
 

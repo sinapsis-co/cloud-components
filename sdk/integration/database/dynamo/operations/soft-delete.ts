@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 
 import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
-import { Entity, EntityBuilder, EntityEvents, EntityKey, EntityStore, EntityUpdate } from 'model';
+import { Entity, EntityBuilder, EntityEvents, EntityKey, EntityStore } from 'model';
 import { Tracing } from 'tracing';
 import { SoftDeleteItemFn } from '../types/operations';
 import { RepositoryConfig } from '../types/repository';
@@ -27,13 +27,10 @@ export const softDeleteItem = <EBuilder extends EntityBuilder, TBuilder extends 
     const tableName = process.env[parseTableName(repoConfig.tableName)];
     const serializedKey = repoConfig.keySerialize(key);
     const ttl = params?.deleteAfter || { amount: 30, period: 'days' };
-    const mapper = updateMapper<EntityUpdate<EBuilder>>(
-      {},
-      {
-        deleted: true,
-        deleteTTL: dayjs().add(ttl.amount, ttl.period).unix(),
-      }
-    );
+    const mapper = updateMapper({
+      deleted: true,
+      deleteTTL: dayjs().add(ttl.amount, ttl.period).unix(),
+    });
 
     const cmd = async () => {
       const { Attributes } = await dynamodb
