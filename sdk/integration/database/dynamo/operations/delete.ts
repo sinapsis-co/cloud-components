@@ -3,10 +3,11 @@ import { DeleteCommand, DeleteCommandInput, DynamoDBDocumentClient } from '@aws-
 import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
 import { Tracing } from 'tracing';
-import { parseTableName } from '..';
-import { Entity, EntityBuilder, EntityStore, RepositoryConfig, RepositoryEvent } from '../interface';
-import { DeleteItemFn } from '../op-interface';
-import { TableBuilder } from '../table-builder';
+import { parseTableName } from '../repository';
+import { Entity, EntityBuilder, EntityStore } from '../types/entity-builder';
+import { DeleteItemFn } from '../types/operations';
+import { RepositoryConfig, RepositoryEvent } from '../types/repository';
+import { TableBuilder } from '../types/table-builder';
 
 export const deleteItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
   repoConfig: RepositoryConfig<Builder, Table>,

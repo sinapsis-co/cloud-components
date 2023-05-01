@@ -1,12 +1,14 @@
 import { BatchGetCommand, BatchGetCommandInput, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { NativeAttributeValue } from '@aws-sdk/util-dynamodb';
+
 import { PlatformFault } from 'error';
 import { chunkArray } from 'util/chunk-array';
 import { wait } from 'util/executers';
-import { parseTableName } from '..';
-import { Entity, EntityBuilder, EntityStore, RepositoryConfig } from '../interface';
-import { BatchGetItemFn } from '../op-interface';
-import { TableBuilder } from '../table-builder';
+import { parseTableName } from '../repository';
+import { Entity, EntityBuilder, EntityStore } from '../types/entity-builder';
+import { BatchGetItemFn } from '../types/operations';
+import { RepositoryConfig } from '../types/repository';
+import { TableBuilder } from '../types/table-builder';
 
 export type BatchGetItemParams = {
   autoRetry?: true;

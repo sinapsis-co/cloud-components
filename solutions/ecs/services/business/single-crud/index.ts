@@ -2,6 +2,7 @@ import { Service } from '@sinapsis-co/cc-core/common/service';
 import { ApiAggregate } from '@sinapsis-co/cc-core/prefab/compute/function/api-function/api-aggregate';
 import { BaseFunction } from '@sinapsis-co/cc-core/prefab/compute/function/base-function';
 
+import { ApiRestPrefab } from '@sinapsis-co/cc-core/prefab/gateway/api/api-rest';
 import { GlobalCoordinator } from '../../../config/config-type';
 import { CdnApi } from '../../support/cdn-api';
 import { EnvVpc } from '../../support/env-vpc';
@@ -23,12 +24,12 @@ export class SingleCrud extends Service<GlobalCoordinator> {
   }
 
   build(deps: Deps) {
-    // new ApiRestPrefab(this, {
-    //   basePath: '',
-    //   stageName: this.props.envName,
-    //   stageVariables: { environment: this.props.envName },
-    //   httpProxyIntegrationUrl: 'https://lb.api.stage.trywecare.com/{proxy}',
-    // });
+    new ApiRestPrefab(this, {
+      basePath: '',
+      stageName: this.props.envName,
+      stageVariables: { environment: this.props.envName },
+      httpProxyIntegrationUrl: 'https://lb.api.stage.trywecare.com/{proxy}',
+    });
 
     const customAuthorizerHandler = new BaseFunction(this, {
       name: 'authorizer',

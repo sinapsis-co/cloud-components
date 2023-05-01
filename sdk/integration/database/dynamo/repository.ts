@@ -14,8 +14,9 @@ import { updateItem } from './operations/update';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { Tracing } from 'tracing';
-import { EntityBuilder, Repository, RepositoryConfig, View, ViewConfig } from './interface';
-import { TableBuilder } from './table-builder';
+import { EntityBuilder } from './types/entity-builder';
+import { Repository, RepositoryConfig, View, ViewConfig } from './types/repository';
+import { TableBuilder } from './types/table-builder';
 
 const client: DynamoDBClient = Tracing.captureIntegration(new DynamoDBClient({}) as any);
 export const dynamodb = DynamoDBDocumentClient.from(client);
@@ -30,6 +31,7 @@ export const repository = <Builder extends EntityBuilder, Table extends TableBui
       deleted: { name: `app.${repoConfig.repoName}.deleted`, source: 'app' },
       recovered: { name: `app.${repoConfig.repoName}.recovered`, source: 'app' },
     },
+    keySerialize: repoConfig.keySerialize,
     entitySerialize: repoConfig.entitySerialize,
     entityDeserialize: repoConfig.entityDeserialize,
     createItem: createItem(repoConfig, dynamodb),

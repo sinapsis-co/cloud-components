@@ -1,11 +1,13 @@
 import { BatchWriteCommand, BatchWriteCommandInput, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+
 import { PlatformFault } from 'error';
 import { chunkArray } from 'util/chunk-array';
 import { wait } from 'util/executers';
-import { parseTableName } from '..';
-import { Entity, EntityBuilder, EntityCreate, EntityStore, RepositoryConfig } from '../interface';
-import { BatchCreateItemFn } from '../op-interface';
-import { TableBuilder } from '../table-builder';
+import { parseTableName } from '../repository';
+import { Entity, EntityBuilder, EntityCreate, EntityStore } from '../types/entity-builder';
+import { BatchCreateItemFn } from '../types/operations';
+import { RepositoryConfig } from '../types/repository';
+import { TableBuilder } from '../types/table-builder';
 
 export type BatchCreateItemParams = {
   autoRetry?: true;

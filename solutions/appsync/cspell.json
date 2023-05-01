@@ -3,11 +3,15 @@
   "language": "en",
   "words": [
     "algoliasearch",
+    "AWSIP",
+    "AWSJSON",
+    "AWSURL",
     "backoffice",
     "backofficeauth",
     "browserslist",
     "Bugsnag",
     "certificatemanager",
+    "codegen",
     "cognitoidentityserviceprovider",
     "DISTRO",
     "esbuild",
@@ -27,5 +31,13 @@
     "Topup",
     "TTFB"
   ],
-  "ignorePaths": ["**/node_modules/**", "cdk.out/**", "dist/**", "frontend/**", "package.json", "yarn.lock", ".yarnrc"]
+  "ignorePaths": [
+    "**/node_modules/**",
+    "cdk.out/**",
+    "dist/**",
+    "frontend/**",
+    "package.json",
+    "yarn.lock",
+    ".yarnrc"
+  ]
 }

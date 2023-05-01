@@ -1,6 +1,10 @@
 /* eslint-disable no-console */
 import { Coordinator } from '@sinapsis-co/cc-core/common/coordinator';
-import { GraphqlApi } from 'services/business/graphql-api';
+import { Assets } from 'services/business/assets';
+import { Identity } from 'services/business/identity';
+import { CdnApi } from 'services/support/cdn-api';
+import { GraphqlApi } from 'services/support/graphql-api';
+import { Notifications } from 'services/support/notifications';
 import { globalConstConfig, globalDeployTargetConfig, globalEnvConfig } from './config';
 import { Menu } from './services/business/menu';
 import { DnsDomainRef } from './services/support/dns-domain-ref';
@@ -15,16 +19,16 @@ const coordinator = new Coordinator(globalConstConfig, globalEnvConfig, globalDe
 new DnsSubdomainHostedZone(coordinator);
 new DnsDomainRef(coordinator);
 new DnsSubdomainCertificate(coordinator);
-// new CdnApi(coordinator);
+new CdnApi(coordinator);
 new GlobalEventBus(coordinator);
-// new Notifications(coordinator);
+new Notifications(coordinator);
+new GraphqlApi(coordinator);
 // new EventsAnalytics(coordinator);
 
 // Business
-// new Identity(coordinator);
-// new Assets(coordinator);
+new Identity(coordinator);
+new Assets(coordinator);
 new Menu(coordinator);
-new GraphqlApi(coordinator);
 
 // Frontend
 // new SpaWebapp(coordinator);

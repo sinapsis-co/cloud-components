@@ -1,7 +1,7 @@
 {
   "exclude": ["node_modules/**/*", ".dist/**/*"],
   "compilerOptions": {
-    "target": "es2019",
+    "target": "ES5",
     "lib": ["es2019"],
     "module": "commonjs",
     "moduleResolution": "node",
@@ -19,16 +19,17 @@
     "inlineSourceMap": false,
     "inlineSources": false,
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "strictPropertyInitialization": false,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "allowJs": true,
     "noEmit": false,
-    "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
+
     "baseUrl": ".",
     "paths": {
       "@sinapsis-co/cc-sdk/*": ["./sdk/*"],

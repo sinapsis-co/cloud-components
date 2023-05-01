@@ -51,12 +51,12 @@ export class Identity extends Service<GlobalCoordinator> {
       callbackUrl: getDomain(this.props.subdomain.spaWebapp, this.props, true),
       userPool: { customAttributes: buildCustomAttributes() },
       emailConfiguration: SesDomain.getCognitoRef(this.props),
-      userPoolDomain: {
-        customDomain: {
-          domainName: getDomain(this.props.subdomain.auth, this.props),
-          certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,
-        },
-      },
+      // userPoolDomain: {
+      //   customDomain: {
+      //     domainName: getDomain(this.props.subdomain.auth, this.props),
+      //     certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,
+      //   },
+      // },
     });
 
     this.apiAggregate = new ApiAggregate(this, {
@@ -140,7 +140,7 @@ export class Identity extends Service<GlobalCoordinator> {
           },
           tablePermission: 'write',
           modifiers: [CognitoAuthPoolPrefab.modifier.updateUserAtt()],
-          timeout: Duration.seconds(15),
+          timeout: Duration.seconds(5),
         },
       },
     });

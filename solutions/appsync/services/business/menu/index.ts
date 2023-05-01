@@ -1,9 +1,10 @@
 import { Service } from '@sinapsis-co/cc-core/common/service';
 
+import { AppSyncPrefab } from '@sinapsis-co/cc-core/prefab/gateway/app-sync';
 import { DynamoTablePrefab } from '@sinapsis-co/cc-core/prefab/storage/dynamo/table';
 import { GlobalCoordinator } from '../../../config/config-type';
 import { GlobalEventBus } from '../../support/global-event-bus';
-import { GraphqlApi } from '../graphql-api';
+import { GraphqlApi } from '../../support/graphql-api';
 import { ingredientsTableBuilder } from './table/table-ingredient';
 
 type Deps = {
@@ -23,24 +24,45 @@ export class Menu extends Service<GlobalCoordinator> {
 
   build(deps: Deps) {
     const ingredientsTable = new DynamoTablePrefab(this, ingredientsTableBuilder);
-    const ingredientsTableDataSource = deps.graphqlApi.appSyncPrefab.addDynamoTableDataSource(ingredientsTable);
-    deps.graphqlApi.appSyncPrefab.addFunctionResolver({
-      baseApiFolder: __dirname,
-      dataSource: ingredientsTableDataSource,
-      typeName: 'Query',
-      fieldName: 'getIngredient',
+    const eventBridgeDataSource = AppSyncPrefab.eventBridgeDataSource(this, {
+      api: deps.graphqlApi.appSyncPrefab.api,
+      eventBusPrefab: deps.globalEventBus.eventBusPrefab,
     });
-    deps.graphqlApi.appSyncPrefab.addFunctionResolver({
+
+    AppSyncPrefab.serviceResolver(this, {
       baseApiFolder: __dirname,
-      dataSource: ingredientsTableDataSource,
-      typeName: 'Query',
-      fieldName: 'listIngredients',
+      api: deps.graphqlApi.appSyncPrefab.api,
+      tablePrefab: ingredientsTable,
+      resolvers: [
+        { typeName: 'Query', fieldName: 'getIngredient' },
+        { typeName: 'Query', fieldName: 'listIngredients' },
+        {
+          typeName: 'Mutation',
+          fieldName: 'addIngredient',
+          resolversPipeline: [
+            { name: 'addIngredientCreate' },
+            { name: 'addIngredientDispatch', dataSource: eventBridgeDataSource },
+          ],
+        },
+      ],
     });
-    deps.graphqlApi.appSyncPrefab.addFunctionResolver({
-      baseApiFolder: __dirname,
-      dataSource: ingredientsTableDataSource,
-      typeName: 'Mutation',
-      fieldName: 'addIngredient',
-    });
+    // deps.graphqlApi.appSyncPrefab.addFunctionResolver({
+    //   baseApiFolder: __dirname,
+    //   dataSource: ingredientsTableDataSource,
+    //   typeName: 'Query',
+    //   fieldName: 'getIngredient',
+    // });
+    // deps.graphqlApi.appSyncPrefab.addFunctionResolver({
+    //   baseApiFolder: __dirname,
+    //   dataSource: ingredientsTableDataSource,
+    //   typeName: 'Query',
+    //   fieldName: 'listIngredients',
+    // });
+    // deps.graphqlApi.appSyncPrefab.addFunctionResolver({
+    //   baseApiFolder: __dirname,
+    //   dataSource: ingredientsTableDataSource,
+    //   typeName: 'Mutation',
+    //   fieldName: 'addIngredient',
+    // });
   }
 }

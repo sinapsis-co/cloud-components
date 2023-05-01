@@ -8,9 +8,9 @@
   integrity sha512-Ebr2vndynpBnILaAjDOPUGvznQCeNZLNroWqa7FZtNZ9G/+EyhguFcrmvtG96frH31Z/STYGm0EuZb2aZUkGiA==
 
 "@aws-cdk/asset-awscli-v1@^2.2.97":
-  version "2.2.154"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-awscli-v1/-/asset-awscli-v1-2.2.154.tgz#4e285d11a07ba486e851142f41359d6bfa31b1f6"
-  integrity sha512-sBL/l1gf7me3I5zSdpwKuDWJoimBngXgV9v/zHV4uEdek2iYbRAbZaO+Eti62dY7Pw2xU5ZUrPdXIMSOXyzy3Q==
+  version "2.2.155"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-awscli-v1/-/asset-awscli-v1-2.2.155.tgz#66e1b74a0d2cbee5c63204f2898ae7393f512f66"
+  integrity sha512-jz6+GqsNoRj74QHk6sNaLnfbCPkBU/HRWr+kr88ypM6qYE77Z7UOgEQFb3B3rtPSl0YZgVF2RgB/DZhQe5AWqw==
 
 "@aws-cdk/asset-kubectl-v20@^2.1.1":
   version "2.1.1"
@@ -18,9 +18,9 @@
   integrity sha512-U1ntiX8XiMRRRH5J1IdC+1t5CE89015cwyt5U63Cpk0GnMlN5+h9WsWMlKlPXZR4rdq/m806JRlBMRpBUB2Dhw==
 
 "@aws-cdk/asset-node-proxy-agent-v5@^2.0.77":
-  version "2.0.129"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-node-proxy-agent-v5/-/asset-node-proxy-agent-v5-2.0.129.tgz#53fff07bbe27fc7e74a47415c08a8ec7ce45e685"
-  integrity sha512-CVoB2u0wI0cK2JyWWiKLIYBMF+RUG1o5mHidF/lXtVSzvHFYPxAFjZVz9XYg2tZSMaV6QVNijy4Z6ljp9/tRhg==
+  version "2.0.130"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-node-proxy-agent-v5/-/asset-node-proxy-agent-v5-2.0.130.tgz#32e030b6e547df620c3211e1e7ff2e8f72ae41d1"
+  integrity sha512-82bvlMwH14feWyhBGTcJrZCol608nb6lpM5MYvXaln1WpqXKQ//4CmwZZPbnaUM4zk+df6DdRBxeolwnae5hjA==
 
 "@aws-cdk/aws-apigatewayv2-alpha@^2.24.1-alpha.0":
   version "2.24.1-alpha.0"

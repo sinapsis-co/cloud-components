@@ -21,6 +21,7 @@
     "start-spa": "npx ts-node script-manager.ts start-spa",
     "destroy": "npx ts-node script-manager.ts destroy",
     "create-user": "npx ts-node script-manager.ts create-user",
+    "schema-gen": "npx ts-node script-manager.ts schema-gen",
     "gen-postman-env": "npx ts-node script-manager.ts gen-postman-env",
     "prepare": "npx husky install",
     "verify": "npx tsc --pretty --noEmit && npx eslint . --ext .ts && npx prettier -c . && npx cspell '**/*.ts'",
@@ -44,6 +45,10 @@
   "dependencies": {
     "@aws-appsync/utils": "^1.2.5",
     "@fast-csv/format": "^4.3.5",
+    "@graphql-codegen/cli": "^3.3.1",
+    "@graphql-codegen/client-preset": "^3.0.1",
+    "@graphql-codegen/graphql-modules-preset": "^3.1.3",
+    "@graphql-codegen/near-operation-file-preset": "^2.5.0",
     "@graphql-tools/load-files": "^6.6.1",
     "@graphql-tools/merge": "^8.4.1",
     "@types/aws-lambda": "^8.10.108",
@@ -51,13 +56,17 @@
     "algoliasearch": "^4.17.0",
     "aws-lambda": "^1.0.7",
     "cdk": "^2.75.0-alpha.0",
+    "class-validator": "^0.14.0",
     "esbuild": "^0.14.43",
+    "graphql": "15.3.0",
     "graphql-modules": "^2.1.2",
     "require-from-string": "^2.0.2",
     "serverless-http": "^3.0.1",
     "sharp": "^0.31.3",
     "stripe": "^11.6.0",
     "tsconfig-paths": "^4.2.0",
-    "twilio": "^3.84.1"
+    "twilio": "^3.84.1",
+    "type-graphql": "^1.1.1",
+    "typescript-typedefs": "^0.4.0"
   }
 }

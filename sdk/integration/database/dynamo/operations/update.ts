@@ -1,13 +1,14 @@
 import { DynamoDBDocumentClient, UpdateCommand, UpdateCommandInput } from '@aws-sdk/lib-dynamodb';
-import { parseTableName } from '..';
 
 import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
 import { Tracing } from 'tracing';
-import { Entity, EntityBuilder, EntityStore, EntityUpdate, RepositoryConfig, RepositoryEvent } from '../interface';
-import { UpdateItemFn } from '../op-interface';
-import { TableBuilder } from '../table-builder';
-import { updateMapper } from '../update-mapper';
+import { parseTableName } from '../repository';
+import { Entity, EntityBuilder, EntityStore, EntityUpdate } from '../types/entity-builder';
+import { UpdateItemFn } from '../types/operations';
+import { RepositoryConfig, RepositoryEvent } from '../types/repository';
+import { TableBuilder } from '../types/table-builder';
+import { updateMapper } from '../util/update-mapper';
 
 export const updateItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
   repoConfig: RepositoryConfig<Builder, Table>,

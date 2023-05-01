@@ -1,9 +1,11 @@
 import { DynamoDBDocumentClient, GetCommand, GetCommandInput } from '@aws-sdk/lib-dynamodb';
+
 import { Tracing } from 'tracing';
-import { parseTableName } from '..';
-import { Entity, EntityBuilder, EntityStore, RepositoryConfig } from '../interface';
-import { CheckItemExistsFn } from '../op-interface';
-import { TableBuilder } from '../table-builder';
+import { parseTableName } from '../repository';
+import { Entity, EntityBuilder, EntityStore } from '../types/entity-builder';
+import { CheckItemExistsFn } from '../types/operations';
+import { RepositoryConfig } from '../types/repository';
+import { TableBuilder } from '../types/table-builder';
 
 export const checkItemExists = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
   repoConfig: RepositoryConfig<Builder, Table>,

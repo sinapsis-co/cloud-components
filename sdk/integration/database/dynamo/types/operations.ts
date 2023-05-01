@@ -1,6 +1,7 @@
 import * as Dynamo from '@aws-sdk/lib-dynamodb';
 import { PaginatedResponse } from 'catalog/api';
-import { Entity, EntityBuilder, EntityCreate, EntityUpdate, TimeToDelete } from './interface';
+import { TimeToDelete } from '../operations/soft-delete';
+import { Entity, EntityBuilder, EntityCreate, EntityUpdate } from './entity-builder';
 import { TableBuilder } from './table-builder';
 
 export type CreateItemFn<Builder extends EntityBuilder, EntityCreate = Builder['body']> = (

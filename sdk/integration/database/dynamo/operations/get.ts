@@ -2,10 +2,11 @@ import { DynamoDBDocumentClient, GetCommand, GetCommandInput } from '@aws-sdk/li
 
 import { PlatformError } from 'error';
 import { Tracing } from 'tracing';
-import { parseTableName } from '..';
-import { Entity, EntityBuilder, EntityStore, RepositoryConfig } from '../interface';
-import { GetItemFn } from '../op-interface';
-import { TableBuilder } from '../table-builder';
+import { parseTableName } from '../repository';
+import { Entity, EntityBuilder, EntityStore } from '../types/entity-builder';
+import { GetItemFn } from '../types/operations';
+import { RepositoryConfig } from '../types/repository';
+import { TableBuilder } from '../types/table-builder';
 
 export const getItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
   repoConfig: RepositoryConfig<Builder, Table>,

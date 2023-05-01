@@ -21,6 +21,7 @@ export class CdnApi extends Service<GlobalCoordinator> {
     this.cdnApiPrefab = new CdnApiPrefab(this, {
       subDomain: this.props.subdomain.api,
       certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,
+      headersWhitelist: ['X-Api-Key'],
     });
   }
 }

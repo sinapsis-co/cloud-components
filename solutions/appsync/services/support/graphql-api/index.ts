@@ -3,16 +3,15 @@ import { AppSyncPrefab } from '@sinapsis-co/cc-core/prefab/gateway/app-sync';
 
 import { DnsSubdomainCertificate } from 'services/support/dns-subdomain-certificate';
 import { GlobalCoordinator } from '../../../config/config-type';
-import { GlobalEventBus } from '../../support/global-event-bus';
+import { schemaPath } from './schema-builder';
 
 type Deps = {
-  globalEventBus: GlobalEventBus;
   dnsSubdomainCertificate: DnsSubdomainCertificate;
   // cdnApi: CdnApi;
   // identity: Identity;
 };
 // const depsNames: Array<keyof Deps> = ['globalEventBus', 'cdnApi', 'identity'];
-const depsNames: Array<keyof Deps> = ['globalEventBus', 'dnsSubdomainCertificate'];
+const depsNames: Array<keyof Deps> = ['dnsSubdomainCertificate'];
 
 export class GraphqlApi extends Service<GlobalCoordinator> {
   public appSyncPrefab: AppSyncPrefab;
@@ -25,7 +24,7 @@ export class GraphqlApi extends Service<GlobalCoordinator> {
   build(deps: Deps) {
     this.appSyncPrefab = new AppSyncPrefab(this, {
       name: 'graphql',
-      baseApiFolder: __dirname,
+      consolidatedSchemaPath: schemaPath,
       domainConfig: {
         subdomain: this.props.subdomain.graphql,
         certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,

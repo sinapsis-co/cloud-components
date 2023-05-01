@@ -3,10 +3,11 @@ import { DynamoDBDocumentClient, PutCommand, PutCommandInput } from '@aws-sdk/li
 import { PlatformError } from '@sinapsis-co/cc-sdk/error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
 import { Tracing } from 'tracing';
-import { parseTableName } from '..';
-import { Entity, EntityBuilder, EntityCreate, RepositoryConfig, RepositoryEvent } from '../interface';
-import { CreateItemFn } from '../op-interface';
-import { TableBuilder } from '../table-builder';
+import { parseTableName } from '../repository';
+import { Entity, EntityBuilder, EntityCreate } from '../types/entity-builder';
+import { CreateItemFn } from '../types/operations';
+import { RepositoryConfig, RepositoryEvent } from '../types/repository';
+import { TableBuilder } from '../types/table-builder';
 
 export const createItem = <
   Builder extends EntityBuilder,

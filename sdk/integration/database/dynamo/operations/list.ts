@@ -4,10 +4,11 @@ import { PaginatedResponse } from 'catalog/api';
 import { PlatformFault } from 'error';
 import { Tracing } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
-import { parseTableName } from '..';
-import { Entity, EntityBuilder, EntityStore, RepositoryConfig, ViewConfig } from '../interface';
-import { ListItemFn } from '../op-interface';
-import { TableBuilder } from '../table-builder';
+import { parseTableName } from '../repository';
+import { Entity, EntityBuilder, EntityStore } from '../types/entity-builder';
+import { ListItemFn } from '../types/operations';
+import { RepositoryConfig, ViewConfig } from '../types/repository';
+import { TableBuilder } from '../types/table-builder';
 
 export const listItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
   repoConfig: RepositoryConfig<Builder, Table> | ViewConfig<Builder, Table>,
