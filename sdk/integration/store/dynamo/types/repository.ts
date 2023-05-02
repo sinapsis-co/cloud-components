@@ -13,9 +13,9 @@ import {
   SoftDeleteItemFn,
   UpdateItemFn,
 } from './operations';
-import { TableBuilder } from './table-builder';
+import { TableStoreBuilder } from './table-store-builder';
 
-export type RepositoryConfig<EBuilder extends EntityBuilder, TBuilder extends TableBuilder> = {
+export type RepositoryConfig<EBuilder extends EntityBuilder, TBuilder extends TableStoreBuilder> = {
   repoName: EBuilder['name'];
   tableName: TBuilder['tableName'];
   keySerialize: (key: EntityBuilder<EBuilder>['key']) => TBuilder['storeMapping']['key'];
@@ -26,12 +26,12 @@ export type RepositoryConfig<EBuilder extends EntityBuilder, TBuilder extends Ta
   entityDeserialize: (entityStore: EntityStore<EBuilder, TBuilder>) => Entity<EBuilder>;
 };
 
-export type ViewConfig<EBuilder extends EntityBuilder, TBuilder extends TableBuilder> = {
+export type ViewConfig<EBuilder extends EntityBuilder, TBuilder extends TableStoreBuilder> = {
   tableName: TBuilder['tableName'];
   entityDeserialize: (entityStore: EntityStore<EBuilder, TBuilder>) => Entity<EBuilder>;
 };
 
-export type Repository<EBuilder extends EntityBuilder, TBuilder extends TableBuilder> = {
+export type Repository<EBuilder extends EntityBuilder, TBuilder extends TableStoreBuilder> = {
   events: {
     created: {
       source: 'app';

@@ -4,7 +4,6 @@ import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { UserPool } from 'aws-cdk-lib/aws-cognito';
 import { CnameRecord, HostedZone } from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
-import * as esbuild from 'esbuild';
 
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { getDomain } from 'common/naming/get-domain';
@@ -12,13 +11,13 @@ import { getLogicalName } from 'common/naming/get-logical-name';
 import { getResourceName } from 'common/naming/get-resource-name';
 import { Service } from 'common/service';
 import { SynthError } from 'common/synth/synth-error';
-import { DynamoTablePrefab } from 'prefab/storage/dynamo/table';
+import { EventBusPrefab } from 'prefab/integration/event-bus';
 import { CdnApiPrefab } from '../cdn-api';
-import { EventBridgeDataSourceParams, FunctionResolver, ServiceResolver } from './types';
 
 export type AppSyncPrefabParams = {
   name: string;
   consolidatedSchemaPath: string;
+  eventBusPrefab?: EventBusPrefab;
   userPool?: UserPool;
   cdnApiPrefab?: CdnApiPrefab;
   domainConfig?: {
@@ -29,7 +28,7 @@ export type AppSyncPrefabParams = {
 
 export class AppSyncPrefab extends Construct {
   public readonly api: appsync.GraphqlApi;
-  public readonly baseApiFolder: string;
+  public readonly eventBridgeDataSource: EventBridgeDataSource;
 
   constructor(service: Service, params: AppSyncPrefabParams) {
     super(service, getLogicalName(AppSyncPrefab.name));
@@ -51,18 +50,6 @@ export class AppSyncPrefab extends Construct {
         }
       : undefined;
 
-    // info('\n<< Generating GraphQL schema files >>');
-    // const loadedFiles = params.schemaMergingPaths.reduce((memo: string[], m) => {
-    //   const files = loadFilesSync(m);
-    //   memo.push(...files);
-    //   return memo;
-    // }, []);
-    // const typeDefs = mergeTypeDefs(loadedFiles);
-    // const printedTypeDefs = print(typeDefs);
-    // writeFileSync(params.consolidatedSchemaPath, printedTypeDefs, { encoding: 'utf8', flag: 'w' });
-    // const schema = appsync.SchemaFile.fromAsset(params.consolidatedSchemaPath);
-    // info('\n Merged Schema generated at: \n', params.consolidatedSchemaPath);
-
     this.api = new appsync.GraphqlApi(this, 'Api', {
       name: getResourceName('', service.props),
       schema: appsync.SchemaFile.fromAsset(params.consolidatedSchemaPath),
@@ -74,8 +61,21 @@ export class AppSyncPrefab extends Construct {
       },
     });
 
+    if (params.eventBusPrefab) {
+      this.eventBridgeDataSource = new EventBridgeDataSource(service, 'EventBridgeDataSource', {
+        name: 'EventBridgeDataSource',
+        api: this.api,
+      });
+      appsync.CfnDataSource;
+      const cfDs = this.eventBridgeDataSource.node.defaultChild as appsync.CfnDataSource;
+      cfDs.eventBridgeConfig = { eventBusArn: params.eventBusPrefab.bus.eventBusArn };
+      params.eventBusPrefab.bus.grantPutEventsTo(this.eventBridgeDataSource);
+    }
+
     if (params.domainConfig) {
-      const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', service.props) });
+      const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', {
+        domainName: getDomain('', service.props),
+      });
       new CnameRecord(service, 'Record', {
         zone: hostedZone,
         recordName: domainConfig?.domainName,
@@ -87,104 +87,6 @@ export class AppSyncPrefab extends Construct {
     }
     new CfnOutput(this, 'Domain', { value: domainConfig?.domainName || this.api.graphqlUrl });
   }
-
-  addDynamoTableDataSource = (tablePrefab: DynamoTablePrefab): appsync.DynamoDbDataSource => {
-    return this.api.addDynamoDbDataSource(tablePrefab.tableName, tablePrefab.table, {
-      name: `${tablePrefab.tableName}TableDataSource`,
-    });
-  };
-
-  static eventBridgeDataSource = (service: Service, params: EventBridgeDataSourceParams): EventBridgeDataSource => {
-    // const role = new Role(this, getLogicalName('role', params.name), {
-    //   assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
-    //   roleName: getShortResourceName(params.name, service.props),
-    // });
-    const ds = new EventBridgeDataSource(service, 'EventBridgeDataSource', {
-      name: 'EventBridgeDataSource',
-      api: params.api,
-    });
-    appsync.CfnDataSource;
-    const cfDs = ds.node.defaultChild as appsync.CfnDataSource;
-    cfDs.eventBridgeConfig = { eventBusArn: params.eventBusPrefab.bus.eventBusArn };
-    params.eventBusPrefab.bus.grantPutEventsTo(ds);
-    return ds;
-    // const ds = new appsync.HttpDataSource(service, 'EventBridgeDataSource', {
-    //   api: params.api,
-    //   endpoint: `https://events.${service.props.regionName}.amazonaws.com`,
-    //   authorizationConfig: {
-    //     signingRegion: service.props.regionName,
-    //     signingServiceName: 'events',
-    //   },
-    // });
-    // params.eventBusPrefab.bus.grantPutEventsTo(ds);
-    // return ds;
-  };
-
-  static functionResolver = (service: Service, params: FunctionResolver): appsync.AppsyncFunction => {
-    return new appsync.AppsyncFunction(service, getLogicalName('function', params.name), {
-      api: params.api,
-      dataSource: params.dataSource,
-      name: params.name,
-      code: AppSyncPrefab.bundleAppSyncResolver(`${params.baseApiFolder}/resolvers/${params.name}.ts`),
-      runtime: appsync.FunctionRuntime.JS_1_0_0,
-    });
-  };
-
-  static serviceResolver = (service: Service, params: ServiceResolver): void => {
-    const { api, baseApiFolder, resolvers, tablePrefab } = params;
-
-    const dataSource = new appsync.DynamoDbDataSource(
-      service,
-      getLogicalName('dynamoDataSource', tablePrefab.tableName),
-      { api: api, table: tablePrefab.table, name: `${tablePrefab.tableName}TableDataSource` }
-    );
-
-    resolvers.map((r) => {
-      const fnPipeline =
-        r.resolversPipeline && r.resolversPipeline.length > 1
-          ? r.resolversPipeline.map((rp) =>
-              AppSyncPrefab.functionResolver(service, {
-                api,
-                baseApiFolder,
-                dataSource: rp.dataSource || dataSource,
-                name: rp.name,
-              })
-            )
-          : [
-              AppSyncPrefab.functionResolver(service, {
-                api,
-                dataSource,
-                baseApiFolder,
-                name: r.fieldName,
-              }),
-            ];
-
-      // PipelineResolver
-      new appsync.Resolver(service, getLogicalName('pipeline', r.fieldName), {
-        api: api,
-        typeName: r.typeName,
-        fieldName: r.fieldName,
-        pipelineConfig: fnPipeline,
-        code: appsync.Code.fromAsset(`${__dirname}/resolvers/pipeline.js`),
-        runtime: appsync.FunctionRuntime.JS_1_0_0,
-      });
-    });
-  };
-
-  static bundleAppSyncResolver = (entryPoint: string): appsync.Code => {
-    const result = esbuild.buildSync({
-      entryPoints: [entryPoint],
-      external: ['@aws-appsync/utils'],
-      bundle: true,
-      write: false,
-      platform: 'node',
-      target: 'esnext',
-      format: 'esm',
-      // minify: true,
-      sourcesContent: false,
-    });
-    return appsync.Code.fromInline(result.outputFiles[0].text);
-  };
 }
 
 export class EventBridgeDataSource extends appsync.BackedDataSource {

@@ -1,9 +1,8 @@
-import { TableBuilder } from '@sinapsis-co/cc-sdk/integration/database/dynamo/types/table-builder';
+import { TableStoreBuilder } from '@sinapsis-co/cc-sdk/integration/store/dynamo/types/table-store-builder';
 
-export type IdentityTableBuilder = TableBuilder<{
+export type IdentityTableBuilder = TableStoreBuilder<{
   tableName: 'identity';
-  indexes: ['email'];
-  ttlAttribute: true;
+  indexes: { email: { pk: 'email' } };
   storeMapping: {
     key: {
       pk: string;
@@ -18,8 +17,7 @@ export type IdentityTableBuilder = TableBuilder<{
 
 export const identityTableBuilder: IdentityTableBuilder = {
   tableName: 'identity',
-  indexes: ['email'],
-  ttlAttribute: true,
+  indexes: { email: { pk: 'email' } },
   storeMapping: {
     key: { pk: 'S', sk: 'S' },
     timers: { createdAt: 'S', updatedAt: 'S' },

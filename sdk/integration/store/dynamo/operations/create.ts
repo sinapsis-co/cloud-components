@@ -6,20 +6,16 @@ import { Entity, EntityBuilder, EntityCreate, EntityEvents, EntityKey } from 'mo
 import { Tracing } from 'tracing';
 import { CreateItemFn } from '../types/operations';
 import { RepositoryConfig } from '../types/repository';
-import { TableBuilder } from '../types/table-builder';
+import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
-export const createItem = <
-  Builder extends EntityBuilder,
-  Table extends TableBuilder = TableBuilder,
-  Omitted extends keyof Builder['body'] = ''
->(
+export const createItem = <Builder extends EntityBuilder, Table extends TableStoreBuilder = TableStoreBuilder>(
   repoConfig: RepositoryConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient
-): CreateItemFn<Builder, EntityCreate<Builder, Omitted>> => {
+): CreateItemFn<Builder> => {
   return async (
     key: EntityKey<Builder>,
-    entityCreate: EntityCreate<Builder, Omitted>,
+    entityCreate: EntityCreate<Builder>,
     params?: Partial<PutCommandInput> & { emitEvent?: boolean }
   ): Promise<Entity<Builder>> => {
     const tableName = process.env[parseTableName(repoConfig.tableName)];

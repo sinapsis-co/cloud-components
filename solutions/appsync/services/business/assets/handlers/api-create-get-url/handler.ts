@@ -1,5 +1,5 @@
 import { apiHandler } from '@sinapsis-co/cc-sdk/handler/api/api-handler';
-import { createGetPresignedUrl } from '@sinapsis-co/cc-sdk/integration/bucket/presigned';
+import { createGetPresignedUrl } from '@sinapsis-co/cc-sdk/integration/store/bucket/presigned';
 import { CustomError } from '../../../../../config/error-catalog';
 import { assetApi } from '../../catalog';
 import { assetsTypes } from '../../lib/assets-type';

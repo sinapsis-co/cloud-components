@@ -1,4 +1,4 @@
-import { TableBuilder } from '@sinapsis-co/cc-sdk/integration/database/dynamo/types/table-builder';
+import { TableStoreBuilder } from '@sinapsis-co/cc-sdk/integration/store/dynamo/types/table-store-builder';
 import { UserPool, UserPoolClient } from 'aws-cdk-lib/aws-cognito';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
@@ -23,7 +23,7 @@ export type ApiAuthPoolParams = {
 
 export type ApiAggregateParams<
   HandlerName extends string = string,
-  TableB extends TableBuilder = TableBuilder
+  TableB extends TableStoreBuilder = TableStoreBuilder
 > = BaseFunctionParams & {
   basePath: string;
   handlers: Record<HandlerName, ApiHandlerParams>;

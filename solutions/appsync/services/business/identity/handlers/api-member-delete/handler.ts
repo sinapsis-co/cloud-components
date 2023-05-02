@@ -11,6 +11,7 @@ import { userRepository } from '../../repository/repo-user';
 export const handler = apiHandler<identityApi.memberDelete.Interface>(async (_, req) => {
   const { tenantId } = req.claims;
   const { id } = req.pathParams;
+
   const profile = await userRepository
     .deleteItem(
       { tenantId, id },

@@ -4,17 +4,17 @@ import { PaginatedResponse } from 'catalog/api';
 import { Entity, EntityBuilder, EntityStore } from 'model';
 import { Tracing } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
-import { ListIndexFn, valueof } from '../types/operations';
+import { ListIndexFn } from '../types/operations';
 import { RepositoryConfig, ViewConfig } from '../types/repository';
-import { TableBuilder } from '../types/table-builder';
+import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
-export const listIndex = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
+export const listIndex = <Builder extends EntityBuilder, Table extends TableStoreBuilder = TableStoreBuilder>(
   repoConfig: RepositoryConfig<Builder, Table> | ViewConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient
 ): ListIndexFn<Builder, Table> => {
   return async (
-    index: valueof<Table['indexes']>,
+    index: keyof Table['indexes'],
     queryParams: { limit: number; nextToken?: string },
     params?: Partial<QueryCommandInput>
   ): Promise<PaginatedResponse<Entity<Builder>>> => {

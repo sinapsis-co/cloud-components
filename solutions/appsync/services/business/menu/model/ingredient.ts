@@ -18,12 +18,10 @@ export type IngredientModel = Model<
       updatedAt: Date;
     };
   },
-  IngredientsTableBuilder,
-  'category'
+  {
+    storeBuilder: IngredientsTableBuilder;
+  }
 >;
-
-export type Ingredient = IngredientModel['Entity'];
-export type IngredientCreate = IngredientModel['Create'];
 
 export enum Measurement {
   unit,
@@ -32,3 +30,6 @@ export enum Measurement {
   l,
   ml,
 }
+
+export type Ingredient = IngredientModel['Entity'];
+export type IngredientCreate = IngredientModel['Create'];

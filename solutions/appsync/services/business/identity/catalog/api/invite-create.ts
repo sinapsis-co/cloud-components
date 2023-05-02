@@ -1,11 +1,11 @@
 import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-sdk/catalog/api';
 import { Schemy } from '@sinapsis-co/cc-sdk/lib/schemy';
 import { UserClaims } from '../../entities/user-cognito';
-import { Invite } from '../../model/invite';
+import { InviteModel } from '../../model/invite';
 import { authMdw, authScope } from '../../platform/authorization';
 
 export type Interface = ApiInterface<{
-  response: Invite;
+  response: InviteModel['Entity'];
   pathParams: EmptyObject;
   body: { email: string };
   claims: UserClaims;

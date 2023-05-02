@@ -6,10 +6,10 @@ import { Entity, EntityBuilder, EntityEvents, EntityStore } from 'model';
 import { Tracing } from 'tracing';
 import { DeleteItemFn } from '../types/operations';
 import { RepositoryConfig } from '../types/repository';
-import { TableBuilder } from '../types/table-builder';
+import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
-export const deleteItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
+export const deleteItem = <Builder extends EntityBuilder, Table extends TableStoreBuilder = TableStoreBuilder>(
   repoConfig: RepositoryConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient
 ): DeleteItemFn<Builder> => {

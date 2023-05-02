@@ -7,7 +7,7 @@ import { chunkArray } from 'util/chunk-array';
 import { wait } from 'util/executers';
 import { BatchGetItemFn } from '../types/operations';
 import { RepositoryConfig } from '../types/repository';
-import { TableBuilder } from '../types/table-builder';
+import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
 export type BatchGetItemParams = {
@@ -15,7 +15,7 @@ export type BatchGetItemParams = {
   tableName?: string;
 };
 
-export const batchGetItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
+export const batchGetItem = <Builder extends EntityBuilder, Table extends TableStoreBuilder = TableStoreBuilder>(
   repoConfig: RepositoryConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient,
   params?: BatchGetItemParams

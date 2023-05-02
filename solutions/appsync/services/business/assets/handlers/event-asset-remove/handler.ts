@@ -1,5 +1,5 @@
 import { eventHandler } from '@sinapsis-co/cc-sdk/handler/event/event-handler';
-import { bucketDeleteObject } from '@sinapsis-co/cc-sdk/integration/bucket/object';
+import { bucketDeleteObject } from '@sinapsis-co/cc-sdk/integration/store/bucket/object';
 import { CustomError } from '../../../../../config/error-catalog';
 import { assetEvent } from '../../catalog';
 import { Asset } from '../../entities/asset';

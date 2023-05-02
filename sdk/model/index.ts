@@ -1,40 +1,41 @@
-import { TableBuilder } from '../integration/database/dynamo/types/table-builder';
+import { TableStoreBuilder } from '../integration/store/dynamo/types/table-store-builder';
 
-export type EntityBuilderKeys = {
+export type EntityBuilderParams = {
   name: string;
   body: Record<string, unknown>;
   key: Record<string, unknown>;
   timers: Record<string, Date>;
 };
 
-export type EntityBuilder<Builder extends EntityBuilderKeys = EntityBuilderKeys> = {
-  name: Builder['name'];
-  key: Builder['key'];
-  body: Builder['body'];
-  timers: Builder['timers'];
+export type EntityBuilder<EBuilderKeys extends EntityBuilderParams = EntityBuilderParams> = {
+  name: EBuilderKeys['name'];
+  key: EBuilderKeys['key'];
+  body: EBuilderKeys['body'];
+  timers: EBuilderKeys['timers'];
 };
 
-export type Entity<EBuilderKeys extends EntityBuilderKeys> = EBuilderKeys['body'] &
+export type Entity<EBuilderKeys extends EntityBuilderParams> = EBuilderKeys['body'] &
   EBuilderKeys['key'] &
   EBuilderKeys['timers'];
 
-export type EntityKey<EBuilderKeys extends EntityBuilderKeys> = EBuilderKeys['key'];
+export type EntityKey<EBuilderKeys extends EntityBuilderParams> = EBuilderKeys['key'];
 
 export type EntityCreate<
-  EBuilderKeys extends EntityBuilderKeys,
-  Omitted extends keyof EBuilderKeys['body'] | undefined = undefined
-> = Omitted extends keyof EBuilderKeys['body'] ? Omit<EBuilderKeys['body'], Omitted> : EBuilderKeys['body'];
+  EBuilderKeys extends EntityBuilderParams,
+  Omitted extends (keyof EBuilderKeys['body'])[] = []
+> = Omit<EBuilderKeys['body'], Omitted[number]>;
 
 export type EntityUpdate<
-  EBuilderKeys extends EntityBuilderKeys,
-  Omitted extends keyof EBuilderKeys['body'] | undefined = undefined
-> = Omitted extends keyof EBuilderKeys['body'] ? Omit<EBuilderKeys['body'], Omitted> : EBuilderKeys['body'];
+  EBuilderKeys extends EntityBuilderParams,
+  Omitted extends (keyof EBuilderKeys['body'])[] = []
+> = Partial<Omit<EBuilderKeys['body'], Omitted[number]>>;
 
-export type EntityStore<EBuilderKeys extends EntityBuilderKeys, TBuilder extends TableBuilder> = EBuilderKeys['body'] &
-  TBuilder['storeMapping']['key'] &
-  TBuilder['storeMapping']['timers'];
+export type EntityStore<
+  EBuilderKeys extends EntityBuilderParams,
+  TBuilder extends TableStoreBuilder
+> = EBuilderKeys['body'] & TBuilder['storeMapping']['key'] & TBuilder['storeMapping']['timers'];
 
-export type EntityEvents<EBuilderKeys extends EntityBuilderKeys> = {
+export type EntityEvents<EBuilderKeys extends EntityBuilderParams> = {
   created: {
     name: `app.${EBuilderKeys['name']}.created`;
     payload: Entity<EBuilderKeys>;
@@ -53,19 +54,42 @@ export type EntityEvents<EBuilderKeys extends EntityBuilderKeys> = {
   };
 };
 
-export type Model<
-  EBuilderKeys extends EntityBuilderKeys,
-  TBuilder extends TableBuilder | undefined = undefined,
-  CreateOmitted extends keyof EBuilderKeys['body'] | undefined = undefined,
-  UpdateOmitted extends keyof EBuilderKeys['body'] | undefined = undefined
-> = {
-  Builder: EntityBuilder<EBuilderKeys>;
-  Entity: Entity<EBuilderKeys>;
-  Create: EntityCreate<EBuilderKeys, CreateOmitted>;
-  Update: EntityUpdate<EBuilderKeys, UpdateOmitted>;
-  Key: EntityKey<EBuilderKeys>;
-  Events: EntityEvents<EBuilderKeys>;
-  Store: TBuilder extends TableBuilder ? EntityStore<EBuilderKeys, TBuilder> : undefined;
-  StoreMapping: TBuilder extends TableBuilder ? TBuilder['storeMapping'] : undefined;
-  StoreBuilder: TBuilder extends TableBuilder ? TBuilder : undefined;
+export type ModelOptions<T extends EntityBuilderParams> = {
+  storeBuilder: TableStoreBuilder | undefined;
+  omittedCreateKeys?: (keyof T['body'])[];
+  omittedUpdateKeys?: (keyof T['body'])[];
+};
+
+export type Model<EBuilder extends EntityBuilder, options extends ModelOptions<EBuilder> | undefined = undefined> = {
+  Builder: EntityBuilder<EBuilder>;
+  Entity: Entity<EBuilder>;
+  Key: EntityKey<EBuilder>;
+  Events: EntityEvents<EBuilder>;
+  Create: options extends ModelOptions<EBuilder>
+    ? EntityCreate<
+        EBuilder,
+        options['omittedCreateKeys'] extends (keyof EBuilder['body'])[] ? options['omittedCreateKeys'] : []
+      >
+    : EntityCreate<EBuilder>;
+  Update: options extends ModelOptions<EBuilder>
+    ? EntityUpdate<
+        EBuilder,
+        options['omittedUpdateKeys'] extends (keyof EBuilder['body'])[] ? options['omittedUpdateKeys'] : []
+      >
+    : EntityUpdate<EBuilder>;
+  Store: options extends ModelOptions<EBuilder>
+    ? options['storeBuilder'] extends TableStoreBuilder
+      ? EntityStore<EBuilder, options['storeBuilder']>
+      : undefined
+    : undefined;
+  StoreBuilder: options extends ModelOptions<EBuilder>
+    ? options['storeBuilder'] extends TableStoreBuilder
+      ? options['storeBuilder']
+      : undefined
+    : undefined;
+  StoreMapping: options extends ModelOptions<EBuilder>
+    ? options['storeBuilder'] extends TableStoreBuilder
+      ? options['storeBuilder']['storeMapping']
+      : undefined
+    : undefined;
 };

@@ -1,8 +1,8 @@
 import { NotificationMessage } from '@sinapsis-co/cc-sdk/catalog/notification/index';
 import { queueBatchHandler } from '@sinapsis-co/cc-sdk/handler/queue/queue-batch-handler';
-import { bucketGetObject } from '@sinapsis-co/cc-sdk/integration/bucket/object';
 import { deliverEmail, DeliverEmailParams } from '@sinapsis-co/cc-sdk/integration/notification';
 import { renderEmailTemplate } from '@sinapsis-co/cc-sdk/integration/notification/render-template';
+import { bucketGetObject } from '@sinapsis-co/cc-sdk/integration/store/bucket/object';
 import { Readable } from 'stream';
 
 export const handler = queueBatchHandler<NotificationMessage>(async (event, record, payload) => {

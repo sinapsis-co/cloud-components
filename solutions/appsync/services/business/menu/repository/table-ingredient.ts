@@ -1,9 +1,8 @@
-import { TableBuilder } from '@sinapsis-co/cc-sdk/integration/database/dynamo/types/table-builder';
+import { TableStoreBuilder } from '@sinapsis-co/cc-sdk/integration/store/dynamo/types/table-store-builder';
 
-export type IngredientsTableBuilder = TableBuilder<{
+export type IngredientsTableBuilder = TableStoreBuilder<{
   tableName: 'ingredients';
-  indexes: [];
-  ttlAttribute: true;
+  indexes: undefined;
   storeMapping: {
     key: {
       pk: string;
@@ -17,8 +16,7 @@ export type IngredientsTableBuilder = TableBuilder<{
 
 export const ingredientsTableBuilder: IngredientsTableBuilder = {
   tableName: 'ingredients',
-  indexes: [],
-  ttlAttribute: true,
+  indexes: undefined,
   storeMapping: {
     key: { pk: 'S' },
     timers: { createdAt: 'S', updatedAt: 'S' },

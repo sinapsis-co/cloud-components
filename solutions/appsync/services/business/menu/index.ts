@@ -1,11 +1,12 @@
 import { Service } from '@sinapsis-co/cc-core/common/service';
 
-import { AppSyncPrefab } from '@sinapsis-co/cc-core/prefab/gateway/app-sync';
+import { AppSyncResolverAggregate } from '@sinapsis-co/cc-core/prefab/gateway/app-sync/resolver-aggregate';
 import { DynamoTablePrefab } from '@sinapsis-co/cc-core/prefab/storage/dynamo/table';
 import { GlobalCoordinator } from '../../../config/config-type';
 import { GlobalEventBus } from '../../support/global-event-bus';
 import { GraphqlApi } from '../../support/graphql-api';
 import { ingredientsTableBuilder } from './repository/table-ingredient';
+import { IngredientResolver } from './schema/ingredient';
 
 type Deps = {
   globalEventBus: GlobalEventBus;
@@ -24,45 +25,22 @@ export class Menu extends Service<GlobalCoordinator> {
 
   build(deps: Deps) {
     const ingredientsTable = new DynamoTablePrefab(this, ingredientsTableBuilder);
-    const eventBridgeDataSource = AppSyncPrefab.eventBridgeDataSource(this, {
-      api: deps.graphqlApi.appSyncPrefab.api,
-      eventBusPrefab: deps.globalEventBus.eventBusPrefab,
-    });
 
-    AppSyncPrefab.serviceResolver(this, {
+    new AppSyncResolverAggregate<IngredientResolver>(this, {
+      appSyncPrefab: deps.graphqlApi.appSyncPrefab,
       baseApiFolder: __dirname,
-      api: deps.graphqlApi.appSyncPrefab.api,
       tablePrefab: ingredientsTable,
-      resolvers: [
-        { typeName: 'Query', fieldName: 'getIngredient' },
-        { typeName: 'Query', fieldName: 'listIngredients' },
-        {
+      resolvers: {
+        ingredientGet: { typeName: 'Query' },
+        ingredientList: { typeName: 'Query' },
+        ingredientCreate: {
           typeName: 'Mutation',
-          fieldName: 'addIngredient',
           resolversPipeline: [
-            { name: 'addIngredientCreate' },
-            { name: 'addIngredientDispatch', dataSource: eventBridgeDataSource },
+            { name: 'ingredientCreate' },
+            { name: 'ingredientDispatch', dataSource: deps.graphqlApi.appSyncPrefab.eventBridgeDataSource },
           ],
         },
-      ],
+      },
     });
-    // deps.graphqlApi.appSyncPrefab.addFunctionResolver({
-    //   baseApiFolder: __dirname,
-    //   dataSource: ingredientsTableDataSource,
-    //   typeName: 'Query',
-    //   fieldName: 'getIngredient',
-    // });
-    // deps.graphqlApi.appSyncPrefab.addFunctionResolver({
-    //   baseApiFolder: __dirname,
-    //   dataSource: ingredientsTableDataSource,
-    //   typeName: 'Query',
-    //   fieldName: 'listIngredients',
-    // });
-    // deps.graphqlApi.appSyncPrefab.addFunctionResolver({
-    //   baseApiFolder: __dirname,
-    //   dataSource: ingredientsTableDataSource,
-    //   typeName: 'Mutation',
-    //   fieldName: 'addIngredient',
-    // });
   }
 }

@@ -1,5 +1,5 @@
 import { apiHandler } from '@sinapsis-co/cc-sdk/handler/api/api-handler';
-import { createPutPresignedUrl } from '@sinapsis-co/cc-sdk/integration/bucket/presigned';
+import { createPutPresignedUrl } from '@sinapsis-co/cc-sdk/integration/store/bucket/presigned';
 import { uuid } from '@sinapsis-co/cc-sdk/lib/uuid';
 import { AssetKeyGeneratorParams } from 'services/business/assets/entities/asset';
 import { assetsTypes } from 'services/business/assets/lib/assets-type';

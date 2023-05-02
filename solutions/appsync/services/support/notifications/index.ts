@@ -1,4 +1,3 @@
-import { Coordinator } from '@sinapsis-co/cc-core/common/coordinator';
 import { Service } from '@sinapsis-co/cc-core/common/service';
 import { EventAggregate } from '@sinapsis-co/cc-core/prefab/compute/function/event-function/event-aggregate';
 import { QueueFunction } from '@sinapsis-co/cc-core/prefab/compute/function/queue-function';
@@ -6,6 +5,7 @@ import { AssetBucketPrefab } from '@sinapsis-co/cc-core/prefab/storage/bucket/as
 import { PrivateBucketPrefab } from '@sinapsis-co/cc-core/prefab/storage/bucket/private-bucket';
 import { SesDomain } from '@sinapsis-co/cc-core/prefab/util/ses/ses-domain';
 
+import { GlobalCoordinator } from 'config/config-type';
 import { DnsDomainRef } from '../dns-domain-ref';
 import { DnsSubdomainHostedZone } from '../dns-subdomain-hosted-zone';
 import { GlobalEventBus } from '../global-event-bus';
@@ -17,13 +17,13 @@ type Deps = {
   dnsDomainRef: DnsDomainRef;
 };
 const depsNames: Array<keyof Deps> = ['globalEventBus', 'dnsSubdomainHostedZone', 'dnsDomainRef'];
-export class Notifications extends Service<Coordinator> {
+export class Notifications extends Service<GlobalCoordinator> {
   public templatesBucket: PrivateBucketPrefab;
   public attachmentsBucket: PrivateBucketPrefab;
   public sendEmailQueueFn: QueueFunction;
   public ses: SesDomain;
 
-  constructor(coordinator: Coordinator) {
+  constructor(coordinator: GlobalCoordinator) {
     super(coordinator, Notifications.name, depsNames);
     coordinator.addService(this);
   }

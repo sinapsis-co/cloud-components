@@ -1,6 +1,6 @@
 import { eventHandler } from '@sinapsis-co/cc-sdk/handler/event/event-handler';
-import { bucketStreamGetObject, bucketStreamUpload } from '@sinapsis-co/cc-sdk/integration/bucket/streaming';
 import { dispatchEvent } from '@sinapsis-co/cc-sdk/integration/event/dispatch-event';
+import { bucketStreamGetObject, bucketStreamUpload } from '@sinapsis-co/cc-sdk/integration/store/bucket/streaming';
 import sharp from 'sharp';
 import { Readable } from 'stream';
 import { assetEvent } from '../../catalog';

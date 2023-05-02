@@ -7,10 +7,10 @@ import { Tracing } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
 import { ListItemFn } from '../types/operations';
 import { RepositoryConfig, ViewConfig } from '../types/repository';
-import { TableBuilder } from '../types/table-builder';
+import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
-export const listItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
+export const listItem = <Builder extends EntityBuilder, Table extends TableStoreBuilder = TableStoreBuilder>(
   repoConfig: RepositoryConfig<Builder, Table> | ViewConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient
 ): ListItemFn<Builder> => {

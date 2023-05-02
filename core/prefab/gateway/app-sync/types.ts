@@ -8,8 +8,8 @@ export type EventBridgeDataSourceParams = {
 };
 
 export type ServiceResolver = {
-  baseApiFolder: string;
   api: GraphqlApi;
+  baseApiFolder: string;
   tablePrefab: DynamoTablePrefab;
   resolvers: {
     fieldName: string;

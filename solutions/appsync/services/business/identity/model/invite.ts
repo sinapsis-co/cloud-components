@@ -20,5 +20,5 @@ export type InviteModel = Model<
       updatedAt: Date;
     };
   },
-  IdentityTableBuilder
+  { storeBuilder: IdentityTableBuilder }
 >;

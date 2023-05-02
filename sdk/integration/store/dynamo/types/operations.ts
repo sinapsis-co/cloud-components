@@ -2,11 +2,11 @@ import * as Dynamo from '@aws-sdk/lib-dynamodb';
 import { PaginatedResponse } from 'catalog/api';
 import { Entity, EntityBuilder, EntityCreate, EntityKey, EntityUpdate } from '../../../../model';
 import { TimeToDelete } from '../operations/soft-delete';
-import { TableBuilder } from './table-builder';
+import { TableStoreBuilder } from './table-store-builder';
 
-export type CreateItemFn<Builder extends EntityBuilder, EntityCreate = Builder['body']> = (
+export type CreateItemFn<Builder extends EntityBuilder> = (
   key: EntityKey<Builder>,
-  entityCreate: EntityCreate,
+  entityCreate: EntityCreate<Builder>,
   params?: Partial<Dynamo.PutCommandInput> & { emitEvent?: boolean }
 ) => Promise<Entity<Builder>>;
 
@@ -66,10 +66,8 @@ export type ScanTableFn<Builder extends EntityBuilder> = (
   params?: Partial<Dynamo.ScanCommandInput>
 ) => Promise<PaginatedResponse<Entity<Builder>>>;
 
-export type ListIndexFn<Builder extends EntityBuilder, Table extends TableBuilder> = (
-  index: valueof<Table['indexes']>,
+export type ListIndexFn<Builder extends EntityBuilder, Table extends TableStoreBuilder> = (
+  index: keyof Table['indexes'],
   queryParams: { limit: number; nextToken?: string },
   params?: Partial<Dynamo.QueryCommandInput>
 ) => Promise<PaginatedResponse<Entity<Builder>>>;
-
-export type valueof<T> = T[keyof T];

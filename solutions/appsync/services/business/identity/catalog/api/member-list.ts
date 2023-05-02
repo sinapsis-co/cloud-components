@@ -1,12 +1,12 @@
 import * as api from '@sinapsis-co/cc-sdk/catalog/api';
 
 import { UserClaims } from '../../entities/user-cognito';
-import { Invite } from '../../model/invite';
-import { User } from '../../model/user';
+import { InviteModel } from '../../model/invite';
+import { UserModel } from '../../model/user';
 import { authMdw, authScope } from '../../platform/authorization';
 
 export type Interface = api.ApiInterface<{
-  response: api.PaginatedResponse<User | Invite>;
+  response: api.PaginatedResponse<UserModel['Entity'] | InviteModel['Entity']>;
   pathParams: api.EmptyObject;
   body: api.EmptyObject;
   claims: UserClaims;

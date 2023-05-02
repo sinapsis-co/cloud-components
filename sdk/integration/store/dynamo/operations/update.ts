@@ -6,11 +6,11 @@ import { Entity, EntityBuilder, EntityEvents, EntityKey, EntityStore, EntityUpda
 import { Tracing } from 'tracing';
 import { UpdateItemFn } from '../types/operations';
 import { RepositoryConfig } from '../types/repository';
-import { TableBuilder } from '../types/table-builder';
+import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 import { updateMapper } from '../util/update-mapper';
 
-export const updateItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
+export const updateItem = <Builder extends EntityBuilder, Table extends TableStoreBuilder = TableStoreBuilder>(
   repoConfig: RepositoryConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient
 ): UpdateItemFn<Builder> => {

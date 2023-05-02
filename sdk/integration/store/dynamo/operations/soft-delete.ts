@@ -1,24 +1,36 @@
 import { DynamoDBDocumentClient, UpdateCommand, UpdateCommandInput } from '@aws-sdk/lib-dynamodb';
+import dayjs from 'dayjs';
 
 import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
 import { Entity, EntityBuilder, EntityEvents, EntityKey, EntityStore } from 'model';
 import { Tracing } from 'tracing';
-import { RecoverItemFn } from '../types/operations';
+import { SoftDeleteItemFn } from '../types/operations';
 import { RepositoryConfig } from '../types/repository';
-import { TableBuilder } from '../types/table-builder';
+import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
+import { updateMapper } from '../util/update-mapper';
 
-export const recoverItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
-  repoConfig: RepositoryConfig<Builder, Table>,
+export type TimeToDelete = {
+  amount: number;
+  period: dayjs.ManipulateType;
+};
+
+export const softDeleteItem = <EBuilder extends EntityBuilder, TBuilder extends TableStoreBuilder = TableStoreBuilder>(
+  repoConfig: RepositoryConfig<EBuilder, TBuilder>,
   dynamodb: DynamoDBDocumentClient
-): RecoverItemFn<Builder> => {
+): SoftDeleteItemFn<EBuilder> => {
   return async (
-    key: EntityKey<Builder>,
-    params?: Partial<UpdateCommandInput> & { emitEvent?: boolean }
-  ): Promise<Entity<Builder>> => {
+    key: EntityKey<EBuilder>,
+    params?: Partial<UpdateCommandInput> & { emitEvent?: boolean; deleteAfter?: TimeToDelete }
+  ): Promise<Entity<EBuilder>> => {
     const tableName = process.env[parseTableName(repoConfig.tableName)];
     const serializedKey = repoConfig.keySerialize(key);
+    const ttl = params?.deleteAfter || { amount: 30, period: 'days' };
+    const mapper = updateMapper({
+      deleted: true,
+      deleteTTL: dayjs().add(ttl.amount, ttl.period).unix(),
+    });
 
     const cmd = async () => {
       const { Attributes } = await dynamodb
@@ -27,8 +39,7 @@ export const recoverItem = <Builder extends EntityBuilder, Table extends TableBu
             TableName: tableName,
             Key: serializedKey,
             ReturnValues: 'ALL_NEW',
-            UpdateExpression: 'REMOVE #deleteTTL',
-            ExpressionAttributeNames: { '#deleteTTL': 'deleteTTL' },
+            ...mapper,
             ...params,
           })
         )
@@ -40,17 +51,19 @@ export const recoverItem = <Builder extends EntityBuilder, Table extends TableBu
 
       if (!Attributes) throw new PlatformError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
 
-      const entity = repoConfig.entityDeserialize(Attributes as EntityStore<Builder, Table>);
+      const entity = repoConfig.entityDeserialize(Attributes as EntityStore<EBuilder, TBuilder>);
+
       if (params?.emitEvent) {
-        await dispatchEvent<EntityEvents<Builder>['recovered']>(
-          { name: `app.${repoConfig.repoName}.recovered`, source: 'app' },
+        await dispatchEvent<EntityEvents<EBuilder>['deleted']>(
+          { name: `app.${repoConfig.repoName}.deleted`, source: 'app' },
           entity
         );
       }
+
       return entity;
     };
 
-    const meta = { tableName, rawKey: key, serializedKey, params };
-    return Tracing.capture('recoverItem', 'FAULT_DYN_RECOVER_ITEM', JSON.stringify(key), cmd, meta);
+    const meta = { tableName, rawKey: key, serializedKey, ttl, mapper, params };
+    return Tracing.capture('softDeleteItem', 'FAULT_DYN_SOFT_DELETE_ITEM', JSON.stringify(key), cmd, meta);
   };
 };

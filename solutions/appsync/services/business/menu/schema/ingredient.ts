@@ -1,8 +1,25 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
+import { GraphQLScalarType, Kind } from 'graphql';
 import { Arg, Field, ID, InputType, Mutation, ObjectType, Query, Resolver, registerEnumType } from 'type-graphql';
 import { Ingredient, IngredientCreate, Measurement } from '../model/ingredient';
+
+export const AWSDate = new GraphQLScalarType({
+  name: 'AWSDate',
+  parseValue(value: string) {
+    return new Date(value); // value from the client input variables
+  },
+  serialize(value: Date) {
+    return value.toISOString(); // value sent to the client
+  },
+  parseLiteral(ast) {
+    if (ast.kind === Kind.STRING) {
+      return new Date(ast.value);
+    }
+    return null;
+  },
+});
 
 // Entities
 @ObjectType()
@@ -20,9 +37,9 @@ export class IngredientSchema implements Ingredient {
   public category: string;
   @Field()
   public price: number;
-  @Field()
+  @Field((type) => AWSDate)
   public createdAt: Date;
-  @Field()
+  @Field((type) => AWSDate)
   public updatedAt: Date;
   // @Field(() => [String])
   // ingredients: string[];
@@ -67,11 +84,11 @@ export class IngredientResolver {
   constructor() {}
 
   @Query((returns) => IngredientSchema)
-  getIngredient(@Arg('id', (type) => ID) id: string) {}
+  ingredientGet(@Arg('id', (type) => ID) id: string) {}
 
   @Query((returns) => IngredientQueryResult)
-  listIngredients(@Arg('input', { nullable: true }) input: QueryPaginationInput) {}
+  ingredientList(@Arg('input', { nullable: true }) input: QueryPaginationInput) {}
 
   @Mutation((returns) => IngredientSchema)
-  addIngredient(@Arg('input') input: IngredientInput) {}
+  ingredientCreate(@Arg('input') input: IngredientInput) {}
 }

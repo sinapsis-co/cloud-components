@@ -1,5 +1,5 @@
-import { View } from '@sinapsis-co/cc-sdk/integration/database/dynamo/types/view';
-import { view } from '@sinapsis-co/cc-sdk/integration/database/dynamo/view';
+import { View } from '@sinapsis-co/cc-sdk/integration/store/dynamo/types/view';
+import { view } from '@sinapsis-co/cc-sdk/integration/store/dynamo/view';
 import { InviteModel } from '../model/invite';
 import { UserModel } from '../model/user';
 

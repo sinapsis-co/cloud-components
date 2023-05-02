@@ -1,6 +1,6 @@
 import { TablePermission } from '@sinapsis-co/cc-sdk/catalog/api';
-import { TableBuilder } from '@sinapsis-co/cc-sdk/integration/database/dynamo/types/table-builder';
-import { parseTableName } from '@sinapsis-co/cc-sdk/integration/database/dynamo/util/parse-name';
+import { TableStoreBuilder } from '@sinapsis-co/cc-sdk/integration/store/dynamo/types/table-store-builder';
+import { parseTableName } from '@sinapsis-co/cc-sdk/integration/store/dynamo/util/parse-name';
 import { RemovalPolicy } from 'aws-cdk-lib';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
@@ -14,7 +14,7 @@ export class DynamoTablePrefab extends Construct {
   public readonly table: Table;
   public readonly tableName: string;
 
-  constructor(service: Service, params: TableBuilder) {
+  constructor(service: Service, params: TableStoreBuilder) {
     super(service, getLogicalName(DynamoTablePrefab.name, params.tableName));
 
     this.tableName = params.tableName;
@@ -22,15 +22,21 @@ export class DynamoTablePrefab extends Construct {
       tableName: getResourceName(params.tableName, service.props),
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: { name: 'pk', type: AttributeType.STRING },
-      ...(params.ttlAttribute ? { timeToLiveAttribute: 'deleteTTL' } : {}),
+      timeToLiveAttribute: 'deleteTTL',
       ...(params.storeMapping.key.sk ? { sortKey: { name: 'sk', type: AttributeType.STRING } } : {}),
       // stream: params.stream,
     });
-    params.indexes?.forEach((index) => {
-      this.table.addGlobalSecondaryIndex({
-        indexName: index,
-        partitionKey: { name: index, type: AttributeType.STRING },
-      });
+
+    Object.keys(params.indexes || {}).forEach((index) => {
+      if (params && params.indexes && params.indexes[index]) {
+        this.table.addGlobalSecondaryIndex({
+          indexName: index,
+          partitionKey: { name: params.indexes[index].pk, type: AttributeType.STRING },
+          ...(params.indexes[index].sk
+            ? { sortKey: { name: params.indexes[index].sk!, type: AttributeType.STRING } }
+            : {}),
+        });
+      }
     });
 
     this.table.applyRemovalPolicy(RemovalPolicy.DESTROY);

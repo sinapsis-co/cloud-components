@@ -26,7 +26,9 @@ export type UserModel = Model<
       updatedAt: Date;
     };
   },
-  IdentityTableBuilder,
-  undefined,
-  'givenName' | 'familyName'
+  {
+    storeBuilder: IdentityTableBuilder;
+    omittedCreateKeys: ['email' | 'role' | 'companyName' | 'tenantOwner' | 'avatar'];
+    omittedUpdateKeys: ['email' | 'role' | 'companyName' | 'tenantOwner' | 'avatar'];
+  }
 >;

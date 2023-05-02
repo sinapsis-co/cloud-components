@@ -1,5 +1,5 @@
-import { repository } from '@sinapsis-co/cc-sdk/integration/database/dynamo/repository';
-import { Repository, RepositoryConfig } from '@sinapsis-co/cc-sdk/integration/database/dynamo/types/repository';
+import { repository } from '@sinapsis-co/cc-sdk/integration/store/dynamo/repository';
+import { Repository, RepositoryConfig } from '@sinapsis-co/cc-sdk/integration/store/dynamo/types/repository';
 import { UserModel } from '../model/user';
 
 const repoFactory = <Model extends UserModel>(): Repository<Model['Builder'], Model['StoreBuilder']> => {

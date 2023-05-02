@@ -1,9 +1,9 @@
 import { EventConfig, EventInterface } from '@sinapsis-co/cc-sdk/catalog/event';
-import { User } from '../../model/user';
+import { UserModel } from '../../model/user';
 
 export type Event = EventInterface<{
   name: 'app.member.created';
-  payload: User;
+  payload: UserModel['Entity'];
 }>;
 
 export const eventConfig: EventConfig<Event> = {

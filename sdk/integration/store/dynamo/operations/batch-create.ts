@@ -6,7 +6,7 @@ import { chunkArray } from 'util/chunk-array';
 import { wait } from 'util/executers';
 import { BatchCreateItemFn } from '../types/operations';
 import { RepositoryConfig } from '../types/repository';
-import { TableBuilder } from '../types/table-builder';
+import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
 export type BatchCreateItemParams = {
@@ -14,7 +14,7 @@ export type BatchCreateItemParams = {
   tableName?: string;
 };
 
-export const batchCreateItem = <Builder extends EntityBuilder, Table extends TableBuilder = TableBuilder>(
+export const batchCreateItem = <Builder extends EntityBuilder, Table extends TableStoreBuilder = TableStoreBuilder>(
   repoConfig: RepositoryConfig<Builder, Table>,
   dynamodb: DynamoDBDocumentClient,
   params?: BatchCreateItemParams

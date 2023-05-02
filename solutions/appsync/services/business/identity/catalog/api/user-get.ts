@@ -1,11 +1,11 @@
 import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-sdk/catalog/api';
 
 import { UserClaims } from '../../entities/user-cognito';
-import { User } from '../../model/user';
+import { UserModel } from '../../model/user';
 import { authMdw, authScope } from '../../platform/authorization';
 
 export type Interface = ApiInterface<{
-  response: User;
+  response: UserModel['Entity'];
   pathParams: EmptyObject;
   body: EmptyObject;
   claims: UserClaims;
