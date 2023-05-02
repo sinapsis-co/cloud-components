@@ -20,12 +20,12 @@ export type Entity<EBuilderKeys extends EntityBuilderParams> = EBuilderKeys['bod
 
 export type EntityKey<EBuilderKeys extends EntityBuilderParams> = EBuilderKeys['key'];
 
-export type EntityCreate<
-  EBuilderKeys extends EntityBuilderParams,
-  Omitted extends (keyof EBuilderKeys['body'])[] = []
-> = Omit<EBuilderKeys['body'], Omitted[number]>;
+type EntityCreate<EBuilderKeys extends EntityBuilderParams, Omitted extends (keyof EBuilderKeys['body'])[] = []> = Omit<
+  EBuilderKeys['body'],
+  Omitted[number]
+>;
 
-export type EntityUpdate<
+type EntityUpdate<
   EBuilderKeys extends EntityBuilderParams,
   Omitted extends (keyof EBuilderKeys['body'])[] = []
 > = Partial<Omit<EBuilderKeys['body'], Omitted[number]>>;
@@ -34,6 +34,11 @@ export type EntityStore<
   EBuilderKeys extends EntityBuilderParams,
   TBuilder extends TableStoreBuilder
 > = EBuilderKeys['body'] & TBuilder['storeMapping']['key'] & TBuilder['storeMapping']['timers'];
+
+export type EntityList<EBuilderKeys extends EntityBuilderParams> = {
+  items: Entity<EBuilderKeys>[];
+  nextToken: string | number | null;
+};
 
 export type EntityEvents<EBuilderKeys extends EntityBuilderParams> = {
   created: {
@@ -60,11 +65,15 @@ export type ModelOptions<T extends EntityBuilderParams> = {
   omittedUpdateKeys?: (keyof T['body'])[];
 };
 
-export type Model<EBuilder extends EntityBuilder, options extends ModelOptions<EBuilder> | undefined = undefined> = {
+export type Model<
+  EBuilder extends EntityBuilder = EntityBuilder,
+  options extends ModelOptions<EBuilder> | undefined = undefined
+> = {
   Builder: EntityBuilder<EBuilder>;
   Entity: Entity<EBuilder>;
   Key: EntityKey<EBuilder>;
   Events: EntityEvents<EBuilder>;
+  List: EntityList<EBuilder>;
   Create: options extends ModelOptions<EBuilder>
     ? EntityCreate<
         EBuilder,

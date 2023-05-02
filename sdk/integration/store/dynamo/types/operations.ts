@@ -1,19 +1,19 @@
 import * as Dynamo from '@aws-sdk/lib-dynamodb';
 import { PaginatedResponse } from 'catalog/api';
-import { Entity, EntityBuilder, EntityCreate, EntityKey, EntityUpdate } from '../../../../model';
+import { Entity, EntityBuilder, EntityKey } from '../../../../model';
 import { TimeToDelete } from '../operations/soft-delete';
 import { TableStoreBuilder } from './table-store-builder';
 
 export type CreateItemFn<Builder extends EntityBuilder> = (
   key: EntityKey<Builder>,
-  entityCreate: EntityCreate<Builder>,
+  body: Builder['body'],
   params?: Partial<Dynamo.PutCommandInput> & { emitEvent?: boolean }
 ) => Promise<Entity<Builder>>;
 
 export type BatchCreateItemFn<Builder extends EntityBuilder> = (
   Commands: {
     key: EntityKey<Builder>;
-    entityCreate: EntityCreate<Builder>;
+    body: Builder['body'];
   }[],
   autoRetry?: boolean
 ) => Promise<Entity<Builder>[]>;
@@ -52,7 +52,7 @@ export type SoftDeleteItemFn<Builder extends EntityBuilder> = (
 
 export type UpdateItemFn<Builder extends EntityBuilder> = (
   key: EntityKey<Builder>,
-  entityUpdate: EntityUpdate<Builder>,
+  body: Builder['body'],
   params?: Partial<Dynamo.UpdateCommandInput> & { emitEvent?: boolean }
 ) => Promise<Entity<Builder>>;
 

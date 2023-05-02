@@ -1,4 +1,5 @@
-import { Entity, EntityBuilder, EntityStore } from '../../../../model';
+import { EntityBuilder } from '../../../../model';
+import { RepositoryConfig } from './config';
 import {
   BatchCreateItemFn,
   BatchGetItemFn,
@@ -14,22 +15,6 @@ import {
   UpdateItemFn,
 } from './operations';
 import { TableStoreBuilder } from './table-store-builder';
-
-export type RepositoryConfig<EBuilder extends EntityBuilder, TBuilder extends TableStoreBuilder> = {
-  repoName: EBuilder['name'];
-  tableName: TBuilder['tableName'];
-  keySerialize: (key: EntityBuilder<EBuilder>['key']) => TBuilder['storeMapping']['key'];
-  entitySerialize: (
-    key: EntityBuilder<EBuilder>['key'],
-    body: EntityBuilder<EBuilder>['body']
-  ) => EntityStore<EBuilder, TBuilder>;
-  entityDeserialize: (entityStore: EntityStore<EBuilder, TBuilder>) => Entity<EBuilder>;
-};
-
-export type ViewConfig<EBuilder extends EntityBuilder, TBuilder extends TableStoreBuilder> = {
-  tableName: TBuilder['tableName'];
-  entityDeserialize: (entityStore: EntityStore<EBuilder, TBuilder>) => Entity<EBuilder>;
-};
 
 export type Repository<EBuilder extends EntityBuilder, TBuilder extends TableStoreBuilder> = {
   events: {

@@ -4,7 +4,7 @@ import path from 'path';
 import { buildSchema } from 'type-graphql';
 
 import { log } from 'console';
-import { IngredientResolver } from '../../business/menu/schema/ingredient';
+import { IngredientResolver } from '../../business/menu/catalog/schema/ingredient';
 
 export const schemaPath = path.join(__dirname, 'consolidated.graphql');
 

@@ -11,6 +11,7 @@ export type IngredientModel = Model<
       name: string;
       category: string;
       description?: string;
+      price?: number;
       measurement: Measurement;
     };
     timers: {
@@ -33,3 +34,4 @@ export enum Measurement {
 
 export type Ingredient = IngredientModel['Entity'];
 export type IngredientCreate = IngredientModel['Create'];
+export type IngredientList = IngredientModel['List'];

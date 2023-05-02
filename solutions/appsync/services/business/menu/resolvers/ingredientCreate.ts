@@ -1,20 +1,20 @@
-import { Context, DynamoDBPutItemRequest, util } from '@aws-appsync/utils';
-import type { IngredientInput, IngredientSchema } from '../schema/ingredient';
+import { util } from '@aws-appsync/utils';
+import { CreateContextReq, CreateContextRes } from '@sinapsis-co/cc-sdk/handler/resolver';
+import { resolverCreateItem } from '@sinapsis-co/cc-sdk/integration/store/dynamo/resolver-operations/create';
+import { IngredientModel } from '../model/ingredient';
+import {
+  ingredientBodySerialize,
+  ingredientEntityDeserialize,
+  ingredientKeySerialize,
+} from '../repository/resolver-repo-ingredient';
 
-type UnitMutationContextReq<Input> = (ctx: Context<{ input: Input }>) => DynamoDBPutItemRequest;
-type UnitMutationContextRes<Result, Response> = (ctx: Context<any, any, any, any, Result>) => Response;
-type Stored = Omit<IngredientSchema, 'id'> & { pk: string };
-
-export const request: UnitMutationContextReq<IngredientInput> = (ctx) => {
+export const request: CreateContextReq<IngredientModel['Builder']> = (ctx) => {
   const { input } = ctx.args;
-  return {
-    operation: 'PutItem',
-    key: util.dynamodb.toMapValues({ pk: util.autoId() }),
-    attributeValues: util.dynamodb.toMapValues(input)!,
-  };
+  const key = ingredientKeySerialize({ id: util.autoId() });
+  const body = ingredientBodySerialize(input);
+  return resolverCreateItem<IngredientModel['Builder'], IngredientModel['StoreBuilder']>(key, body);
 };
 
-export const response: UnitMutationContextRes<Stored, IngredientSchema> = (ctx) => {
-  const { pk, ...att } = ctx.result;
-  return { id: pk, ...att };
+export const response: CreateContextRes<IngredientModel['Builder'], IngredientModel['StoreBuilder']> = (ctx) => {
+  return ingredientEntityDeserialize(ctx.result);
 };

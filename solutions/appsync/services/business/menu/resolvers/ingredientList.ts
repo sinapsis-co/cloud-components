@@ -1,15 +1,18 @@
-import { Context, DynamoDBScanRequest } from '@aws-appsync/utils';
+import { ListContextRes, ScanContextReq } from '@sinapsis-co/cc-sdk/handler/resolver';
+import { resolverScan } from '@sinapsis-co/cc-sdk/integration/store/dynamo/resolver-operations/scan';
+import { IngredientModel } from '../model/ingredient';
+import { ingredientEntityDeserialize } from '../repository/resolver-repo-ingredient';
 
-export function request(ctx: Context): DynamoDBScanRequest {
-  const { limit = 20, nextToken } = ctx.args;
-  return { operation: 'Scan', limit, nextToken };
-}
+export const request: ScanContextReq = (ctx) => {
+  const {
+    input: { limit, nextToken },
+  } = ctx.args;
+  return resolverScan(limit, nextToken);
+};
 
-export function response(ctx: Context) {
+export const response: ListContextRes<IngredientModel['Builder'], IngredientModel['StoreBuilder']> = (ctx) => {
   return {
-    items: ctx.result.items.map((item) => {
-      const { pk, ...att } = item;
-      return { id: pk, ...att };
-    }),
+    items: ctx.result.items.map((item) => ingredientEntityDeserialize(item)),
+    nextToken: ctx.result.nextToken,
   };
-}
+};

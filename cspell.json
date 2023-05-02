@@ -22,6 +22,7 @@
     "invisipay",
     "kinesisfirehose",
     "nosniff",
+    "outfile",
     "parens",
     "passwordless",
     "Prefabapi",
@@ -33,9 +34,12 @@
     "spreedly",
     "timestream",
     "tspm",
-    "valueof",
     "typeorm",
+    "valueof",
     "wafv2"
   ],
-  "ignorePaths": ["*/node_modules/**", "*/cdk.out/**"]
+  "ignorePaths": [
+    "*/node_modules/**",
+    "*/cdk.out/**"
+  ]
 }

@@ -5,8 +5,8 @@ import { DynamoTablePrefab } from '@sinapsis-co/cc-core/prefab/storage/dynamo/ta
 import { GlobalCoordinator } from '../../../config/config-type';
 import { GlobalEventBus } from '../../support/global-event-bus';
 import { GraphqlApi } from '../../support/graphql-api';
+import { IngredientResolver } from './catalog/schema/ingredient';
 import { ingredientsTableBuilder } from './repository/table-ingredient';
-import { IngredientResolver } from './schema/ingredient';
 
 type Deps = {
   globalEventBus: GlobalEventBus;

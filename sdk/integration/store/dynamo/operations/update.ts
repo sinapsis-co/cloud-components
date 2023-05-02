@@ -2,7 +2,7 @@ import { DynamoDBDocumentClient, UpdateCommand, UpdateCommandInput } from '@aws-
 
 import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
-import { Entity, EntityBuilder, EntityEvents, EntityKey, EntityStore, EntityUpdate } from 'model';
+import { Entity, EntityBuilder, EntityEvents, EntityKey, EntityStore } from 'model';
 import { Tracing } from 'tracing';
 import { UpdateItemFn } from '../types/operations';
 import { RepositoryConfig } from '../types/repository';
@@ -16,12 +16,12 @@ export const updateItem = <Builder extends EntityBuilder, Table extends TableSto
 ): UpdateItemFn<Builder> => {
   return async (
     key: EntityKey<Builder>,
-    entityUpdate: EntityUpdate<Builder>,
+    body: Builder['body'],
     params?: Partial<UpdateCommandInput> & { emitEvent?: boolean }
   ): Promise<Entity<Builder>> => {
     const tableName = process.env[parseTableName(repoConfig.tableName)];
     const serializedKey = repoConfig.keySerialize(key);
-    const mapper = updateMapper<EntityUpdate<Builder>>(entityUpdate);
+    const mapper = updateMapper<Builder['body']>(body);
 
     const cmd = async () => {
       const { Attributes } = await dynamodb

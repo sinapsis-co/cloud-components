@@ -1,5 +1,6 @@
 import { repository } from '@sinapsis-co/cc-sdk/integration/store/dynamo/repository';
-import { Repository, RepositoryConfig } from '@sinapsis-co/cc-sdk/integration/store/dynamo/types/repository';
+import { RepositoryConfig } from '@sinapsis-co/cc-sdk/integration/store/dynamo/types/config';
+import { Repository } from '@sinapsis-co/cc-sdk/integration/store/dynamo/types/repository';
 import { IngredientModel } from '../model/ingredient';
 
 const repoFactory = <Model extends IngredientModel>(): Repository<Model['Builder'], Model['StoreBuilder']> => {
@@ -21,7 +22,6 @@ const repoFactory = <Model extends IngredientModel>(): Repository<Model['Builder
     },
     entityDeserialize: (entityStore: Model['Store']): Model['Entity'] => {
       const { pk, createdAt, updatedAt, ...att } = entityStore;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       return {
         ...att,
         id: pk,
@@ -32,4 +32,4 @@ const repoFactory = <Model extends IngredientModel>(): Repository<Model['Builder
   };
   return repository(repoConfig);
 };
-export const ingredientsRepo = repoFactory();
+export const repoIngredient = repoFactory();

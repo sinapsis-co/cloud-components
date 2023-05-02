@@ -5,6 +5,7 @@ import * as esbuild from 'esbuild';
 import { BaseDataSource } from 'aws-cdk-lib/aws-appsync';
 import { getLogicalName } from 'common/naming/get-logical-name';
 import { Service } from 'common/service';
+import { log } from 'console';
 import { DynamoTablePrefab } from 'prefab/storage/dynamo/table';
 import { AppSyncPrefab } from '.';
 import { FunctionResolver } from './types';
@@ -44,7 +45,7 @@ export class AppSyncResolverAggregate<T> extends Construct {
       const fnPipeline =
         resolver.resolversPipeline && resolver.resolversPipeline.length > 1
           ? resolver.resolversPipeline.map((rp) =>
-              AppSyncResolverAggregate.functionResolver(service, {
+              this.functionResolver(service, {
                 api: appSyncPrefab.api,
                 baseApiFolder,
                 dataSource: rp.dataSource || dataSource,
@@ -52,7 +53,7 @@ export class AppSyncResolverAggregate<T> extends Construct {
               })
             )
           : [
-              AppSyncResolverAggregate.functionResolver(service, {
+              this.functionResolver(service, {
                 api: appSyncPrefab.api,
                 dataSource,
                 baseApiFolder,
@@ -78,28 +79,33 @@ export class AppSyncResolverAggregate<T> extends Construct {
     });
   };
 
-  static functionResolver = (service: Service, params: FunctionResolver): appsync.AppsyncFunction => {
+  functionResolver = (service: Service, params: FunctionResolver): appsync.AppsyncFunction => {
     return new appsync.AppsyncFunction(service, getLogicalName('function', params.name), {
       api: params.api,
       dataSource: params.dataSource,
       name: params.name,
-      code: AppSyncResolverAggregate.bundleAppSyncResolver(`${params.baseApiFolder}/resolvers/${params.name}.ts`),
+      code: this.bundleAppSyncResolver(params.baseApiFolder, params.name),
       runtime: appsync.FunctionRuntime.JS_1_0_0,
     });
   };
 
-  static bundleAppSyncResolver = (entryPoint: string): appsync.Code => {
-    const result = esbuild.buildSync({
-      entryPoints: [entryPoint],
+  bundleAppSyncResolver = (baseApiFolder: string, name: string): appsync.Code => {
+    const file = `cdk.out/resolvers/${name}.js`;
+    log('pre build', file);
+    esbuild.buildSync({
+      entryPoints: [`${baseApiFolder}/resolvers/${name}.ts`],
       external: ['@aws-appsync/utils'],
+      allowOverwrite: true,
+      outfile: file,
       bundle: true,
-      write: false,
+      write: true,
       platform: 'node',
       target: 'esnext',
       format: 'esm',
       // minify: true,
       sourcesContent: false,
     });
-    return appsync.Code.fromInline(result.outputFiles[0].text);
+    log('pos build');
+    return appsync.Code.fromAsset(file);
   };
 }

@@ -6,7 +6,7 @@ export function request(ctx: Context) {
     events: [
       {
         source: 'app',
-        detailType: 'test',
+        detailType: ctx.info.fieldName,
         detail: ctx.prev.result,
       },
     ],
