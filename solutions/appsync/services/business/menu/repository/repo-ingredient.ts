@@ -1,6 +1,7 @@
 import { repository } from '@sinapsis-co/cc-sdk/integration/store/dynamo/repository';
 import { RepositoryConfig } from '@sinapsis-co/cc-sdk/integration/store/dynamo/types/config';
 import { Repository } from '@sinapsis-co/cc-sdk/integration/store/dynamo/types/repository';
+
 import { IngredientModel } from '../model/ingredient';
 
 const repoFactory = <Model extends IngredientModel>(): Repository<Model['Builder'], Model['StoreBuilder']> => {

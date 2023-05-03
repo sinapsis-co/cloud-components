@@ -9,6 +9,7 @@ import { SesDomain } from '@sinapsis-co/cc-core/prefab/util/ses/ses-domain';
 import { Duration } from 'aws-cdk-lib';
 import { UserPoolOperation } from 'aws-cdk-lib/aws-cognito';
 
+import { DepCheck } from '@sinapsis-co/cc-core/common/coordinator';
 import { CdnApi } from 'services/support/cdn-api';
 import { DnsSubdomainCertificate } from 'services/support/dns-subdomain-certificate';
 import { GlobalEventBus } from 'services/support/global-event-bus';
@@ -25,13 +26,16 @@ import { identityTableBuilder } from './repository/table-identity';
  * @default - automatically generated name by CloudFormation at deploy time
  */
 
-type Deps = {
+class Dep {
+  @DepCheck()
   notifications: Notifications;
+  @DepCheck()
   globalEventBus: GlobalEventBus;
+  @DepCheck()
   dnsSubdomainCertificate: DnsSubdomainCertificate;
+  @DepCheck()
   cdnApi: CdnApi;
-};
-const depsNames: Array<keyof Deps> = ['notifications', 'globalEventBus', 'dnsSubdomainCertificate', 'cdnApi'];
+}
 
 export class Identity extends Service<GlobalCoordinator> {
   public authPool: CognitoAuthPoolPrefab;
@@ -39,13 +43,13 @@ export class Identity extends Service<GlobalCoordinator> {
   public apiAggregate: ApiAggregate;
 
   constructor(coordinator: GlobalCoordinator) {
-    super(coordinator, Identity.name, depsNames);
+    super(coordinator, Identity.name, Dep);
     coordinator.addService(this);
   }
 
-  build(deps: Deps) {
-    this.addDependency(deps.notifications);
-    this.addDependency(deps.notifications);
+  build(dep: Dep): void {
+    this.addDependency(dep.notifications);
+    this.addDependency(dep.notifications);
 
     this.authPool = new CognitoAuthPoolPrefab(this, {
       callbackUrl: getDomain(this.props.subdomain.spaWebapp, this.props, true),
@@ -62,9 +66,9 @@ export class Identity extends Service<GlobalCoordinator> {
     this.apiAggregate = new ApiAggregate(this, {
       baseFunctionFolder: __dirname,
       basePath: 'identity',
-      cdnApiPrefab: deps.cdnApi.cdnApiPrefab,
+      cdnApiPrefab: dep.cdnApi.cdnApiPrefab,
       authPool: this.authPool,
-      eventBus: deps.globalEventBus.eventBusPrefab,
+      eventBus: dep.globalEventBus.eventBusPrefab,
       tableBuilder: identityTableBuilder,
       handlers: {
         inviteCreate: {
@@ -114,7 +118,7 @@ export class Identity extends Service<GlobalCoordinator> {
     this.cognitoAggregate = new CognitoAggregate(this, {
       baseFunctionFolder: __dirname,
       userPool: this.authPool.userPool,
-      eventBus: deps.globalEventBus.eventBusPrefab,
+      eventBus: dep.globalEventBus.eventBusPrefab,
       tablePrefab: this.apiAggregate.tablePrefab,
       handlers: {
         customMessage: {
@@ -127,7 +131,7 @@ export class Identity extends Service<GlobalCoordinator> {
           },
           tablePermission: 'none',
           modifiers: [
-            deps.notifications.templatesBucket.useMod('TEMPLATES_BUCKET', [PrivateBucketPrefab.modifier.reader]),
+            dep.notifications.templatesBucket.useMod('TEMPLATES_BUCKET', [PrivateBucketPrefab.modifier.reader]),
           ],
         },
         postConfirmation: {
@@ -147,7 +151,7 @@ export class Identity extends Service<GlobalCoordinator> {
 
     new EventAggregate(this, {
       baseFunctionFolder: __dirname,
-      eventBus: deps.globalEventBus.eventBusPrefab,
+      eventBus: dep.globalEventBus.eventBusPrefab,
       tablePrefab: this.apiAggregate.tablePrefab,
       handlers: {
         eventNotificationDispatch: {

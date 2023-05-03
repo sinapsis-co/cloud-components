@@ -6,7 +6,6 @@ export function ingredientKeySerialize(key: IngredientModel['Key']): IngredientM
   };
 }
 
-//This is dirt but the only way to manage AppSync restrictions
 export function ingredientEntityDeserialize(entityStore: IngredientModel['Store']): IngredientModel['Entity'] {
   const { pk, ...att } = entityStore;
   return {

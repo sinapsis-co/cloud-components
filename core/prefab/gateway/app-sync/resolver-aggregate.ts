@@ -5,7 +5,6 @@ import * as esbuild from 'esbuild';
 import { BaseDataSource } from 'aws-cdk-lib/aws-appsync';
 import { getLogicalName } from 'common/naming/get-logical-name';
 import { Service } from 'common/service';
-import { log } from 'console';
 import { DynamoTablePrefab } from 'prefab/storage/dynamo/table';
 import { AppSyncPrefab } from '.';
 import { FunctionResolver } from './types';
@@ -91,7 +90,6 @@ export class AppSyncResolverAggregate<T> extends Construct {
 
   bundleAppSyncResolver = (baseApiFolder: string, name: string): appsync.Code => {
     const file = `cdk.out/resolvers/${name}.js`;
-    log('pre build', file);
     esbuild.buildSync({
       entryPoints: [`${baseApiFolder}/resolvers/${name}.ts`],
       external: ['@aws-appsync/utils'],
@@ -105,7 +103,6 @@ export class AppSyncResolverAggregate<T> extends Construct {
       // minify: true,
       sourcesContent: false,
     });
-    log('pos build');
     return appsync.Code.fromAsset(file);
   };
 }

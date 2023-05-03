@@ -1,0 +1,23 @@
+{
+  "name": "@sinapsis-co/cc-service-graphql-api",
+  "version": "0.1.0",
+  "license": "MIT",
+  "private": true,
+  "cpu": [
+    "arm64",
+    "x64"
+  ],
+  "engines": {
+    "npm": "please-use-yarn",
+    "yarn": ">= 1.22.0",
+    "node": ">= 14.14.0"
+  },
+  "dependencies": {
+    "@aws-appsync/utils": "^1.2.5",
+    "class-validator": "^0.14.0",
+    "esbuild": "^0.14.43",
+    "graphql": "15.3.0",
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^1.1.1"
+  }
+}

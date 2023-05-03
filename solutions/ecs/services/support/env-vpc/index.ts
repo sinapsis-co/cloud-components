@@ -3,19 +3,18 @@ import { VpcPrefab } from '@sinapsis-co/cc-core/prefab/networking/vpc';
 
 import { GlobalCoordinator } from '../../../config/config-type';
 
-type Deps = Record<string, never>;
-const depsNames: Array<keyof Deps> = [];
+class Dep {}
 
 export class EnvVpc extends Service<GlobalCoordinator> {
   public vpcPrefab: VpcPrefab;
 
   constructor(coordinator: GlobalCoordinator) {
-    super(coordinator, EnvVpc.name, depsNames);
+    super(coordinator, EnvVpc.name, Dep);
     coordinator.addService(this);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  build(_deps = {}) {
+  build(dep: Dep): void {
     this.vpcPrefab = new VpcPrefab(this, { name: this.props.envName });
   }
 }

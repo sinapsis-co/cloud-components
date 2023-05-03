@@ -2,26 +2,28 @@ import { Service } from '@sinapsis-co/cc-core/common/service';
 import { DnsSubdomainCertificatePrefab } from '@sinapsis-co/cc-core/prefab/networking/dns-subdomain-certificate';
 import { GlobalCoordinator } from '../../../config/config-type';
 
+import { DepCheck } from '@sinapsis-co/cc-core/common/coordinator';
 import { DnsDomainRef } from '../dns-domain-ref';
 import { DnsSubdomainHostedZone } from '../dns-subdomain-hosted-zone';
 
-type Deps = {
+class Dep {
+  @DepCheck()
   dnsSubdomainHostedZone: DnsSubdomainHostedZone;
+  @DepCheck()
   dnsDomainRef: DnsDomainRef;
-};
-const depsNames: Array<keyof Deps> = ['dnsSubdomainHostedZone', 'dnsDomainRef'];
+}
 
 export class DnsSubdomainCertificate extends Service<GlobalCoordinator> {
   public certificatePrefab: DnsSubdomainCertificatePrefab;
 
   constructor(coordinator: GlobalCoordinator) {
-    super(coordinator, DnsSubdomainCertificate.name, depsNames);
+    super(coordinator, DnsSubdomainCertificate.name, Dep);
     coordinator.addService(this);
   }
 
-  build(deps: Deps) {
-    this.addDependency(deps.dnsSubdomainHostedZone);
-    this.addDependency(deps.dnsDomainRef);
+  build(dep: Dep): void {
+    this.addDependency(dep.dnsSubdomainHostedZone);
+    this.addDependency(dep.dnsDomainRef);
 
     this.certificatePrefab = new DnsSubdomainCertificatePrefab(this);
   }

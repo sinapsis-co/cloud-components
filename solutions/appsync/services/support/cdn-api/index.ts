@@ -2,25 +2,26 @@ import { Service } from '@sinapsis-co/cc-core/common/service';
 import { CdnApiPrefab } from '@sinapsis-co/cc-core/prefab/gateway/cdn-api';
 import { GlobalCoordinator } from '../../../config/config-type';
 
+import { DepCheck } from '@sinapsis-co/cc-core/common/coordinator';
 import { DnsSubdomainCertificate } from '../dns-subdomain-certificate';
 
-type Deps = {
+class Dep {
+  @DepCheck()
   dnsSubdomainCertificate: DnsSubdomainCertificate;
-};
-const depsNames: Array<keyof Deps> = ['dnsSubdomainCertificate'];
+}
 
 export class CdnApi extends Service<GlobalCoordinator> {
   public cdnApiPrefab: CdnApiPrefab;
 
   constructor(coordinator: GlobalCoordinator) {
-    super(coordinator, CdnApi.name, depsNames);
+    super(coordinator, CdnApi.name, Dep);
     coordinator.addService(this);
   }
 
-  build(deps: Deps) {
+  build(dep: Dep): void {
     this.cdnApiPrefab = new CdnApiPrefab(this, {
       subDomain: this.props.subdomain.api,
-      certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,
+      certificate: dep.dnsSubdomainCertificate.certificatePrefab.certificate,
       headersWhitelist: ['X-Api-Key'],
     });
   }

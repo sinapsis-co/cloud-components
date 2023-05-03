@@ -1,6 +1,7 @@
 import { EventConfig, EventInterface } from '@sinapsis-co/cc-sdk/catalog/event';
-import { BaseRepoEvent, singleRepo } from '../../repository/repo-single';
+import { SingleKey } from '../../model/single-key';
+import { repoSingle } from '../../repository/repo-single';
 
-export type Event = EventInterface<BaseRepoEvent['deleted']>;
+export type Event = EventInterface<SingleKey['Events']['deleted']>;
 
-export const eventConfig: EventConfig<Event> = singleRepo.events.deleted;
+export const eventConfig: EventConfig<Event> = repoSingle.events.deleted;

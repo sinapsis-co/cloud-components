@@ -4,6 +4,7 @@ import { getDeployConfig } from './naming/get-deploy-config';
 import { getServiceName } from './naming/get-service-name';
 import { getServiceProps } from './synth/get-service-props';
 import { BaseDeployTargetName, BaseServiceDependencies, BaseServiceProps } from './synth/props-types';
+import { SynthError } from './synth/synth-error';
 
 export { Construct } from 'constructs';
 
@@ -18,7 +19,7 @@ type ServiceClass<MyCoord extends Coordinator = Coordinator> = {
   build(args: any): void;
 };
 
-export type BaseDeps<DepsNames extends readonly string[]> = Record<DepsNames[number], unknown>;
+// export type BaseDeps<DepsNames extends readonly string[]> = Record<DepsNames[number], unknown>;
 export abstract class Service<
     MyCoord extends Coordinator = Coordinator,
     DeployTargetName extends BaseDeployTargetName = BaseDeployTargetName
@@ -30,7 +31,8 @@ export abstract class Service<
   public readonly name: string;
   public depsNames: string[];
 
-  constructor(coordinator: MyCoord, name: string, depsNames: string[], deployTargetName?: DeployTargetName) {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  constructor(coordinator: MyCoord, name: string, dep: any, deployTargetName?: DeployTargetName) {
     super(
       coordinator,
       getServiceName(name, coordinator.globalProps),
@@ -38,22 +40,13 @@ export abstract class Service<
     );
     this.props = getServiceProps(name, coordinator.globalProps);
     this.name = name;
-    this.depsNames = depsNames;
+    try {
+      this.depsNames = new dep().depStore || [];
+    } catch {
+      throw new SynthError(`Service ${name} invalid dependency`, this.props);
+    }
   }
 
-  // abstract class Service<T extends readonly string[]> {
-  //   constructor(protected readonly depsNames: T) {}
-
-  //   abstract build<K extends T[number]>(obj: Pick<ValidatedObject<T>, K>): unknown;
-  // }
-  //
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  // abstract build(deps: { [key in DepsNames[number]]: unknown }): void;
-  // abstract build(deps: Record<typeof this.depsNames[number], unknown>): void;
-  // abstract build(deps: Record<DepsNames[number], unknown>): void;
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   abstract build(deps: any): void;
-  // abstract build(deps: { [key in typeof this.depsNames[number]]: unknown }): void;
-  // abstract build<T extends Record<typeof this.depsNames[number], unknown> = T>(deps: T): void;
-  // abstract build<K extends DepsNames[number]>(deps: Record<K, unknown>): Record<K, unknown>;
-  // abstract build<K extends DepsNames[number]>(obj: Pick<ValidatedObject<DepsNames>, K>): unknown;
 }

@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import 'reflect-metadata';
 
-import { auroraClusterConnect } from '@sinapsis-co/cc-sdk/integration/database/aurora/cluster-connect';
+import { auroraClusterConnect } from '@sinapsis-co/cc-sdk/integration/store/aurora/cluster-connect';
 import { metricRowGenerator } from '../demo-ingestion/gen';
 import { RawMetric } from '../entities/raw-metric';
 
@@ -9,7 +9,7 @@ const secretArn = 'arn:aws:secretsmanager:us-east-1:331183547525:secret:ecs-temp
 
 const entities = [RawMetric];
 
-export const handler = async () => {
+export const handler = async (): Promise<void> => {
   const start = Date.now();
   const dataSource = await auroraClusterConnect(secretArn, { entities: entities });
   console.log(`connection took ${Date.now() - start}ms`);

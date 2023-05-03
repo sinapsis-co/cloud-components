@@ -1,14 +1,8 @@
-import {
-  ApiConfig,
-  ApiInterface,
-  EmptyObject,
-  PaginatedQueryParams,
-  PaginatedResponse,
-} from '@sinapsis-co/cc-sdk/catalog/api';
-import { Single } from '../../entities/base';
+import { ApiConfig, ApiInterface, EmptyObject, PaginatedQueryParams } from '@sinapsis-co/cc-sdk/catalog/api';
+import { SingleKey } from '../../model/single-key';
 
 export type Interface = ApiInterface<{
-  response: PaginatedResponse<Single>;
+  response: SingleKey['List'];
   pathParams: EmptyObject;
   body: EmptyObject;
   claims: EmptyObject;

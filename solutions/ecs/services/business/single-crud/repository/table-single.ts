@@ -1,26 +1,17 @@
-import { TableBuilder } from '@sinapsis-co/cc-sdk/integration/database/dynamo/table-builder';
+import { TableStoreBuilder } from '@sinapsis-co/cc-sdk/integration/store/dynamo/types/table-store-builder';
 
-export type SingleTable = TableBuilder<{
+export type SingleTableStore = TableStoreBuilder<{
   tableName: 'single';
-  indexes: [];
-  ttlAttribute: false;
-  storeMapping: {
-    key: {
-      pk: string;
-    };
-    timers: {
-      createdAt: string;
-      updatedAt: string;
-    };
+  indexes: undefined;
+  keyMapping: {
+    pk: string;
   };
 }>;
 
-export const baseTableBuilder: SingleTable = {
+export const baseTableBuilder: SingleTableStore = {
   tableName: 'single',
-  ttlAttribute: false,
-  indexes: [],
-  storeMapping: {
-    key: { pk: 'S' },
-    timers: { createdAt: 'S', updatedAt: 'S' },
+  indexes: undefined,
+  keyMapping: {
+    pk: 'S',
   },
 };

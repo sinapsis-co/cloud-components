@@ -1,29 +1,31 @@
 import { Service } from '@sinapsis-co/cc-core/common/service';
 import { CdnApiPrefab } from '@sinapsis-co/cc-core/prefab/gateway/cdn-api';
 
+import { DepCheck } from '@sinapsis-co/cc-core/common/coordinator';
 import { GlobalCoordinator } from '../../../config/config-type';
 import { DnsSubdomainCertificate } from '../dns-subdomain-certificate';
 import { EnvAlb } from '../env-alb';
 
-type Deps = {
+class Dep {
+  @DepCheck()
   envAlb: EnvAlb;
+  @DepCheck()
   dnsSubdomainCertificate: DnsSubdomainCertificate;
-};
-const depsNames: Array<keyof Deps> = ['envAlb', 'dnsSubdomainCertificate'];
+}
 
 export class CdnApi extends Service<GlobalCoordinator> {
   public cdnApiPrefab: CdnApiPrefab;
 
   constructor(coordinator: GlobalCoordinator) {
-    super(coordinator, CdnApi.name, depsNames);
+    super(coordinator, CdnApi.name, Dep);
     coordinator.addService(this);
   }
 
-  build(deps: Deps) {
+  build(dep: Dep): void {
     this.cdnApiPrefab = new CdnApiPrefab(this, {
       subDomain: this.props.subdomain.api,
-      certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,
-      albDefaultBehavior: deps.envAlb.albPrefab,
+      certificate: dep.dnsSubdomainCertificate.certificatePrefab.certificate,
+      albDefaultBehavior: dep.envAlb.albPrefab,
     });
   }
 }

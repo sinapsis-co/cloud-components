@@ -90,7 +90,7 @@ export class AppSyncPrefab extends Construct {
 }
 
 export class EventBridgeDataSource extends appsync.BackedDataSource {
-  constructor(scope: Construct, id: string, props) {
+  constructor(scope: Construct, id: string, props: appsync.BackedDataSourceProps) {
     super(scope, id, props, {
       type: 'AMAZON_EVENTBRIDGE',
     });

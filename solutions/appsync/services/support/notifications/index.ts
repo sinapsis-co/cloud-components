@@ -5,18 +5,21 @@ import { AssetBucketPrefab } from '@sinapsis-co/cc-core/prefab/storage/bucket/as
 import { PrivateBucketPrefab } from '@sinapsis-co/cc-core/prefab/storage/bucket/private-bucket';
 import { SesDomain } from '@sinapsis-co/cc-core/prefab/util/ses/ses-domain';
 
+import { DepCheck } from '@sinapsis-co/cc-core/common/coordinator';
 import { GlobalCoordinator } from 'config/config-type';
 import { DnsDomainRef } from '../dns-domain-ref';
 import { DnsSubdomainHostedZone } from '../dns-subdomain-hosted-zone';
 import { GlobalEventBus } from '../global-event-bus';
 import { notificationEvent } from './catalog';
 
-type Deps = {
+class Deps {
+  @DepCheck()
   globalEventBus: GlobalEventBus;
+  @DepCheck()
   dnsSubdomainHostedZone: DnsSubdomainHostedZone;
+  @DepCheck()
   dnsDomainRef: DnsDomainRef;
-};
-const depsNames: Array<keyof Deps> = ['globalEventBus', 'dnsSubdomainHostedZone', 'dnsDomainRef'];
+}
 export class Notifications extends Service<GlobalCoordinator> {
   public templatesBucket: PrivateBucketPrefab;
   public attachmentsBucket: PrivateBucketPrefab;
@@ -24,11 +27,11 @@ export class Notifications extends Service<GlobalCoordinator> {
   public ses: SesDomain;
 
   constructor(coordinator: GlobalCoordinator) {
-    super(coordinator, Notifications.name, depsNames);
+    super(coordinator, Notifications.name, Deps);
     coordinator.addService(this);
   }
 
-  build(deps: Deps) {
+  build(deps: Deps): void {
     this.addDependency(deps.dnsSubdomainHostedZone);
     this.addDependency(deps.dnsDomainRef);
 

@@ -1,9 +1,9 @@
 import { ApiConfig, ApiInterface, EmptyObject } from '@sinapsis-co/cc-sdk/catalog/api';
-import { Single } from '../../entities/base';
+import { SingleKey } from '../../model/single-key';
 
 export type Interface = ApiInterface<{
-  response: Single;
-  pathParams: { id: string };
+  response: SingleKey['Entity'];
+  pathParams: SingleKey['Key'];
   body: EmptyObject;
   claims: EmptyObject;
   queryParams: EmptyObject;

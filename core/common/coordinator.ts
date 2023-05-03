@@ -36,13 +36,13 @@ export class Coordinator<
     this.services = {};
   }
 
-  public addService(service: Service) {
+  public addService(service: Service): void {
     service.depsNames = service.depsNames.map((d) => `${d.charAt(0).toUpperCase()}${d.slice(1)}`);
     this.serviceList.push(service);
     this.services[service.name] = service;
   }
 
-  public build() {
+  public build(): void {
     try {
       const ordererServiceList = this.orderDependencies();
       ordererServiceList.map((l) => {
@@ -54,10 +54,9 @@ export class Coordinator<
         }, {});
         service.build(deps);
       });
-
       this.synth();
     } catch (error: any) {
-      console.log('ServiceBuildFailed: Missing dependency error');
+      console.log('ServiceBuildFailed: Missing dependency error (Did you forget adding @DepCheck() decorator?)');
       console.log(error);
       process.exit(1);
     }
@@ -92,4 +91,16 @@ export class Coordinator<
 
     return result;
   }
+}
+
+export function DepCheck() {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  return function (target: any, propertyKey: string) {
+    // Define the _propertyMap dict if it doesn't exist yet
+    if (!target.depStore) {
+      target.depStore = [];
+    }
+    // Store the decorated property's value in the _propertyMap dict
+    target.depStore.push(propertyKey);
+  };
 }

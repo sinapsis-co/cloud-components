@@ -18,6 +18,7 @@
       "util/*": ["./sdk/util/*"],
       "logger": ["./sdk/logger"],
       "error": ["./sdk/error"],
+      "model": ["./sdk/model"],
       "tracing": ["./sdk/tracing"]
     }
   },

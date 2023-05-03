@@ -1,26 +1,27 @@
 import { Service } from '@sinapsis-co/cc-core/common/service';
 
+import { DepCheck } from '@sinapsis-co/cc-core/common/coordinator';
 import { FargateClusterPrefab } from '@sinapsis-co/cc-core/prefab/compute/fargate/cluster';
 import { GlobalCoordinator } from '../../../config/config-type';
 import { EnvVpc } from '../env-vpc';
 
-type Deps = {
+class Dep {
+  @DepCheck()
   envVpc: EnvVpc;
-};
-const depsNames: Array<keyof Deps> = ['envVpc'];
+}
 
 export class EnvCluster extends Service<GlobalCoordinator> {
   public fargateClusterPrefab: FargateClusterPrefab;
 
   constructor(coordinator: GlobalCoordinator) {
-    super(coordinator, EnvCluster.name, depsNames);
+    super(coordinator, EnvCluster.name, Dep);
     coordinator.addService(this);
   }
 
-  build(deps: Deps) {
+  build(dep: Dep): void {
     this.fargateClusterPrefab = new FargateClusterPrefab(this, {
       name: this.props.envName,
-      vpcPrefab: deps.envVpc.vpcPrefab,
+      vpcPrefab: dep.envVpc.vpcPrefab,
     });
   }
 }

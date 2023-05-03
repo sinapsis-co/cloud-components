@@ -1,29 +1,31 @@
 import { Service } from '@sinapsis-co/cc-core/common/service';
 
+import { DepCheck } from '@sinapsis-co/cc-core/common/coordinator';
 import { PublicAlbPrefab } from '@sinapsis-co/cc-core/prefab/gateway/alb-public';
 import { GlobalCoordinator } from '../../../config/config-type';
 import { DnsSubdomainCertificate } from '../dns-subdomain-certificate';
 import { EnvVpc } from '../env-vpc';
 
-type Deps = {
+class Dep {
+  @DepCheck()
   envVpc: EnvVpc;
+  @DepCheck()
   dnsSubdomainCertificate: DnsSubdomainCertificate;
-};
-const depsNames: Array<keyof Deps> = ['envVpc', 'dnsSubdomainCertificate'];
+}
 
 export class EnvAlb extends Service<GlobalCoordinator> {
   public albPrefab: PublicAlbPrefab;
 
   constructor(coordinator: GlobalCoordinator) {
-    super(coordinator, EnvAlb.name, depsNames);
+    super(coordinator, EnvAlb.name, Dep);
     coordinator.addService(this);
   }
 
-  build(deps: Deps) {
+  build(dep: Dep): void {
     this.albPrefab = new PublicAlbPrefab(this, {
       name: 'global-alb',
-      vpc: deps.envVpc.vpcPrefab.vpc,
-      certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,
+      vpc: dep.envVpc.vpcPrefab.vpc,
+      certificate: dep.dnsSubdomainCertificate.certificatePrefab.certificate,
     });
   }
 }

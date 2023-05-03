@@ -10,8 +10,14 @@
       "sdk/",
       "core/",
       "solutions/base",
+      "solutions/base/services/**/*",
       "solutions/appsync",
-      "solutions/ecs"
+      "solutions/appsync/services/**/*",
+      "solutions/ecs",
+      "solutions/ecs/services/**/*"
+    ],
+    "nohoist": [
+      "solutions/appsync/frontend/*"
     ]
   },
   "scripts": {

@@ -7,6 +7,7 @@ import { CdnAssetPrefab } from '@sinapsis-co/cc-core/prefab/gateway/cdn-asset';
 import { PrivateBucketPrefab } from '@sinapsis-co/cc-core/prefab/storage/bucket/private-bucket';
 import { Duration } from 'aws-cdk-lib';
 
+import { DepCheck } from '@sinapsis-co/cc-core/common/coordinator';
 import { CdnApi } from 'services/support/cdn-api';
 import { GlobalCoordinator } from '../../../config/config-type';
 import { DnsSubdomainCertificate } from '../../support/dns-subdomain-certificate';
@@ -16,13 +17,16 @@ import { assetApi, assetEvent } from './catalog';
 import { Asset } from './entities/asset';
 import { AssetType, assetsTypes } from './lib/assets-type';
 
-type Deps = {
+class Dep {
+  @DepCheck()
   globalEventBus: GlobalEventBus;
+  @DepCheck()
   cdnApi: CdnApi;
+  @DepCheck()
   identity: Identity;
+  @DepCheck()
   dnsSubdomainCertificate: DnsSubdomainCertificate;
-};
-const depsNames: Array<keyof Deps> = ['globalEventBus', 'cdnApi', 'dnsSubdomainCertificate', 'identity'];
+}
 
 export class Assets extends Service<GlobalCoordinator> {
   public apiAggregate: ApiAggregate;
@@ -33,14 +37,14 @@ export class Assets extends Service<GlobalCoordinator> {
   public cdnAssetPrefab: CdnAssetPrefab;
 
   constructor(coordinator: GlobalCoordinator) {
-    super(coordinator, Assets.name, depsNames);
+    super(coordinator, Assets.name, Dep);
     coordinator.addService(this);
   }
 
-  build(deps: Deps) {
+  build(dep: Dep): void {
     this.cdnAssetPrefab = new CdnAssetPrefab(this, {
       subDomain: this.props.subdomain.assets,
-      certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,
+      certificate: dep.dnsSubdomainCertificate.certificatePrefab.certificate,
       assetBucketProps: {
         bucketName: 'public',
         folder: './notifications/assets',
@@ -54,8 +58,8 @@ export class Assets extends Service<GlobalCoordinator> {
     this.apiAggregate = new ApiAggregate(this, {
       baseFunctionFolder: __dirname,
       basePath: 'assets',
-      cdnApiPrefab: deps.cdnApi.cdnApiPrefab,
-      authPool: deps.identity.authPool,
+      cdnApiPrefab: dep.cdnApi.cdnApiPrefab,
+      authPool: dep.identity.authPool,
       handlers: {
         createPutUrl: {
           ...assetApi.createPutUrl.config,
@@ -73,7 +77,7 @@ export class Assets extends Service<GlobalCoordinator> {
     });
 
     this.eventAggregate = new EventAggregate(this, {
-      eventBus: deps.globalEventBus.eventBusPrefab,
+      eventBus: dep.globalEventBus.eventBusPrefab,
       baseFunctionFolder: __dirname,
       handlers: {
         remove: {
@@ -106,7 +110,7 @@ export class Assets extends Service<GlobalCoordinator> {
     const queueFunction = new QueueFunction(this, {
       name: 'msg-asset-uploaded',
       baseFunctionFolder: __dirname,
-      eventBus: deps.globalEventBus.eventBusPrefab,
+      eventBus: dep.globalEventBus.eventBusPrefab,
       modifiers: [
         this.publicAssetsBucket.useMod('PUBLIC_BUCKET', [
           PrivateBucketPrefab.modifier.reader,

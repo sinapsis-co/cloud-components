@@ -2,28 +2,30 @@ import { Service } from '@sinapsis-co/cc-core/common/service';
 import { ApiAggregate } from '@sinapsis-co/cc-core/prefab/compute/function/api-function/api-aggregate';
 import { AuroraServerlessV2Prefab } from '@sinapsis-co/cc-core/prefab/storage/aurora/aurora-serverless-v2';
 
+import { DepCheck } from '@sinapsis-co/cc-core/common/coordinator';
 import { GlobalCoordinator } from '../../../config/config-type';
 import { CdnApi } from '../../support/cdn-api';
 import { EnvVpc } from '../../support/env-vpc';
 
-type Deps = {
+class Dep {
+  @DepCheck()
   cdnApi: CdnApi;
+  @DepCheck()
   envVpc: EnvVpc;
-};
-const depsNames: Array<keyof Deps> = ['cdnApi', 'envVpc'];
+}
 
 export class RdsDemo extends Service<GlobalCoordinator> {
   public apiAggregate: ApiAggregate;
 
   constructor(coordinator: GlobalCoordinator) {
-    super(coordinator, RdsDemo.name, depsNames);
+    super(coordinator, RdsDemo.name, Dep);
     coordinator.addService(this);
   }
 
-  build(deps: Deps) {
+  build(dep: Dep): void {
     new AuroraServerlessV2Prefab(this, {
       clusterName: 'demo',
-      vpcPrefab: deps.envVpc.vpcPrefab,
+      vpcPrefab: dep.envVpc.vpcPrefab,
       performanceTunning: {
         instances: 1,
         minCapacity: 0.5,

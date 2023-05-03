@@ -5,6 +5,7 @@ import { ParameterSecret } from '@sinapsis-co/cc-core/prefab/util/config/paramet
 import { Duration } from 'aws-cdk-lib';
 import { Secret } from 'aws-cdk-lib/aws-ecs';
 
+import { DepCheck } from '@sinapsis-co/cc-core/common/coordinator';
 import { GlobalCoordinator } from '../../../config/config-type';
 import { DnsSubdomainCertificate } from '../../support/dns-subdomain-certificate';
 import { EnvAlb } from '../../support/env-alb';
@@ -12,30 +13,33 @@ import { EnvCluster } from '../../support/env-cluster';
 import { EnvVpc } from '../../support/env-vpc';
 import { performanceTunningMapper } from './config';
 
-type Deps = {
+class Dep {
+  @DepCheck()
   envVpc: EnvVpc;
+  @DepCheck()
   envAlb: EnvAlb;
+  @DepCheck()
   envCluster: EnvCluster;
+  @DepCheck()
   dnsSubdomainCertificate: DnsSubdomainCertificate;
-};
-const depsNames: Array<keyof Deps> = ['envVpc', 'envAlb', 'envCluster', 'dnsSubdomainCertificate'];
+}
 
 export class ContainerService extends Service<GlobalCoordinator> {
   public readonly apiAggregate: ApiAggregate;
 
   constructor(coordinator: GlobalCoordinator) {
-    super(coordinator, ContainerService.name, depsNames);
+    super(coordinator, ContainerService.name, Dep);
     coordinator.addService(this);
   }
 
-  build(deps: Deps) {
+  build(dep: Dep): void {
     new FargateServicePrefab(this, {
       name: 'serviceOne',
       basePath: '/container/one',
-      fargateClusterPrefab: deps.envCluster.fargateClusterPrefab,
-      vpcPrefab: deps.envVpc.vpcPrefab,
-      albPrefab: deps.envAlb.albPrefab,
-      certificate: deps.dnsSubdomainCertificate.certificatePrefab.certificate,
+      fargateClusterPrefab: dep.envCluster.fargateClusterPrefab,
+      vpcPrefab: dep.envVpc.vpcPrefab,
+      albPrefab: dep.envAlb.albPrefab,
+      certificate: dep.dnsSubdomainCertificate.certificatePrefab.certificate,
       containerHealthCheck: {
         startPeriod: Duration.seconds(2),
         interval: Duration.seconds(5),

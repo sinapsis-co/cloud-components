@@ -1,35 +1,26 @@
-import { repository } from '@sinapsis-co/cc-sdk/integration/database/dynamo';
-import { RepositoryEvent } from '@sinapsis-co/cc-sdk/integration/database/dynamo/interface';
-import { Single, SingleCreate, SingleEntity, SingleStore } from '../entities/base';
-import { SingleTable } from './table-single';
+import { repository } from '@sinapsis-co/cc-sdk/integration/store/dynamo/repository';
+import { RepositoryConfig } from '@sinapsis-co/cc-sdk/integration/store/dynamo/types/config';
+import { Repository } from '@sinapsis-co/cc-sdk/integration/store/dynamo/types/repository';
 
-export const singleRepo = repository<SingleEntity, SingleTable>({
-  tableName: 'single',
-  repoName: 'single',
-  keySerialize: (key: SingleEntity['key']): SingleTable['storeMapping']['key'] => {
-    return {
-      pk: key.id,
-    };
-  },
-  entitySerialize: (key: SingleEntity['key'], entityCreate: SingleCreate): SingleStore => {
-    const mappedKey: SingleTable['storeMapping']['key'] = {
-      pk: key.id,
-    };
-    const timers: SingleTable['storeMapping']['timers'] = {
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    return { ...mappedKey, ...entityCreate, ...timers };
-  },
-  entityDeserialize: (entityStore: SingleStore): Single => {
-    const { pk, createdAt, updatedAt, ...att } = entityStore;
-    return {
-      ...att,
-      id: pk,
-      createdAt: new Date(createdAt),
-      updatedAt: new Date(updatedAt),
-    };
-  },
-});
+import { SingleKey } from '../model/single-key';
 
-export type BaseRepoEvent = RepositoryEvent<SingleEntity>;
+const repoFactory = <Model extends SingleKey>(): Repository<Model['Builder'], Model['StoreBuilder']> => {
+  const repoConfig: RepositoryConfig<Model['Builder'], Model['StoreBuilder']> = {
+    repoName: 'single',
+    tableName: 'single',
+    keySerialize: (key: Model['Key']): Model['StoreBuilder']['keyMapping'] => {
+      return {
+        pk: key.id,
+      };
+    },
+    entityDeserialize: (entityStore: Model['Store']): Model['Entity'] => {
+      const { pk, ...att } = entityStore;
+      return {
+        id: pk,
+        ...att,
+      };
+    },
+  };
+  return repository(repoConfig);
+};
+export const repoSingle = repoFactory();

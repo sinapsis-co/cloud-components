@@ -2,18 +2,17 @@ import { Service } from '@sinapsis-co/cc-core/common/service';
 import { DnsSubdomainHostedZonePrefab } from '@sinapsis-co/cc-core/prefab/networking/dns-subdomain-hosted-zone';
 import { GlobalCoordinator } from '../../../config/config-type';
 
-type Deps = Record<string, never>;
-const depsNames: Array<keyof Deps> = [];
+class Dep {}
 
 export class DnsSubdomainHostedZone extends Service<GlobalCoordinator> {
   public subdomainHostedZonePrefab: DnsSubdomainHostedZonePrefab;
 
   constructor(coordinator: GlobalCoordinator) {
-    super(coordinator, DnsSubdomainHostedZone.name, depsNames);
+    super(coordinator, DnsSubdomainHostedZone.name, Dep);
     coordinator.addService(this);
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  build(_deps = {}) {
+  build(dep: Dep): void {
     const isBootstrapping = this.node.tryGetContext('isBootstrapping') === 'true' ? true : false;
 
     if (this.props.envName !== 'prod') {

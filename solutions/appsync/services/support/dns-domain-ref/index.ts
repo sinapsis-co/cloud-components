@@ -1,22 +1,23 @@
+import { DepCheck } from '@sinapsis-co/cc-core/common/coordinator';
 import { Service } from '@sinapsis-co/cc-core/common/service';
 import { DnsDomainRefPrefab } from '@sinapsis-co/cc-core/prefab/networking/dns-domain-ref';
 import { DeployTargetName, GlobalCoordinator } from '../../../config/config-type';
 import { DnsSubdomainHostedZone } from '../dns-subdomain-hosted-zone';
 
-type Deps = {
+class Dep {
+  @DepCheck()
   dnsSubdomainHostedZone: DnsSubdomainHostedZone;
-};
-const depsNames: Array<keyof Deps> = ['dnsSubdomainHostedZone'];
+}
 
 export class DnsDomainRef extends Service<GlobalCoordinator, DeployTargetName> {
   constructor(coordinator: GlobalCoordinator) {
-    super(coordinator, DnsDomainRef.name, depsNames, 'dnsShared');
+    super(coordinator, DnsDomainRef.name, Dep, 'dnsShared');
     coordinator.addService(this);
   }
 
-  build(deps: Deps) {
-    this.addDependency(deps.dnsSubdomainHostedZone);
-    const hostedZoneNS = deps.dnsSubdomainHostedZone.subdomainHostedZonePrefab.hostedZoneNS;
+  build(dep: Dep): void {
+    this.addDependency(dep.dnsSubdomainHostedZone);
+    const hostedZoneNS = dep.dnsSubdomainHostedZone.subdomainHostedZonePrefab.hostedZoneNS;
     if (this.props.envName !== 'prod') new DnsDomainRefPrefab(this, { hostedZoneNS });
   }
 }

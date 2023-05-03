@@ -2,19 +2,22 @@ import { Service } from '@sinapsis-co/cc-core/common/service';
 import { EventsAnalyticsPrefab } from '@sinapsis-co/cc-core/prefab/analytics/events';
 import { GlobalCoordinator } from '../../../config/config-type';
 
+import { DepCheck } from '@sinapsis-co/cc-core/common/coordinator';
 import { GlobalEventBus } from '../global-event-bus';
 
-type Deps = { globalEventBus: GlobalEventBus };
-const depsNames: Array<keyof Deps> = ['globalEventBus'];
+class Dep {
+  @DepCheck()
+  globalEventBus: GlobalEventBus;
+}
 
 export class EventsAnalytics extends Service<GlobalCoordinator> {
   constructor(coordinator: GlobalCoordinator) {
-    super(coordinator, EventsAnalytics.name, depsNames);
+    super(coordinator, EventsAnalytics.name, Dep);
     coordinator.addService(this);
   }
-  build(deps: Deps) {
+  build(dep: Dep): void {
     new EventsAnalyticsPrefab(this, {
-      eventBus: deps.globalEventBus.eventBusPrefab,
+      eventBus: dep.globalEventBus.eventBusPrefab,
       bufferingHints: {
         intervalInSeconds: 60,
         sizeInMBs: 1,
