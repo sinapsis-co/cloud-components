@@ -4,8 +4,8 @@ import { PaginatedResponse } from 'catalog/api';
 import { Entity, EntityBuilder, EntityStore } from 'model';
 import { Tracing } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
+import { RepositoryConfig, ViewConfig } from '../types/config';
 import { ListIndexFn } from '../types/operations';
-import { RepositoryConfig, ViewConfig } from '../types/repository';
 import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 

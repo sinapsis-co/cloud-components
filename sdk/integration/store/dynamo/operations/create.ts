@@ -2,10 +2,10 @@ import { DynamoDBDocumentClient, PutCommand, PutCommandInput } from '@aws-sdk/li
 
 import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
-import { Entity, EntityBuilder, EntityEvents, EntityKey } from 'model';
+import { Entity, EntityBuilder, EntityEvents, EntityKey, EntityStore } from 'model';
 import { Tracing } from 'tracing';
+import { RepositoryConfig } from '../types/config';
 import { CreateItemFn } from '../types/operations';
-import { RepositoryConfig } from '../types/repository';
 import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
@@ -15,11 +15,16 @@ export const createItem = <Builder extends EntityBuilder, Table extends TableSto
 ): CreateItemFn<Builder> => {
   return async (
     key: EntityKey<Builder>,
-    body: Builder['body'],
+    body: Omit<Builder['body'], 'createdAt' | 'updatedAt'>,
     params?: Partial<PutCommandInput> & { emitEvent?: boolean }
   ): Promise<Entity<Builder>> => {
     const tableName = process.env[parseTableName(repoConfig.tableName)];
-    const serializedItem = repoConfig.entitySerialize(key, body);
+    const serializedItem: EntityStore<Builder, Table> = {
+      ...repoConfig.keySerialize(key),
+      ...body,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
 
     const cmd = async () => {
       await dynamodb.send(new PutCommand({ TableName: tableName, Item: serializedItem, ...params })).catch((e) => {

@@ -5,8 +5,8 @@ import { PlatformFault } from 'error';
 import { Entity, EntityBuilder, EntityStore } from 'model';
 import { Tracing } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
+import { RepositoryConfig, ViewConfig } from '../types/config';
 import { ListItemFn } from '../types/operations';
-import { RepositoryConfig, ViewConfig } from '../types/repository';
 import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
@@ -15,7 +15,7 @@ export const listItem = <Builder extends EntityBuilder, Table extends TableStore
   dynamodb: DynamoDBDocumentClient
 ): ListItemFn<Builder> => {
   return async (
-    pk: Table['storeMapping']['key']['pk'],
+    pk: Table['keyMapping']['pk'],
     queryParams: { limit: number; nextToken?: string },
     params?: Partial<QueryCommandInput>
   ): Promise<PaginatedResponse<Entity<Builder>>> => {

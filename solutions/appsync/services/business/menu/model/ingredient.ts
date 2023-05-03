@@ -13,10 +13,8 @@ export type IngredientModel = Model<
       description?: string;
       price?: number;
       measurement: Measurement;
-    };
-    timers: {
-      createdAt: Date;
-      updatedAt: Date;
+      createdAt: string;
+      updatedAt: string;
     };
   },
   {

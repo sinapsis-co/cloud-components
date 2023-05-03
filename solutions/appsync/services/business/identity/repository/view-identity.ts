@@ -11,15 +11,13 @@ type StoreView = UserModel['Store'] | InviteModel['Store'];
 export const identityView: View<EntityBuilderView, StoreBuilderView> = view({
   tableName: 'identity',
   entityDeserialize: (entityStore: StoreView): EntityView => {
-    const { pk, sk, createdAt, updatedAt, ...att } = entityStore;
+    const { pk, sk, ...att } = entityStore;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, id] = sk.split('#');
     return {
       ...att,
       tenantId: pk,
       id,
-      createdAt: new Date(createdAt),
-      updatedAt: new Date(updatedAt),
     };
   },
 });

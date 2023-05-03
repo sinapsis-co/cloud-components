@@ -13,8 +13,8 @@ export const cognitoToProfileMapper = (userCognito: UserCognito): UserModel['Ent
     givenName: userCognito.standard.given_name,
     familyName: userCognito.standard.family_name,
     role: userCognito.custom.role,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   };
 };
 

@@ -10,14 +10,12 @@ export type InviteModel = Model<
       companyName: string;
       inviteId: string;
       role: AuthScope;
+      createdAt: string;
+      updatedAt: string;
     };
     key: {
       tenantId: string;
       id: string;
-    };
-    timers: {
-      createdAt: Date;
-      updatedAt: Date;
     };
   },
   { storeBuilder: IdentityTableBuilder }

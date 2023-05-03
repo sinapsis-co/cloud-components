@@ -5,8 +5,8 @@ import { PlatformFault } from 'error';
 import { Entity, EntityBuilder, EntityKey, EntityStore } from 'model';
 import { chunkArray } from 'util/chunk-array';
 import { wait } from 'util/executers';
+import { RepositoryConfig } from '../types/config';
 import { BatchGetItemFn } from '../types/operations';
-import { RepositoryConfig } from '../types/repository';
 import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 

@@ -3,8 +3,8 @@ import { DynamoDBDocumentClient, GetCommand, GetCommandInput } from '@aws-sdk/li
 import { PlatformError } from 'error';
 import { Entity, EntityBuilder, EntityKey, EntityStore } from 'model';
 import { Tracing } from 'tracing';
+import { RepositoryConfig } from '../types/config';
 import { GetItemFn } from '../types/operations';
-import { RepositoryConfig } from '../types/repository';
 import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 

@@ -4,29 +4,19 @@ import { Repository } from '@sinapsis-co/cc-sdk/integration/store/dynamo/types/r
 import { IngredientModel } from '../model/ingredient';
 
 const repoFactory = <Model extends IngredientModel>(): Repository<Model['Builder'], Model['StoreBuilder']> => {
-  const keySerialize = (key: Model['Key']): Model['StoreMapping']['key'] => {
-    return {
-      pk: key.id,
-    };
-  };
   const repoConfig: RepositoryConfig<Model['Builder'], Model['StoreBuilder']> = {
     repoName: 'ingredient',
     tableName: 'ingredients',
-    keySerialize,
-    entitySerialize: (key: Model['Key'], body: Model['Builder']['body']): Model['Store'] => {
-      const timers: Model['StoreMapping']['timers'] = {
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+    keySerialize: (key: Model['Key']): Model['StoreBuilder']['keyMapping'] => {
+      return {
+        pk: key.id,
       };
-      return { ...keySerialize(key), ...body, ...timers };
     },
     entityDeserialize: (entityStore: Model['Store']): Model['Entity'] => {
-      const { pk, createdAt, updatedAt, ...att } = entityStore;
+      const { pk, ...att } = entityStore;
       return {
-        ...att,
         id: pk,
-        createdAt: new Date(createdAt),
-        updatedAt: new Date(updatedAt),
+        ...att,
       };
     },
   };

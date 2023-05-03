@@ -5,8 +5,8 @@ import { PlatformFault } from 'error';
 import { Entity, EntityBuilder, EntityStore } from 'model';
 import { Tracing } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
+import { RepositoryConfig, ViewConfig } from '../types/config';
 import { ScanTableFn } from '../types/operations';
-import { RepositoryConfig, ViewConfig } from '../types/repository';
 import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 

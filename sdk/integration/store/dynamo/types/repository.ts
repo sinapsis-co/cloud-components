@@ -1,4 +1,4 @@
-import { EntityBuilder } from '../../../../model';
+import { EntityBuilder } from 'model';
 import { RepositoryConfig } from './config';
 import {
   BatchCreateItemFn,
@@ -36,7 +36,6 @@ export type Repository<EBuilder extends EntityBuilder, TBuilder extends TableSto
     };
   };
   keySerialize: RepositoryConfig<EBuilder, TBuilder>['keySerialize'];
-  entitySerialize: RepositoryConfig<EBuilder, TBuilder>['entitySerialize'];
   entityDeserialize: RepositoryConfig<EBuilder, TBuilder>['entityDeserialize'];
   createItem: CreateItemFn<EBuilder>;
   checkItemExists: CheckItemExistsFn<EBuilder>;

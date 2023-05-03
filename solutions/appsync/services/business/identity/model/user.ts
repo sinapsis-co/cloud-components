@@ -16,14 +16,12 @@ export type UserModel = Model<
       role: AuthScope;
       avatar?: string;
       location?: FullLocation;
+      createdAt: string;
+      updatedAt: string;
     };
     key: {
       tenantId: string;
       id: string;
-    };
-    timers: {
-      createdAt: Date;
-      updatedAt: Date;
     };
   },
   {

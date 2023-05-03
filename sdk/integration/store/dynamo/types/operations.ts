@@ -6,14 +6,14 @@ import { TableStoreBuilder } from './table-store-builder';
 
 export type CreateItemFn<Builder extends EntityBuilder> = (
   key: EntityKey<Builder>,
-  body: Builder['body'],
+  body: Omit<Builder['body'], 'createdAt' | 'updatedAt'>,
   params?: Partial<Dynamo.PutCommandInput> & { emitEvent?: boolean }
 ) => Promise<Entity<Builder>>;
 
 export type BatchCreateItemFn<Builder extends EntityBuilder> = (
   Commands: {
     key: EntityKey<Builder>;
-    body: Builder['body'];
+    body: Omit<Builder['body'], 'createdAt' | 'updatedAt'>;
   }[],
   autoRetry?: boolean
 ) => Promise<Entity<Builder>[]>;
@@ -52,7 +52,7 @@ export type SoftDeleteItemFn<Builder extends EntityBuilder> = (
 
 export type UpdateItemFn<Builder extends EntityBuilder> = (
   key: EntityKey<Builder>,
-  body: Builder['body'],
+  body: Partial<Omit<Builder['body'], 'createdAt' | 'updatedAt'>>,
   params?: Partial<Dynamo.UpdateCommandInput> & { emitEvent?: boolean }
 ) => Promise<Entity<Builder>>;
 

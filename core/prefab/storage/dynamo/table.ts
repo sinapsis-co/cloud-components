@@ -23,7 +23,7 @@ export class DynamoTablePrefab extends Construct {
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: { name: 'pk', type: AttributeType.STRING },
       timeToLiveAttribute: 'deleteTTL',
-      ...(params.storeMapping.key.sk ? { sortKey: { name: 'sk', type: AttributeType.STRING } } : {}),
+      ...(params.keyMapping.sk ? { sortKey: { name: 'sk', type: AttributeType.STRING } } : {}),
       // stream: params.stream,
     });
 

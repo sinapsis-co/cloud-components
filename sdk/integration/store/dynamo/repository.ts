@@ -28,7 +28,6 @@ export const repository = <Builder extends EntityBuilder, Table extends TableSto
       recovered: { name: `app.${repoConfig.repoName}.recovered`, source: 'app' },
     },
     keySerialize: repoConfig.keySerialize,
-    entitySerialize: repoConfig.entitySerialize,
     entityDeserialize: repoConfig.entityDeserialize,
     createItem: createItem(repoConfig, dynamodb),
     checkItemExists: checkItemExists(repoConfig, dynamodb),

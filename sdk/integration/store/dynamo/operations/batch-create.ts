@@ -4,8 +4,8 @@ import { PlatformFault } from 'error';
 import { Entity, EntityBuilder, EntityKey, EntityStore } from 'model';
 import { chunkArray } from 'util/chunk-array';
 import { wait } from 'util/executers';
+import { RepositoryConfig } from '../types/config';
 import { BatchCreateItemFn } from '../types/operations';
-import { RepositoryConfig } from '../types/repository';
 import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
@@ -21,7 +21,10 @@ export const batchCreateItem = <Builder extends EntityBuilder, Table extends Tab
 ): BatchCreateItemFn<Builder> => {
   return async (items: { key: EntityKey<Builder>; body: Builder['body'] }[]): Promise<Entity<Builder>[]> => {
     const table = process.env[parseTableName(repoConfig.tableName)]!;
-    const entities: EntityStore<Builder, Table>[] = items.map((e) => repoConfig.entitySerialize(e.key, e.body));
+    const entities: EntityStore<Builder, Table>[] = items.map((e) => ({
+      ...repoConfig.keySerialize(e.key),
+      ...e.body,
+    }));
     const chunk = chunkArray(entities, 25);
     await Promise.all(
       chunk.map(async (c): Promise<any> => {
