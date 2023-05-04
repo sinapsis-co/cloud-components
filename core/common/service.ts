@@ -1,5 +1,4 @@
 import { Stack } from 'aws-cdk-lib';
-import { log } from 'console';
 import { Coordinator, ServiceDependencies } from './coordinator';
 import { getDeployConfig } from './naming/get-deploy-config';
 import { getServiceName } from './naming/get-service-name';
@@ -42,7 +41,6 @@ export abstract class Service<
     this.name = name;
     try {
       const d: any = new dep();
-      log(d.depStore);
       this.depsNames = d.depStore || [];
     } catch {
       throw new SynthError(`Service ${name} invalid dependency`, this.props);

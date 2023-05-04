@@ -9,7 +9,6 @@ import { DeployPipeline } from './services/support/deploy-pipeline';
 import { DnsDomainRef } from './services/support/dns-domain-ref';
 import { DnsSubdomainCertificate } from './services/support/dns-subdomain-certificate';
 import { DnsSubdomainHostedZone } from './services/support/dns-subdomain-hosted-zone';
-import { EnvAlb } from './services/support/env-alb';
 import { EnvCluster } from './services/support/env-cluster';
 import { EnvVpc } from './services/support/env-vpc';
 
@@ -21,7 +20,6 @@ new DnsSubdomainHostedZone(coordinator);
 new DnsDomainRef(coordinator);
 new DnsSubdomainCertificate(coordinator);
 new EnvVpc(coordinator);
-new EnvAlb(coordinator);
 new EnvCluster(coordinator);
 new CdnApi(coordinator);
 
