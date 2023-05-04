@@ -1,8 +1,9 @@
+import { ServiceDependencies } from '@sinapsis-co/cc-core/common/coordinator';
 import { Service } from '@sinapsis-co/cc-core/common/service';
 import { DeployPipelinePrefab } from '@sinapsis-co/cc-core/prefab/util/deploy-pipeline';
 import { DeployTargetName, GlobalCoordinator } from '../../../config/config-type';
 
-class Dep {}
+class Dep extends ServiceDependencies {}
 export class DeployPipeline extends Service<GlobalCoordinator, DeployTargetName> {
   constructor(coordinator: GlobalCoordinator) {
     super(coordinator, DeployPipeline.name, Dep, 'deployPipeline');

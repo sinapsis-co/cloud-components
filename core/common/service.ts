@@ -1,17 +1,12 @@
 import { Stack } from 'aws-cdk-lib';
-import { Coordinator } from './coordinator';
+import { log } from 'console';
+import { Coordinator, ServiceDependencies } from './coordinator';
 import { getDeployConfig } from './naming/get-deploy-config';
 import { getServiceName } from './naming/get-service-name';
 import { getServiceProps } from './synth/get-service-props';
-import { BaseDeployTargetName, BaseServiceDependencies, BaseServiceProps } from './synth/props-types';
+import { BaseDeployTargetName, BaseServiceProps } from './synth/props-types';
 import { SynthError } from './synth/synth-error';
-
 export { Construct } from 'constructs';
-
-export type ServiceOptionalParams<ServiceDependencies extends BaseServiceDependencies = BaseServiceDependencies> = {
-  deps?: ServiceDependencies;
-  deployConfigName?: string;
-};
 
 type ServiceClass<MyCoord extends Coordinator = Coordinator> = {
   props: MyCoord['globalProps'];
@@ -32,7 +27,12 @@ export abstract class Service<
   public depsNames: string[];
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  constructor(coordinator: MyCoord, name: string, dep: any, deployTargetName?: DeployTargetName) {
+  constructor(
+    coordinator: MyCoord,
+    name: string,
+    dep: typeof ServiceDependencies,
+    deployTargetName?: DeployTargetName
+  ) {
     super(
       coordinator,
       getServiceName(name, coordinator.globalProps),
@@ -41,7 +41,9 @@ export abstract class Service<
     this.props = getServiceProps(name, coordinator.globalProps);
     this.name = name;
     try {
-      this.depsNames = new dep().depStore || [];
+      const d: any = new dep();
+      log(d.depStore);
+      this.depsNames = d.depStore || [];
     } catch {
       throw new SynthError(`Service ${name} invalid dependency`, this.props);
     }

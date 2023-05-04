@@ -2,7 +2,7 @@ import { Model } from '@sinapsis-co/cc-sdk/model';
 
 import { FullLocation } from '../entities/location';
 import { AuthScope } from '../platform/authorization';
-import { IdentityTableBuilder } from '../repository/table-identity';
+import { IdentityTableBuilder } from '../store/table-identity';
 
 export type UserModel = Model<
   {

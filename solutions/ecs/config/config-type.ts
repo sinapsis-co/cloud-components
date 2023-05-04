@@ -12,7 +12,7 @@ export type Subdomain = {
   webapp: string;
   webappVite: string;
   api: string;
-  media: string;
+  assets: string;
   auth: string;
   backofficeAuth: string;
 };

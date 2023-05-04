@@ -22,7 +22,7 @@ type Deps = {
   identity: Identity;
   dnsSubdomainCertificate: DnsSubdomainCertificate;
 };
-const depsNames: Array<keyof Deps> = ['globalEventBus', 'cdnApi', 'dnsSubdomainCertificate', 'identity'];
+const depsNames: Array<keyof Deps> = ['globalEventBus', 'cdnApi', 'dnsSubdomainCertificate'];
 
 export class Assets extends Service<GlobalCoordinator> {
   public apiAggregate: ApiAggregate;

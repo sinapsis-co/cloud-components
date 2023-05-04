@@ -104,3 +104,7 @@ export function DepCheck() {
     target.depStore.push(propertyKey);
   };
 }
+
+export class ServiceDependencies {
+  // depStore: string[] = [];
+}

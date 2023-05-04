@@ -49,9 +49,6 @@ export class IngredientSchema implements Ingredient {
 
   @Field((type) => AWSDateTime)
   public updatedAt: Ingredient['createdAt'];
-
-  // @Field(() => [String])
-  // ingredients: string[];
 }
 
 @ObjectType()
@@ -61,6 +58,8 @@ export class IngredientQueryResult implements IngredientList {
   @Field((type) => String, { nullable: true })
   nextToken: IngredientList['nextToken'];
 }
+// @Field(() => [String])
+// ingredients: string[];
 
 // Inputs
 @InputType()

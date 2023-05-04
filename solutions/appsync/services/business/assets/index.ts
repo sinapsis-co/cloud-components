@@ -7,7 +7,7 @@ import { CdnAssetPrefab } from '@sinapsis-co/cc-core/prefab/gateway/cdn-asset';
 import { PrivateBucketPrefab } from '@sinapsis-co/cc-core/prefab/storage/bucket/private-bucket';
 import { Duration } from 'aws-cdk-lib';
 
-import { DepCheck } from '@sinapsis-co/cc-core/common/coordinator';
+import { DepCheck, ServiceDependencies } from '@sinapsis-co/cc-core/common/coordinator';
 import { CdnApi } from 'services/support/cdn-api';
 import { GlobalCoordinator } from '../../../config/config-type';
 import { DnsSubdomainCertificate } from '../../support/dns-subdomain-certificate';
@@ -17,7 +17,7 @@ import { assetApi, assetEvent } from './catalog';
 import { Asset } from './entities/asset';
 import { AssetType, assetsTypes } from './lib/assets-type';
 
-class Dep {
+class Dep extends ServiceDependencies {
   @DepCheck()
   globalEventBus: GlobalEventBus;
   @DepCheck()

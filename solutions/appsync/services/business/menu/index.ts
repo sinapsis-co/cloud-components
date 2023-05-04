@@ -1,21 +1,19 @@
 import { Service } from '@sinapsis-co/cc-core/common/service';
 
-import { DepCheck } from '@sinapsis-co/cc-core/common/coordinator';
+import { DepCheck, ServiceDependencies } from '@sinapsis-co/cc-core/common/coordinator';
 import { AppSyncResolverAggregate } from '@sinapsis-co/cc-core/prefab/gateway/app-sync/resolver-aggregate';
 import { DynamoTablePrefab } from '@sinapsis-co/cc-core/prefab/storage/dynamo/table';
 import { GlobalCoordinator } from '../../../config/config-type';
 import { GlobalEventBus } from '../../support/global-event-bus';
 import { GraphqlApi } from '../../support/graphql-api';
 import { IngredientResolver } from './catalog/schema/ingredient';
-import { ingredientsTableBuilder } from './repository/table-ingredient';
+import { IngredientsTableBuilder } from './store/table-ingredient';
 
-class Dep {
+class Dep extends ServiceDependencies {
   @DepCheck()
   globalEventBus: GlobalEventBus;
   @DepCheck()
   graphqlApi: GraphqlApi;
-  // cdnApi: CdnApi;
-  // identity: Identity;
 }
 
 export class Menu extends Service<GlobalCoordinator> {
@@ -25,7 +23,7 @@ export class Menu extends Service<GlobalCoordinator> {
   }
 
   build(dep: Dep): void {
-    const ingredientsTable = new DynamoTablePrefab(this, ingredientsTableBuilder);
+    const ingredientsTable = new DynamoTablePrefab(this, IngredientsTableBuilder);
 
     new AppSyncResolverAggregate<IngredientResolver>(this, {
       appSyncPrefab: dep.graphqlApi.appSyncPrefab,

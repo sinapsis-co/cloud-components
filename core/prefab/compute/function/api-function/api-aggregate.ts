@@ -21,17 +21,14 @@ export type ApiAuthPoolParams = {
   userPoolClient?: UserPoolClient;
 };
 
-export type ApiAggregateParams<
-  HandlerName extends string = string,
-  TableB extends TableStoreBuilder = TableStoreBuilder
-> = BaseFunctionParams & {
+export type ApiAggregateParams<HandlerName extends string = string> = BaseFunctionParams & {
   basePath: string;
   handlers: Record<HandlerName, ApiHandlerParams>;
   cdnApiPrefab: CdnApiPrefab;
   authPool?: ApiAuthPoolParams;
   customAuthorizerHandler?: IFunction;
   useRestApi?: true;
-  tableBuilder?: TableB;
+  tableBuilder?: typeof TableStoreBuilder;
 };
 
 export class ApiAggregate<HandlerName extends string = string> extends Construct {

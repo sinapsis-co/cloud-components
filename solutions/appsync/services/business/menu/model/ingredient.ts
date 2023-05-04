@@ -1,5 +1,5 @@
 import { Model } from '@sinapsis-co/cc-sdk/model';
-import { IngredientsTableBuilder } from '../repository/table-ingredient';
+import { IngredientsTableBuilder } from '../store/table-ingredient';
 
 export type IngredientModel = Model<
   {

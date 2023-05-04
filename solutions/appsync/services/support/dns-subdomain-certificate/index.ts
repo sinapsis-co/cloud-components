@@ -2,11 +2,11 @@ import { Service } from '@sinapsis-co/cc-core/common/service';
 import { DnsSubdomainCertificatePrefab } from '@sinapsis-co/cc-core/prefab/networking/dns-subdomain-certificate';
 import { GlobalCoordinator } from '../../../config/config-type';
 
-import { DepCheck } from '@sinapsis-co/cc-core/common/coordinator';
+import { DepCheck, ServiceDependencies } from '@sinapsis-co/cc-core/common/coordinator';
 import { DnsDomainRef } from '../dns-domain-ref';
 import { DnsSubdomainHostedZone } from '../dns-subdomain-hosted-zone';
 
-class Dep {
+class Dep extends ServiceDependencies {
   @DepCheck()
   dnsSubdomainHostedZone: DnsSubdomainHostedZone;
   @DepCheck()

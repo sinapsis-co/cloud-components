@@ -1,8 +1,9 @@
+import { ServiceDependencies } from '@sinapsis-co/cc-core/common/coordinator';
 import { Service } from '@sinapsis-co/cc-core/common/service';
 import { DnsSubdomainHostedZonePrefab } from '@sinapsis-co/cc-core/prefab/networking/dns-subdomain-hosted-zone';
 import { GlobalCoordinator } from '../../../config/config-type';
 
-class Dep {}
+class Dep extends ServiceDependencies {}
 
 export class DnsSubdomainHostedZone extends Service<GlobalCoordinator> {
   public subdomainHostedZonePrefab: DnsSubdomainHostedZonePrefab;

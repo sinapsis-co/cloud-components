@@ -1,40 +1,47 @@
 import { TablePermission } from '@sinapsis-co/cc-sdk/catalog/api';
-import { TableStoreBuilder } from '@sinapsis-co/cc-sdk/integration/store/dynamo/types/table-store-builder';
 import { parseTableName } from '@sinapsis-co/cc-sdk/integration/store/dynamo/util/parse-name';
 import { RemovalPolicy } from 'aws-cdk-lib';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
+import { TableStoreBuilder } from '@sinapsis-co/cc-sdk/integration/store/dynamo/types/table-store-builder';
 import { getLogicalName } from 'common/naming/get-logical-name';
 import { getResourceName } from 'common/naming/get-resource-name';
 import { Service } from 'common/service';
+import { SynthError } from 'common/synth/synth-error';
 
 export class DynamoTablePrefab extends Construct {
   public readonly table: Table;
   public readonly tableName: string;
 
-  constructor(service: Service, params: TableStoreBuilder) {
-    super(service, getLogicalName(DynamoTablePrefab.name, params.tableName));
+  constructor(service: Service, params: typeof TableStoreBuilder) {
+    super(service, getLogicalName(DynamoTablePrefab.name, new params().tableName));
 
-    this.tableName = params.tableName;
-    this.table = new Table(this, params.tableName, {
-      tableName: getResourceName(params.tableName, service.props),
+    const definition = new params();
+    if (!definition.tableName)
+      throw new SynthError(
+        'Bad implementation of TableStoreBuilder (remember use implements instead of extends in you class)',
+        service.props
+      );
+
+    this.tableName = definition.tableName;
+    this.table = new Table(this, definition.tableName, {
+      tableName: getResourceName(definition.tableName, service.props),
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: { name: 'pk', type: AttributeType.STRING },
       timeToLiveAttribute: 'deleteTTL',
-      ...(params.keyMapping.sk ? { sortKey: { name: 'sk', type: AttributeType.STRING } } : {}),
+      ...(definition.keyMapping.sk ? { sortKey: { name: 'sk', type: AttributeType.STRING } } : {}),
       // stream: params.stream,
     });
 
-    Object.keys(params.indexes || {}).forEach((index) => {
-      if (params && params.indexes && params.indexes[index]) {
+    const indexes = Object.keys(definition.indexes || {}) || [];
+    indexes.forEach((index) => {
+      if (indexes && indexes[index]) {
         this.table.addGlobalSecondaryIndex({
           indexName: index,
-          partitionKey: { name: params.indexes[index].pk, type: AttributeType.STRING },
-          ...(params.indexes[index].sk
-            ? { sortKey: { name: params.indexes[index].sk!, type: AttributeType.STRING } }
-            : {}),
+          partitionKey: { name: indexes[index].pk, type: AttributeType.STRING },
+          ...(indexes[index].sk ? { sortKey: { name: indexes[index]?.sk, type: AttributeType.STRING } } : {}),
         });
       }
     });

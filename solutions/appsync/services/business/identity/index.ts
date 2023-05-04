@@ -9,7 +9,7 @@ import { SesDomain } from '@sinapsis-co/cc-core/prefab/util/ses/ses-domain';
 import { Duration } from 'aws-cdk-lib';
 import { UserPoolOperation } from 'aws-cdk-lib/aws-cognito';
 
-import { DepCheck } from '@sinapsis-co/cc-core/common/coordinator';
+import { DepCheck, ServiceDependencies } from '@sinapsis-co/cc-core/common/coordinator';
 import { CdnApi } from 'services/support/cdn-api';
 import { DnsSubdomainCertificate } from 'services/support/dns-subdomain-certificate';
 import { GlobalEventBus } from 'services/support/global-event-bus';
@@ -18,7 +18,7 @@ import { GlobalCoordinator } from '../../../config/config-type';
 import { assetEvent } from '../assets/catalog';
 import { identityApi } from './catalog';
 import { buildCustomAttributes } from './platform/cognito-builder';
-import { identityTableBuilder } from './repository/table-identity';
+import { IdentityTableBuilder } from './store/table-identity';
 
 /**
  * Name of the user pool
@@ -26,7 +26,7 @@ import { identityTableBuilder } from './repository/table-identity';
  * @default - automatically generated name by CloudFormation at deploy time
  */
 
-class Dep {
+class Dep extends ServiceDependencies {
   @DepCheck()
   notifications: Notifications;
   @DepCheck()
@@ -69,7 +69,7 @@ export class Identity extends Service<GlobalCoordinator> {
       cdnApiPrefab: dep.cdnApi.cdnApiPrefab,
       authPool: this.authPool,
       eventBus: dep.globalEventBus.eventBusPrefab,
-      tableBuilder: identityTableBuilder,
+      tableBuilder: IdentityTableBuilder,
       handlers: {
         inviteCreate: {
           ...identityApi.inviteCreate.config,

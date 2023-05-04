@@ -2,10 +2,10 @@ import { Service } from '@sinapsis-co/cc-core/common/service';
 import { EventsAnalyticsPrefab } from '@sinapsis-co/cc-core/prefab/analytics/events';
 import { GlobalCoordinator } from '../../../config/config-type';
 
-import { DepCheck } from '@sinapsis-co/cc-core/common/coordinator';
+import { DepCheck, ServiceDependencies } from '@sinapsis-co/cc-core/common/coordinator';
 import { GlobalEventBus } from '../global-event-bus';
 
-class Dep {
+class Dep extends ServiceDependencies {
   @DepCheck()
   globalEventBus: GlobalEventBus;
 }
