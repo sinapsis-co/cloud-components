@@ -8,6 +8,7 @@
       "templates/*": ["./solutions/appsync/notifications/templates/*"],
       "@sinapsis-co/cc-sdk/*": ["./sdk/*"],
       "@sinapsis-co/cc-core/*": ["./core/*"],
+      "@sinapsis-co/cc-services/*": ["./services/*"],
       "common/*": ["./core/common/*"],
       "prefab/*": ["./core/prefab/*"],
       "catalog/*": ["./sdk/catalog/*"],

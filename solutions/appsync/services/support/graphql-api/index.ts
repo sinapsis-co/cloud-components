@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import 'reflect-metadata';
 
+import { DepCheck, ServiceDependencies } from '@sinapsis-co/cc-core/common/coordinator';
 import { Service } from '@sinapsis-co/cc-core/common/service';
 import { AppSyncPrefab } from '@sinapsis-co/cc-core/prefab/gateway/app-sync';
-
-import { DepCheck, ServiceDependencies } from '@sinapsis-co/cc-core/common/coordinator';
-import { menuSchema } from 'services/business/menu/catalog';
-import { DnsSubdomainCertificate } from 'services/support/dns-subdomain-certificate';
 import { NonEmptyArray } from 'type-graphql';
-import { GlobalCoordinator } from '../../../config/config-type';
-import { GlobalEventBus } from '../global-event-bus';
+
+import { DnsSubdomainCertificate } from '@sinapsis-co/cc-services/support/dns-subdomain-certificate';
+import { GlobalEventBus } from '@sinapsis-co/cc-services/support/global-event-bus';
+
+import { GlobalCoordinator } from 'config/config-type';
+import { menuSchema } from 'services/business/menu/catalog';
 import { schemaPath } from './schema-builder';
 
 class Dep extends ServiceDependencies {

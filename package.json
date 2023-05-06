@@ -9,6 +9,7 @@
     "packages": [
       "sdk/",
       "core/",
+      "services/**/*",
       "solutions/base",
       "solutions/base/services/**/*",
       "solutions/appsync",

@@ -95,7 +95,7 @@ export class Coordinator<
 
 export function DepCheck() {
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  return function (target: any, propertyKey: string) {
+  return function (target: any, propertyKey: any) {
     // Define the _propertyMap dict if it doesn't exist yet
     if (!target.depStore) {
       target.depStore = [];

@@ -1,7 +1,7 @@
 import type { APIGatewayProxyEventV2WithJWTAuthorizer, APIGatewayProxyResultV2 } from 'aws-lambda';
 import { Schemy } from 'schemy-ts';
 
-import { ApiConfig, ApiInterface, ApiInterfaceKeys, ApiInterfaceRequest } from 'catalog/api';
+import { ApiDefinition, ApiInterface, ApiInterfaceKeys, ApiInterfaceRequest } from 'catalog/api';
 import { PlatformError, PlatformFault } from 'error';
 import { HandledException } from 'error/types';
 import { Tracing } from 'tracing';
@@ -23,7 +23,7 @@ type Handler<T extends ApiInterface> = (
 
 export const apiHandler = <T extends ApiInterface>(
   handler: Handler<T>,
-  apiOptions: ApiConfig<T>,
+  apiDefinition: ApiDefinition<T>,
   customHeaders?: APIGatewayProxyEventV2WithJWTAuthorizer['headers'],
   statusCode = 200
 ): Handler<T> => {
@@ -31,8 +31,8 @@ export const apiHandler = <T extends ApiInterface>(
     const headers = { ...DEFAULT_HEADERS, ...customHeaders };
     const tracing = new Tracing(event);
     try {
-      const request: ApiInterfaceRequest<T> = await apiParser<T>(event, apiOptions.schema);
-      if (apiOptions.authorizationMdw) apiOptions.authorizationMdw(request, apiOptions.scope);
+      const request: ApiInterfaceRequest<T> = await apiParser<T>(event, apiDefinition.schema);
+      if (apiDefinition.authorizationMdw) apiDefinition.authorizationMdw(request, apiDefinition.scope);
       const result = await timeoutController(handler(event, request));
       tracing.close(result);
       return {

@@ -1,11 +1,11 @@
 import { ApiConfig, ApiInterface, ApiInterfaceRequest } from '@sinapsis-co/cc-sdk/catalog/api';
 import { CustomError } from '../../../../config/error-catalog';
 
-export type AuthScope = 'owner' | 'member' | 'user';
+export type AuthScope = 'premium' | 'guest' | 'user';
 
 export const authScope: Record<AuthScope, string> = {
-  owner: '0',
-  member: '1',
+  premium: '0',
+  guest: '1',
   user: '2',
 };
 

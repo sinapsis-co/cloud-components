@@ -37,7 +37,7 @@ export type PaginatedResponse<ResponseType> = {
 export type ApiMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 export type TablePermission = 'read' | 'write' | 'readWrite' | 'none';
 
-export type ApiConfig<T extends ApiInterface> = {
+export type ApiDefinition<T extends ApiInterface> = {
   name: string;
   basePath: string;
   path: string;

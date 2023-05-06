@@ -32,6 +32,7 @@
 
     "baseUrl": ".",
     "paths": {
+      "@sinapsis-co/cc-services/*": ["./services/*"],
       "@sinapsis-co/cc-sdk/*": ["./sdk/*"],
       "@sinapsis-co/cc-core/*": ["./core/*"],
       "common/*": ["./core/common/*"],

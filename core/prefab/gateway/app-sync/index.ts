@@ -1,17 +1,19 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { CfnOutput } from 'aws-cdk-lib';
 import * as appsync from 'aws-cdk-lib/aws-appsync';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { UserPool } from 'aws-cdk-lib/aws-cognito';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { CnameRecord, HostedZone } from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
 
-import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { getDomain } from 'common/naming/get-domain';
 import { getLogicalName } from 'common/naming/get-logical-name';
 import { getResourceName } from 'common/naming/get-resource-name';
 import { Service } from 'common/service';
 import { SynthError } from 'common/synth/synth-error';
 import { EventBusPrefab } from 'prefab/integration/event-bus';
+
 import { CdnApiPrefab } from '../cdn-api';
 
 export type AppSyncPrefabParams = {
@@ -29,6 +31,7 @@ export type AppSyncPrefabParams = {
 export class AppSyncPrefab extends Construct {
   public readonly api: appsync.GraphqlApi;
   public readonly eventBridgeDataSource: EventBridgeDataSource;
+  public schemas: any[];
 
   constructor(service: Service, params: AppSyncPrefabParams) {
     super(service, getLogicalName(AppSyncPrefab.name));
@@ -49,6 +52,13 @@ export class AppSyncPrefab extends Construct {
           domainName: getDomain(params.domainConfig.subdomain, service.props),
         }
       : undefined;
+
+    // const schemaPath = path.join(__dirname, 'consolidated.graphql');
+    // log('<< Building GraphQL Schema >>');
+    // buildSchema({
+    //   resolvers: resolverSchemas,
+    //   emitSchemaFile: schemaPath,
+    // });
 
     this.api = new appsync.GraphqlApi(this, 'Api', {
       name: getResourceName('', service.props),
@@ -86,6 +96,11 @@ export class AppSyncPrefab extends Construct {
       params.cdnApiPrefab.addAppSync(this.api.graphqlUrl);
     }
     new CfnOutput(this, 'Domain', { value: domainConfig?.domainName || this.api.graphqlUrl });
+  }
+
+  addSchema(schema: Function) {
+    if (!this.schemas) this.schemas = [];
+    this.schemas.push(schema);
   }
 }
 

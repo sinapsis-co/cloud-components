@@ -1,5 +1,5 @@
 import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
-import { ApiConfig, ApiInterface } from '@sinapsis-co/cc-sdk/catalog/api';
+import { ApiDefinition, ApiInterface } from '@sinapsis-co/cc-sdk/catalog/api';
 import { Duration } from 'aws-cdk-lib';
 import { LambdaIntegration } from 'aws-cdk-lib/aws-apigateway';
 import { HttpMethod } from 'aws-cdk-lib/aws-events';
@@ -16,10 +16,10 @@ import { ApiRestPrefab } from 'prefab/gateway/api/api-rest';
 import { BaseFunction, BaseFunctionParams, BaseHandlerParams } from '../base-function';
 
 export type ApiHandlerParams = BaseHandlerParams & {
-  basePath: ApiConfig<ApiInterface>['basePath'];
-  path: ApiConfig<ApiInterface>['path'];
-  method: ApiConfig<ApiInterface>['method'];
-  isPublic?: ApiConfig<ApiInterface>['isPublic'];
+  basePath: ApiDefinition<ApiInterface>['basePath'];
+  path: ApiDefinition<ApiInterface>['path'];
+  method: ApiDefinition<ApiInterface>['method'];
+  isPublic?: ApiDefinition<ApiInterface>['isPublic'];
   cacheMaxAge?: number;
 };
 

@@ -1,7 +1,7 @@
 import { CorsHttpMethod, HttpApi, HttpMethod, IHttpRouteAuthorizer } from '@aws-cdk/aws-apigatewayv2-alpha';
 import * as awsApigatewayv2AuthorizersAlpha from '@aws-cdk/aws-apigatewayv2-authorizers-alpha';
 import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
-import { ApiConfig, ApiInterface } from '@sinapsis-co/cc-sdk/catalog/api';
+import { ApiDefinition, ApiInterface } from '@sinapsis-co/cc-sdk/catalog/api';
 import { CfnOutput, Duration, Fn } from 'aws-cdk-lib';
 import { UserPool, UserPoolClient } from 'aws-cdk-lib/aws-cognito';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
@@ -62,7 +62,7 @@ export class ApiHttpPrefab extends Construct {
   public addPath(params: {
     basePath: string;
     path: string;
-    method: ApiConfig<ApiInterface>['method'];
+    method: ApiDefinition<ApiInterface>['method'];
     lambdaFunction: IFunction;
     isPublic?: true;
   }): void {
