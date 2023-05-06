@@ -1,13 +1,13 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "outDir": ".dist",
-    "rootDir": ".",
-    "baseUrl": ".",
-    "paths": {
-      "common/*": ["./common/*"],
-      "prefab/*": ["./prefab/*"]
-    }
+    "outDir": ".dist"
+    // "rootDir": ".",
+    // "baseUrl": ".",
+    // "paths": {
+    //   "common/*": ["./common/*"],
+    //   "prefab/*": ["./prefab/*"]
+    // }
   },
   "include": ["./**/*.ts"],
   "exclude": ["cdk.out", "node_modules/**/*", ".dist/**/*"]

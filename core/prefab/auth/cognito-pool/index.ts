@@ -4,12 +4,11 @@ import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { UserPoolDomainTarget } from 'aws-cdk-lib/aws-route53-targets';
-import { Construct } from 'constructs';
-
 import { getDomain } from 'common/naming/get-domain';
 import { getLogicalName } from 'common/naming/get-logical-name';
 import { getResourceName } from 'common/naming/get-resource-name';
 import { Service } from 'common/service';
+import { Construct } from 'constructs';
 
 export type AuthPoolParams = {
   userPool?: Partial<awsCognito.UserPoolProps>;
