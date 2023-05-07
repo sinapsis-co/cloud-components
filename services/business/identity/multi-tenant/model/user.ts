@@ -30,3 +30,5 @@ export type UserModel = Model<
     omittedUpdateKeys: ['email' | 'role' | 'companyName' | 'tenantOwner' | 'avatar'];
   }
 >;
+
+export type User = UserModel['Entity'];

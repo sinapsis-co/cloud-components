@@ -10,14 +10,14 @@ import { SesDomain } from '@sinapsis-co/cc-core/prefab/util/ses/ses-domain';
 import { Duration } from 'aws-cdk-lib';
 import { UserPoolOperation } from 'aws-cdk-lib/aws-cognito';
 
-import { assetEvent } from '@sinapsis-co/cc-services/business/assets/catalog';
 import { GlobalCoordinator } from '@sinapsis-co/cc-services/config/config-type';
+import { assetEvent } from '@sinapsis-co/cc-services/support/assets/catalog';
 import { CdnApi } from '@sinapsis-co/cc-services/support/cdn-api';
 import { DnsSubdomainCertificate } from '@sinapsis-co/cc-services/support/dns-subdomain-certificate';
 import { GlobalEventBus } from '@sinapsis-co/cc-services/support/global-event-bus';
 import { Notifications } from '@sinapsis-co/cc-services/support/notifications';
 
-import { identityApi } from './catalog';
+import { identityApi, identityEvent } from './catalog';
 import { buildCustomAttributes } from './platform/cognito-builder';
 import { IdentityTableBuilder } from './store/table-identity';
 
@@ -49,9 +49,6 @@ export class Identity extends Service<GlobalCoordinator> {
   }
 
   build(dep: Dep): void {
-    this.addDependency(dep.notifications);
-    this.addDependency(dep.notifications);
-
     this.authPool = new CognitoAuthPoolPrefab(this, {
       callbackUrl: getDomain(this.props.subdomain.spaWebapp, this.props, true),
       userPool: { customAttributes: buildCustomAttributes() },
@@ -107,6 +104,7 @@ export class Identity extends Service<GlobalCoordinator> {
           ...identityApi.userUpdate.definition,
           modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.updateUserAtt])],
         },
+        tenantDelete: identityApi.tenantDelete.definition,
       },
     });
 
@@ -153,6 +151,22 @@ export class Identity extends Service<GlobalCoordinator> {
           name: 'event-asset-updated',
           eventConfig: [{ ...assetEvent.assetUploaded.eventConfig, detail: { assetType: ['avatar'] } }],
           tablePermission: 'write',
+        },
+        eventTenantDeleted: {
+          name: 'event-tenant-deleted',
+          eventConfig: [identityEvent.tenantDeleted.eventConfig],
+          tablePermission: 'read',
+        },
+        eventInviteDeleted: {
+          name: 'event-invite-deleted',
+          eventConfig: [identityEvent.inviteDeleted.eventConfig],
+          tablePermission: 'write',
+        },
+        eventMemberDisabled: {
+          name: 'event-member-disabled',
+          eventConfig: [identityEvent.memberDisabled.eventConfig],
+          tablePermission: 'read',
+          modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.updateUserAtt])],
         },
       },
     });

@@ -18,7 +18,9 @@
       "solutions/ecs/services/**/*"
     ],
     "nohoist": [
-      "solutions/appsync/frontend/*"
+      "solutions/appsync/frontend/*",
+      "solutions/ecs/frontend/*",
+      "solutions/base/frontend/*"
     ]
   },
   "scripts": {

@@ -1,7 +1,7 @@
 import { eventHandler } from '@sinapsis-co/cc-sdk/handler/event/event-handler';
 import { dispatchEvent } from '@sinapsis-co/cc-sdk/integration/event/dispatch-event';
 
-import { assetEvent } from '@sinapsis-co/cc-services/business/assets/catalog';
+import { assetEvent } from '@sinapsis-co/cc-services/support/assets/catalog';
 
 import { userRepository } from '../../repository/repo-user';
 

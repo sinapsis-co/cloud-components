@@ -29,7 +29,6 @@
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
-
     "baseUrl": ".",
     "paths": {
       "@sinapsis-co/cc-services/*": ["./services/*"],
@@ -44,6 +43,7 @@
       "integration/*": ["./sdk/integration/*"],
       "lib/*": ["./sdk/lib/*"],
       "util/*": ["./sdk/util/*"],
+      "model": ["./sdk/model"],
       "logger": ["./sdk/logger"],
       "error": ["./sdk/error"],
       "tracing": ["./sdk/tracing"]

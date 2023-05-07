@@ -1,0 +1,20 @@
+{
+  "name": "@sinapsis-co/cc-service-ssr",
+  "version": "0.1.0",
+  "license": "MIT",
+  "private": true,
+  "cpu": [
+    "arm64",
+    "x64"
+  ],
+  "engines": {
+    "npm": "please-use-yarn",
+    "yarn": ">= 1.22.0",
+    "node": ">= 14.14.0"
+  },
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "require-from-string": "^2.0.2",
+    "serverless-http": "^3.2.0"
+  }
+}

@@ -1,21 +1,30 @@
-import * as clientCognitoIdentityProvider from '@aws-sdk/client-cognito-identity-provider';
+import {
+  AdminDeleteUserCommand,
+  AdminDeleteUserCommandOutput,
+  AdminDisableUserCommand,
+  AdminDisableUserCommandOutput,
+  AdminEnableUserCommand,
+  AdminEnableUserCommandOutput,
+  AdminUpdateUserAttributesCommand,
+  AdminUpdateUserAttributesCommandInput,
+  AdminUpdateUserAttributesCommandOutput,
+  CognitoIdentityProviderClient,
+} from '@aws-sdk/client-cognito-identity-provider';
 
 import { Tracing } from 'tracing';
 
-export const cognito: clientCognitoIdentityProvider.CognitoIdentityProviderClient = Tracing.captureIntegration(
-  new clientCognitoIdentityProvider.CognitoIdentityProviderClient({}) as any
+export const cognito: CognitoIdentityProviderClient = Tracing.captureIntegration(
+  new CognitoIdentityProviderClient({}) as any
 );
 
-export type AttributeListType = clientCognitoIdentityProvider.AdminUpdateUserAttributesCommandInput['UserAttributes'];
+export type AttributeListType = AdminUpdateUserAttributesCommandInput['UserAttributes'];
 
 export const deleteCognitoUser = async (
   username: string,
   userPoolId = process.env.USER_POOL_ID
-): Promise<clientCognitoIdentityProvider.AdminDeleteUserCommandOutput> => {
+): Promise<AdminDeleteUserCommandOutput> => {
   const cmd = () => {
-    return cognito.send(
-      new clientCognitoIdentityProvider.AdminDeleteUserCommand({ UserPoolId: userPoolId, Username: username })
-    );
+    return cognito.send(new AdminDeleteUserCommand({ UserPoolId: userPoolId, Username: username }));
   };
   return Tracing.capture('DeleteCognitoUser', 'FAULT_COG_DELETE_USER', username, cmd);
 };
@@ -24,10 +33,10 @@ export const updateCognitoUser = async (
   username: string,
   attributes: AttributeListType,
   userPoolId = process.env.USER_POOL_ID
-): Promise<clientCognitoIdentityProvider.AdminUpdateUserAttributesCommandOutput> => {
+): Promise<AdminUpdateUserAttributesCommandOutput> => {
   const cmd = () => {
     return cognito.send(
-      new clientCognitoIdentityProvider.AdminUpdateUserAttributesCommand({
+      new AdminUpdateUserAttributesCommand({
         UserPoolId: userPoolId,
         Username: username,
         UserAttributes: attributes,
@@ -35,4 +44,33 @@ export const updateCognitoUser = async (
     );
   };
   return Tracing.capture('UpdateCognitoUser', 'FAULT_COG_UPDATE_USER', username, cmd);
+};
+
+export const disableCognitoUser = async (
+  username: string,
+  userPoolId = process.env.USER_POOL_ID
+): Promise<AdminDisableUserCommandOutput> => {
+  const cmd = () => {
+    return cognito.send(
+      new AdminDisableUserCommand({
+        UserPoolId: userPoolId,
+        Username: username,
+      })
+    );
+  };
+  return Tracing.capture('DisableCognitoUser', 'FAULT_COG_DISABLE_USER', username, cmd);
+};
+export const enableCognitoUser = async (
+  username: string,
+  userPoolId = process.env.USER_POOL_ID
+): Promise<AdminEnableUserCommandOutput> => {
+  const cmd = () => {
+    return cognito.send(
+      new AdminEnableUserCommand({
+        UserPoolId: userPoolId,
+        Username: username,
+      })
+    );
+  };
+  return Tracing.capture('UpdateCognitoUser', 'FAULT_COG_ENABLE_USER', username, cmd);
 };

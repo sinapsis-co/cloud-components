@@ -1,6 +1,12 @@
+#!/bin/bash
+
+set -e
+
 package=$1
 
 cd $package
+
+yarn verify
 
 if [ "$package" = "core" ]; then
 	yarn upgrade @sinapsis-co/cc-sdk --latest

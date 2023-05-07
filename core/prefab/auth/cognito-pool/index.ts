@@ -130,7 +130,11 @@ export class CognitoAuthPoolPrefab extends Construct {
       return (lambda: NodejsFunction): void => {
         lambda.role?.addToPrincipalPolicy(
           new PolicyStatement({
-            actions: ['cognito-idp:AdminUpdateUserAttributes'],
+            actions: [
+              'cognito-idp:AdminUpdateUserAttributes',
+              'cognito-idp:AdminDisableUser',
+              'cognito-idp:AdminEnableUser',
+            ],
             resources: ['*'],
           })
         );

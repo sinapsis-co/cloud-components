@@ -33,11 +33,18 @@ type ApiCallFaults =
 
 type AuroraFaults = 'FAULT_AURORA_CONNECT' | 'FAULT_AURORA_INVALID_HOST';
 
+type CognitoFaults =
+  | 'FAULT_COG_DELETE_USER'
+  | 'FAULT_COG_UPDATE_USER'
+  | 'FAULT_COG_DISABLE_USER'
+  | 'FAULT_COG_ENABLE_USER';
+
 export type PlatformFaultCodes =
   | DynamoFaults
   | S3Faults
   | ApiCallFaults
   | AuroraFaults
+  | CognitoFaults
   | 'FAULT_UNHANDLED'
   | 'FAULT_TIMEOUT'
   | 'FAULT_MAX_RETRY_REACHED'
@@ -46,14 +53,13 @@ export type PlatformFaultCodes =
   | 'FAULT_SQS_SEND_MESSAGES'
   | 'FAULT_SQS_DELETE_MESSAGE'
   | 'FAULT_EVENT_DISPATCH'
+  | 'FAULT_EVENT_BATCH_DISPATCH'
   | 'FAULT_NOT_DELIVER_EMAIL'
   | 'FAULT_NOT_MISSING_TEMPLATE'
   | 'FAULT_SM_MISSING_SECRET'
   | 'FAULT_SM_GET_RUNTIME_SECRET'
   | 'FAULT_SSM_INVALID_PARAMETER'
-  | 'FAULT_SSM_GET_EDGE_CONFIG'
-  | 'FAULT_COG_DELETE_USER'
-  | 'FAULT_COG_UPDATE_USER';
+  | 'FAULT_SSM_GET_EDGE_CONFIG';
 
 export type PlatformErrorCodes =
   | 'ERROR_ITEM_NOT_FOUND'

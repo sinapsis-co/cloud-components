@@ -35,16 +35,20 @@ export class DynamoTablePrefab extends Construct {
       // stream: params.stream,
     });
 
-    const indexes = Object.keys(definition.indexes || {}) || [];
-    indexes.forEach((index) => {
-      if (indexes && indexes[index]) {
-        this.table.addGlobalSecondaryIndex({
-          indexName: index,
-          partitionKey: { name: indexes[index].pk, type: AttributeType.STRING },
-          ...(indexes[index].sk ? { sortKey: { name: indexes[index]?.sk, type: AttributeType.STRING } } : {}),
-        });
-      }
-    });
+    const indexes = definition.indexes;
+    if (indexes) {
+      const indexKeys = Object.keys(indexes);
+      indexKeys.forEach((indexKey) => {
+        const index = indexes[indexKey];
+        if (index) {
+          this.table.addGlobalSecondaryIndex({
+            indexName: indexKey,
+            partitionKey: { name: index.pk, type: AttributeType.STRING },
+            ...(index.sk ? { sortKey: { name: index.sk, type: AttributeType.STRING } } : {}),
+          });
+        }
+      });
+    }
 
     this.table.applyRemovalPolicy(RemovalPolicy.DESTROY);
     if (service.props.envName === 'prod') this.table.applyRemovalPolicy(RemovalPolicy.RETAIN);

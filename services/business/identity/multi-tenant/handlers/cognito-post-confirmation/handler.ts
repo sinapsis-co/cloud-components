@@ -53,7 +53,11 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
     ...[
       userWithInvite
         ? dispatchEvent(identityEvent.memberCreated.eventConfig, { tenantId, id, ...att })
-        : dispatchEvent(identityEvent.tenantCreated.eventConfig, { tenantId, id, ...att }),
+        : dispatchEvent(identityEvent.tenantCreated.eventConfig, {
+            tenantId,
+            companyName: att.companyName,
+            ownerEmail: att.email,
+          }),
     ],
     userRepository.createItem({ tenantId, id }, { ...att, ...(userWithInvite ? {} : { tenantOwner: true }) }),
     updateCognitoUser(event.userName, cognitoUpdateCustomMapper(userCognito.custom), event.userPoolId),

@@ -20,3 +20,5 @@ export type InviteModel = Model<
   },
   { storeBuilder: IdentityTableBuilder }
 >;
+
+export type Invite = InviteModel['Entity'];
