@@ -1,13 +1,13 @@
 import { TableStoreBuilder } from '../integration/store/dynamo/types/table-store-builder';
 
 export type EntityBuilderParams = {
-  name: string;
+  type: string;
   body: Record<string, unknown>;
   key: Record<string, unknown>;
 };
 
 export type EntityBuilder<EBuilderKeys extends EntityBuilderParams = EntityBuilderParams> = {
-  name: EBuilderKeys['name'];
+  type: EBuilderKeys['type'];
   key: EBuilderKeys['key'];
   body: EBuilderKeys['body'];
 };
@@ -16,17 +16,25 @@ export type EntityKey<EBuilderKeys extends EntityBuilderParams> = EBuilderKeys['
 
 export type EntityBody<EBuilderKeys extends EntityBuilderParams> = EBuilderKeys['body'];
 
-export type Entity<EBuilderKeys extends EntityBuilderParams> = EBuilderKeys['body'] & EBuilderKeys['key'];
+export type EntityBase<EBuilderKeys extends EntityBuilderParams> = {
+  type: EBuilderKeys['type'];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type Entity<EBuilderKeys extends EntityBuilderParams> = EBuilderKeys['body'] &
+  EBuilderKeys['key'] &
+  EntityBase<EBuilderKeys>;
 
 type EntityCreate<EBuilderKeys extends EntityBuilderParams, Omitted extends (keyof EBuilderKeys['body'])[] = []> = Omit<
   EBuilderKeys['body'],
-  Omitted[number] | 'createdAt' | 'updatedAt'
+  Omitted[number]
 >;
 
 type EntityUpdate<
   EBuilderKeys extends EntityBuilderParams,
   Omitted extends (keyof EBuilderKeys['body'])[] = []
-> = Partial<Omit<EBuilderKeys['body'], Omitted[number] | 'createdAt' | 'updatedAt'>>;
+> = Partial<Omit<EBuilderKeys['body'], Omitted[number]>>;
 
 export type EntityList<EBuilderKeys extends EntityBuilderParams> = {
   items: Entity<EBuilderKeys>[];
@@ -36,23 +44,23 @@ export type EntityList<EBuilderKeys extends EntityBuilderParams> = {
 export type EntityStore<
   EBuilderKeys extends EntityBuilderParams,
   TBuilder extends TableStoreBuilder
-> = EBuilderKeys['body'] & TBuilder['keyMapping'];
+> = Entity<EBuilderKeys> & TBuilder['keyMapping'];
 
 export type EntityEvents<EBuilderKeys extends EntityBuilderParams> = {
   created: {
-    name: `app.${EBuilderKeys['name']}.created`;
+    name: `app.${EBuilderKeys['type']}.created`;
     payload: Entity<EBuilderKeys>;
   };
   updated: {
-    name: `app.${EBuilderKeys['name']}.updated`;
+    name: `app.${EBuilderKeys['type']}.updated`;
     payload: Entity<EBuilderKeys>;
   };
   deleted: {
-    name: `app.${EBuilderKeys['name']}.deleted`;
+    name: `app.${EBuilderKeys['type']}.deleted`;
     payload: Entity<EBuilderKeys>;
   };
   recovered: {
-    name: `app.${EBuilderKeys['name']}.recovered`;
+    name: `app.${EBuilderKeys['type']}.recovered`;
     payload: Entity<EBuilderKeys>;
   };
 };
@@ -65,10 +73,12 @@ export type ModelOptions<T extends EntityBuilderParams> = {
 
 export type Model<
   EBuilder extends EntityBuilder = EntityBuilder,
-  options extends ModelOptions<EBuilder> | undefined = undefined
+  options extends ModelOptions<EBuilder> | undefined = { storeBuilder: TableStoreBuilder }
 > = {
   Builder: EntityBuilder<EBuilder>;
   Entity: Entity<EBuilder>;
+  Type: EBuilder['type'];
+  Base: EntityBase<EBuilder>;
   Key: EntityKey<EBuilder>;
   Body: EntityBody<EBuilder>;
   List: EntityList<EBuilder>;
@@ -93,6 +103,6 @@ export type Model<
   StoreBuilder: options extends ModelOptions<EBuilder>
     ? options['storeBuilder'] extends TableStoreBuilder
       ? options['storeBuilder']
-      : undefined
-    : undefined;
+      : TableStoreBuilder
+    : TableStoreBuilder;
 };

@@ -2,12 +2,11 @@ import { BatchGetCommand, BatchGetCommandInput, DynamoDBDocumentClient } from '@
 import { NativeAttributeValue } from '@aws-sdk/util-dynamodb';
 
 import { PlatformFault } from 'error';
-import { Entity, EntityBuilder, EntityKey, EntityStore } from 'model';
+import { Model } from 'model';
 import { chunkArray } from 'util/chunk-array';
 import { wait } from 'util/executers';
-import { RepositoryConfig } from '../types/config';
+import { OperationConfig } from '../types/config';
 import { BatchGetItemFn } from '../types/operations';
-import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
 export type BatchGetItemParams = {
@@ -15,22 +14,21 @@ export type BatchGetItemParams = {
   tableName?: string;
 };
 
-export const batchGetItem = <Builder extends EntityBuilder, Table extends TableStoreBuilder = TableStoreBuilder>(
-  repoConfig: RepositoryConfig<Builder, Table>,
-  dynamodb: DynamoDBDocumentClient,
+export const batchGetItem = <M extends Model>(
+  operationConfig: OperationConfig<M>,
   params?: BatchGetItemParams
-): BatchGetItemFn<Builder> => {
-  return async (keys: EntityKey<Builder>[]): Promise<Entity<Builder>[] | undefined[]> => {
-    const table: string = process.env[parseTableName(repoConfig.tableName)]!;
-    const items = keys.map((k) => repoConfig.keySerialize(k));
+): BatchGetItemFn<M> => {
+  return async (keys: M['Key'][]): Promise<M['Entity'][] | undefined[]> => {
+    const table: string = process.env[parseTableName(operationConfig.tableName)]!;
+    const items = keys.map((k) => operationConfig.keySerialize(k));
     const chunk = chunkArray(items, 100);
 
     const result = await Promise.all(
-      chunk.map(async (c): Promise<Entity<Builder>[] | []> => {
+      chunk.map(async (c): Promise<M['Entity'][] | []> => {
         const RequestItems = { [table]: { Keys: c } };
-        const response = await call(dynamodb, RequestItems, table, params?.autoRetry);
+        const response = await call(operationConfig.dynamoClient, RequestItems, table, params?.autoRetry);
         return response.map((item) => {
-          return repoConfig.entityDeserialize(item as EntityStore<Builder, Table>);
+          return operationConfig.entityDeserialize(item as unknown as M['Store']);
         });
       })
     );

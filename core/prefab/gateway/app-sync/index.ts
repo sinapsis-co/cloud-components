@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import 'reflect-metadata';
+
 import { CfnOutput } from 'aws-cdk-lib';
 import * as appsync from 'aws-cdk-lib/aws-appsync';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
@@ -14,11 +16,16 @@ import { Service } from 'common/service';
 import { SynthError } from 'common/synth/synth-error';
 import { EventBusPrefab } from 'prefab/integration/event-bus';
 
+import { buildSchemaSync, NonEmptyArray } from 'type-graphql';
+
+import { log } from 'console';
+import path from 'path';
 import { CdnApiPrefab } from '../cdn-api';
 
 export type AppSyncPrefabParams = {
   name: string;
-  consolidatedSchemaPath: string;
+  baseFolder: string;
+  schemas: NonEmptyArray<Function>;
   eventBusPrefab?: EventBusPrefab;
   userPool?: UserPool;
   cdnApiPrefab?: CdnApiPrefab;
@@ -29,15 +36,17 @@ export type AppSyncPrefabParams = {
 };
 
 export class AppSyncPrefab extends Construct {
-  public readonly api: appsync.GraphqlApi;
-  public readonly eventBridgeDataSource: EventBridgeDataSource;
-  public schemas: any[];
+  public api: appsync.GraphqlApi;
+  public eventBridgeDataSource: EventBridgeDataSource;
+  public schemas: NonEmptyArray<Function>;
 
   constructor(service: Service, params: AppSyncPrefabParams) {
     super(service, getLogicalName(AppSyncPrefab.name));
 
     if (params.cdnApiPrefab && params.domainConfig)
       throw new SynthError('Cannot use cdnApi and custom domain at the same time');
+
+    this.schemas = params.schemas;
 
     const defaultAuthorization: appsync.AuthorizationMode = params.userPool
       ? {
@@ -53,16 +62,17 @@ export class AppSyncPrefab extends Construct {
         }
       : undefined;
 
-    // const schemaPath = path.join(__dirname, 'consolidated.graphql');
-    // log('<< Building GraphQL Schema >>');
-    // buildSchema({
-    //   resolvers: resolverSchemas,
-    //   emitSchemaFile: schemaPath,
-    // });
+    log('<< Building GraphQL Schema >>');
+    const schemaPath = path.join(params.baseFolder, 'consolidated.graphql');
+    buildSchemaSync({
+      resolvers: this.schemas as NonEmptyArray<Function>,
+      emitSchemaFile: schemaPath,
+    });
+    log('<< GraphQL Schema Built >>');
 
     this.api = new appsync.GraphqlApi(this, 'Api', {
       name: getResourceName('', service.props),
-      schema: appsync.SchemaFile.fromAsset(params.consolidatedSchemaPath),
+      schema: appsync.SchemaFile.fromAsset(schemaPath),
       authorizationConfig: { defaultAuthorization },
       domainName: domainConfig,
       logConfig: {
@@ -98,10 +108,10 @@ export class AppSyncPrefab extends Construct {
     new CfnOutput(this, 'Domain', { value: domainConfig?.domainName || this.api.graphqlUrl });
   }
 
-  addSchema(schema: Function) {
-    if (!this.schemas) this.schemas = [];
-    this.schemas.push(schema);
-  }
+  // addSchema(schema: Function) {
+  //   if (!this.schemas) this.schemas = [];
+  //   this.schemas.push(schema);
+  // }
 }
 
 export class EventBridgeDataSource extends appsync.BackedDataSource {

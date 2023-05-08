@@ -15,7 +15,7 @@ export class DynamoTablePrefab extends Construct {
   public readonly table: Table;
   public readonly tableName: string;
 
-  constructor(service: Service, params: typeof TableStoreBuilder) {
+  constructor(service: Service, params: typeof TableStoreBuilder<any>) {
     super(service, getLogicalName(DynamoTablePrefab.name, new params().tableName));
 
     const definition = new params();

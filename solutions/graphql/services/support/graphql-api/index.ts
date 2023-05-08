@@ -1,18 +1,12 @@
-/* eslint-disable @typescript-eslint/ban-types */
-import 'reflect-metadata';
-
 import { DepCheck, ServiceDependencies } from '@sinapsis-co/cc-core/common/coordinator';
 import { Service } from '@sinapsis-co/cc-core/common/service';
 import { AppSyncPrefab } from '@sinapsis-co/cc-core/prefab/gateway/app-sync';
-import { NonEmptyArray } from 'type-graphql';
 
 import { DnsSubdomainCertificate } from '@sinapsis-co/cc-services/support/dns-subdomain-certificate';
 import { GlobalEventBus } from '@sinapsis-co/cc-services/support/global-event-bus';
 
-// import { GlobalCoordinator } from 'config/config-type';
-import { GlobalCoordinator } from 'solutions/graphql/config/config-type';
-import { menuSchema } from 'solutions/graphql/services/business/menu/catalog';
-import { schemaPath } from './schema-builder';
+import { GlobalCoordinator } from 'config/config-type';
+import { menuSchema } from 'services/business/menu/catalog';
 
 class Dep extends ServiceDependencies {
   @DepCheck()
@@ -22,8 +16,6 @@ class Dep extends ServiceDependencies {
   // cdnApi: CdnApi;
   // identity: Identity;
 }
-
-export const resolverSchemas: NonEmptyArray<Function> = [menuSchema.Ingredient.IngredientResolver];
 
 export class GraphqlApi extends Service<GlobalCoordinator> {
   public appSyncPrefab: AppSyncPrefab;
@@ -36,7 +28,8 @@ export class GraphqlApi extends Service<GlobalCoordinator> {
   build(dep: Dep): void {
     this.appSyncPrefab = new AppSyncPrefab(this, {
       name: 'graphql',
-      consolidatedSchemaPath: schemaPath,
+      baseFolder: __dirname,
+      schemas: [menuSchema.Ingredient.IngredientResolver],
       eventBusPrefab: dep.globalEventBus.eventBusPrefab,
       domainConfig: {
         subdomain: this.props.subdomain.graphql,

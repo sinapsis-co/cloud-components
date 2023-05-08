@@ -5,12 +5,13 @@ import { resolverCreateItem } from '@sinapsis-co/cc-sdk/integration/store/dynamo
 import { IngredientModel } from '../model/ingredient';
 import { ingredientEntityDeserialize, ingredientKeySerialize } from '../repository/resolver-repo-ingredient';
 
-export const request: CreateContextReq<IngredientModel['Builder']> = (ctx) => {
+export const request: CreateContextReq<IngredientModel> = (ctx) => {
   const { input } = ctx.args;
+  const type: IngredientModel['Type'] = 'ingredient';
   const key = ingredientKeySerialize({ id: util.autoId() });
-  return resolverCreateItem<IngredientModel['Builder'], IngredientModel['StoreBuilder']>(key, input);
+  return resolverCreateItem<IngredientModel>(type, key, input);
 };
 
-export const response: CreateContextRes<IngredientModel['Builder'], IngredientModel['StoreBuilder']> = (ctx) => {
+export const response: CreateContextRes<IngredientModel> = (ctx) => {
   return ingredientEntityDeserialize(ctx.result);
 };

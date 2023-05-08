@@ -1,12 +1,11 @@
 import { BatchWriteCommand, BatchWriteCommandInput, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 
 import { PlatformFault } from 'error';
-import { Entity, EntityBuilder, EntityKey, EntityStore } from 'model';
+import { Model } from 'model';
 import { chunkArray } from 'util/chunk-array';
 import { wait } from 'util/executers';
-import { RepositoryConfig } from '../types/config';
+import { OperationConfig } from '../types/config';
 import { BatchCreateItemFn } from '../types/operations';
-import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
 export type BatchCreateItemParams = {
@@ -14,17 +13,22 @@ export type BatchCreateItemParams = {
   tableName?: string;
 };
 
-export const batchCreateItem = <Builder extends EntityBuilder, Table extends TableStoreBuilder = TableStoreBuilder>(
-  repoConfig: RepositoryConfig<Builder, Table>,
-  dynamodb: DynamoDBDocumentClient,
+export const batchCreateItem = <M extends Model>(
+  operationConfig: OperationConfig<M>,
   params?: BatchCreateItemParams
-): BatchCreateItemFn<Builder> => {
-  return async (items: { key: EntityKey<Builder>; body: Builder['body'] }[]): Promise<Entity<Builder>[]> => {
-    const table = process.env[parseTableName(repoConfig.tableName)]!;
-    const entities: EntityStore<Builder, Table>[] = items.map((e) => ({
-      ...repoConfig.keySerialize(e.key),
+): BatchCreateItemFn<M> => {
+  return async (items: { key: M['Key']; body: M['Body'] }[]): Promise<M['Entity'][]> => {
+    const table = process.env[parseTableName(operationConfig.tableName)]!;
+
+    const entities = items.map((e) => ({
+      type: operationConfig.type,
+      ...operationConfig.keySerialize(e.key),
+      ...e.key,
       ...e.body,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     }));
+
     const chunk = chunkArray(entities, 25);
     await Promise.all(
       chunk.map(async (c): Promise<any> => {
@@ -33,11 +37,11 @@ export const batchCreateItem = <Builder extends EntityBuilder, Table extends Tab
             return { PutRequest: { Item } };
           }),
         };
-        await call(dynamodb, RequestItems, table, params?.autoRetry);
+        await call(operationConfig.dynamoClient, RequestItems, table, params?.autoRetry);
       })
     );
 
-    return entities.map((i) => repoConfig.entityDeserialize(i));
+    return entities.map((i) => operationConfig.entityDeserialize(i as unknown as M['Store']));
   };
 };
 

@@ -10,7 +10,7 @@ export const request: ScanContextReq = (ctx) => {
   return resolverScan(limit, nextToken);
 };
 
-export const response: ListContextRes<IngredientModel['Builder'], IngredientModel['StoreBuilder']> = (ctx) => {
+export const response: ListContextRes<IngredientModel> = (ctx) => {
   return {
     items: ctx.result.items.map((item) => ingredientEntityDeserialize(item)),
     nextToken: ctx.result.nextToken,

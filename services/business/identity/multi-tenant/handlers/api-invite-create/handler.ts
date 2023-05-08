@@ -17,7 +17,7 @@ export const handler = apiHandler(async (_, req) => {
   // We need to run the query because the email is not the primary key, and we use identityRepository because
   // we want to find coincides in both cases (users or invites)
   const emailCheck = await identityView.listIndex(
-    'email',
+    'gsi1',
     { limit: 50 },
     {
       ExpressionAttributeNames: { '#email': 'email' },

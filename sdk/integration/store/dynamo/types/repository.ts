@@ -1,5 +1,5 @@
-import { EntityBuilder } from 'model';
-import { RepositoryConfig } from './config';
+import { Model } from 'model';
+import { EntityDeserialize, RepositoryConfig } from './config';
 import {
   BatchCreateItemFn,
   BatchGetItemFn,
@@ -14,39 +14,39 @@ import {
   SoftDeleteItemFn,
   UpdateItemFn,
 } from './operations';
-import { TableStoreBuilder } from './table-store-builder';
 
-export type Repository<EBuilder extends EntityBuilder, TBuilder extends TableStoreBuilder> = {
+export type Repository<M extends Model> = {
+  tableName: M['StoreBuilder']['tableName'];
   events: {
     created: {
       source: 'app';
-      name: `app.${EBuilder['name']}.created`;
+      name: `app.${M['Type']}.created`;
     };
     updated: {
       source: 'app';
-      name: `app.${EBuilder['name']}.updated`;
+      name: `app.${M['Type']}.updated`;
     };
     deleted: {
       source: 'app';
-      name: `app.${EBuilder['name']}.deleted`;
+      name: `app.${M['Type']}.deleted`;
     };
     recovered: {
       source: 'app';
-      name: `app.${EBuilder['name']}.recovered`;
+      name: `app.${M['Type']}.recovered`;
     };
   };
-  keySerialize: RepositoryConfig<EBuilder, TBuilder>['keySerialize'];
-  entityDeserialize: RepositoryConfig<EBuilder, TBuilder>['entityDeserialize'];
-  createItem: CreateItemFn<EBuilder>;
-  checkItemExists: CheckItemExistsFn<EBuilder>;
-  getItem: GetItemFn<EBuilder>;
-  listItem: ListItemFn<EBuilder>;
-  deleteItem: DeleteItemFn<EBuilder>;
-  updateItem: UpdateItemFn<EBuilder>;
-  batchCreateItem: BatchCreateItemFn<EBuilder>;
-  batchGetItem: BatchGetItemFn<EBuilder>;
-  softDeleteItem: SoftDeleteItemFn<EBuilder>;
-  recoverItem: RecoverItemFn<EBuilder>;
-  scanTable: ScanTableFn<EBuilder>;
-  listIndex: ListIndexFn<EBuilder, TBuilder>;
+  keySerialize: RepositoryConfig<M>['keySerialize'];
+  entityDeserialize: EntityDeserialize<M>;
+  createItem: CreateItemFn<M>;
+  checkItemExists: CheckItemExistsFn<M>;
+  getItem: GetItemFn<M>;
+  listItem: ListItemFn<M>;
+  deleteItem: DeleteItemFn<M>;
+  updateItem: UpdateItemFn<M>;
+  batchCreateItem: BatchCreateItemFn<M>;
+  batchGetItem: BatchGetItemFn<M>;
+  softDeleteItem: SoftDeleteItemFn<M>;
+  recoverItem: RecoverItemFn<M>;
+  scanTable: ScanTableFn<M>;
+  listIndex: ListIndexFn<M>;
 };

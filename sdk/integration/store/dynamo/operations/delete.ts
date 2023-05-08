@@ -1,27 +1,23 @@
-import { DeleteCommand, DeleteCommandInput, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import { DeleteCommand, DeleteCommandInput } from '@aws-sdk/lib-dynamodb';
 
 import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
-import { Entity, EntityBuilder, EntityEvents, EntityStore } from 'model';
+import { Model } from 'model';
 import { Tracing } from 'tracing';
-import { RepositoryConfig } from '../types/config';
+import { OperationConfig } from '../types/config';
 import { DeleteItemFn } from '../types/operations';
-import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
-export const deleteItem = <Builder extends EntityBuilder, Table extends TableStoreBuilder = TableStoreBuilder>(
-  repoConfig: RepositoryConfig<Builder, Table>,
-  dynamodb: DynamoDBDocumentClient
-): DeleteItemFn<Builder> => {
+export const deleteItem = <M extends Model>(operationConfig: OperationConfig<M>): DeleteItemFn<M> => {
   return async (
-    key: EntityBuilder<Builder>['key'],
+    key: M['Key'],
     params?: Partial<DeleteCommandInput> & { emitEvent?: boolean }
-  ): Promise<Entity<Builder>> => {
-    const tableName = process.env[parseTableName(repoConfig.tableName)];
-    const serializedKey = repoConfig.keySerialize(key);
+  ): Promise<M['Entity']> => {
+    const tableName = process.env[parseTableName(operationConfig.tableName)];
+    const serializedKey = operationConfig.keySerialize(key);
 
     const cmd = async () => {
-      const { Attributes } = await dynamodb
+      const { Attributes } = await operationConfig.dynamoClient
         .send(
           new DeleteCommand({
             TableName: tableName,
@@ -38,11 +34,11 @@ export const deleteItem = <Builder extends EntityBuilder, Table extends TableSto
 
       if (!Attributes) throw new PlatformError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
 
-      const entity = repoConfig.entityDeserialize(Attributes as EntityStore<Builder, Table>);
+      const entity = operationConfig.entityDeserialize(Attributes as unknown as M['Store']);
 
       if (params?.emitEvent) {
-        await dispatchEvent<EntityEvents<Builder>['deleted']>(
-          { name: `app.${repoConfig.repoName}.deleted`, source: 'app' },
+        await dispatchEvent<M['Events']['deleted']>(
+          { name: `app.${operationConfig.type}.deleted`, source: 'app' },
           entity
         );
       }

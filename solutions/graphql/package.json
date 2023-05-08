@@ -21,7 +21,6 @@
     "start-spa": "npx ts-node -r tsconfig-paths/register script-manager.ts start-spa",
     "destroy": "npx ts-node -r tsconfig-paths/register script-manager.ts destroy",
     "create-user": "npx ts-node -r tsconfig-paths/register script-manager.ts create-user",
-    "schema-gen": "npx ts-node -r tsconfig-paths/register script-manager.ts schema-gen",
     "gen-postman-env": "npx ts-node -r tsconfig-paths/register script-manager.ts gen-postman-env",
     "prepare": "npx husky install",
     "verify": "npx tsc --pretty --noEmit && npx eslint . --ext .ts && npx prettier -c . && npx cspell '**/*.ts'",

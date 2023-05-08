@@ -19,7 +19,7 @@ import { Notifications } from '@sinapsis-co/cc-services/support/notifications';
 
 import { identityApi, identityEvent } from './catalog';
 import { buildCustomAttributes } from './platform/cognito-builder';
-import { IdentityTableBuilder } from './store/table-identity';
+import { IdentityStoreTable } from './store/table-identity';
 
 /**
  * Name of the user pool
@@ -61,7 +61,7 @@ export class Identity extends Service<GlobalCoordinator> {
       cdnApiPrefab: dep.cdnApi.cdnApiPrefab,
       authPool: this.authPool,
       eventBus: dep.globalEventBus.eventBusPrefab,
-      tableBuilder: IdentityTableBuilder,
+      tableBuilder: IdentityStoreTable,
       handlers: {
         inviteCreate: {
           ...identityApi.inviteCreate.definition,

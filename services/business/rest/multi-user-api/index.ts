@@ -6,7 +6,7 @@ import { GlobalCoordinator } from '@sinapsis-co/cc-services/config/config-type';
 import { CdnApi } from '@sinapsis-co/cc-services/support/cdn-api';
 
 import { ingredientApi } from './catalog';
-import { IngredientsTableBuilder } from './store/table-ingredient';
+import { IngredientsStoreTable } from './store/table-ingredient';
 
 class Dep extends ServiceDependencies {
   @DepCheck()
@@ -26,7 +26,7 @@ export class Ingredient extends Service<GlobalCoordinator> {
       basePath: 'ingredient',
       baseFunctionFolder: __dirname,
       cdnApiPrefab: deps.cdnApi.cdnApiPrefab,
-      tableBuilder: IngredientsTableBuilder,
+      tableBuilder: IngredientsStoreTable,
       handlers: {
         create: ingredientApi.create.definition,
         get: ingredientApi.get.definition,

@@ -4,7 +4,7 @@ import { AttributeListType } from '@sinapsis-co/cc-sdk/integration/cognito';
 import { UserCognito } from '../entities/user-cognito';
 import { UserModel } from '../model/user';
 
-export const cognitoToProfileMapper = (userCognito: UserCognito): UserModel['Entity'] => {
+export const cognitoToProfileMapper = (userCognito: UserCognito): UserModel['Body'] & UserModel['Key'] => {
   return {
     tenantId: userCognito.custom.tenantId,
     companyName: userCognito.custom.companyName,
@@ -13,8 +13,6 @@ export const cognitoToProfileMapper = (userCognito: UserCognito): UserModel['Ent
     givenName: userCognito.standard.given_name,
     familyName: userCognito.standard.family_name,
     role: userCognito.custom.role,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
   };
 };
 

@@ -7,9 +7,6 @@ export function ingredientKeySerialize(key: IngredientModel['Key']): IngredientM
 }
 
 export function ingredientEntityDeserialize(entityStore: IngredientModel['Store']): IngredientModel['Entity'] {
-  const { pk, ...att } = entityStore;
-  return {
-    id: pk,
-    ...att,
-  };
+  const { pk, ...entity } = entityStore;
+  return entity;
 }

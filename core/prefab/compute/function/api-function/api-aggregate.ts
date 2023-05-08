@@ -28,7 +28,7 @@ export type ApiAggregateParams<HandlerName extends string = string> = BaseFuncti
   authPool?: ApiAuthPoolParams;
   customAuthorizerHandler?: IFunction;
   useRestApi?: true;
-  tableBuilder?: typeof TableStoreBuilder;
+  tableBuilder?: typeof TableStoreBuilder<any>;
 };
 
 export class ApiAggregate<HandlerName extends string = string> extends Construct {

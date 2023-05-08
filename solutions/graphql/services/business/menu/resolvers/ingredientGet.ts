@@ -3,12 +3,12 @@ import { resolverGetItem } from '@sinapsis-co/cc-sdk/integration/store/dynamo/re
 import { IngredientModel } from '../model/ingredient';
 import { ingredientEntityDeserialize, ingredientKeySerialize } from '../repository/resolver-repo-ingredient';
 
-export const request: GetContextReq<IngredientModel['Builder']> = (ctx) => {
+export const request: GetContextReq<IngredientModel> = (ctx) => {
   const { id } = ctx.args;
   const key = ingredientKeySerialize({ id });
-  return resolverGetItem<IngredientModel['StoreBuilder']>(key);
+  return resolverGetItem<IngredientModel>(key);
 };
 
-export const response: GetContextRes<IngredientModel['Builder'], IngredientModel['StoreBuilder']> = (ctx) => {
+export const response: GetContextRes<IngredientModel> = (ctx) => {
   return ingredientEntityDeserialize(ctx.result);
 };

@@ -8,7 +8,7 @@ import { authMdw, authScope } from '../../platform/authorization';
 export type Interface = ApiInterface<{
   response: UserModel['Entity'];
   pathParams: Pick<UserModel['Key'], 'id'>;
-  body: Pick<UserModel['Entity'], 'role'>;
+  body: Pick<UserModel['Body'], 'role'>;
   claims: UserClaims;
   queryParams: EmptyObject;
 }>;

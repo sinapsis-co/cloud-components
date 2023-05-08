@@ -1,27 +1,24 @@
-import { DynamoDBDocumentClient, ScanCommand, ScanCommandInput } from '@aws-sdk/lib-dynamodb';
+import { ScanCommand, ScanCommandInput } from '@aws-sdk/lib-dynamodb';
 
-import { PaginatedResponse } from 'catalog/api';
 import { PlatformFault } from 'error';
-import { Entity, EntityBuilder, EntityStore } from 'model';
+import { Model } from 'model';
 import { Tracing } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
-import { RepositoryConfig, ViewConfig } from '../types/config';
+import { OperationConfig, OperationConfigView } from '../types/config';
 import { ScanTableFn } from '../types/operations';
-import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
-export const scanTable = <Builder extends EntityBuilder, Table extends TableStoreBuilder = TableStoreBuilder>(
-  repoConfig: RepositoryConfig<Builder, Table> | ViewConfig<Builder, Table>,
-  dynamodb: DynamoDBDocumentClient
-): ScanTableFn<Builder> => {
+export const scanTable = <M extends Model>(
+  operationConfig: OperationConfig<M> | OperationConfigView<M>
+): ScanTableFn<M> => {
   return async (
     queryParams: { limit: number; nextToken?: string },
     params?: Partial<ScanCommandInput>
-  ): Promise<PaginatedResponse<Entity<Builder>>> => {
-    const tableName = process.env[parseTableName(repoConfig.tableName)];
+  ): Promise<M['List']> => {
+    const tableName = process.env[parseTableName(operationConfig.tableName)];
 
     const cmd = async () => {
-      const { Items, LastEvaluatedKey } = await dynamodb
+      const { Items, LastEvaluatedKey } = await operationConfig.dynamoClient
         .send(
           new ScanCommand({
             TableName: tableName,
@@ -35,7 +32,7 @@ export const scanTable = <Builder extends EntityBuilder, Table extends TableStor
         });
 
       return {
-        items: Items ? Items.map((item) => repoConfig.entityDeserialize(item as EntityStore<Builder, Table>)) : [],
+        items: Items ? Items.map((item) => operationConfig.entityDeserialize(item as unknown as M['Store'])) : [],
         nextToken: encodeLastEvaluatedKey(LastEvaluatedKey),
       };
     };

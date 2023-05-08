@@ -1,27 +1,24 @@
-import { DynamoDBDocumentClient, QueryCommand, QueryCommandInput } from '@aws-sdk/lib-dynamodb';
+import { QueryCommand, QueryCommandInput } from '@aws-sdk/lib-dynamodb';
 
-import { PaginatedResponse } from 'catalog/api';
-import { Entity, EntityBuilder, EntityStore } from 'model';
+import { Model } from 'model';
 import { Tracing } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
-import { RepositoryConfig, ViewConfig } from '../types/config';
+import { OperationConfig, OperationConfigView } from '../types/config';
 import { ListIndexFn } from '../types/operations';
-import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
-export const listIndex = <Builder extends EntityBuilder, Table extends TableStoreBuilder = TableStoreBuilder>(
-  repoConfig: RepositoryConfig<Builder, Table> | ViewConfig<Builder, Table>,
-  dynamodb: DynamoDBDocumentClient
-): ListIndexFn<Builder, Table> => {
+export const listIndex = <M extends Model>(
+  operationConfig: OperationConfig<M> | OperationConfigView<M>
+): ListIndexFn<M> => {
   return async (
-    index: keyof Table['indexes'],
+    index: keyof M['StoreBuilder']['indexes'],
     queryParams: { limit: number; nextToken?: string },
     params?: Partial<QueryCommandInput>
-  ): Promise<PaginatedResponse<Entity<Builder>>> => {
-    const tableName = process.env[parseTableName(repoConfig.tableName)];
+  ): Promise<M['List']> => {
+    const tableName = process.env[parseTableName(operationConfig.tableName)];
 
     const cmd = async () => {
-      const { Items, LastEvaluatedKey } = await dynamodb.send(
+      const { Items, LastEvaluatedKey } = await operationConfig.dynamoClient.send(
         new QueryCommand({
           TableName: tableName,
           IndexName: index as string,
@@ -32,7 +29,7 @@ export const listIndex = <Builder extends EntityBuilder, Table extends TableStor
       );
 
       return {
-        items: Items ? Items.map((item) => repoConfig.entityDeserialize(item as EntityStore<Builder, Table>)) : [],
+        items: Items ? Items.map((item) => operationConfig.entityDeserialize(item as unknown as M['Store'])) : [],
         nextToken: encodeLastEvaluatedKey(LastEvaluatedKey),
       };
     };

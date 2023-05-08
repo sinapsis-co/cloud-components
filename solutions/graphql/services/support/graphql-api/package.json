@@ -14,8 +14,6 @@
   },
   "dependencies": {
     "@aws-appsync/utils": "^1.2.5",
-    "class-validator": "^0.14.0",
-    "esbuild": "^0.14.43",
     "graphql": "15.3.0",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^1.1.1"

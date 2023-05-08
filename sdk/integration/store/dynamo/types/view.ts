@@ -1,11 +1,10 @@
-import { EntityBuilder } from 'model';
-import { ViewConfig } from './config';
+import { Model } from 'model';
+import { EntityDeserialize } from './config';
 import { ListIndexFn, ListItemFn, ScanTableFn } from './operations';
-import { TableStoreBuilder } from './table-store-builder';
 
-export type View<EBuilder extends EntityBuilder, TBuilder extends TableStoreBuilder> = {
-  entityDeserialize: ViewConfig<EBuilder, TBuilder>['entityDeserialize'];
-  listItem: ListItemFn<EBuilder>;
-  scanTable: ScanTableFn<EBuilder>;
-  listIndex: ListIndexFn<EBuilder, TBuilder>;
+export type View<M extends Model> = {
+  entityDeserialize: EntityDeserialize<M>;
+  listItem: ListItemFn<M>;
+  scanTable: ScanTableFn<M>;
+  listIndex: ListIndexFn<M>;
 };

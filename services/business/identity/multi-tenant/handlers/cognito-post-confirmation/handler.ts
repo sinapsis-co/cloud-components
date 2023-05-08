@@ -71,7 +71,7 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
           siteUrl: process.env.WEBAPP_URL!,
           baseAssetUrl: process.env.MEDIA_URL!,
           projectName: process.env.PROJECT_NAME!,
-          language: 'es',
+          language: 'en',
           defaultLanguage: 'en',
         },
       },

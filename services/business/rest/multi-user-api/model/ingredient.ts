@@ -1,9 +1,9 @@
 import { Model } from '@sinapsis-co/cc-sdk/model';
-import { IngredientsTableBuilder } from '../store/table-ingredient';
+import { IngredientsStoreTable } from '../store/table-ingredient';
 
 export type IngredientModel = Model<
   {
-    name: 'ingredient';
+    type: 'ingredient';
     key: {
       id: string;
     };
@@ -13,12 +13,10 @@ export type IngredientModel = Model<
       description?: string;
       price?: number;
       measurement: 'unit' | 'kg' | 'g' | 'l' | 'ml';
-      createdAt: string;
-      updatedAt: string;
     };
   },
   {
-    storeBuilder: IngredientsTableBuilder;
+    storeBuilder: IngredientsStoreTable;
   }
 >;
 

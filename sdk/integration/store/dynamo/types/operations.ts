@@ -1,73 +1,72 @@
 import * as Dynamo from '@aws-sdk/lib-dynamodb';
 import { PaginatedResponse } from 'catalog/api';
-import { Entity, EntityBuilder, EntityKey } from '../../../../model';
+import { Model } from 'model';
 import { TimeToDelete } from '../operations/soft-delete';
-import { TableStoreBuilder } from './table-store-builder';
 
-export type CreateItemFn<Builder extends EntityBuilder> = (
-  key: EntityKey<Builder>,
-  body: Omit<Builder['body'], 'createdAt' | 'updatedAt'>,
-  params?: Partial<Dynamo.PutCommandInput> & { emitEvent?: boolean }
-) => Promise<Entity<Builder>>;
+export type CreateItemFn<M extends Model> = (
+  key: M['Key'],
+  body: M['Body'],
+  params?: Partial<Dynamo.PutCommandInput> & { emitEvent?: boolean; allowOverwrite?: boolean }
+) => Promise<M['Entity']>;
 
-export type BatchCreateItemFn<Builder extends EntityBuilder> = (
-  Commands: {
-    key: EntityKey<Builder>;
-    body: Omit<Builder['body'], 'createdAt' | 'updatedAt'>;
+export type BatchCreateItemFn<M extends Model> = (
+  items: {
+    key: M['Key'];
+    body: M['Body'];
   }[],
   autoRetry?: boolean
-) => Promise<Entity<Builder>[]>;
+) => Promise<M['Entity'][]>;
 
-export type CheckItemExistsFn<Builder extends EntityBuilder> = (
-  key: EntityKey<Builder>,
+export type CheckItemExistsFn<M extends Model> = (
+  key: M['Key'],
   params?: Partial<Dynamo.GetCommandInput>
-) => Promise<{ exists: boolean; entity?: Entity<Builder> }>;
+) => Promise<{ exists: boolean; entity?: M['Entity'] }>;
 
-export type GetItemFn<Builder extends EntityBuilder> = (
-  key: EntityKey<Builder>,
+export type GetItemFn<M extends Model> = (
+  key: M['Key'],
   params?: Partial<Dynamo.GetCommandInput>
-) => Promise<Entity<Builder>>;
+) => Promise<M['Entity']>;
 
-export type BatchGetItemFn<Builder extends EntityBuilder> = (
-  keys: EntityKey<Builder>[],
+export type BatchGetItemFn<M extends Model> = (
+  keys: M['Key'][],
   autoRetry?: boolean
-) => Promise<Entity<Builder>[] | undefined[]>;
+) => Promise<M['Entity'][] | undefined[]>;
 
-export type ListItemFn<Builder extends EntityBuilder> = (
+export type ListItemFn<M extends Model> = (
   pk: string,
   queryParams: { limit: number; nextToken?: string },
   params?: Partial<Dynamo.QueryCommandInput>
-) => Promise<PaginatedResponse<Entity<Builder>>>;
+) => Promise<PaginatedResponse<M['Entity']>>;
 
-export type DeleteItemFn<Builder extends EntityBuilder> = (
-  key: EntityKey<Builder>,
+export type DeleteItemFn<M extends Model> = (
+  key: M['Key'],
   params?: Partial<Dynamo.DeleteCommandInput> & { emitEvent?: boolean }
-) => Promise<Entity<Builder>>;
+) => Promise<M['Entity']>;
 
-export type SoftDeleteItemFn<Builder extends EntityBuilder> = (
-  key: EntityKey<Builder>,
+export type SoftDeleteItemFn<M extends Model> = (
+  key: M['Key'],
   params?: Dynamo.UpdateCommandInput & { deleteAfter?: TimeToDelete; emitEvent?: boolean },
   deleteAfter?: TimeToDelete
-) => Promise<Entity<Builder>>;
+) => Promise<M['Entity']>;
 
-export type UpdateItemFn<Builder extends EntityBuilder> = (
-  key: EntityKey<Builder>,
-  body: Partial<Omit<Builder['body'], 'createdAt' | 'updatedAt'>>,
+export type UpdateItemFn<M extends Model> = (
+  key: M['Key'],
+  body: Partial<M['Body']>,
   params?: Partial<Dynamo.UpdateCommandInput> & { emitEvent?: boolean }
-) => Promise<Entity<Builder>>;
+) => Promise<M['Entity']>;
 
-export type RecoverItemFn<Builder extends EntityBuilder> = (
-  key: EntityKey<Builder>,
+export type RecoverItemFn<M extends Model> = (
+  key: M['Key'],
   params?: Dynamo.GetCommandInput & { emitEvent?: boolean }
-) => Promise<Entity<Builder>>;
+) => Promise<M['Entity']>;
 
-export type ScanTableFn<Builder extends EntityBuilder> = (
+export type ScanTableFn<M extends Model> = (
   queryParams: { limit: number; nextToken?: string },
   params?: Partial<Dynamo.ScanCommandInput>
-) => Promise<PaginatedResponse<Entity<Builder>>>;
+) => Promise<M['List']>;
 
-export type ListIndexFn<Builder extends EntityBuilder, Table extends TableStoreBuilder> = (
-  index: keyof Table['indexes'],
+export type ListIndexFn<M extends Model> = (
+  index: keyof M['StoreBuilder']['indexes'],
   queryParams: { limit: number; nextToken?: string },
   params?: Partial<Dynamo.QueryCommandInput>
-) => Promise<PaginatedResponse<Entity<Builder>>>;
+) => Promise<M['List']>;

@@ -1,13 +1,12 @@
-import { DynamoDBDocumentClient, UpdateCommand, UpdateCommandInput } from '@aws-sdk/lib-dynamodb';
+import { UpdateCommand, UpdateCommandInput } from '@aws-sdk/lib-dynamodb';
 import dayjs from 'dayjs';
 
 import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
-import { Entity, EntityBuilder, EntityEvents, EntityKey, EntityStore } from 'model';
+import { Model } from 'model';
 import { Tracing } from 'tracing';
-import { RepositoryConfig } from '../types/config';
+import { OperationConfig } from '../types/config';
 import { SoftDeleteItemFn } from '../types/operations';
-import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 import { updateMapper } from '../util/update-mapper';
 
@@ -16,16 +15,13 @@ export type TimeToDelete = {
   period: dayjs.ManipulateType;
 };
 
-export const softDeleteItem = <EBuilder extends EntityBuilder, TBuilder extends TableStoreBuilder = TableStoreBuilder>(
-  repoConfig: RepositoryConfig<EBuilder, TBuilder>,
-  dynamodb: DynamoDBDocumentClient
-): SoftDeleteItemFn<EBuilder> => {
+export const softDeleteItem = <M extends Model>(operationConfig: OperationConfig<M>): SoftDeleteItemFn<M> => {
   return async (
-    key: EntityKey<EBuilder>,
+    key: M['Key'],
     params?: Partial<UpdateCommandInput> & { emitEvent?: boolean; deleteAfter?: TimeToDelete }
-  ): Promise<Entity<EBuilder>> => {
-    const tableName = process.env[parseTableName(repoConfig.tableName)];
-    const serializedKey = repoConfig.keySerialize(key);
+  ): Promise<M['Entity']> => {
+    const tableName = process.env[parseTableName(operationConfig.tableName)];
+    const serializedKey = operationConfig.keySerialize(key);
     const ttl = params?.deleteAfter || { amount: 30, period: 'days' };
     const mapper = updateMapper({
       deleted: true,
@@ -33,7 +29,7 @@ export const softDeleteItem = <EBuilder extends EntityBuilder, TBuilder extends 
     });
 
     const cmd = async () => {
-      const { Attributes } = await dynamodb
+      const { Attributes } = await operationConfig.dynamoClient
         .send(
           new UpdateCommand({
             TableName: tableName,
@@ -51,11 +47,11 @@ export const softDeleteItem = <EBuilder extends EntityBuilder, TBuilder extends 
 
       if (!Attributes) throw new PlatformError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
 
-      const entity = repoConfig.entityDeserialize(Attributes as EntityStore<EBuilder, TBuilder>);
+      const entity = operationConfig.entityDeserialize(Attributes as unknown as M['Store']);
 
       if (params?.emitEvent) {
-        await dispatchEvent<EntityEvents<EBuilder>['deleted']>(
-          { name: `app.${repoConfig.repoName}.deleted`, source: 'app' },
+        await dispatchEvent<M['Events']['deleted']>(
+          { name: `app.${operationConfig.type}.deleted`, source: 'app' },
           entity
         );
       }

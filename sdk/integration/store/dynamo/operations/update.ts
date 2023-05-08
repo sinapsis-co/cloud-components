@@ -1,30 +1,26 @@
-import { DynamoDBDocumentClient, UpdateCommand, UpdateCommandInput } from '@aws-sdk/lib-dynamodb';
+import { UpdateCommand, UpdateCommandInput } from '@aws-sdk/lib-dynamodb';
 
 import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
-import { Entity, EntityBuilder, EntityEvents, EntityKey, EntityStore } from 'model';
+import { Model } from 'model';
 import { Tracing } from 'tracing';
-import { RepositoryConfig } from '../types/config';
+import { OperationConfig } from '../types/config';
 import { UpdateItemFn } from '../types/operations';
-import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 import { updateMapper } from '../util/update-mapper';
 
-export const updateItem = <Builder extends EntityBuilder, Table extends TableStoreBuilder = TableStoreBuilder>(
-  repoConfig: RepositoryConfig<Builder, Table>,
-  dynamodb: DynamoDBDocumentClient
-): UpdateItemFn<Builder> => {
+export const updateItem = <M extends Model>(operationConfig: OperationConfig<M>): UpdateItemFn<M> => {
   return async (
-    key: EntityKey<Builder>,
-    body: Builder['body'],
+    key: M['Key'],
+    body: Partial<M['Body']>,
     params?: Partial<UpdateCommandInput> & { emitEvent?: boolean }
-  ): Promise<Entity<Builder>> => {
-    const tableName = process.env[parseTableName(repoConfig.tableName)];
-    const serializedKey = repoConfig.keySerialize(key);
-    const mapper = updateMapper<Builder['body']>(body);
+  ): Promise<M['Entity']> => {
+    const tableName = process.env[parseTableName(operationConfig.tableName)];
+    const serializedKey = operationConfig.keySerialize(key);
+    const mapper = updateMapper<Partial<M['Body']>>(body);
 
     const cmd = async () => {
-      const { Attributes } = await dynamodb
+      const { Attributes } = await operationConfig.dynamoClient
         .send(
           new UpdateCommand({
             TableName: tableName,
@@ -42,11 +38,11 @@ export const updateItem = <Builder extends EntityBuilder, Table extends TableSto
 
       if (!Attributes) throw new PlatformError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
 
-      const entity: Entity<Builder> = repoConfig.entityDeserialize(Attributes as EntityStore<Builder, Table>);
+      const entity: M['Entity'] = operationConfig.entityDeserialize(Attributes as unknown as M['Store']);
 
       if (params?.emitEvent) {
-        await dispatchEvent<EntityEvents<Builder>['updated']>(
-          { name: `app.${repoConfig.repoName}.updated`, source: 'app' },
+        await dispatchEvent<M['Events']['updated']>(
+          { name: `app.${operationConfig.type}.updated`, source: 'app' },
           entity
         );
       }

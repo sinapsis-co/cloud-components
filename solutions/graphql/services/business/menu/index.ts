@@ -8,7 +8,7 @@ import { GlobalEventBus } from '@sinapsis-co/cc-services/support/global-event-bu
 import { GlobalCoordinator } from 'solutions/graphql/config/config-type';
 import { GraphqlApi } from 'solutions/graphql/services/support/graphql-api';
 import { IngredientResolver } from './catalog/schema/ingredient';
-import { IngredientsTableBuilder } from './store/table-ingredient';
+import { IngredientsStoreTable } from './store/table-ingredient';
 
 class Dep extends ServiceDependencies {
   @DepCheck()
@@ -24,7 +24,7 @@ export class Menu extends Service<GlobalCoordinator> {
   }
 
   build(dep: Dep): void {
-    const ingredientsTable = new DynamoTablePrefab(this, IngredientsTableBuilder);
+    const ingredientsTable = new DynamoTablePrefab(this, IngredientsStoreTable);
 
     new AppSyncResolverAggregate<IngredientResolver>(this, {
       appSyncPrefab: dep.graphqlApi.appSyncPrefab,

@@ -4,7 +4,7 @@ import { ApiAggregate } from '@sinapsis-co/cc-core/prefab/compute/function/api-f
 import { BaseFunction } from '@sinapsis-co/cc-core/prefab/compute/function/base-function';
 
 import { ingredientApi } from '@sinapsis-co/cc-services/business/rest/multi-user-api/catalog';
-import { IngredientsTableBuilder } from '@sinapsis-co/cc-services/business/rest/multi-user-api/store/table-ingredient';
+import { IngredientsStoreTable } from '@sinapsis-co/cc-services/business/rest/multi-user-api/store/table-ingredient';
 import { GlobalCoordinator } from '@sinapsis-co/cc-services/config/config-type';
 import { CdnApi } from '@sinapsis-co/cc-services/support/cdn-api';
 import { EnvVpc } from '@sinapsis-co/cc-services/support/env-vpc';
@@ -36,7 +36,7 @@ export class Ingredient extends Service<GlobalCoordinator> {
       baseFunctionFolder: __dirname, // Won't work (Functions are in different sources in this example)
       cdnApiPrefab: deps.cdnApi.cdnApiPrefab,
       customAuthorizerHandler,
-      tableBuilder: IngredientsTableBuilder,
+      tableBuilder: IngredientsStoreTable,
       handlers: {
         create: ingredientApi.create.definition,
         get: ingredientApi.get.definition,

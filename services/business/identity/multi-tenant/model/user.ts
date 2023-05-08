@@ -2,11 +2,11 @@ import { Model } from '@sinapsis-co/cc-sdk/model';
 
 import { FullLocation } from '../entities/location';
 import { AuthScope } from '../platform/authorization';
-import { IdentityTableBuilder } from '../store/table-identity';
+import { IdentityStoreTable } from '../store/table-identity';
 
 export type UserModel = Model<
   {
-    name: 'user';
+    type: 'user';
     body: {
       email: string;
       givenName: string;
@@ -16,8 +16,6 @@ export type UserModel = Model<
       role: AuthScope;
       avatar?: string;
       location?: FullLocation;
-      createdAt: string;
-      updatedAt: string;
     };
     key: {
       tenantId: string;
@@ -25,7 +23,7 @@ export type UserModel = Model<
     };
   },
   {
-    storeBuilder: IdentityTableBuilder;
+    storeBuilder: IdentityStoreTable;
     omittedCreateKeys: ['email' | 'role' | 'companyName' | 'tenantOwner' | 'avatar'];
     omittedUpdateKeys: ['email' | 'role' | 'companyName' | 'tenantOwner' | 'avatar'];
   }

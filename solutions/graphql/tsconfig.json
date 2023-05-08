@@ -3,9 +3,9 @@
   "compilerOptions": {
     "noEmit": true,
     "paths": {
-      "services/*": ["./solutions/appsync/services/*"],
-      "config/*": ["./solutions/appsync/config/*"],
-      "notifications/*": ["./solutions/appsync/notifications/*"],
+      "services/*": ["./solutions/graphql/services/*"],
+      "config/*": ["./solutions/graphql/config/*"],
+      "notifications/*": ["./solutions/graphql/notifications/*"],
       "@sinapsis-co/cc-services/*": ["./services/*"],
       "@sinapsis-co/cc-sdk/*": ["./sdk/*"],
       "@sinapsis-co/cc-core/*": ["./core/*"],

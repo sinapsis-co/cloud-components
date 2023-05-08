@@ -3,7 +3,7 @@ import { UserModel } from '../../model/user';
 
 export type Event = EventInterface<{
   name: 'app.member.created';
-  payload: UserModel['Entity'];
+  payload: UserModel['Body'] & UserModel['Key'];
 }>;
 
 export const eventConfig: EventConfig<Event> = {

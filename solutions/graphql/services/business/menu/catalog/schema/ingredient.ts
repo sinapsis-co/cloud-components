@@ -22,7 +22,7 @@ export const AWSDateTime = new GraphQLScalarType({ name: 'AWSDateTime' });
 
 // Entities
 @ObjectType()
-export class IngredientSchema implements Ingredient {
+export class IngredientSchema implements Omit<Ingredient, 'type'> {
   //Key
   @Field((type) => ID)
   public id: Ingredient['id'];
