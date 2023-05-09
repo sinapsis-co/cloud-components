@@ -14,8 +14,9 @@ import {
   SoftDeleteItemFn,
   UpdateItemFn,
 } from './operations';
+import { TableStoreBuilder } from './table-store-builder';
 
-export type Repository<M extends Model> = {
+export type Repository<T extends TableStoreBuilder, M extends Model> = {
   tableName: M['StoreBuilder']['tableName'];
   events: {
     created: {
@@ -48,5 +49,5 @@ export type Repository<M extends Model> = {
   softDeleteItem: SoftDeleteItemFn<M>;
   recoverItem: RecoverItemFn<M>;
   scanTable: ScanTableFn<M>;
-  listIndex: ListIndexFn<M>;
+  listIndex: ListIndexFn<M, T>;
 };

@@ -9,7 +9,10 @@ import { OperationConfigView, ViewConfig } from './types/config';
 import { TableStoreBuilder } from './types/table-store-builder';
 import { View } from './types/view';
 
-export const view = <M extends Model>(table: typeof TableStoreBuilder<any>, repoConfig: ViewConfig<M>): View<M> => {
+export const view = <T extends TableStoreBuilder, M extends Model>(
+  table: typeof TableStoreBuilder<T['keyMapping']['pk'], T['keyMapping']['sk'], keyof T['indexes']>,
+  repoConfig: ViewConfig<M>
+): View<T, M> => {
   const operationConfig: OperationConfigView<M> = {
     tableName: repoConfig.tableName,
     entityDeserialize: entityDeserialize<M>(table),

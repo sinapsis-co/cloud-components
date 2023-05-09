@@ -3,7 +3,11 @@ export type DynamoKeyStructure = {
   sk: 'sk';
 };
 
-export class TableStoreBuilder<R extends string = string, S extends string = string, T extends string = string> {
+export class TableStoreBuilder<
+  R extends string = string,
+  S extends string | undefined = string,
+  T extends string | number | symbol = string
+> {
   tableName: string;
   keyMapping: { pk: R; sk?: S };
   indexes?: Record<T, { pk: string; sk?: string }> | undefined;

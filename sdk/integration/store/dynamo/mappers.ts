@@ -39,3 +39,8 @@ export const indexParsing = <M extends Model>(
     return newFields;
   };
 };
+
+export const indexNames = (table: typeof TableStoreBuilder<any>): string[] => {
+  const definition = new table();
+  return Object.keys(definition.indexes || {});
+};

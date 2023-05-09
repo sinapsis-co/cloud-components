@@ -2,6 +2,7 @@ import * as Dynamo from '@aws-sdk/lib-dynamodb';
 import { PaginatedResponse } from 'catalog/api';
 import { Model } from 'model';
 import { TimeToDelete } from '../operations/soft-delete';
+import { TableStoreBuilder } from './table-store-builder';
 
 export type CreateItemFn<M extends Model> = (
   key: M['Key'],
@@ -65,8 +66,9 @@ export type ScanTableFn<M extends Model> = (
   params?: Partial<Dynamo.ScanCommandInput>
 ) => Promise<M['List']>;
 
-export type ListIndexFn<M extends Model> = (
-  index: keyof M['StoreBuilder']['indexes'],
+export type ListIndexFn<M extends Model, T extends TableStoreBuilder> = (
+  // index: keyof M['StoreBuilder']['indexes'],
+  index: keyof T['indexes'],
   queryParams: { limit: number; nextToken?: string },
   params?: Partial<Dynamo.QueryCommandInput>
 ) => Promise<M['List']>;

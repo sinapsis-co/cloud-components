@@ -22,10 +22,10 @@ type IndexReq<M extends Model> = M['StoreBuilder']['indexes'] extends Record<any
   ? RepositoryConfig<M> & Required<Pick<RepositoryConfig<M>, 'indexSerialize'>>
   : RepositoryConfig<M>;
 
-export const repository = <M extends Model>(
-  table: typeof TableStoreBuilder<any>,
+export const repository = <T extends TableStoreBuilder, M extends Model>(
+  table: typeof TableStoreBuilder<T['keyMapping']['pk'], T['keyMapping']['sk'], keyof T['indexes']>,
   repoConfig: IndexReq<M>
-): Repository<M> => {
+): Repository<TableStoreBuilder, M> => {
   const operationConfig: OperationConfig<M> = {
     type: repoConfig.type,
     tableName: repoConfig.tableName,

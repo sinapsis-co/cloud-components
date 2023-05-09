@@ -5,13 +5,14 @@ import { Tracing } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
 import { OperationConfig, OperationConfigView } from '../types/config';
 import { ListIndexFn } from '../types/operations';
+import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
-export const listIndex = <M extends Model>(
+export const listIndex = <M extends Model, T extends TableStoreBuilder>(
   operationConfig: OperationConfig<M> | OperationConfigView<M>
-): ListIndexFn<M> => {
+): ListIndexFn<M, T> => {
   return async (
-    index: keyof M['StoreBuilder']['indexes'],
+    index: keyof T['indexes'],
     queryParams: { limit: number; nextToken?: string },
     params?: Partial<QueryCommandInput>
   ): Promise<M['List']> => {
