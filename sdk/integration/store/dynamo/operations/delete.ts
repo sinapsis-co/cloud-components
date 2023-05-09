@@ -6,9 +6,12 @@ import { Model } from 'model';
 import { Tracing } from 'tracing';
 import { OperationConfig } from '../types/config';
 import { DeleteItemFn } from '../types/operations';
+import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
-export const deleteItem = <M extends Model>(operationConfig: OperationConfig<M>): DeleteItemFn<M> => {
+export const deleteItem = <T extends TableStoreBuilder, M extends Model>(
+  operationConfig: OperationConfig<T, M>
+): DeleteItemFn<M> => {
   return async (
     key: M['Key'],
     params?: Partial<DeleteCommandInput> & { emitEvent?: boolean }
@@ -34,7 +37,7 @@ export const deleteItem = <M extends Model>(operationConfig: OperationConfig<M>)
 
       if (!Attributes) throw new PlatformError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
 
-      const entity = operationConfig.entityDeserialize(Attributes as unknown as M['Store']);
+      const entity = operationConfig.entityDeserialize(Attributes as M['Entity']);
 
       if (params?.emitEvent) {
         await dispatchEvent<M['Events']['deleted']>(

@@ -2,5 +2,5 @@ import { TableStoreBuilder } from '@sinapsis-co/cc-sdk/integration/store/dynamo/
 
 export class IngredientsStoreTable implements TableStoreBuilder {
   tableName = 'ingredients';
-  keyMapping = { pk: 'pk' };
+  keyMapping = { PK: 'PK' };
 }

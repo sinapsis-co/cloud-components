@@ -8,7 +8,6 @@ export type InviteModel = Model<
     body: {
       email: string;
       companyName: string;
-      inviteId: string;
       role: AuthScope;
     };
     key: {

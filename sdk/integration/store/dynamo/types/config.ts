@@ -1,29 +1,47 @@
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { Model } from 'model';
+import { TableStoreBuilder } from './table-store-builder';
 
-export type RepositoryConfig<M extends Model> = {
+export type RepositoryConfig<T extends TableStoreBuilder, M extends Model> = {
   type: M['Type'];
-  tableName: M['StoreBuilder']['tableName'];
-  keySerialize: (key: M['Key']) => Record<keyof M['StoreBuilder']['keyMapping'], string>;
-  indexSerialize?: IndexSerializeConfig<M>;
+  tableName: T['tableName'];
+  keySerialize: (key: M['Key']) => Record<keyof T['keyMapping'], string>;
+  indexSerialize?: IndexSerializeConfig<T, M>;
 };
 
-export type IndexSerializeConfig<M extends Model> = (
+export type IndexReq<T extends TableStoreBuilder, M extends Model> = T['indexes'] extends Record<
+  any,
+  { PK: string; SK?: string }
+>
+  ? RepositoryConfig<T, M> & Required<Pick<RepositoryConfig<T, M>, 'indexSerialize'>>
+  : RepositoryConfig<T, M>;
+
+export type IndexSerializeOutput<T extends TableStoreBuilder> = T['indexes'] extends Record<
+  any,
+  { PK: string; SK?: string }
+>
+  ? Record<keyof T['indexes'], Record<keyof T['indexes'][keyof T['indexes']], string | undefined>>
+  : never;
+
+export type IndexSerializeConfig<T extends TableStoreBuilder, M extends Model> = (
   entity: M['Entity']
-) => Record<
-  keyof M['StoreBuilder']['indexes'],
-  Record<keyof M['StoreBuilder']['indexes'][keyof M['StoreBuilder']['indexes']], string | undefined>
->;
+) => IndexSerializeOutput<T>;
 
-export type ViewConfig<M extends Model> = {
-  tableName: M['StoreBuilder']['tableName'];
+export type ViewConfig<T extends TableStoreBuilder> = {
+  tableName: T['tableName'];
 };
 
-export type EntityDeserialize<M extends Model> = (entityStore: M['Store']) => M['Entity'];
+export type EntityDeserialize<M extends Model> = (entityStore: M['Entity']) => M['Entity'];
 
-export type OperationConfig<M extends Model> = Omit<RepositoryConfig<M>, 'indexSerialize'> & {
+export type OperationConfig<T extends TableStoreBuilder, M extends Model> = Omit<
+  RepositoryConfig<T, M>,
+  'indexSerialize'
+> & {
   entityDeserialize: EntityDeserialize<M>;
   indexSerialize?: (entity: M['Entity']) => Record<string, string>;
   dynamoClient: DynamoDBDocumentClient;
 };
-export type OperationConfigView<M extends Model> = Omit<OperationConfig<M>, 'keySerialize' | 'type'>;
+export type OperationConfigView<T extends TableStoreBuilder, M extends Model> = Omit<
+  OperationConfig<T, M>,
+  'keySerialize' | 'type'
+>;

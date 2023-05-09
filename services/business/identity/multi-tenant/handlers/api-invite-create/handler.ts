@@ -2,13 +2,11 @@ import { apiHandler } from '@sinapsis-co/cc-sdk/handler/api/api-handler';
 import { dispatchEvent } from '@sinapsis-co/cc-sdk/integration/event/dispatch-event';
 import { uuid } from '@sinapsis-co/cc-sdk/lib/uuid';
 
-import { CustomError } from '@sinapsis-co/cc-services/config/error-catalog';
 import { UserInviteTemplate } from '@sinapsis-co/cc-services/notifications/templates/user-invite';
 import { notificationEvent } from '@sinapsis-co/cc-services/support/notifications/catalog';
 
 import { identityApi } from '../../catalog';
 import { repoInvite } from '../../repository/repo-invite';
-import { viewUsersAndInvites } from '../../repository/view-identity';
 
 export const handler = apiHandler(async (_, req) => {
   const { tenantId, companyName } = req.claims;
@@ -16,22 +14,21 @@ export const handler = apiHandler(async (_, req) => {
 
   // We need to run the query because the email is not the primary key, and we use identityRepository because
   // we want to find coincides in both cases (users or invites)
-  const emailCheck = await viewUsersAndInvites.listIndex(
-    'gsi1',
-    { limit: 50 },
-    {
-      ExpressionAttributeNames: { '#email': 'email' },
-      ExpressionAttributeValues: { ':email': req.body.email },
-      KeyConditionExpression: '#email = :email',
-    }
-  );
+  // const emailCheck = await viewUsersAndInvites.listIndex(
+  //   'gsi1',
+  //   { limit: 50 },
+  //   {
+  //     ExpressionAttributeNames: { '#email': 'email' },
+  //     ExpressionAttributeValues: { ':email': req.body.email },
+  //     KeyConditionExpression: '#email = :email',
+  //   }
+  // );
 
-  if (emailCheck.items.length > 0) throw new CustomError({ code: 'ERROR_IDENTITY_USER_EXISTS' });
+  // if (emailCheck.items.length > 0) throw new CustomError({ code: 'ERROR_IDENTITY_USER_EXISTS' });
 
   const invite = await repoInvite.createItem(
     { tenantId, id: inviteId },
     {
-      inviteId,
       email: req.body.email,
       companyName: companyName,
       role: 'member',

@@ -2,5 +2,5 @@ import { TableStoreBuilder } from '@sinapsis-co/cc-sdk/integration/store/dynamo/
 
 export class IngredientsStoreTable implements TableStoreBuilder {
   readonly tableName = 'ingredients';
-  readonly keyMapping = { pk: 'pk' };
+  readonly keyMapping = { PK: 'PK' };
 }

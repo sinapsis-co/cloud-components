@@ -7,9 +7,12 @@ import { Model } from 'model';
 import { Tracing } from 'tracing';
 import { OperationConfig } from '../types/config';
 import { CreateItemFn } from '../types/operations';
+import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
-export const createItem = <M extends Model>(operationConfig: OperationConfig<M>): CreateItemFn<M> => {
+export const createItem = <T extends TableStoreBuilder, M extends Model>(
+  operationConfig: OperationConfig<T, M>
+): CreateItemFn<M> => {
   return async (
     key: M['Key'],
     body: Omit<M['Body'], 'createdAt' | 'updatedAt'>,
@@ -25,7 +28,7 @@ export const createItem = <M extends Model>(operationConfig: OperationConfig<M>)
 
     log('operationConfig.indexSerialize?.(originalEntity)', operationConfig.indexSerialize?.(originalEntity));
 
-    const serializedItem: M['Store'] = {
+    const serializedItem: M['Entity'] = {
       ...operationConfig.keySerialize(key),
       ...operationConfig.indexSerialize?.(originalEntity),
       ...originalEntity,
@@ -44,7 +47,7 @@ export const createItem = <M extends Model>(operationConfig: OperationConfig<M>)
             throw new PlatformError({ code: 'ERROR_CONDITIONAL_CHECK_FAILED', statusCode: 400 });
           } else throw e;
         });
-      const entity = operationConfig.entityDeserialize(serializedItem as unknown as M['Store']);
+      const entity = operationConfig.entityDeserialize(serializedItem as M['Entity']);
       if (params?.emitEvent) {
         await dispatchEvent<M['Events']['created']>(
           { name: `app.${operationConfig.type}.created`, source: 'app' },

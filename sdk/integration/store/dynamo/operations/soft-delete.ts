@@ -7,6 +7,7 @@ import { Model } from 'model';
 import { Tracing } from 'tracing';
 import { OperationConfig } from '../types/config';
 import { SoftDeleteItemFn } from '../types/operations';
+import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 import { updateMapper } from '../util/update-mapper';
 
@@ -15,7 +16,9 @@ export type TimeToDelete = {
   period: dayjs.ManipulateType;
 };
 
-export const softDeleteItem = <M extends Model>(operationConfig: OperationConfig<M>): SoftDeleteItemFn<M> => {
+export const softDeleteItem = <T extends TableStoreBuilder, M extends Model>(
+  operationConfig: OperationConfig<T, M>
+): SoftDeleteItemFn<M> => {
   return async (
     key: M['Key'],
     params?: Partial<UpdateCommandInput> & { emitEvent?: boolean; deleteAfter?: TimeToDelete }
@@ -47,7 +50,7 @@ export const softDeleteItem = <M extends Model>(operationConfig: OperationConfig
 
       if (!Attributes) throw new PlatformError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
 
-      const entity = operationConfig.entityDeserialize(Attributes as unknown as M['Store']);
+      const entity = operationConfig.entityDeserialize(Attributes as M['Entity']);
 
       if (params?.emitEvent) {
         await dispatchEvent<M['Events']['deleted']>(

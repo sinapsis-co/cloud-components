@@ -1,18 +1,19 @@
 import { QueryCommand, QueryCommandInput } from '@aws-sdk/lib-dynamodb';
 
+import { Model } from '@sinapsis-co/cc-sdk/model';
 import { PlatformFault } from 'error';
-import { Model } from 'model';
 import { Tracing } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
 import { OperationConfig, OperationConfigView } from '../types/config';
 import { ListItemFn } from '../types/operations';
+import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
-export const listItem = <M extends Model>(
-  operationConfig: OperationConfig<M> | OperationConfigView<M>
+export const listItem = <T extends TableStoreBuilder, M extends Model>(
+  operationConfig: OperationConfig<T, M> | OperationConfigView<T, M>
 ): ListItemFn<M> => {
   return async (
-    pk: M['StoreBuilder']['keyMapping']['pk'],
+    pk: T['keyMapping']['PK'],
     queryParams: { limit: number; nextToken?: string },
     params?: Partial<QueryCommandInput>
   ): Promise<M['List']> => {
@@ -23,9 +24,9 @@ export const listItem = <M extends Model>(
         .send(
           new QueryCommand({
             TableName: tableName,
-            KeyConditionExpression: '#pk = :pk',
-            ExpressionAttributeNames: { '#pk': 'pk' },
-            ExpressionAttributeValues: { ':pk': pk },
+            KeyConditionExpression: '#PK = :PK',
+            ExpressionAttributeNames: { '#PK': 'PK' },
+            ExpressionAttributeValues: { ':PK': pk },
             ExclusiveStartKey: decodeLastEvaluatedKey(queryParams.nextToken),
             Limit: queryParams.limit,
             ...params,
@@ -36,7 +37,7 @@ export const listItem = <M extends Model>(
         });
 
       return {
-        items: Items ? Items.map((item) => operationConfig.entityDeserialize(item as unknown as M['Store'])) : [],
+        items: Items ? Items.map((item) => operationConfig.entityDeserialize(item as M['Entity'])) : [],
         nextToken: encodeLastEvaluatedKey(LastEvaluatedKey),
       };
     };

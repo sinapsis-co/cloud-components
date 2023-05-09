@@ -6,10 +6,13 @@ import { Model } from 'model';
 import { Tracing } from 'tracing';
 import { OperationConfig } from '../types/config';
 import { UpdateItemFn } from '../types/operations';
+import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 import { updateMapper } from '../util/update-mapper';
 
-export const updateItem = <M extends Model>(operationConfig: OperationConfig<M>): UpdateItemFn<M> => {
+export const updateItem = <T extends TableStoreBuilder, M extends Model>(
+  operationConfig: OperationConfig<T, M>
+): UpdateItemFn<M> => {
   return async (
     key: M['Key'],
     body: Partial<M['Body']>,
@@ -38,7 +41,7 @@ export const updateItem = <M extends Model>(operationConfig: OperationConfig<M>)
 
       if (!Attributes) throw new PlatformError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
 
-      const entity: M['Entity'] = operationConfig.entityDeserialize(Attributes as unknown as M['Store']);
+      const entity: M['Entity'] = operationConfig.entityDeserialize(Attributes as M['Entity']);
 
       if (params?.emitEvent) {
         await dispatchEvent<M['Events']['updated']>(

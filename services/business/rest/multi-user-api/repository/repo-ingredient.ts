@@ -6,9 +6,9 @@ import { IngredientsStoreTable } from '../store/table-ingredient';
 export const repoIngredient = repository<IngredientsStoreTable, IngredientModel>(IngredientsStoreTable, {
   type: 'ingredient',
   tableName: 'ingredients',
-  keySerialize: (key: IngredientModel['Key']): IngredientModel['StoreBuilder']['keyMapping'] => {
+  keySerialize: (key: IngredientModel['Key']) => {
     return {
-      pk: key.id,
+      PK: key.id,
     };
   },
 });

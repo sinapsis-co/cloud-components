@@ -25,7 +25,6 @@ export class Menu extends Service<GlobalCoordinator> {
 
   build(dep: Dep): void {
     const ingredientsTable = new DynamoTablePrefab(this, IngredientsStoreTable);
-
     new AppSyncResolverAggregate<IngredientResolver>(this, {
       appSyncPrefab: dep.graphqlApi.appSyncPrefab,
       baseApiFolder: __dirname,

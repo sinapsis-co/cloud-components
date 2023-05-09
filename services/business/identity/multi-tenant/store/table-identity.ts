@@ -2,9 +2,9 @@ import { TableStoreBuilder } from '@sinapsis-co/cc-sdk/integration/store/dynamo/
 
 export class IdentityStoreTable implements TableStoreBuilder {
   readonly tableName = 'identity';
-  readonly indexes = { gsi1: { pk: 'gsi1PK' } };
+  // readonly indexes = { GSI_1: { PK: 'GSI_1_PK' } };
   readonly keyMapping = {
-    pk: 'pk',
-    sk: 'sk',
+    PK: 'PK',
+    SK: 'SK',
   };
 }

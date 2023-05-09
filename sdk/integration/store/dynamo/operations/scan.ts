@@ -6,10 +6,11 @@ import { Tracing } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
 import { OperationConfig, OperationConfigView } from '../types/config';
 import { ScanTableFn } from '../types/operations';
+import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
-export const scanTable = <M extends Model>(
-  operationConfig: OperationConfig<M> | OperationConfigView<M>
+export const scanTable = <T extends TableStoreBuilder, M extends Model>(
+  operationConfig: OperationConfig<T, M> | OperationConfigView<T, M>
 ): ScanTableFn<M> => {
   return async (
     queryParams: { limit: number; nextToken?: string },
@@ -32,7 +33,7 @@ export const scanTable = <M extends Model>(
         });
 
       return {
-        items: Items ? Items.map((item) => operationConfig.entityDeserialize(item as unknown as M['Store'])) : [],
+        items: Items ? Items.map((item) => operationConfig.entityDeserialize(item as M['Entity'])) : [],
         nextToken: encodeLastEvaluatedKey(LastEvaluatedKey),
       };
     };

@@ -17,7 +17,7 @@ import {
 import { TableStoreBuilder } from './table-store-builder';
 
 export type Repository<T extends TableStoreBuilder, M extends Model> = {
-  tableName: M['StoreBuilder']['tableName'];
+  tableName: T['tableName'];
   events: {
     created: {
       source: 'app';
@@ -36,7 +36,7 @@ export type Repository<T extends TableStoreBuilder, M extends Model> = {
       name: `app.${M['Type']}.recovered`;
     };
   };
-  keySerialize: RepositoryConfig<M>['keySerialize'];
+  keySerialize: RepositoryConfig<T, M>['keySerialize'];
   entityDeserialize: EntityDeserialize<M>;
   createItem: CreateItemFn<M>;
   checkItemExists: CheckItemExistsFn<M>;

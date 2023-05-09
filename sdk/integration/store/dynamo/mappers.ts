@@ -3,23 +3,23 @@ import { IndexSerializeConfig } from './types/config';
 import { TableStoreBuilder } from './types/table-store-builder';
 
 export const entityDeserialize = <M extends Model>(table: typeof TableStoreBuilder<any>) => {
-  return (entityStore: M['Store']): M['Entity'] => {
+  return (entityStore: M['Entity']): M['Entity'] => {
     const definition = new table();
     const store = entityStore!;
     const entity: M['Entity'] = store;
-    delete entity[definition.keyMapping.pk];
-    if (definition.keyMapping.sk) delete entity[definition.keyMapping.sk];
+    delete entity['PK'];
+    if (definition.keyMapping.SK) delete entity['SK'];
     if (definition.indexes) {
       Object.values(definition.indexes).forEach((index) => {
-        delete entity[index.pk];
+        delete entity[index.PK];
       });
     }
     return entity;
   };
 };
 
-export const indexParsing = <M extends Model>(
-  indexSerialize: IndexSerializeConfig<M> | undefined,
+export const indexParsing = <T extends TableStoreBuilder, M extends Model>(
+  indexSerialize: IndexSerializeConfig<T, M> | undefined,
   table: typeof TableStoreBuilder<any>
 ): ((entity: M['Entity']) => Record<string, string>) => {
   return (entity: M['Entity']): Record<string, string> => {

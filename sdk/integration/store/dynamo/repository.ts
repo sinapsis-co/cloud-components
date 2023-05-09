@@ -14,19 +14,15 @@ import { updateItem } from './operations/update';
 import { Model } from '../../../model';
 import { dynamodb } from './client';
 import { entityDeserialize, indexParsing } from './mappers';
-import { OperationConfig, RepositoryConfig } from './types/config';
+import { IndexReq, OperationConfig } from './types/config';
 import { Repository } from './types/repository';
 import { TableStoreBuilder } from './types/table-store-builder';
 
-type IndexReq<M extends Model> = M['StoreBuilder']['indexes'] extends Record<any, { pk: string; sk?: string }>
-  ? RepositoryConfig<M> & Required<Pick<RepositoryConfig<M>, 'indexSerialize'>>
-  : RepositoryConfig<M>;
-
 export const repository = <T extends TableStoreBuilder, M extends Model>(
-  table: typeof TableStoreBuilder<T['keyMapping']['pk'], T['keyMapping']['sk'], keyof T['indexes']>,
-  repoConfig: IndexReq<M>
+  table: typeof TableStoreBuilder<T['keyMapping']['PK'], T['keyMapping']['SK'], keyof T['indexes']>,
+  repoConfig: IndexReq<T, M>
 ): Repository<TableStoreBuilder, M> => {
-  const operationConfig: OperationConfig<M> = {
+  const operationConfig: OperationConfig<T, M> = {
     type: repoConfig.type,
     tableName: repoConfig.tableName,
     keySerialize: repoConfig.keySerialize,

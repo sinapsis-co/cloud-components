@@ -1,8 +1,8 @@
 import { DynamoDBGetItemRequest } from '@aws-appsync/utils';
-import { Model } from '@sinapsis-co/cc-sdk/model';
+import { TableStoreBuilder } from '../types/table-store-builder';
 
-export const resolverGetItem = <M extends Model>(
-  key: M['StoreBuilder']['keyMapping'],
+export const resolverGetItem = <T extends TableStoreBuilder>(
+  key: T['keyMapping'],
   params?: Partial<DynamoDBGetItemRequest>
 ): DynamoDBGetItemRequest => {
   return {

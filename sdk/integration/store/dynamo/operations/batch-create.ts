@@ -6,6 +6,7 @@ import { chunkArray } from 'util/chunk-array';
 import { wait } from 'util/executers';
 import { OperationConfig } from '../types/config';
 import { BatchCreateItemFn } from '../types/operations';
+import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
 export type BatchCreateItemParams = {
@@ -13,8 +14,8 @@ export type BatchCreateItemParams = {
   tableName?: string;
 };
 
-export const batchCreateItem = <M extends Model>(
-  operationConfig: OperationConfig<M>,
+export const batchCreateItem = <T extends TableStoreBuilder, M extends Model>(
+  operationConfig: OperationConfig<T, M>,
   params?: BatchCreateItemParams
 ): BatchCreateItemFn<M> => {
   return async (items: { key: M['Key']; body: M['Body'] }[]): Promise<M['Entity'][]> => {
@@ -41,7 +42,7 @@ export const batchCreateItem = <M extends Model>(
       })
     );
 
-    return entities.map((i) => operationConfig.entityDeserialize(i as unknown as M['Store']));
+    return entities.map((i) => operationConfig.entityDeserialize(i));
   };
 };
 

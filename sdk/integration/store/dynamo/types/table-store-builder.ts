@@ -1,7 +1,4 @@
-export type DynamoKeyStructure = {
-  pk: 'pk';
-  sk: 'sk';
-};
+// export type TablaIndexes<T extends string | number | symbol = string> = Record<T, { PK: string; SK?: string }>;
 
 export class TableStoreBuilder<
   R extends string = string,
@@ -9,6 +6,6 @@ export class TableStoreBuilder<
   T extends string | number | symbol = string
 > {
   tableName: string;
-  keyMapping: { pk: R; sk?: S };
-  indexes?: Record<T, { pk: string; sk?: string }> | undefined;
+  keyMapping: { PK: R; SK?: S };
+  indexes?: Record<T, { PK: string; SK?: string }> | undefined;
 }

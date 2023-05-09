@@ -41,11 +41,6 @@ export type EntityList<EBuilderKeys extends EntityBuilderParams> = {
   nextToken: string | number | null;
 };
 
-export type EntityStore<
-  EBuilderKeys extends EntityBuilderParams,
-  TBuilder extends TableStoreBuilder
-> = Entity<EBuilderKeys> & TBuilder['keyMapping'];
-
 export type EntityEvents<EBuilderKeys extends EntityBuilderParams> = {
   created: {
     name: `app.${EBuilderKeys['type']}.created`;
@@ -73,7 +68,7 @@ export type ModelOptions<T extends EntityBuilderParams> = {
 
 export type Model<
   EBuilder extends EntityBuilder = EntityBuilder,
-  options extends ModelOptions<EBuilder> | undefined = { storeBuilder: TableStoreBuilder }
+  options extends ModelOptions<EBuilder> | undefined = undefined
 > = {
   Builder: EntityBuilder<EBuilder>;
   Entity: Entity<EBuilder>;
@@ -95,14 +90,4 @@ export type Model<
       >
     : EntityUpdate<EBuilder>;
   Events: EntityEvents<EBuilder>;
-  Store: options extends ModelOptions<EBuilder>
-    ? options['storeBuilder'] extends TableStoreBuilder
-      ? EntityStore<EBuilder, options['storeBuilder']>
-      : undefined
-    : undefined;
-  StoreBuilder: options extends ModelOptions<EBuilder>
-    ? options['storeBuilder'] extends TableStoreBuilder
-      ? options['storeBuilder']
-      : TableStoreBuilder
-    : TableStoreBuilder;
 };

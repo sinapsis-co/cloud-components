@@ -1,10 +1,11 @@
 import { DynamoDBPutItemRequest } from '@aws-appsync/utils';
 import { Model } from '@sinapsis-co/cc-sdk/model';
+import { TableStoreBuilder } from '../types/table-store-builder';
 
-export const resolverCreateItem = <M extends Model>(
+export const resolverCreateItem = <T extends TableStoreBuilder, M extends Model>(
   type: M['Type'],
   key: M['Key'],
-  serializedKey: M['StoreBuilder']['keyMapping'],
+  serializedKey: T['keyMapping'],
   body: M['Body'],
   params?: Partial<DynamoDBPutItemRequest>
 ): DynamoDBPutItemRequest => {

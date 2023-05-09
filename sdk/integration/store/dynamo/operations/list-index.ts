@@ -8,8 +8,8 @@ import { ListIndexFn } from '../types/operations';
 import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
-export const listIndex = <M extends Model, T extends TableStoreBuilder>(
-  operationConfig: OperationConfig<M> | OperationConfigView<M>
+export const listIndex = <T extends TableStoreBuilder, M extends Model>(
+  operationConfig: OperationConfig<T, M> | OperationConfigView<T, M>
 ): ListIndexFn<M, T> => {
   return async (
     index: keyof T['indexes'],
@@ -30,7 +30,7 @@ export const listIndex = <M extends Model, T extends TableStoreBuilder>(
       );
 
       return {
-        items: Items ? Items.map((item) => operationConfig.entityDeserialize(item as unknown as M['Store'])) : [],
+        items: Items ? Items.map((item) => operationConfig.entityDeserialize(item as M['Entity'])) : [],
         nextToken: encodeLastEvaluatedKey(LastEvaluatedKey),
       };
     };

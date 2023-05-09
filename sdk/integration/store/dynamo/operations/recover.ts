@@ -6,9 +6,12 @@ import { Model } from 'model';
 import { Tracing } from 'tracing';
 import { OperationConfig } from '../types/config';
 import { RecoverItemFn } from '../types/operations';
+import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
-export const recoverItem = <M extends Model>(operationConfig: OperationConfig<M>): RecoverItemFn<M> => {
+export const recoverItem = <T extends TableStoreBuilder, M extends Model>(
+  operationConfig: OperationConfig<T, M>
+): RecoverItemFn<M> => {
   return async (
     key: M['Key'],
     params?: Partial<UpdateCommandInput> & { emitEvent?: boolean }
@@ -36,7 +39,7 @@ export const recoverItem = <M extends Model>(operationConfig: OperationConfig<M>
 
       if (!Attributes) throw new PlatformError({ code: 'ERROR_ITEM_NOT_FOUND', statusCode: 404 });
 
-      const entity = operationConfig.entityDeserialize(Attributes as unknown as M['Store']);
+      const entity = operationConfig.entityDeserialize(Attributes as M['Entity']);
       if (params?.emitEvent) {
         await dispatchEvent<M['Events']['recovered']>(
           { name: `app.${operationConfig.type}.recovered`, source: 'app' },

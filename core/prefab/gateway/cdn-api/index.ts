@@ -60,7 +60,6 @@ export class CdnApiPrefab extends Construct {
 
     this.apiGatewayRequestPolicy = new awsCloudfront.OriginRequestPolicy(this, 'OriginRequestPolicy', {
       originRequestPolicyName: getCloudFrontName('ApiGateway', 'RequestPolicy', this.service.props),
-      // headerBehavior: awsCloudfront.OriginRequestHeaderBehavior.all('Authorization'),
       headerBehavior: {
         behavior: 'whitelist',
         headers: [
@@ -159,7 +158,7 @@ export class CdnApiPrefab extends Construct {
         originId: getCloudFrontName('Origin', 'graphql', this.service.props),
         ...originOptions,
       }),
-      this.unrestrictedBehaviorOptions
+      this.apiGatewayBehaviorOptions
     );
   }
 

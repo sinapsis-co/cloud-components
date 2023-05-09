@@ -10,10 +10,10 @@ import { TableStoreBuilder } from './types/table-store-builder';
 import { View } from './types/view';
 
 export const view = <T extends TableStoreBuilder, M extends Model>(
-  table: typeof TableStoreBuilder<T['keyMapping']['pk'], T['keyMapping']['sk'], keyof T['indexes']>,
-  repoConfig: ViewConfig<M>
+  table: typeof TableStoreBuilder<T['keyMapping']['PK'], T['keyMapping']['SK'], keyof T['indexes']>,
+  repoConfig: ViewConfig<T>
 ): View<T, M> => {
-  const operationConfig: OperationConfigView<M> = {
+  const operationConfig: OperationConfigView<T, M> = {
     tableName: repoConfig.tableName,
     entityDeserialize: entityDeserialize<M>(table),
     dynamoClient: dynamodb,

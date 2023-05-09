@@ -7,11 +7,11 @@ export const repoInvite = repository<IdentityStoreTable, InviteModel>(IdentitySt
   tableName: 'identity',
   keySerialize: (key: InviteModel['Key']) => {
     return {
-      pk: key.tenantId,
-      sk: `invite#${key.id}`,
+      PK: key.tenantId,
+      SK: `invite#${key.id}`,
     };
   },
-  indexSerialize: (body: InviteModel['Body'] & InviteModel['Base']) => {
-    return { gsi1: { pk: body.email } };
-  },
+  // indexSerialize: (entity: InviteModel['Entity']) => {
+  //   return { GSI_1: { PK: entity.email } };
+  // },
 });

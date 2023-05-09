@@ -5,13 +5,13 @@ import { IdentityStoreTable } from '../store/table-identity';
 export const repoUser = repository<IdentityStoreTable, UserModel>(IdentityStoreTable, {
   type: 'user',
   tableName: 'identity',
-  keySerialize: (key: UserModel['Key']): UserModel['StoreBuilder']['keyMapping'] => {
+  keySerialize: (key: UserModel['Key']) => {
     return {
-      pk: key.tenantId,
-      sk: `user#${key.id}`,
+      PK: key.tenantId,
+      SK: `user#${key.id}`,
     };
   },
-  indexSerialize: (entity: UserModel['Entity']) => {
-    return { gsi1: { pk: entity.email } };
-  },
+  // indexSerialize: (entity: UserModel['Entity']) => {
+  //   return { GSI_1: { PK: entity.email } };
+  // },
 });

@@ -26,12 +26,18 @@ export class DynamoTablePrefab extends Construct {
       );
 
     this.tableName = definition.tableName;
+    if (definition.keyMapping.PK !== 'PK') {
+      throw new SynthError('Bad implementation of TableStoreBuilder (PK must be PK)', service.props);
+    }
+    if (definition.keyMapping.SK && definition.keyMapping.SK !== 'SK') {
+      throw new SynthError('Bad implementation of TableStoreBuilder (SK must be SK)', service.props);
+    }
     this.table = new Table(this, definition.tableName, {
       tableName: getResourceName(definition.tableName, service.props),
       billingMode: BillingMode.PAY_PER_REQUEST,
-      partitionKey: { name: 'pk', type: AttributeType.STRING },
+      partitionKey: { name: 'PK', type: AttributeType.STRING },
       timeToLiveAttribute: 'deleteTTL',
-      ...(definition.keyMapping.sk ? { sortKey: { name: 'sk', type: AttributeType.STRING } } : {}),
+      ...(definition.keyMapping.SK ? { sortKey: { name: 'SK', type: AttributeType.STRING } } : {}),
       // stream: params.stream,
     });
 
@@ -43,8 +49,8 @@ export class DynamoTablePrefab extends Construct {
         if (index) {
           this.table.addGlobalSecondaryIndex({
             indexName: indexKey,
-            partitionKey: { name: index.pk, type: AttributeType.STRING },
-            ...(index.sk ? { sortKey: { name: index.sk, type: AttributeType.STRING } } : {}),
+            partitionKey: { name: index.PK, type: AttributeType.STRING },
+            ...(index.SK ? { sortKey: { name: index.SK, type: AttributeType.STRING } } : {}),
           });
         }
       });

@@ -7,6 +7,7 @@ import { chunkArray } from 'util/chunk-array';
 import { wait } from 'util/executers';
 import { OperationConfig } from '../types/config';
 import { BatchGetItemFn } from '../types/operations';
+import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
 export type BatchGetItemParams = {
@@ -14,8 +15,8 @@ export type BatchGetItemParams = {
   tableName?: string;
 };
 
-export const batchGetItem = <M extends Model>(
-  operationConfig: OperationConfig<M>,
+export const batchGetItem = <T extends TableStoreBuilder, M extends Model>(
+  operationConfig: OperationConfig<T, M>,
   params?: BatchGetItemParams
 ): BatchGetItemFn<M> => {
   return async (keys: M['Key'][]): Promise<M['Entity'][] | undefined[]> => {
@@ -28,7 +29,7 @@ export const batchGetItem = <M extends Model>(
         const RequestItems = { [table]: { Keys: c } };
         const response = await call(operationConfig.dynamoClient, RequestItems, table, params?.autoRetry);
         return response.map((item) => {
-          return operationConfig.entityDeserialize(item as unknown as M['Store']);
+          return operationConfig.entityDeserialize(item as M['Entity']);
         });
       })
     );

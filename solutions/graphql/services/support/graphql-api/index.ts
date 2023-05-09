@@ -7,13 +7,15 @@ import { GlobalEventBus } from '@sinapsis-co/cc-services/support/global-event-bu
 
 import { GlobalCoordinator } from 'config/config-type';
 import { menuSchema } from 'services/business/menu/catalog';
+import { CdnApi } from '../cdn-api';
 
 class Dep extends ServiceDependencies {
   @DepCheck()
   dnsSubdomainCertificate: DnsSubdomainCertificate;
   @DepCheck()
   globalEventBus: GlobalEventBus;
-  // cdnApi: CdnApi;
+  @DepCheck()
+  cdnApi: CdnApi;
   // identity: Identity;
 }
 
@@ -30,11 +32,8 @@ export class GraphqlApi extends Service<GlobalCoordinator> {
       name: 'graphql',
       baseFolder: __dirname,
       schemas: [menuSchema.Ingredient.IngredientResolver],
+      cdnApiPrefab: dep.cdnApi.cdnApiPrefab,
       eventBusPrefab: dep.globalEventBus.eventBusPrefab,
-      domainConfig: {
-        subdomain: this.props.subdomain.graphql,
-        certificate: dep.dnsSubdomainCertificate.certificatePrefab.certificate,
-      },
     });
   }
 }
