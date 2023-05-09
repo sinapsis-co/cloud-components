@@ -4,6 +4,6 @@ import { InviteModel } from '../model/invite';
 import { UserModel } from '../model/user';
 import { IdentityStoreTable } from '../store/table-identity';
 
-export const identityView: View<UserModel | InviteModel> = view(IdentityStoreTable, {
+export const viewUsersAndInvites: View<UserModel | InviteModel> = view(IdentityStoreTable, {
   tableName: 'identity',
 });

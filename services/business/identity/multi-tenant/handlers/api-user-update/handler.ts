@@ -3,13 +3,13 @@ import { updateCognitoUser } from '@sinapsis-co/cc-sdk/integration/cognito';
 
 import { identityApi } from '../../catalog';
 import { cognitoUpdateStandardMapper } from '../../platform/cognito-mapper';
-import { userRepository } from '../../repository/repo-user';
+import { repoUser } from '../../repository/repo-user';
 
 export const handler = apiHandler(async (_, req) => {
   const { tenantId, sub, email } = req.claims;
 
   const [profile] = await Promise.all([
-    userRepository.updateItem({ tenantId, id: sub }, req.body),
+    repoUser.updateItem({ tenantId, id: sub }, req.body),
     updateCognitoUser(email, cognitoUpdateStandardMapper(req.body)),
   ]);
   return profile;

@@ -7,13 +7,13 @@ import { CustomError } from '@sinapsis-co/cc-services/config/error-catalog';
 import { assetEvent } from '@sinapsis-co/cc-services/support/assets/catalog';
 
 import { identityApi, identityEvent } from '../../catalog';
-import { userRepository } from '../../repository/repo-user';
+import { repoUser } from '../../repository/repo-user';
 
 export const handler = apiHandler(async (_, req) => {
   const { tenantId } = req.claims;
   const { id } = req.pathParams;
 
-  const user = await userRepository
+  const user = await repoUser
     .deleteItem(
       { tenantId, id },
       {

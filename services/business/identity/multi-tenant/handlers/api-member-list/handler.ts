@@ -1,6 +1,6 @@
 import { apiHandler } from '@sinapsis-co/cc-sdk/handler/api/api-handler';
 import { identityApi } from '../../catalog';
-import { identityView } from '../../repository/view-identity';
+import { viewUsersAndInvites } from '../../repository/view-identity';
 
 export const handler = apiHandler(async (_, req) => {
   const { tenantId } = req.claims;
@@ -19,7 +19,11 @@ export const handler = apiHandler(async (_, req) => {
         },
       }
     : {};
-  const { items, ...att } = await identityView.listItem(tenantId, { limit: Number(limit) || 50, nextToken }, params);
+  const { items, ...att } = await viewUsersAndInvites.listItem(
+    tenantId,
+    { limit: Number(limit) || 50, nextToken },
+    params
+  );
   return {
     items: items.map((r) => {
       if (r['avatar']) r['avatar'] = `${process.env.MEDIA_URL}/${r['avatar']}`;

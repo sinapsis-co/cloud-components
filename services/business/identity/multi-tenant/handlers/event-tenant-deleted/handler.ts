@@ -4,8 +4,8 @@ import { dispatchEventBatch } from '@sinapsis-co/cc-sdk/integration/event/dispat
 import { identityEvent } from '../../catalog';
 import { Invite } from '../../model/invite';
 import { User } from '../../model/user';
-import { inviteRepository } from '../../repository/repo-invite';
-import { userRepository } from '../../repository/repo-user';
+import { repoInvite } from '../../repository/repo-invite';
+import { repoUser } from '../../repository/repo-user';
 
 export const handler = eventHandler<identityEvent.tenantDeleted.Event>(async (event) => {
   const { tenantId } = event.detail;
@@ -19,7 +19,7 @@ export const handler = eventHandler<identityEvent.tenantDeleted.Event>(async (ev
 
 const listUsers = async (tenantId: string, nextToken?) => {
   const allItems: User[] = [];
-  const { items, nextToken: nextTokenResponse } = await userRepository.listItem(tenantId, { limit: 1000, nextToken });
+  const { items, nextToken: nextTokenResponse } = await repoUser.listItem(tenantId, { limit: 1000, nextToken });
   allItems.push(...items);
   if (nextTokenResponse) {
     allItems.push(...(await listUsers(tenantId, nextTokenResponse)));
@@ -29,7 +29,7 @@ const listUsers = async (tenantId: string, nextToken?) => {
 
 const listInvites = async (tenantId: string, nextToken?) => {
   const allItems: Invite[] = [];
-  const { items, nextToken: nextTokenResponse } = await inviteRepository.listItem(tenantId, { limit: 1000, nextToken });
+  const { items, nextToken: nextTokenResponse } = await repoInvite.listItem(tenantId, { limit: 1000, nextToken });
   allItems.push(...items);
   if (nextTokenResponse) {
     allItems.push(...(await listInvites(tenantId, nextTokenResponse)));

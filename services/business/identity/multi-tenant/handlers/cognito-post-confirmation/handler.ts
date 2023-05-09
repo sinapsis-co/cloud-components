@@ -10,8 +10,8 @@ import { notificationEvent } from '@sinapsis-co/cc-services/support/notification
 import { identityEvent } from '../../catalog';
 import { UserCognito } from '../../entities/user-cognito';
 import { cognitoToProfileMapper, cognitoUpdateCustomMapper } from '../../platform/cognito-mapper';
-import { inviteRepository } from '../../repository/repo-invite';
-import { userRepository } from '../../repository/repo-user';
+import { repoInvite } from '../../repository/repo-invite';
+import { repoUser } from '../../repository/repo-user';
 
 export const handler: PostConfirmationTriggerHandler = async (event) => {
   const { userAttributes } = event.request;
@@ -36,7 +36,7 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
 
   // Check if the user has an invitation
   const [inviteTenantId, inviteId] = userAttributes['custom:companyName'].split('#');
-  const userWithInvite = await inviteRepository.deleteItem({ tenantId: inviteTenantId, id: inviteId }).catch((e) => {
+  const userWithInvite = await repoInvite.deleteItem({ tenantId: inviteTenantId, id: inviteId }).catch((e) => {
     if (e instanceof CustomError && e.errorCode === 'ERROR_ITEM_NOT_FOUND') return;
     throw e;
   });
@@ -59,7 +59,7 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
             ownerEmail: att.email,
           }),
     ],
-    userRepository.createItem({ tenantId, id }, { ...att, ...(userWithInvite ? {} : { tenantOwner: true }) }),
+    repoUser.createItem({ tenantId, id }, { ...att, ...(userWithInvite ? {} : { tenantOwner: true }) }),
     updateCognitoUser(event.userName, cognitoUpdateCustomMapper(userCognito.custom), event.userPoolId),
     dispatchEvent<notificationEvent.dispatch.Event<WelcomeTemplate>>(notificationEvent.dispatch.eventConfig, {
       via: 'email',

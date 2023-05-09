@@ -3,6 +3,9 @@ import { Model } from 'model';
 
 // Generals
 
+export type KeySerialize<M extends Model> = (key: M['Key']) => Model['StoreBuilder']['keyMapping'];
+export type EntityDeserialize<M extends Model> = (entityStore: Model['Store']) => M['Entity'];
+
 export type PaginatedInput = { limit?: number; nextToken?: string };
 
 export type DispatchContextReq<EBuilder extends Model['Events']> = (ctx: Context<{ input: EBuilder }>) => any;

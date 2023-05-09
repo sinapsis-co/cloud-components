@@ -5,12 +5,12 @@ import { UserInviteTemplate } from '@sinapsis-co/cc-services/notifications/templ
 import { notificationEvent } from '@sinapsis-co/cc-services/support/notifications/catalog';
 
 import { identityApi } from '../../catalog';
-import { inviteRepository } from '../../repository/repo-invite';
+import { repoInvite } from '../../repository/repo-invite';
 
 export const handler = apiHandler(async (_, req) => {
   const { tenantId } = req.claims;
   const { id } = req.pathParams;
-  const invite = await inviteRepository.getItem({ tenantId, id });
+  const invite = await repoInvite.getItem({ tenantId, id });
 
   await dispatchEvent<notificationEvent.dispatch.Event<UserInviteTemplate>>(notificationEvent.dispatch.eventConfig, {
     via: 'email',

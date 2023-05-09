@@ -2,7 +2,7 @@ import { repository } from '@sinapsis-co/cc-sdk/integration/store/dynamo/reposit
 import { InviteModel } from '../model/invite';
 import { IdentityStoreTable } from '../store/table-identity';
 
-export const inviteRepository = repository<InviteModel>(IdentityStoreTable, {
+export const repoInvite = repository<InviteModel>(IdentityStoreTable, {
   type: 'invite',
   tableName: 'identity',
   keySerialize: (key: InviteModel['Key']) => {

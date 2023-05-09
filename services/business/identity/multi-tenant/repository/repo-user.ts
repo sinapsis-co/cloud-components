@@ -2,7 +2,7 @@ import { repository } from '@sinapsis-co/cc-sdk/integration/store/dynamo/reposit
 import { UserModel } from '../model/user';
 import { IdentityStoreTable } from '../store/table-identity';
 
-export const userRepository = repository<UserModel>(IdentityStoreTable, {
+export const repoUser = repository<UserModel>(IdentityStoreTable, {
   type: 'user',
   tableName: 'identity',
   keySerialize: (key: UserModel['Key']): UserModel['StoreBuilder']['keyMapping'] => {

@@ -5,7 +5,7 @@ import { EventAggregate } from '@sinapsis-co/cc-core/prefab/compute/function/eve
 import { RuntimeSecret } from '@sinapsis-co/cc-core/prefab/util/config/runtime-secret';
 
 import { Identity } from '@sinapsis-co/cc-services/business/identity/multi-tenant';
-import { userRepository } from '@sinapsis-co/cc-services/business/identity/multi-tenant/repository/repo-user';
+import { repoUser } from '@sinapsis-co/cc-services/business/identity/multi-tenant/repository/repo-user';
 import { GlobalCoordinator } from '@sinapsis-co/cc-services/config/config-type';
 import { CdnApi } from '@sinapsis-co/cc-services/support/cdn-api';
 import { GlobalEventBus } from '@sinapsis-co/cc-services/support/global-event-bus';
@@ -39,7 +39,7 @@ export class Search extends Service<GlobalCoordinator> {
       handlers: {
         entityChanged: {
           name: 'event-entity-changed',
-          eventConfig: Object.values(userRepository.events),
+          eventConfig: Object.values(repoUser.events),
           modifiers: [this.secret.useModReader()],
           environment: {
             ENV_NAME: this.props.envName,

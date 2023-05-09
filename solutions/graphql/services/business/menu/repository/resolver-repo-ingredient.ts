@@ -1,12 +1,13 @@
+import { EntityDeserialize, KeySerialize } from '@sinapsis-co/cc-sdk/handler/resolver';
 import { IngredientModel } from '../model/ingredient';
 
-export function ingredientKeySerialize(key: IngredientModel['Key']): IngredientModel['StoreBuilder']['keyMapping'] {
+export const ingredientKeySerialize: KeySerialize<IngredientModel> = (key) => {
   return {
     pk: key.id,
   };
-}
+};
 
-export function ingredientEntityDeserialize(entityStore: IngredientModel['Store']): IngredientModel['Entity'] {
-  const { pk, ...entity } = entityStore;
+export const ingredientEntityDeserialize: EntityDeserialize<IngredientModel> = (entityStore) => {
+  const { pk, ...entity } = entityStore as IngredientModel['Store'];
   return entity;
-}
+};

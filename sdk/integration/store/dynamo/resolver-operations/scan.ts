@@ -1,10 +1,11 @@
 import { DynamoDBScanRequest } from '@aws-appsync/utils';
+import { PaginatedInput } from '@sinapsis-co/cc-sdk/handler/resolver';
 
 export const resolverScan = (
-  limit: number | undefined,
-  nextToken: string | undefined,
+  paginatedReq: PaginatedInput,
   params?: Partial<DynamoDBScanRequest>
 ): DynamoDBScanRequest => {
+  const { limit, nextToken } = paginatedReq;
   return {
     operation: 'Scan',
     limit,

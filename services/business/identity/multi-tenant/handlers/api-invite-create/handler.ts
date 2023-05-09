@@ -7,8 +7,8 @@ import { UserInviteTemplate } from '@sinapsis-co/cc-services/notifications/templ
 import { notificationEvent } from '@sinapsis-co/cc-services/support/notifications/catalog';
 
 import { identityApi } from '../../catalog';
-import { inviteRepository } from '../../repository/repo-invite';
-import { identityView } from '../../repository/view-identity';
+import { repoInvite } from '../../repository/repo-invite';
+import { viewUsersAndInvites } from '../../repository/view-identity';
 
 export const handler = apiHandler(async (_, req) => {
   const { tenantId, companyName } = req.claims;
@@ -16,7 +16,7 @@ export const handler = apiHandler(async (_, req) => {
 
   // We need to run the query because the email is not the primary key, and we use identityRepository because
   // we want to find coincides in both cases (users or invites)
-  const emailCheck = await identityView.listIndex(
+  const emailCheck = await viewUsersAndInvites.listIndex(
     'gsi1',
     { limit: 50 },
     {
@@ -28,7 +28,7 @@ export const handler = apiHandler(async (_, req) => {
 
   if (emailCheck.items.length > 0) throw new CustomError({ code: 'ERROR_IDENTITY_USER_EXISTS' });
 
-  const invite = await inviteRepository.createItem(
+  const invite = await repoInvite.createItem(
     { tenantId, id: inviteId },
     {
       inviteId,
