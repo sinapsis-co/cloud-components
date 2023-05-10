@@ -1,7 +1,7 @@
 import { SendEmailCommand, SESv2Client } from '@aws-sdk/client-sesv2';
 import { createTransport } from 'nodemailer';
 import { Readable } from 'stream';
-import { Tracing } from 'tracing';
+import { traceableFunction, Tracing } from 'tracing';
 
 export const ses: SESv2Client = Tracing.captureIntegration(new SESv2Client({}) as any);
 
@@ -37,5 +37,5 @@ export const deliverEmail = async <TracingMeta extends Record<string, string> = 
     const transporter = createTransport({ SES: { ses: ses, aws: { SendRawEmailCommand: SendRawEmailCommand } } });
     await transporter.sendMail(params);
   };
-  return Tracing.capture('SendEmail', 'FAULT_NOT_DELIVER_EMAIL', params.to, cmd, tracingMeta);
+  return traceableFunction('SendEmail', 'FAULT_NOT_DELIVER_EMAIL', params.to, cmd, tracingMeta);
 };

@@ -2,7 +2,7 @@ import { GetCommand, GetCommandInput } from '@aws-sdk/lib-dynamodb';
 
 import { PlatformError } from 'error';
 import { Model } from 'model';
-import { Tracing } from 'tracing';
+import { traceableFunction } from 'tracing';
 import { OperationConfig } from '../types/config';
 import { GetItemFn } from '../types/operations';
 import { TableStoreBuilder } from '../types/table-store-builder';
@@ -24,6 +24,6 @@ export const getItem = <T extends TableStoreBuilder, M extends Model>(
     };
 
     const meta = { tableName, rawKey: key, serializedKey, params };
-    return Tracing.capture('getItem', 'FAULT_DYN_GET_ITEM', JSON.stringify(key), cmd, meta);
+    return traceableFunction('getItem', 'FAULT_DYN_GET_ITEM', JSON.stringify(key), cmd, meta);
   };
 };

@@ -3,7 +3,7 @@ import { BaseDataSourceOptions } from 'typeorm/data-source/BaseDataSourceOptions
 
 import { SecretConfig, SecretInterface } from 'catalog/secret';
 import { getRuntimeSecret } from 'integration/config/runtime-secret';
-import { Tracing } from 'tracing';
+import { traceableFunction } from 'tracing';
 
 export type Secret = SecretInterface<{
   name: 'connection';
@@ -46,5 +46,5 @@ export const auroraClusterConnect = async (
     }
     return dataSource;
   };
-  return Tracing.capture('Connect', 'FAULT_AURORA_CONNECT', 'Connect', cmd);
+  return traceableFunction('Connect', 'FAULT_AURORA_CONNECT', 'Connect', cmd);
 };

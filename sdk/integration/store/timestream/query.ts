@@ -1,5 +1,5 @@
 import { QueryCommand, QueryCommandOutput, TimestreamQueryClient } from '@aws-sdk/client-timestream-query';
-import { Tracing } from 'tracing';
+import { Tracing, traceableFunction } from 'tracing';
 
 const timestream: TimestreamQueryClient = Tracing.captureIntegration(new TimestreamQueryClient({}) as any);
 
@@ -15,5 +15,5 @@ export const timestreamQuery = async (query: string, nextToken?: string): Promis
     const queryResults = await timestream.send(new QueryCommand({ QueryString: query, NextToken: nextToken }));
     return queryResults;
   };
-  return Tracing.capture('Query', 'FAULT_TS_WRITE', 'Query', cmd);
+  return traceableFunction('Query', 'FAULT_TS_WRITE', 'Query', cmd);
 };

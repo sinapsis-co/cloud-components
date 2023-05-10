@@ -7,7 +7,7 @@ import {
   SQSClient,
 } from '@aws-sdk/client-sqs';
 import { PlatformFault } from 'error';
-import { Tracing } from 'tracing';
+import { traceableFunction, Tracing } from 'tracing';
 import { chunkArray } from 'util/chunk-array';
 
 export const sqs = Tracing.captureIntegration(new SQSClient({}));
@@ -23,14 +23,14 @@ export const sendMessages = async <T>(
     const messagesChucked = chunkArray(messages, MAX_MESSAGE_PER_BATCH);
     return Promise.all(messagesChucked.map((messageChucked) => sendMessagesBatch(messageChucked, queueUrl, params)));
   };
-  return Tracing.capture('SendMessages', 'FAULT_SQS_SEND_MESSAGES', queueUrl, cmd);
+  return traceableFunction('SendMessages', 'FAULT_SQS_SEND_MESSAGES', queueUrl, cmd);
 };
 
 export const deleteMessage = async (receiptHandle: string, queueUrl: string): Promise<DeleteMessageCommandOutput> => {
   const cmd = async () => {
     return sqs.send(new DeleteMessageCommand({ QueueUrl: queueUrl, ReceiptHandle: receiptHandle }));
   };
-  return Tracing.capture('DeleteMessage', 'FAULT_SQS_DELETE_MESSAGE', receiptHandle, cmd);
+  return traceableFunction('DeleteMessage', 'FAULT_SQS_DELETE_MESSAGE', receiptHandle, cmd);
 };
 
 // Private use only

@@ -1,7 +1,7 @@
 import { TimestreamWriteClient, WriteRecordsCommand, WriteRecordsCommandInput } from '@aws-sdk/client-timestream-write';
 
 import { PlatformFault } from 'error';
-import { Tracing } from 'tracing';
+import { Tracing, traceableFunction } from 'tracing';
 import { chunkArray } from 'util/chunk-array';
 
 const timestream: TimestreamWriteClient = Tracing.captureIntegration(new TimestreamWriteClient({}) as any);
@@ -17,7 +17,7 @@ export const timestreamWrite = async (
     const chunk = chunkArray(records!, MAX_MESSAGE_PER_BATCH);
     return Promise.all(chunk.map((c) => timestreamWriteBatch(c, DatabaseName, TableName)));
   };
-  return Tracing.capture('Write', 'FAULT_TS_WRITE', TableName, cmd);
+  return traceableFunction('Write', 'FAULT_TS_WRITE', TableName, cmd);
 };
 
 // Internal use only

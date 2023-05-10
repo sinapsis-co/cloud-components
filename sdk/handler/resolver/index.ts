@@ -1,5 +1,5 @@
 import { Context, DynamoDBGetItemRequest, DynamoDBPutItemRequest, DynamoDBScanRequest } from '@aws-appsync/utils';
-import { TableStoreBuilder } from '@sinapsis-co/cc-sdk/integration/store/dynamo/types/table-store-builder';
+import { TableStoreBuilder } from 'integration/store/dynamo/types/table-store-builder';
 import { Model } from 'model';
 
 // Generals

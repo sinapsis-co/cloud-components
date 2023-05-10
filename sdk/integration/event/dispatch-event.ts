@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { EventBridgeClient, PutEventsCommand, PutEventsRequestEntry } from '@aws-sdk/client-eventbridge';
 import { EventConfig, EventInterface } from 'catalog/event';
-import { Tracing } from 'tracing';
+import { Tracing, traceableFunction } from 'tracing';
 
 export const eventBridge = Tracing.captureIntegration(new EventBridgeClient({}));
 
@@ -23,7 +23,7 @@ export const dispatchEvent = async <
     Detail: JSON.stringify(payload),
   };
   const cmd = () => eventBridge.send(new PutEventsCommand({ Entries: [event] }));
-  await Tracing.capture('Dispatch', 'FAULT_EVENT_DISPATCH', eventConfig.name, cmd, tracingMeta);
+  await traceableFunction('Dispatch', 'FAULT_EVENT_DISPATCH', eventConfig.name, cmd, tracingMeta);
 };
 
 export const dispatchEventBatch = async <
@@ -49,7 +49,7 @@ export const dispatchEventBatch = async <
   const cmd = async () => {
     await Promise.all(chunks.map((chunk) => eventBridge.send(new PutEventsCommand({ Entries: chunk }))));
   };
-  await Tracing.capture('Dispatch', 'FAULT_EVENT_BATCH_DISPATCH', eventConfig.name, cmd, tracingMeta);
+  await traceableFunction('Dispatch', 'FAULT_EVENT_BATCH_DISPATCH', eventConfig.name, cmd, tracingMeta);
 };
 
 function getSize(entry: PutEventsRequestEntry): number {

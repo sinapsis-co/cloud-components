@@ -36,6 +36,7 @@ export type Repository<T extends TableStoreBuilder, M extends Model> = {
       name: `app.${M['Type']}.recovered`;
     };
   };
+  entitySerialized: (key: M['Key'], body: M['Body']) => M['Entity'] & T['keyMapping'];
   keySerialize: RepositoryConfig<T, M>['keySerialize'];
   entityDeserialize: EntityDeserialize<M>;
   createItem: CreateItemFn<M>;

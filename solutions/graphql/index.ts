@@ -1,9 +1,10 @@
+import { DepCheck, ServiceDependencies } from '@sinapsis-co/cc-core/common/coordinator';
 import { Service } from '@sinapsis-co/cc-core/common/service';
 import { CdnApiPrefab } from '@sinapsis-co/cc-core/prefab/gateway/cdn-api';
-import { GlobalCoordinator } from '../../../config/config-type';
 
-import { DepCheck, ServiceDependencies } from '@sinapsis-co/cc-core/common/coordinator';
-import { DnsSubdomainCertificate } from '../dns-subdomain-certificate';
+import { DnsSubdomainCertificate } from '@sinapsis-co/cc-services/support/dns-subdomain-certificate';
+
+import { GlobalCoordinator } from 'config/config-type';
 
 class Dep extends ServiceDependencies {
   @DepCheck()

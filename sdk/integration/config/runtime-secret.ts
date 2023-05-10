@@ -1,7 +1,8 @@
 import { GetSecretValueCommand, SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
+
 import { SecretConfig, SecretInterface } from 'catalog/secret';
 import { PlatformFault } from 'error';
-import { Tracing } from 'tracing';
+import { Tracing, traceableFunction } from 'tracing';
 
 const _secrets = {};
 
@@ -22,5 +23,5 @@ export const getRuntimeSecret = async <Secret extends SecretInterface = SecretIn
     return _secrets[secretConfig.name];
   };
 
-  return Tracing.capture('GetRuntimeSecret', 'FAULT_SM_GET_RUNTIME_SECRET', secretConfig.name, cmd);
+  return traceableFunction('GetRuntimeSecret', 'FAULT_SM_GET_RUNTIME_SECRET', secretConfig.name, cmd);
 };

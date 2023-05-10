@@ -13,7 +13,7 @@ import { updateItem } from './operations/update';
 
 import { Model } from '../../../model';
 import { dynamodb } from './client';
-import { entityDeserialize, indexParsing } from './mappers';
+import { entityDeserialize, entitySerialized } from './mappers';
 import { IndexReq, OperationConfig } from './types/config';
 import { Repository } from './types/repository';
 import { TableStoreBuilder } from './types/table-store-builder';
@@ -27,7 +27,7 @@ export const repository = <T extends TableStoreBuilder, M extends Model>(
     tableName: repoConfig.tableName,
     keySerialize: repoConfig.keySerialize,
     entityDeserialize: entityDeserialize<M>(table),
-    indexSerialize: indexParsing(repoConfig.indexSerialize, table),
+    entitySerialized: entitySerialized(repoConfig, table),
     dynamoClient: dynamodb,
   };
   return {
@@ -39,6 +39,7 @@ export const repository = <T extends TableStoreBuilder, M extends Model>(
       recovered: { name: `app.${repoConfig.type}.recovered`, source: 'app' },
     },
     keySerialize: repoConfig.keySerialize,
+    entitySerialized: entitySerialized(repoConfig, table),
     entityDeserialize: entityDeserialize<M>(table),
     createItem: createItem(operationConfig),
     checkItemExists: checkItemExists(operationConfig),

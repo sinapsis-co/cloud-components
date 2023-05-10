@@ -5,7 +5,7 @@ import { IdentityStoreTable } from '../store/table-identity';
 export const repoInvite = repository<IdentityStoreTable, InviteModel>(IdentityStoreTable, {
   type: 'invite',
   tableName: 'identity',
-  keySerialize: (key: InviteModel['Key']) => {
+  keySerialize: (key) => {
     return {
       PK: key.tenantId,
       SK: `invite#${key.id}`,

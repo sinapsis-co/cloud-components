@@ -1,5 +1,3 @@
-import { TableStoreBuilder } from '../integration/store/dynamo/types/table-store-builder';
-
 export type EntityBuilderParams = {
   type: string;
   body: Record<string, unknown>;
@@ -61,7 +59,6 @@ export type EntityEvents<EBuilderKeys extends EntityBuilderParams> = {
 };
 
 export type ModelOptions<T extends EntityBuilderParams> = {
-  storeBuilder: TableStoreBuilder | undefined;
   omittedCreateKeys?: (keyof T['body'])[];
   omittedUpdateKeys?: (keyof T['body'])[];
 };

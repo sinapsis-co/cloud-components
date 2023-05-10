@@ -1,4 +1,3 @@
-import { log } from 'console';
 import { PlatformError, PlatformFault } from 'error/index';
 
 /* eslint-disable no-console */
@@ -6,7 +5,6 @@ export {};
 
 const types = {
   api: (claims, event: string) => {
-    log(claims);
     return {
       headers: { 'X-Request-ID': '1234' },
       body: event,
@@ -21,7 +19,9 @@ const types = {
 
     const imported = await import(`${path}`);
     const result = await imported.handler(types[type](claims, event));
-    console.log(result);
+    if (type === 'api') console.log(JSON.parse(result.body));
+    else console.log(result);
+    process.exit(0);
   } catch (error: any) {
     if (error instanceof PlatformError || error instanceof PlatformFault) {
       console.error(error.returnException());

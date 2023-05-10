@@ -5,7 +5,7 @@ import {
   SNSClient,
 } from '@aws-sdk/client-sns';
 import { PlatformFault } from 'error';
-import { Tracing } from 'tracing';
+import { Tracing, traceableFunction } from 'tracing';
 import { chunkArray } from 'util/chunk-array';
 
 const sns: SNSClient = Tracing.captureIntegration(new SNSClient({}) as any);
@@ -20,7 +20,7 @@ export const publishMessages = async <T>(
     const messagesChucked = chunkArray(messages, MAX_MESSAGE_PER_BATCH);
     return Promise.all(messagesChucked.map((messageChucked) => publishMessagesBatch(messageChucked, topicArn)));
   };
-  return Tracing.capture('PushMessages', 'FAULT_SNS_SEND_MESSAGES', topicArn, cmd);
+  return traceableFunction('PushMessages', 'FAULT_SNS_SEND_MESSAGES', topicArn, cmd);
 };
 
 // Private use only

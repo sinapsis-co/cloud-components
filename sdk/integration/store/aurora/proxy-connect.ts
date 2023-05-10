@@ -1,5 +1,5 @@
 import { Signer } from '@aws-sdk/rds-signer';
-import { Tracing } from 'tracing';
+import { traceableFunction } from 'tracing';
 import { DataSource } from 'typeorm';
 import { BaseDataSourceOptions } from 'typeorm/data-source/BaseDataSourceOptions';
 
@@ -29,5 +29,5 @@ export const auroraProxyConnect = async (
     }
     return dataSource;
   };
-  return Tracing.capture('Connect', 'FAULT_AURORA_CONNECT', 'Connect', cmd);
+  return traceableFunction('Connect', 'FAULT_AURORA_CONNECT', 'Connect', cmd);
 };

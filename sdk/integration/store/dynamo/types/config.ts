@@ -38,10 +38,14 @@ export type OperationConfig<T extends TableStoreBuilder, M extends Model> = Omit
   'indexSerialize'
 > & {
   entityDeserialize: EntityDeserialize<M>;
-  indexSerialize?: (entity: M['Entity']) => Record<string, string>;
+  entitySerialized: (key: M['Key'], body: M['Body']) => M['Entity'] & T['keyMapping'];
   dynamoClient: DynamoDBDocumentClient;
 };
 export type OperationConfigView<T extends TableStoreBuilder, M extends Model> = Omit<
   OperationConfig<T, M>,
-  'keySerialize' | 'type'
+  'keySerialize' | 'type' | 'entitySerialized'
+>;
+export type OperationConfigComposite<T extends TableStoreBuilder> = Omit<
+  OperationConfig<T, any>,
+  'keySerialize' | 'type' | 'entitySerialized' | 'entityDeserialize'
 >;

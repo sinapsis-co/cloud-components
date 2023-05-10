@@ -5,7 +5,7 @@ import { IdentityStoreTable } from '../store/table-identity';
 export const repoUser = repository<IdentityStoreTable, UserModel>(IdentityStoreTable, {
   type: 'user',
   tableName: 'identity',
-  keySerialize: (key: UserModel['Key']) => {
+  keySerialize: (key) => {
     return {
       PK: key.tenantId,
       SK: `user#${key.id}`,

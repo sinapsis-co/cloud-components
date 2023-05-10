@@ -11,7 +11,7 @@ import {
   CognitoIdentityProviderClient,
 } from '@aws-sdk/client-cognito-identity-provider';
 
-import { Tracing } from 'tracing';
+import { Tracing, traceableFunction } from 'tracing';
 
 export const cognito: CognitoIdentityProviderClient = Tracing.captureIntegration(
   new CognitoIdentityProviderClient({}) as any
@@ -26,7 +26,7 @@ export const deleteCognitoUser = async (
   const cmd = () => {
     return cognito.send(new AdminDeleteUserCommand({ UserPoolId: userPoolId, Username: username }));
   };
-  return Tracing.capture('DeleteCognitoUser', 'FAULT_COG_DELETE_USER', username, cmd);
+  return traceableFunction('DeleteCognitoUser', 'FAULT_COG_DELETE_USER', username, cmd);
 };
 
 export const updateCognitoUser = async (
@@ -43,7 +43,7 @@ export const updateCognitoUser = async (
       })
     );
   };
-  return Tracing.capture('UpdateCognitoUser', 'FAULT_COG_UPDATE_USER', username, cmd);
+  return traceableFunction('UpdateCognitoUser', 'FAULT_COG_UPDATE_USER', username, cmd);
 };
 
 export const disableCognitoUser = async (
@@ -58,7 +58,7 @@ export const disableCognitoUser = async (
       })
     );
   };
-  return Tracing.capture('DisableCognitoUser', 'FAULT_COG_DISABLE_USER', username, cmd);
+  return traceableFunction('DisableCognitoUser', 'FAULT_COG_DISABLE_USER', username, cmd);
 };
 export const enableCognitoUser = async (
   username: string,
@@ -72,5 +72,5 @@ export const enableCognitoUser = async (
       })
     );
   };
-  return Tracing.capture('UpdateCognitoUser', 'FAULT_COG_ENABLE_USER', username, cmd);
+  return traceableFunction('UpdateCognitoUser', 'FAULT_COG_ENABLE_USER', username, cmd);
 };

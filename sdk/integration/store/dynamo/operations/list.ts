@@ -1,8 +1,8 @@
 import { QueryCommand, QueryCommandInput } from '@aws-sdk/lib-dynamodb';
 
-import { Model } from '@sinapsis-co/cc-sdk/model';
 import { PlatformFault } from 'error';
-import { Tracing } from 'tracing';
+import { Model } from 'model';
+import { traceableFunction } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
 import { OperationConfig, OperationConfigView } from '../types/config';
 import { ListItemFn } from '../types/operations';
@@ -43,6 +43,6 @@ export const listItem = <T extends TableStoreBuilder, M extends Model>(
     };
 
     const meta = { tableName: tableName, pk, params };
-    return Tracing.capture('listItems', 'FAULT_DYN_LIST_ITEM', String(pk), cmd, meta);
+    return traceableFunction('listItems', 'FAULT_DYN_LIST_ITEM', String(pk), cmd, meta);
   };
 };

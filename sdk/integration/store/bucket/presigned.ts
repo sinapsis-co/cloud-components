@@ -1,7 +1,7 @@
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { createPresignedPost, PresignedPost } from '@aws-sdk/s3-presigned-post';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { Tracing } from 'tracing';
+import { traceableFunction } from 'tracing';
 import { s3 } from '.';
 
 export type { PresignedPost } from '@aws-sdk/s3-presigned-post';
@@ -32,10 +32,10 @@ export const createPutPresignedUrl = async (
       ],
     });
   };
-  return Tracing.capture('CreatePutPresignedUrl', 'FAULT_S3_PRESIGNED_PUT', Bucket, cmd, { key: Key });
+  return traceableFunction('CreatePutPresignedUrl', 'FAULT_S3_PRESIGNED_PUT', Bucket, cmd, { key: Key });
 };
 
 export const createGetPresignedUrl = async (bucket: string, key: string, expires = 3600): Promise<string> => {
   const cmd = () => getSignedUrl(s3, new GetObjectCommand({ Bucket: bucket, Key: key }), { expiresIn: expires });
-  return Tracing.capture('CreateGetPresignedUrl', 'FAULT_S3_PRESIGNED_GET', bucket, cmd, { key });
+  return traceableFunction('CreateGetPresignedUrl', 'FAULT_S3_PRESIGNED_GET', bucket, cmd, { key });
 };

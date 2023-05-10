@@ -1,7 +1,7 @@
 import { GetCommand, GetCommandInput } from '@aws-sdk/lib-dynamodb';
 
 import { Model } from 'model';
-import { Tracing } from 'tracing';
+import { traceableFunction } from 'tracing';
 import { OperationConfig } from '../types/config';
 import { CheckItemExistsFn } from '../types/operations';
 import { TableStoreBuilder } from '../types/table-store-builder';
@@ -26,6 +26,6 @@ export const checkItemExists = <T extends TableStoreBuilder, M extends Model>(
     };
 
     const meta = { tableName, rawKey: key, serializedKey, params };
-    return Tracing.capture('checkItemExists', 'FAULT_DYN_CHECK_ITEM_EXISTS', JSON.stringify(key), cmd, meta);
+    return traceableFunction('checkItemExists', 'FAULT_DYN_CHECK_ITEM_EXISTS', JSON.stringify(key), cmd, meta);
   };
 };

@@ -3,7 +3,7 @@ import { UpdateCommand, UpdateCommandInput } from '@aws-sdk/lib-dynamodb';
 import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
 import { Model } from 'model';
-import { Tracing } from 'tracing';
+import { traceableFunction } from 'tracing';
 import { OperationConfig } from '../types/config';
 import { RecoverItemFn } from '../types/operations';
 import { TableStoreBuilder } from '../types/table-store-builder';
@@ -50,6 +50,6 @@ export const recoverItem = <T extends TableStoreBuilder, M extends Model>(
     };
 
     const meta = { tableName, rawKey: key, serializedKey, params };
-    return Tracing.capture('recoverItem', 'FAULT_DYN_RECOVER_ITEM', JSON.stringify(key), cmd, meta);
+    return traceableFunction('recoverItem', 'FAULT_DYN_RECOVER_ITEM', JSON.stringify(key), cmd, meta);
   };
 };

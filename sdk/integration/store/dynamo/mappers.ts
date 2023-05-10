@@ -1,5 +1,5 @@
-import { Model } from '@sinapsis-co/cc-sdk/model';
-import { IndexSerializeConfig } from './types/config';
+import { Model } from 'model';
+import { IndexSerializeConfig, RepositoryConfig } from './types/config';
 import { TableStoreBuilder } from './types/table-store-builder';
 
 export const entityDeserialize = <M extends Model>(table: typeof TableStoreBuilder<any>) => {
@@ -30,17 +30,35 @@ export const indexParsing = <T extends TableStoreBuilder, M extends Model>(
     const indexes = definition.indexes;
     if (indexes) {
       Object.keys(indexes).forEach((index) => {
-        const realPk = indexes[index]['pk'];
-        const realSk = indexes[index]['sk'];
-        newFields[realPk] = indexesFields[index]['pk'];
-        if (realSk) newFields[realSk] = indexesFields[index]['sk'];
+        const realPk = indexes[index]['PK'];
+        const realSk = indexes[index]['SK'];
+        if (indexesFields[index]['PK']) newFields[realPk] = indexesFields[index]['PK'];
+        if (realSk && indexesFields[index]['SK']) newFields[realSk] = indexesFields[index]['SK'];
       });
     }
     return newFields;
   };
 };
 
-export const indexNames = (table: typeof TableStoreBuilder<any>): string[] => {
-  const definition = new table();
-  return Object.keys(definition.indexes || {});
-};
+export const entitySerialized =
+  <T extends TableStoreBuilder, M extends Model>(
+    repoConfig: RepositoryConfig<T, M>,
+    table: typeof TableStoreBuilder<any>
+  ) =>
+  (key: M['Key'], body: M['Body']): M['Entity'] & T['keyMapping'] => {
+    const originalEntity: M['Entity'] = {
+      type: repoConfig.type,
+      ...key,
+      ...body,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    const indexes = repoConfig.indexSerialize ? indexParsing(repoConfig.indexSerialize, table) : (e: any) => e;
+
+    return {
+      ...repoConfig.keySerialize(key),
+      ...indexes(originalEntity),
+      ...originalEntity,
+    };
+  };

@@ -1,7 +1,7 @@
 import { QueryCommand, QueryCommandInput } from '@aws-sdk/lib-dynamodb';
 
 import { Model } from 'model';
-import { Tracing } from 'tracing';
+import { traceableFunction } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
 import { OperationConfig, OperationConfigView } from '../types/config';
 import { ListIndexFn } from '../types/operations';
@@ -36,6 +36,6 @@ export const listIndex = <T extends TableStoreBuilder, M extends Model>(
     };
 
     const meta = { tableName, index, params };
-    return Tracing.capture('listIndex', 'FAULT_DYN_LIST_INDEX', String(index), cmd, meta);
+    return traceableFunction('listIndex', 'FAULT_DYN_LIST_INDEX', String(index), cmd, meta);
   };
 };

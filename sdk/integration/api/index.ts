@@ -1,9 +1,9 @@
 import fetch from 'node-fetch';
 
-import { EmptyObject } from '@sinapsis-co/cc-sdk/catalog/api';
-import { ApiIntegrationConfig, ApiIntegrationInterface } from '@sinapsis-co/cc-sdk/catalog/api-integration';
-import { PlatformFault } from '@sinapsis-co/cc-sdk/error';
-import { Tracing } from '@sinapsis-co/cc-sdk/tracing';
+import { EmptyObject } from 'catalog/api';
+import { ApiIntegrationConfig, ApiIntegrationInterface } from 'catalog/api-integration';
+import { PlatformFault } from 'error';
+import { traceableFunction } from 'tracing';
 
 type NotEmptyObjects<T> = {
   [P in keyof T]: Exclude<T[P], undefined> extends EmptyObject ? never : P;
@@ -85,7 +85,7 @@ export const apiCall = async <
     return { response } as Response<Api, ErrorResponse>;
   };
 
-  return Tracing.capture('ApiCall', 'FAULT_API_CALL_UNHANDLED', endpointWithQuery, cmd, options.tracingMeta);
+  return traceableFunction('ApiCall', 'FAULT_API_CALL_UNHANDLED', endpointWithQuery, cmd, options.tracingMeta);
 };
 
 const getBasicAuthHeader = (basicAuth: BasicAuth) => {

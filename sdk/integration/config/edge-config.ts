@@ -1,6 +1,6 @@
 import { GetParameterCommand, SSMClient } from '@aws-sdk/client-ssm';
 import { PlatformFault } from 'error';
-import { Tracing } from 'tracing';
+import { Tracing, traceableFunction } from 'tracing';
 
 export const ssm = Tracing.captureIntegration(new SSMClient({ region: 'us-east-1' }));
 
@@ -12,5 +12,5 @@ export const getConfig = async <T>(): Promise<T> => {
     const config: T = JSON.parse(Parameter.Value);
     return config;
   };
-  return Tracing.capture('GetEdgeConfig', 'FAULT_SSM_GET_EDGE_CONFIG', Name, cmd);
+  return traceableFunction('GetEdgeConfig', 'FAULT_SSM_GET_EDGE_CONFIG', Name, cmd);
 };

@@ -1,5 +1,5 @@
 import { DynamoDBScanRequest } from '@aws-appsync/utils';
-import { PaginatedInput } from '@sinapsis-co/cc-sdk/handler/resolver';
+import { PaginatedInput } from 'handler/resolver';
 
 export const resolverScan = (
   paginatedReq: PaginatedInput,

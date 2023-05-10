@@ -51,41 +51,37 @@ export class Tracing {
     if (process.env.CC_TRACING) return captureAWSv3Client(client);
     return client;
   }
-  static async capture<PromiseReturn, TracingMeta extends Record<string, any> = Record<string, any>>(
-    op: string,
-    faultCode: PlatformFaultCodes,
-    target: string,
-    fn: () => Promise<PromiseReturn>,
-    tracingMeta?: TracingMeta
-  ): Promise<PromiseReturn> {
-    const id = uuid();
-    debug({ op, phase: 'input', id, ...tracingMeta });
-    if (process.env.CC_TRACING) {
-      return captureAsyncFunc<Promise<PromiseReturn>>(`${op}: ${target}`, async (innerSubsegment) => {
-        if (tracingMeta) {
-          Object.keys(tracingMeta).forEach((t) => {
-            if (typeof t === 'string') innerSubsegment?.addAnnotation(t, tracingMeta[t]);
-          });
-        }
-        const result = await fn().catch((e) => {
-          const exception = catchException(e, op, faultCode, target, tracingMeta);
-          innerSubsegment?.close(exception);
-          throw exception;
-        });
-        innerSubsegment?.close();
-        debug({ op, phase: 'output', id, result });
-        return result;
-      });
-    } else {
+}
+
+export const traceableFunction = async <PromiseReturn, TracingMeta extends Record<string, any> = Record<string, any>>(
+  op: string,
+  faultCode: PlatformFaultCodes,
+  target: string,
+  fn: () => Promise<PromiseReturn>,
+  tracingMeta?: TracingMeta
+): Promise<PromiseReturn> => {
+  const id = uuid();
+  debug({ op, phase: 'input', id, ...tracingMeta });
+  if (process.env.CC_TRACING) {
+    return captureAsyncFunc<Promise<PromiseReturn>>(`${op}: ${target}`, async (innerSubsegment) => {
       const result = await fn().catch((e) => {
         const exception = catchException(e, op, faultCode, target, tracingMeta);
+        innerSubsegment?.close(exception);
         throw exception;
       });
+      innerSubsegment?.close();
       debug({ op, phase: 'output', id, result });
       return result;
-    }
+    });
+  } else {
+    const result = await fn().catch((e) => {
+      const exception = catchException(e, op, faultCode, target, tracingMeta);
+      throw exception;
+    });
+    debug({ op, phase: 'output', id, result });
+    return result;
   }
-}
+};
 
 const catchException = <TracingMeta extends Record<string, string> = Record<string, string>>(
   e: any,

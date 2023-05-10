@@ -2,7 +2,7 @@ import { ScanCommand, ScanCommandInput } from '@aws-sdk/lib-dynamodb';
 
 import { PlatformFault } from 'error';
 import { Model } from 'model';
-import { Tracing } from 'tracing';
+import { traceableFunction } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
 import { OperationConfig, OperationConfigView } from '../types/config';
 import { ScanTableFn } from '../types/operations';
@@ -39,6 +39,6 @@ export const scanTable = <T extends TableStoreBuilder, M extends Model>(
     };
 
     const meta = { tableName, params };
-    return Tracing.capture('scanTable', 'FAULT_DYN_SCAN_TABLE', 'scan', cmd, meta);
+    return traceableFunction('scanTable', 'FAULT_DYN_SCAN_TABLE', 'scan', cmd, meta);
   };
 };

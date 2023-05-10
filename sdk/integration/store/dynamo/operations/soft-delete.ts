@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { PlatformError } from 'error';
 import { dispatchEvent } from 'integration/event/dispatch-event';
 import { Model } from 'model';
-import { Tracing } from 'tracing';
+import { traceableFunction } from 'tracing';
 import { OperationConfig } from '../types/config';
 import { SoftDeleteItemFn } from '../types/operations';
 import { TableStoreBuilder } from '../types/table-store-builder';
@@ -63,6 +63,6 @@ export const softDeleteItem = <T extends TableStoreBuilder, M extends Model>(
     };
 
     const meta = { tableName, rawKey: key, serializedKey, ttl, mapper, params };
-    return Tracing.capture('softDeleteItem', 'FAULT_DYN_SOFT_DELETE_ITEM', JSON.stringify(key), cmd, meta);
+    return traceableFunction('softDeleteItem', 'FAULT_DYN_SOFT_DELETE_ITEM', JSON.stringify(key), cmd, meta);
   };
 };

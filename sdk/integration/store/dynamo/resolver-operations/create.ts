@@ -1,5 +1,5 @@
 import { DynamoDBPutItemRequest } from '@aws-appsync/utils';
-import { Model } from '@sinapsis-co/cc-sdk/model';
+import { Model } from 'model';
 import { TableStoreBuilder } from '../types/table-store-builder';
 
 export const resolverCreateItem = <T extends TableStoreBuilder, M extends Model>(
