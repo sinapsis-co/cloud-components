@@ -5,6 +5,9 @@
   "license": "MIT",
   "repository": "git://github.com/sinapsis-co/cloud-components.git",
   "private": true,
+  "cpu": [
+    "arm64"
+  ],
   "workspaces": {
     "packages": [
       "sdk/",
