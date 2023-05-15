@@ -1,10 +1,12 @@
 import * as appsync from 'aws-cdk-lib/aws-appsync';
+import { BaseDataSource } from 'aws-cdk-lib/aws-appsync';
 import { Construct } from 'constructs';
 import * as esbuild from 'esbuild';
 
-import { BaseDataSource } from 'aws-cdk-lib/aws-appsync';
 import { getLogicalName } from 'common/naming/get-logical-name';
+import { capFirstLetter, toDashCase } from 'common/naming/string-parser';
 import { Service } from 'common/service';
+import { readFileSync, writeFileSync } from 'fs';
 import { DynamoTablePrefab } from 'prefab/storage/dynamo/table';
 import { AppSyncPrefab } from '.';
 import { FunctionResolver } from './types';
@@ -12,6 +14,7 @@ import { FunctionResolver } from './types';
 type Resolver = {
   typeName: 'Mutation' | 'Query' | 'Subscription';
   resolversPipeline?: { name: string; dataSource?: BaseDataSource }[];
+  env?: Record<string, string>;
 };
 
 export type AppSyncResolverAggregateParams<T> = {
@@ -48,7 +51,9 @@ export class AppSyncResolverAggregate<T> extends Construct {
                 api: appSyncPrefab.api,
                 baseApiFolder,
                 dataSource: rp.dataSource || dataSource,
-                name: rp.name,
+                fieldName: fieldName,
+                resolverName: rp.name,
+                env: resolver.env,
               })
             )
           : [
@@ -56,7 +61,8 @@ export class AppSyncResolverAggregate<T> extends Construct {
                 api: appSyncPrefab.api,
                 dataSource,
                 baseApiFolder,
-                name: fieldName,
+                fieldName: fieldName,
+                env: resolver.env,
               }),
             ];
 
@@ -79,30 +85,45 @@ export class AppSyncResolverAggregate<T> extends Construct {
   };
 
   functionResolver = (service: Service, params: FunctionResolver): appsync.AppsyncFunction => {
-    return new appsync.AppsyncFunction(service, getLogicalName('function', params.name), {
-      api: params.api,
-      dataSource: params.dataSource,
-      name: params.name,
-      code: this.bundleAppSyncResolver(params.baseApiFolder, params.name),
-      runtime: appsync.FunctionRuntime.JS_1_0_0,
-    });
-  };
-
-  bundleAppSyncResolver = (baseApiFolder: string, name: string): appsync.Code => {
-    const file = `cdk.out/resolvers/${name}.js`;
-    esbuild.buildSync({
-      entryPoints: [`${baseApiFolder}/resolvers/${name}.ts`],
-      external: ['@aws-appsync/utils'],
-      allowOverwrite: true,
-      outfile: file,
-      bundle: true,
-      write: true,
-      platform: 'node',
-      target: 'esnext',
-      format: 'esm',
-      // minify: true,
-      sourcesContent: false,
-    });
-    return appsync.Code.fromAsset(file);
+    return new appsync.AppsyncFunction(
+      service,
+      getLogicalName('function', params.resolverName ? `${params.fieldName}${params.resolverName}` : params.fieldName),
+      {
+        api: params.api,
+        dataSource: params.dataSource,
+        name: params.resolverName ? `${params.fieldName}${capFirstLetter(params.resolverName)}` : params.fieldName,
+        code: bundleAppSyncResolver(params.baseApiFolder, params.fieldName, params.resolverName, params.env),
+        runtime: appsync.FunctionRuntime.JS_1_0_0,
+      }
+    );
   };
 }
+const bundleAppSyncResolver = (
+  baseApiFolder: string,
+  fieldName: string,
+  resolverName = 'index',
+  env: Record<string, string> | undefined
+): appsync.Code => {
+  const outFile = `cdk.out/resolvers/${toDashCase(fieldName)}/${resolverName}.js`;
+  esbuild.buildSync({
+    entryPoints: [`${baseApiFolder}/resolvers/${toDashCase(fieldName)}/${resolverName}.ts`],
+    external: ['@aws-appsync/utils'],
+    allowOverwrite: true,
+    outfile: outFile,
+    bundle: true,
+    write: true,
+    platform: 'node',
+    target: 'esnext',
+    format: 'esm',
+    sourcesContent: false,
+    // minify: true,
+  });
+  if (Object.keys(env || {}).length > 0) {
+    let mappedFile = readFileSync(outFile, 'utf8');
+    for (const [key, value] of Object.entries(env || {})) {
+      mappedFile = mappedFile.replace(new RegExp(key, 'gi'), value);
+    }
+    writeFileSync(outFile, mappedFile);
+  }
+  return appsync.Code.fromAsset(outFile);
+};

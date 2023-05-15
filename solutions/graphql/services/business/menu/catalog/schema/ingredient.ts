@@ -21,7 +21,7 @@ import { Ingredient, IngredientCreate, IngredientList, Measurement } from '../..
 export const AWSDateTime = new GraphQLScalarType({ name: 'AWSDateTime' });
 
 // Entities
-@ObjectType()
+@ObjectType('Ingredient')
 export class IngredientSchema implements Omit<Ingredient, 'type'> {
   //Key
   @Field((type) => ID)
@@ -58,8 +58,6 @@ export class IngredientQueryResult implements IngredientList {
   @Field((type) => String, { nullable: true })
   nextToken: IngredientList['nextToken'];
 }
-// @Field(() => [String])
-// ingredients: string[];
 
 // Inputs
 @InputType()

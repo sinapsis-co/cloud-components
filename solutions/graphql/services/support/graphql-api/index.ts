@@ -7,6 +7,7 @@ import { GlobalEventBus } from '@sinapsis-co/cc-services/support/global-event-bu
 
 import { GlobalCoordinator } from 'config/config-type';
 import { menuSchema } from 'services/business/menu/catalog';
+import { saleSchema } from 'services/business/sales/catalog';
 import { CdnApi } from '../cdn-api';
 
 class Dep extends ServiceDependencies {
@@ -31,7 +32,7 @@ export class GraphqlApi extends Service<GlobalCoordinator> {
     this.appSyncPrefab = new AppSyncPrefab(this, {
       name: 'graphql',
       baseFolder: __dirname,
-      schemas: [menuSchema.Ingredient.IngredientResolver],
+      schemas: [menuSchema.Ingredient.IngredientResolver, saleSchema.Sale.SaleResolver],
       cdnApiPrefab: dep.cdnApi.cdnApiPrefab,
       eventBusPrefab: dep.globalEventBus.eventBusPrefab,
     });

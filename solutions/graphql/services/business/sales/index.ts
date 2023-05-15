@@ -7,8 +7,8 @@ import { GlobalEventBus } from '@sinapsis-co/cc-services/support/global-event-bu
 
 import { GlobalCoordinator } from 'solutions/graphql/config/config-type';
 import { GraphqlApi } from 'solutions/graphql/services/support/graphql-api';
-import { IngredientResolver } from './catalog/schema/ingredient';
-import { IngredientsStoreTable } from './store/table-ingredient';
+import { SaleResolver } from './catalog/schema/sale';
+import { StoreTableSale } from './store/table-sale';
 
 class Dep extends ServiceDependencies {
   @DepCheck()
@@ -17,27 +17,30 @@ class Dep extends ServiceDependencies {
   graphqlApi: GraphqlApi;
 }
 
-export class Menu extends Service<GlobalCoordinator> {
+export class Sales extends Service<GlobalCoordinator> {
   constructor(coordinator: GlobalCoordinator) {
-    super(coordinator, Menu.name, Dep);
+    super(coordinator, Sales.name, Dep);
     coordinator.addService(this);
   }
 
   build(dep: Dep): void {
-    const ingredientsTable = new DynamoTablePrefab(this, IngredientsStoreTable);
-    new AppSyncResolverAggregate<IngredientResolver>(this, {
+    const salesTable = new DynamoTablePrefab(this, StoreTableSale);
+
+    new AppSyncResolverAggregate<SaleResolver>(this, {
       appSyncPrefab: dep.graphqlApi.appSyncPrefab,
       baseApiFolder: __dirname,
-      tablePrefab: ingredientsTable,
+      tablePrefab: salesTable,
       resolvers: {
-        ingredientGet: { typeName: 'Query' },
-        ingredientList: { typeName: 'Query' },
-        ingredientCreate: {
+        saleGet: { typeName: 'Query' },
+        saleList: { typeName: 'Query' },
+        saleByProduct: { typeName: 'Query' },
+        saleCreate: {
           typeName: 'Mutation',
           resolversPipeline: [
             { name: 'store' },
             { name: 'dispatch', dataSource: dep.graphqlApi.appSyncPrefab.eventBridgeDataSource },
           ],
+          env: { _envName_: this.props.envName },
         },
       },
     });

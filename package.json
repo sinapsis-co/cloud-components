@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@types/aws-lambda": "^8.10.108",
+    "@types/babel__core": "^7.20.0",
     "@types/node": "^18.11.7",
     "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@typescript-eslint/parser": "^5.54.0",

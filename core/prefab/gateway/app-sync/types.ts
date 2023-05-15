@@ -19,8 +19,10 @@ export type ServiceResolver = {
 };
 
 export type FunctionResolver = {
-  name: string;
+  fieldName: string;
+  resolverName?: string;
   baseApiFolder: string;
   api: GraphqlApi;
   dataSource: BaseDataSource;
+  env?: Record<string, string>;
 };

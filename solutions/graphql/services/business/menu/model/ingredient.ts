@@ -1,7 +1,7 @@
 import { Model } from '@sinapsis-co/cc-sdk/model';
 
 export type IngredientModel = Model<{
-  type: 'ingredient';
+  type: 'Ingredient';
   key: {
     id: string;
   };

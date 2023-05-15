@@ -11,6 +11,7 @@ import { DnsSubdomainHostedZone } from '@sinapsis-co/cc-services/support/dns-sub
 import { GlobalEventBus } from '@sinapsis-co/cc-services/support/global-event-bus';
 import { Notifications } from '@sinapsis-co/cc-services/support/notifications';
 
+import { Sales } from 'services/business/sales';
 import { CdnApi } from 'services/support/cdn-api';
 import { Menu } from './services/business/menu';
 import { GraphqlApi } from './services/support/graphql-api';
@@ -31,5 +32,6 @@ new Assets(coordinator);
 // Business
 new Identity(coordinator);
 new Menu(coordinator);
+new Sales(coordinator);
 
 coordinator.build();
