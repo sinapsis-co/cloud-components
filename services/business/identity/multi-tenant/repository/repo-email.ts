@@ -3,12 +3,12 @@ import { EmailModel } from '../model/email';
 import { IdentityStoreTable } from '../store/table-identity';
 
 export const repoEmail = repository<IdentityStoreTable, EmailModel>(IdentityStoreTable, {
-  type: 'email',
+  type: 'Email',
   tableName: 'identity',
   keySerialize: (key) => {
     return {
-      PK: `email#${key.email}`,
-      SK: `email#${key.email}`,
+      PK: `EMAIL#${key.email}`,
+      SK: `EMAIL#${key.email}`,
     };
   },
   // indexSerialize: () => {

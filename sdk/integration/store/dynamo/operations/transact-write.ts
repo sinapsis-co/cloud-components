@@ -1,24 +1,42 @@
-import { Put } from '@aws-sdk/client-dynamodb';
 import { TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 
 import { PlatformError, PlatformFault } from 'error';
 import { Model } from 'model';
 import { traceableFunction } from 'tracing';
 import { OperationConfigComposite } from '../types/config';
+import { TransactWriteFn } from '../types/operations';
 import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
+import { updateMapper } from '../util/update-mapper';
 
-export const transactWrite = <T extends TableStoreBuilder>(operationConfig: OperationConfigComposite<T>): any => {
-  return async (items: { entity: Model['Entity']; params?: Omit<Put, 'TableName' | 'Item'> }[]): Promise<void> => {
+export const transactWrite = <T extends TableStoreBuilder, M extends Model>(
+  operationConfig: OperationConfigComposite<T>
+): TransactWriteFn<M> => {
+  return async ({ putItems, deleteItems, updateItems }): Promise<void> => {
     const tableName = process.env[parseTableName(operationConfig.tableName)];
 
     const cmd = async () => {
       await operationConfig.dynamoClient
         .send(
           new TransactWriteCommand({
-            TransactItems: items.map((i) => {
-              return { Put: { TableName: tableName, Item: i.entity, ...i.params } };
-            }),
+            TransactItems: [
+              ...(putItems?.map((i) => {
+                return { Put: { TableName: tableName, Item: i.entity, ...i.params } };
+              }) || []),
+              ...(updateItems?.map((i) => {
+                return {
+                  Update: {
+                    TableName: tableName,
+                    Key: i.key,
+                    ...updateMapper(i.body),
+                    ...i.params,
+                  },
+                };
+              }) || []),
+              ...(deleteItems?.map((i) => {
+                return { Delete: { TableName: tableName, Key: i.key, ...i.params } };
+              }) || []),
+            ],
           })
         )
         .catch((e) => {

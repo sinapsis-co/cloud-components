@@ -6,7 +6,7 @@ import { authMdw, authScope } from '../../platform/authorization';
 
 export type Interface = ApiInterface<{
   response: InviteModel['Entity'];
-  pathParams: Pick<InviteModel['Key'], 'id'>;
+  pathParams: Pick<InviteModel['Key'], 'inviteId'>;
   body: EmptyObject;
   claims: UserClaims;
   queryParams: EmptyObject;
@@ -16,7 +16,7 @@ export const definition: ApiDefinition<Interface> = {
   name: 'api-invite-delete',
   method: 'DELETE',
   basePath: 'identity',
-  path: '/invite/{id}',
+  path: '/invite/{inviteId}',
   tablePermission: 'write',
   scope: authScope.owner,
   authorizationMdw: authMdw,

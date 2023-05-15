@@ -1,1 +1,1 @@
-export * as menuSchema from './schema';
+export * as ingredientSchema from './schema/ingredient';

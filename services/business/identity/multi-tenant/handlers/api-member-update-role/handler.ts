@@ -11,7 +11,7 @@ import { repoUser } from '../../repository/repo-user';
 export const handler = apiHandler(async (_, req) => {
   const { tenantId } = req.claims;
   if (!Object.keys(authScope).includes(req.body.role)) throw new CustomError({ code: 'ERROR_IDENTITY_INVALID_ROLE' });
-  const user = await repoUser.updateItem({ tenantId, id: req.pathParams.id }, req.body);
+  const user = await repoUser.updateItem({ tenantId, userId: req.pathParams.userId }, req.body);
   await updateCognitoUser(user.email, cognitoUpdateCustomMapper(req.body));
   return user;
 }, identityApi.memberUpdateRole.definition);

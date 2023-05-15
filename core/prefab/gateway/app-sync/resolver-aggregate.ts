@@ -12,7 +12,7 @@ import { AppSyncPrefab } from '.';
 import { FunctionResolver } from './types';
 
 type Resolver = {
-  typeName: 'Mutation' | 'Query' | 'Subscription';
+  typeName: string;
   resolversPipeline?: { name: string; dataSource?: BaseDataSource }[];
   env?: Record<string, string>;
 };

@@ -8,7 +8,7 @@ export const cognitoToProfileMapper = (userCognito: UserCognito): UserModel['Bod
   return {
     tenantId: userCognito.custom.tenantId,
     companyName: userCognito.custom.companyName,
-    id: userCognito.standard.sub,
+    userId: userCognito.standard.sub,
     email: userCognito.standard.email,
     givenName: userCognito.standard.given_name,
     familyName: userCognito.standard.family_name,
@@ -18,7 +18,7 @@ export const cognitoToProfileMapper = (userCognito: UserCognito): UserModel['Bod
 
 export const cognitoUpdateStandardMapper = (userProfile: Partial<UserModel['Entity']>): AttributeListType => {
   const mapper = {
-    sub: userProfile.id,
+    sub: userProfile.userId,
     given_name: userProfile.givenName,
     family_name: userProfile.familyName,
     email: userProfile.email,

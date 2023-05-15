@@ -3,12 +3,12 @@ import { InviteModel } from '../model/invite';
 import { IdentityStoreTable } from '../store/table-identity';
 
 export const repoInvite = repository<IdentityStoreTable, InviteModel>(IdentityStoreTable, {
-  type: 'invite',
+  type: 'Invite',
   tableName: 'identity',
   keySerialize: (key) => {
     return {
       PK: key.tenantId,
-      SK: `invite#${key.id}`,
+      SK: `INVITE#${key.inviteId}`,
     };
   },
   // indexSerialize: (entity: InviteModel['Entity']) => {

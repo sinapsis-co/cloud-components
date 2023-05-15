@@ -5,30 +5,31 @@ import { DynamoTablePrefab } from '@sinapsis-co/cc-core/prefab/storage/dynamo/ta
 
 import { GlobalCoordinator } from 'solutions/graphql/config/config-type';
 import { GraphqlApi } from 'solutions/graphql/services/support/graphql-api';
-import { IngredientResolver } from './catalog/schema/ingredient';
-import { IngredientsStoreTable } from './store/table-ingredient';
+import { ProductResolver } from './catalog/schema/product';
+import { ProductsStoreTable } from './store/table-product';
 
 class Dep extends ServiceDependencies {
   @DepCheck()
   graphqlApi: GraphqlApi;
 }
 
-export class Menu extends Service<GlobalCoordinator> {
+export class Product extends Service<GlobalCoordinator> {
   constructor(coordinator: GlobalCoordinator) {
-    super(coordinator, Menu.name, Dep);
+    super(coordinator, Product.name, Dep);
     coordinator.addService(this);
   }
 
   build(dep: Dep): void {
-    const ingredientsTable = new DynamoTablePrefab(this, IngredientsStoreTable);
-    new AppSyncResolverAggregate<IngredientResolver>(this, {
+    const productsTable = new DynamoTablePrefab(this, ProductsStoreTable);
+
+    new AppSyncResolverAggregate<ProductResolver>(this, {
       appSyncPrefab: dep.graphqlApi.appSyncPrefab,
       baseApiFolder: __dirname,
-      tablePrefab: ingredientsTable,
+      tablePrefab: productsTable,
       resolvers: {
-        ingredientGet: { typeName: 'Query' },
-        ingredientList: { typeName: 'Query' },
-        ingredientCreate: {
+        productGet: { typeName: 'Query' },
+        productList: { typeName: 'Query' },
+        productCreate: {
           typeName: 'Mutation',
           resolversPipeline: [
             { name: 'store' },

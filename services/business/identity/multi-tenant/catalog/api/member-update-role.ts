@@ -7,7 +7,7 @@ import { authMdw, authScope } from '../../platform/authorization';
 
 export type Interface = ApiInterface<{
   response: UserModel['Entity'];
-  pathParams: Pick<UserModel['Key'], 'id'>;
+  pathParams: Pick<UserModel['Key'], 'userId'>;
   body: Pick<UserModel['Body'], 'role'>;
   claims: UserClaims;
   queryParams: EmptyObject;
@@ -18,7 +18,7 @@ export const definition: ApiDefinition<Interface> = {
   name: 'api-member-update-role',
   method: 'PUT',
   basePath: 'identity',
-  path: '/member/{id}',
+  path: '/member/{userId}',
   tablePermission: 'write',
   scope: authScope.owner,
   authorizationMdw: authMdw,

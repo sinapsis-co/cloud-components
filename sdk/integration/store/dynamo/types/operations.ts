@@ -1,3 +1,4 @@
+import { Delete, Put, Update } from '@aws-sdk/client-dynamodb';
 import * as Dynamo from '@aws-sdk/lib-dynamodb';
 import { PaginatedResponse } from 'catalog/api';
 import { Model } from 'model';
@@ -72,3 +73,15 @@ export type ListIndexFn<M extends Model, T extends TableStoreBuilder> = (
   queryParams: { limit: number; nextToken?: string },
   params?: Partial<Dynamo.QueryCommandInput>
 ) => Promise<M['List']>;
+
+type Ops<M extends Model> = {
+  putItems?: { entity: M['Entity']; params?: Omit<Put, 'TableName' | 'Item'> }[];
+  updateItems?: {
+    key: M['Key'];
+    body: Partial<M['Body']>;
+    params?: Omit<Update, 'TableName' | 'Key' | 'UpdateExpression'>;
+  }[];
+  deleteItems?: { key: M['Key']; params?: Omit<Delete, 'TableName' | 'Key'> }[];
+};
+
+export type TransactWriteFn<M extends Model> = ({ putItems, updateItems, deleteItems }: Ops<M>) => Promise<void>;

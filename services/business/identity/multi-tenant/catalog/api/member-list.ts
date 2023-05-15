@@ -10,7 +10,7 @@ export type Interface = api.ApiInterface<{
   pathParams: api.EmptyObject;
   body: api.EmptyObject;
   claims: UserClaims;
-  queryParams: api.PaginatedQueryParams & { filter?: 'users' | 'invite' };
+  queryParams: api.PaginatedQueryParams & { filter?: 'users' | 'invites' };
 }>;
 
 export const definition: api.ApiDefinition<Interface> = {

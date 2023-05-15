@@ -5,6 +5,7 @@ import { scanTable } from './operations/scan';
 import { Model } from '../../../model';
 import { dynamodb } from './client';
 import { entityDeserialize } from './mappers';
+import { transactWrite } from './operations/transact-write';
 import { OperationConfigView, ViewConfig } from './types/config';
 import { TableStoreBuilder } from './types/table-store-builder';
 import { RepositoryView } from './types/view';
@@ -23,5 +24,6 @@ export const viewRepository = <T extends TableStoreBuilder, M extends Model>(
     listItem: listItem(operationConfig),
     scanTable: scanTable(operationConfig),
     listIndex: listIndex(operationConfig),
+    transactWrite: transactWrite(operationConfig),
   };
 };

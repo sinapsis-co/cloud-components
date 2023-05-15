@@ -9,7 +9,7 @@ export const handler = apiHandler(async (_, req) => {
   const { tenantId, sub, email } = req.claims;
 
   const [profile] = await Promise.all([
-    repoUser.updateItem({ tenantId, id: sub }, req.body),
+    repoUser.updateItem({ tenantId, userId: sub }, req.body),
     updateCognitoUser(email, cognitoUpdateStandardMapper(req.body)),
   ]);
   return profile;

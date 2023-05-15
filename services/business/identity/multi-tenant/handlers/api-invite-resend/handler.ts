@@ -9,8 +9,8 @@ import { repoInvite } from '../../repository/repo-invite';
 
 export const handler = apiHandler(async (_, req) => {
   const { tenantId } = req.claims;
-  const { id } = req.pathParams;
-  const invite = await repoInvite.getItem({ tenantId, id });
+  const { inviteId } = req.pathParams;
+  const invite = await repoInvite.getItem({ tenantId, inviteId });
 
   await dispatchEvent<notificationEvent.dispatch.Event<UserInviteTemplate>>(notificationEvent.dispatch.eventConfig, {
     via: 'email',

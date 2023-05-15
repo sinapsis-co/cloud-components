@@ -5,7 +5,7 @@ import { AuthScope } from '../platform/authorization';
 
 export type UserModel = Model<
   {
-    type: 'user';
+    type: 'User';
     body: {
       email: string;
       givenName: string;
@@ -18,7 +18,7 @@ export type UserModel = Model<
     };
     key: {
       tenantId: string;
-      id: string;
+      userId: string;
     };
   },
   {

@@ -6,7 +6,7 @@ import { DnsSubdomainCertificate } from '@sinapsis-co/cc-services/support/dns-su
 import { GlobalEventBus } from '@sinapsis-co/cc-services/support/global-event-bus';
 
 import { GlobalCoordinator } from 'config/config-type';
-import { menuSchema } from 'services/business/menu/catalog';
+import { ingredientSchema } from 'services/business/menu/catalog';
 import { saleSchema } from 'services/business/sales/catalog';
 import { CdnApi } from '../cdn-api';
 
@@ -17,6 +17,7 @@ class Dep extends ServiceDependencies {
   globalEventBus: GlobalEventBus;
   @DepCheck()
   cdnApi: CdnApi;
+  // @DepCheck()
   // identity: Identity;
 }
 
@@ -32,7 +33,7 @@ export class GraphqlApi extends Service<GlobalCoordinator> {
     this.appSyncPrefab = new AppSyncPrefab(this, {
       name: 'graphql',
       baseFolder: __dirname,
-      schemas: [menuSchema.Ingredient.IngredientResolver, saleSchema.Sale.SaleResolver],
+      schemas: [ingredientSchema.IngredientResolver, saleSchema.SaleResolver],
       cdnApiPrefab: dep.cdnApi.cdnApiPrefab,
       eventBusPrefab: dep.globalEventBus.eventBusPrefab,
     });

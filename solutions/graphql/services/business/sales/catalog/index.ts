@@ -1,1 +1,1 @@
-export * as saleSchema from './schema';
+export * as saleSchema from './schema/sale';

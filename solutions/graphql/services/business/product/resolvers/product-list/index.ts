@@ -1,5 +1,5 @@
 import { ListReqContext, ListResContext, PaginatedInput } from '@sinapsis-co/cc-sdk/handler/resolver';
-import { IngredientModel } from '../../model/ingredient';
+import { ProductModel } from '../../model/product';
 
 export const request: ListReqContext<PaginatedInput> = (ctx) => {
   const { input } = ctx.args;
@@ -9,6 +9,6 @@ export const request: ListReqContext<PaginatedInput> = (ctx) => {
   };
 };
 
-export const response: ListResContext<IngredientModel> = (ctx) => {
+export const response: ListResContext<ProductModel> = (ctx) => {
   return ctx.result;
 };

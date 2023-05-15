@@ -2,7 +2,7 @@ import { Model } from '@sinapsis-co/cc-sdk/model';
 import { AuthScope } from '../platform/authorization';
 
 export type InviteModel = Model<{
-  type: 'invite';
+  type: 'Invite';
   body: {
     email: string;
     companyName: string;
@@ -10,7 +10,7 @@ export type InviteModel = Model<{
   };
   key: {
     tenantId: string;
-    id: string;
+    inviteId: string;
   };
 }>;
 
