@@ -4,6 +4,7 @@ import {
   CognitoIdentityProviderClient,
   SignUpCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
+import { getServiceName } from '@sinapsis-co/cc-core/common/naming/get-service-name';
 import { assumeRole } from '../../common/synth/assume-role';
 import { preScript } from '../../common/synth/pre-script';
 import {
@@ -45,10 +46,10 @@ export const createUser = async <
       args
     );
 
-    const identityServiceKey = `${globalConstConfig.projectName}-${envNameInput}-Identity`
-      .split('-')
-      .map((w) => `${w.charAt(0).toUpperCase()}${w.slice(1)}`)
-      .join('-');
+    const identityServiceKey = getServiceName('Identity', {
+      envName: envNameInput,
+      projectName: globalConstConfig.projectName,
+    });
     if (!identityServiceKey)
       throw new Error('Missing Service. Please deploy it in order to run this command: yarn deploy [env] Identity');
     const clientIdKey = Object.keys(output[identityServiceKey]).find((w) =>
@@ -78,7 +79,10 @@ export const createUser = async <
       { Name: 'given_name', Value: name },
       { Name: 'family_name', Value: name },
     ];
-    if (tenant) att.push({ Name: 'custom:companyName', Value: tenant });
+    if (tenant) {
+      const [name, value] = tenant.split('@');
+      att.push({ Name: `custom:${name}`, Value: value });
+    }
 
     console.log('>> STEP: (2/3) => SIGN UP');
     await cognito.send(

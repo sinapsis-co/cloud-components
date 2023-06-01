@@ -6,4 +6,7 @@ export * as memberList from './member-list';
 export * as memberUpdateRole from './member-update-role';
 export * as tenantDelete from './tenant-delete';
 export * as userGet from './user-get';
+export * as userListOrg from './user-list-org';
 export * as userUpdate from './user-update';
+export * as workspaceCreate from './workspace-create';
+export * as workspaceList from './workspace-list';

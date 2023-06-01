@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { getServiceName } from '@sinapsis-co/cc-core/common/naming/get-service-name';
 import { preScript } from '../../common/synth/pre-script';
 import {
   BaseDeployTargetName,
@@ -26,18 +27,20 @@ export const genPostmanEnv = async <
 
     const { envNameInput } = await preScript(globalConstConfig, globalEnvConfig, globalDeployTargetConfig, args);
 
-    const identityServiceKey = `${globalConstConfig.projectName}-${envNameInput}-Identity`
-      .split('-')
-      .map((w) => `${w.charAt(0).toUpperCase()}${w.slice(1)}`)
-      .join('-');
+    const identityServiceKey = getServiceName('Identity', {
+      envName: envNameInput,
+      projectName: globalConstConfig.projectName,
+    });
+
     const clientIdKey = Object.keys(output[identityServiceKey]).find((w) =>
       w.startsWith('CognitoAuthPoolPrefabUserPoolClient')
     );
 
-    const cdnApiServiceKey = `${globalConstConfig.projectName}-${envNameInput}-CdnApi`
-      .split('-')
-      .map((w) => `${w.charAt(0).toUpperCase()}${w.slice(1)}`)
-      .join('-');
+    const cdnApiServiceKey = getServiceName('CdnApi', {
+      envName: envNameInput,
+      projectName: globalConstConfig.projectName,
+    });
+
     const apiUrlKey = Object.keys(output[cdnApiServiceKey]).find((w) => w.startsWith('CdnApiPrefabapiDomain'));
     if (!clientIdKey || !apiUrlKey) throw new Error('Missing output');
 

@@ -6,10 +6,10 @@ import { cognitoUpdateStandardMapper } from '../../platform/cognito-mapper';
 import { repoUser } from '../../repository/repo-user';
 
 export const handler = apiHandler(async (_, req) => {
-  const { tenantId, sub, email } = req.claims;
+  const { sub, email } = req.claims;
 
   const [profile] = await Promise.all([
-    repoUser.updateItem({ tenantId, userId: sub }, req.body),
+    repoUser.updateItem({ userId: sub }, req.body),
     updateCognitoUser(email, cognitoUpdateStandardMapper(req.body)),
   ]);
   return profile;

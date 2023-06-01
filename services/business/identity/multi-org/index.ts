@@ -11,7 +11,6 @@ import { Duration } from 'aws-cdk-lib';
 import { UserPoolOperation } from 'aws-cdk-lib/aws-cognito';
 
 import { GlobalCoordinator } from '@sinapsis-co/cc-services/config/config-type';
-import { assetEvent } from '@sinapsis-co/cc-services/support/assets/catalog';
 import { CdnApi } from '@sinapsis-co/cc-services/support/cdn-api';
 import { DnsSubdomainCertificate } from '@sinapsis-co/cc-services/support/dns-subdomain-certificate';
 import { GlobalEventBus } from '@sinapsis-co/cc-services/support/global-event-bus';
@@ -63,37 +62,38 @@ export class Identity extends Service<GlobalCoordinator> {
       eventBus: dep.globalEventBus.eventBusPrefab,
       tableBuilder: IdentityStoreTable,
       handlers: {
-        inviteCreate: {
-          ...identityApi.inviteCreate.definition,
-          environment: {
-            PROJECT_NAME: this.props.projectName,
-            WEBAPP_URL: getDomain(this.props.subdomain.spaWebapp, this.props),
-            MEDIA_URL: getDomain(this.props.subdomain.assets, this.props),
-          },
-        },
-        inviteResend: {
-          ...identityApi.inviteResend.definition,
-          environment: {
-            PROJECT_NAME: this.props.projectName,
-            WEBAPP_URL: getDomain(this.props.subdomain.spaWebapp, this.props),
-            MEDIA_URL: getDomain(this.props.subdomain.assets, this.props),
-          },
-        },
-        inviteDelete: identityApi.inviteDelete.definition,
-        memberList: {
-          ...identityApi.memberList.definition,
-          environment: {
-            MEDIA_URL: getDomain(this.props.subdomain.assets, this.props, true),
-          },
-        },
-        memberRoleUpdate: {
-          ...identityApi.memberUpdateRole.definition,
-          modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.updateUserAtt])],
-        },
-        memberDelete: {
-          ...identityApi.memberDelete.definition,
-          modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.deleteUser])],
-        },
+        // inviteCreate: {
+        //   ...identityApi.inviteCreate.definition,
+        //   environment: {
+        //     PROJECT_NAME: this.props.projectName,
+        //     WEBAPP_URL: getDomain(this.props.subdomain.spaWebapp, this.props),
+        //     MEDIA_URL: getDomain(this.props.subdomain.assets, this.props),
+        //   },
+        // },
+        // inviteResend: {
+        //   ...identityApi.inviteResend.definition,
+        //   environment: {
+        //     PROJECT_NAME: this.props.projectName,
+        //     WEBAPP_URL: getDomain(this.props.subdomain.spaWebapp, this.props),
+        //     MEDIA_URL: getDomain(this.props.subdomain.assets, this.props),
+        //   },
+        // },
+        // inviteDelete: identityApi.inviteDelete.definition,
+        // memberList: {
+        //   ...identityApi.memberList.definition,
+        //   environment: {
+        //     MEDIA_URL: getDomain(this.props.subdomain.assets, this.props, true),
+        //   },
+        // },
+        // memberRoleUpdate: {
+        //   ...identityApi.memberUpdateRole.definition,
+        //   modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.updateUserAtt])],
+        // },
+        // memberDelete: {
+        //   ...identityApi.memberDelete.definition,
+        //   modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.deleteUser])],
+        // },
+        // tenantDelete: identityApi.tenantDelete.definition,
         userGet: {
           ...identityApi.userGet.definition,
           environment: {
@@ -104,7 +104,7 @@ export class Identity extends Service<GlobalCoordinator> {
           ...identityApi.userUpdate.definition,
           modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.updateUserAtt])],
         },
-        tenantDelete: identityApi.tenantDelete.definition,
+        workspaceCreate: identityApi.workspaceCreate.definition,
       },
     });
 
@@ -147,26 +147,31 @@ export class Identity extends Service<GlobalCoordinator> {
       eventBus: dep.globalEventBus.eventBusPrefab,
       tablePrefab: this.apiAggregate.tablePrefab,
       handlers: {
-        eventNotificationDispatch: {
-          name: 'event-asset-updated',
-          eventConfig: [{ ...assetEvent.assetUploaded.eventConfig, detail: { assetType: ['avatar'] } }],
-          tablePermission: 'write',
+        // eventNotificationDispatch: {
+        //   name: 'event-asset-updated',
+        //   eventConfig: [{ ...assetEvent.assetUploaded.eventConfig, detail: { assetType: ['avatar'] } }],
+        //   tablePermission: 'write',
+        // },
+        // eventMemberDisabled: {
+        //   name: 'event-member-disabled',
+        //   eventConfig: [identityEvent.memberDisabled.eventConfig],
+        //   tablePermission: 'read',
+        //   modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.updateUserAtt])],
+        // },
+        // eventInviteDeleted: {
+        //   name: 'event-invite-deleted',
+        //   eventConfig: [identityEvent.inviteDeleted.eventConfig],
+        //   tablePermission: 'write',
+        // },
+        eventWorkspaceCreated: {
+          name: 'event-workspace-created',
+          eventConfig: [identityEvent.workspaceCreated.eventConfig],
+          tablePermission: 'readWrite',
         },
-        eventTenantDeleted: {
-          name: 'event-tenant-deleted',
-          eventConfig: [identityEvent.tenantDeleted.eventConfig],
-          tablePermission: 'read',
-        },
-        eventInviteDeleted: {
-          name: 'event-invite-deleted',
-          eventConfig: [identityEvent.inviteDeleted.eventConfig],
-          tablePermission: 'write',
-        },
-        eventMemberDisabled: {
-          name: 'event-member-disabled',
-          eventConfig: [identityEvent.memberDisabled.eventConfig],
-          tablePermission: 'read',
-          modifiers: [this.authPool.useMod([CognitoAuthPoolPrefab.modifier.updateUserAtt])],
+        eventOrgSignup: {
+          name: 'event-org-signup',
+          eventConfig: [identityEvent.orgSignUp.eventConfig],
+          tablePermission: 'readWrite',
         },
       },
     });

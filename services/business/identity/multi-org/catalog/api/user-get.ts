@@ -1,8 +1,9 @@
 import { ApiDefinition, ApiInterface, EmptyObject } from '@sinapsis-co/cc-sdk/catalog/api';
 
+import { authScope } from '../../entities/role';
 import { UserClaims } from '../../entities/user-cognito';
 import { UserModel } from '../../model/user';
-import { authMdw, authScope } from '../../platform/authorization';
+import { authMdw } from '../../platform/authorization';
 
 export type Interface = ApiInterface<{
   response: UserModel['Entity'];
@@ -18,6 +19,6 @@ export const definition: ApiDefinition<Interface> = {
   basePath: 'identity',
   path: '/user',
   tablePermission: 'read',
-  scope: authScope.member,
+  scope: authScope.guest,
   authorizationMdw: authMdw,
 };

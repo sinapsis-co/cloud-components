@@ -1,13 +1,7 @@
 import { ApiDefinition, ApiInterface, ApiInterfaceRequest } from '@sinapsis-co/cc-sdk/catalog/api';
 import { PlatformError } from '@sinapsis-co/cc-sdk/error';
 
-export type AuthScope = 'owner' | 'member' | 'guest';
-
-export const authScope: Record<AuthScope, string> = {
-  owner: '2',
-  member: '1',
-  guest: '0',
-};
+import { Role, authScope } from '../entities/role';
 
 export const authMdw: ApiDefinition<ApiInterface>['authorizationMdw'] = (
   request: ApiInterfaceRequest,
@@ -18,7 +12,7 @@ export const authMdw: ApiDefinition<ApiInterface>['authorizationMdw'] = (
 
   if (!orgId) return;
 
-  const currentRoleLevel: number = parseInt(authScope[userId as AuthScope]);
+  const currentRoleLevel: number = parseInt(authScope[userId as Role]);
   const apiScopeLevel: number = parseInt(apiScope || '2');
 
   if (currentRoleLevel < apiScopeLevel) {

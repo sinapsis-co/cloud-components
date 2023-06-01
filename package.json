@@ -17,17 +17,18 @@
       "solutions/base/services/**/*",
       "solutions/appsync",
       "solutions/appsync/services/**/*",
-      "solutions/ecs",
-      "solutions/ecs/services/**/*"
+      "solutions/container",
+      "solutions/container/services/**/*"
     ],
     "nohoist": [
       "solutions/appsync/frontend/*",
-      "solutions/ecs/frontend/*",
+      "solutions/container/frontend/*",
       "solutions/base/frontend/*"
     ]
   },
   "scripts": {
     "release": "bash ./tools/scripts/release.bash",
+    "invoke": "bash ./tools/scripts/invoke.bash",
     "generate": "bash ./tools/scripts/generate.bash"
   },
   "lint-staged": {

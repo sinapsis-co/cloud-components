@@ -5,6 +5,7 @@ export const globalConstConfig: GlobalConstConfig = {
   projectShortName: 'appsync',
   useRepositoryDefaultConfig: true,
   repositoryName: 'cloud-components',
+
   pipelineNotificationSlackChannel: 'cloud-components',
   defaultSlackDestinationDisabled: false,
   bootstrappingServices: ['DnsSubdomainHostedZone'],

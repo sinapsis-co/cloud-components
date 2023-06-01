@@ -41,7 +41,7 @@ export class DynamoTablePrefab extends Construct {
       // stream: params.stream,
     });
 
-    const indexes = definition.indexes;
+    const indexes = { ...definition.attIndexes, ...definition.genericIndexes };
     if (indexes) {
       const indexKeys = Object.keys(indexes);
       indexKeys.forEach((indexKey) => {

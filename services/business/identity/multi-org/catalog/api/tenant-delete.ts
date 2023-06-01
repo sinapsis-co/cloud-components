@@ -1,7 +1,8 @@
 import { ApiDefinition, ApiInterface, EmptyObject } from '@sinapsis-co/cc-sdk/catalog/api';
 
+import { authScope } from '../../entities/role';
 import { UserClaims } from '../../entities/user-cognito';
-import { authMdw, authScope } from '../../platform/authorization';
+import { authMdw } from '../../platform/authorization';
 
 export type Interface = ApiInterface<{
   response: { deleteInProgress: boolean };

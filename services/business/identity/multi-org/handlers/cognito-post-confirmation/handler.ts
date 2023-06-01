@@ -2,15 +2,11 @@ import { dispatchEvent } from '@sinapsis-co/cc-sdk/integration/event/dispatch-ev
 import { PostConfirmationTriggerHandler } from 'aws-lambda';
 
 import { CustomError } from '@sinapsis-co/cc-services/config/error-catalog';
-import { WelcomeTemplate } from '@sinapsis-co/cc-services/notifications/templates/welcome';
-import { notificationEvent } from '@sinapsis-co/cc-services/support/notifications/catalog';
 
+import { identityEvent } from '../../catalog';
 import { UserCognito } from '../../entities/user-cognito';
 import { cognitoToProfileMapper } from '../../platform/cognito-mapper';
-import { repoEmail } from '../../repository/repo-email';
 import { repoInvite } from '../../repository/repo-invite';
-import { repoUser } from '../../repository/repo-user';
-import { viewEmail } from '../../repository/views';
 
 export const handler: PostConfirmationTriggerHandler = async (event) => {
   const { userAttributes } = event.request;
@@ -26,61 +22,68 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
       given_name: userAttributes['given_name'],
       family_name: userAttributes['family_name'],
     },
-    custom: {
-      orgName: userAttributes['custom:orgName'],
-    },
+    custom: {},
   };
+  const userInput = cognitoToProfileMapper(userCognito);
 
   // Check if the user has an invitation
-  const [inviteTenantId, inviteId] = userAttributes['custom:orgName'].split('#');
-  const userWithInvite = await repoInvite.deleteItem({ inviteId: inviteId }).catch((e) => {
+  const orgNameOrInviteId = userAttributes['custom:orgName'];
+  const userWithInvite = await repoInvite.deleteItem({ inviteId: orgNameOrInviteId }).catch((e) => {
     if (e instanceof CustomError && e.errorCode === 'ERROR_ITEM_NOT_FOUND') return;
     throw e;
   });
+
   if (userWithInvite) {
-    userCognito.custom.orgName = userWithInvite.orgName;
+    if (userWithInvite.workspaceId) {
+      await dispatchEvent(identityEvent.guestSignUp.eventConfig, {
+        userInput,
+        orgId: userWithInvite.orgId,
+        workspaceId: userWithInvite.workspaceId,
+      });
+    } else {
+      await dispatchEvent(identityEvent.memberSignUp.eventConfig, { userInput, orgId: userWithInvite.orgId });
+    }
+  } else {
+    await dispatchEvent(identityEvent.orgSignUp.eventConfig, { userInput, orgName: orgNameOrInviteId });
   }
 
-  const { userId, ...att } = cognitoToProfileMapper(userCognito);
+  // const { userId, ...att } = cognitoToProfileMapper(userCognito);
 
-  const userEntity = repoUser.entitySerialized(
-    { userId },
-    { ...att, ...(userWithInvite ? {} : { tenantOwner: true }) }
-  );
-  const emailEntity = repoEmail.entitySerialized(
-    { email: userCognito.standard.email },
-    {
-      email: userCognito.standard.email,
-    }
-  );
+  // const userEntity = repoUser.entitySerialized(
+  //   { userId },
+  //   { ...att, ...(userWithInvite ? {} : { tenantOwner: true }) }
+  // );
+  // const emailEntity = repoEmail.entitySerialized(
+  //   { email: userCognito.standard.email },
+  //   { email: userCognito.standard.email }
+  // );
 
-  // HINT: If you don't need to send the welcome email, it's just delete it from the array
-  await Promise.all([
-    // ...[
-    //   userWithInvite
-    //     ? dispatchEvent(identityEvent.memberCreated.eventConfig, { userId, ...att })
-    //     : dispatchEvent(identityEvent.tenantCreated.eventConfig, {
-    //         companyName: att.companyName,
-    //         ownerEmail: att.email,
-    //       }),
-    // ],
-    viewEmail.transactWrite({ putItems: [{ entity: userEntity }, { entity: emailEntity }] }),
-    dispatchEvent<notificationEvent.dispatch.Event<WelcomeTemplate>>(notificationEvent.dispatch.eventConfig, {
-      via: 'email',
-      addressTo: userCognito.standard.email,
-      template: {
-        templateName: 'welcome',
-        payload: {
-          currentYear: new Date().getFullYear().toString(),
-          siteUrl: process.env.WEBAPP_URL!,
-          baseAssetUrl: process.env.MEDIA_URL!,
-          projectName: process.env.PROJECT_NAME!,
-          language: 'en',
-          defaultLanguage: 'en',
-        },
-      },
-    }),
-  ]);
+  // await Promise.all([
+  //   // ...[
+  //   //   userWithInvite
+  //   //     ? dispatchEvent(identityEvent.memberCreated.eventConfig, { userId, ...att })
+  //   //     : dispatchEvent(identityEvent.tenantCreated.eventConfig, {
+  //   //         companyName: att.companyName,
+  //   //         ownerEmail: att.email,
+  //   //       }),
+  //   // ],
+  //   viewEmail.transactWrite({ putItems: [{ entity: userEntity }, { entity: emailEntity }] }),
+  //   dispatchEvent<notificationEvent.dispatch.Event<WelcomeTemplate>>(notificationEvent.dispatch.eventConfig, {
+  //     via: 'email',
+  //     addressTo: userCognito.standard.email,
+  //     template: {
+  //       templateName: 'welcome',
+  //       payload: {
+  //         currentYear: new Date().getFullYear().toString(),
+  //         siteUrl: process.env.WEBAPP_URL!,
+  //         baseAssetUrl: process.env.MEDIA_URL!,
+  //         projectName: process.env.PROJECT_NAME!,
+  //         language: 'en',
+  //         defaultLanguage: 'en',
+  //       },
+  //     },
+  //   }),
+  // ]);
 
   return event;
 };

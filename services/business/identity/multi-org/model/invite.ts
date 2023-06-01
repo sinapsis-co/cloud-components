@@ -1,12 +1,12 @@
 import { Model } from '@sinapsis-co/cc-sdk/model';
-import { AuthScope } from '../platform/authorization';
+import { Role } from '../entities/role';
 
 export type InviteModel = Model<{
   type: 'Invite';
   body: {
     email: string;
-    orgName: string;
-    role: AuthScope;
+    orgId: string;
+    role: Role;
     workspaceId?: string;
   };
   key: {

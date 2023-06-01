@@ -8,7 +8,7 @@ export type UserCognito = {
     family_name: string;
   };
   custom: {
-    orgName: string;
+    // orgName: string;
   };
 };
 

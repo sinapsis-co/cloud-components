@@ -1,5 +1,5 @@
 {
-  "name": "@sinapsis-co/cc-solution-ecs",
+  "name": "@sinapsis-co/cc-solution-container",
   "private": true,
   "version": "0.1.0",
   "license": "MIT",
@@ -13,13 +13,15 @@
     "node": ">= 14.14.0"
   },
   "scripts": {
-    "synth": "npx ts-node script-manager.ts synth",
-    "bootstrap": "npx ts-node script-manager.ts bootstrap",
-    "deploy": "npx ts-node script-manager.ts deploy",
-    "deploy-spa": "npx ts-node script-manager.ts deploy-spa",
-    "deploy-ssr": "npx ts-node script-manager.ts deploy-ssr",
-    "start-spa": "npx ts-node script-manager.ts start-spa",
-    "destroy": "npx ts-node script-manager.ts destroy",
+    "synth": "npx ts-node -r tsconfig-paths/register script-manager.ts synth",
+    "bootstrap": "npx ts-node -r tsconfig-paths/register script-manager.ts bootstrap",
+    "deploy": "npx ts-node -r tsconfig-paths/register script-manager.ts deploy",
+    "deploy-spa": "npx ts-node -r tsconfig-paths/register script-manager.ts deploy-spa",
+    "deploy-ssr": "npx ts-node -r tsconfig-paths/register script-manager.ts deploy-ssr",
+    "start-spa": "npx ts-node -r tsconfig-paths/register script-manager.ts start-spa",
+    "destroy": "npx ts-node -r tsconfig-paths/register script-manager.ts destroy",
+    "create-user": "npx ts-node -r tsconfig-paths/register script-manager.ts create-user",
+    "gen-postman-env": "npx ts-node -r tsconfig-paths/register script-manager.ts gen-postman-env",
     "prepare": "npx husky install",
     "verify": "npx tsc --pretty --noEmit && npx eslint . --ext .ts && npx prettier -c . && npx cspell '**/*.ts'"
   },
@@ -37,7 +39,7 @@
     "@types/aws-lambda": "^8.10.108",
     "@types/node": "^18.11.7",
     "aws-lambda": "^1.0.7",
-    "cdk": "^2.77.0-alpha.0",
+    "cdk": "^2.80.0-alpha.0",
     "ts-node": "^10.7.0",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.0.2"

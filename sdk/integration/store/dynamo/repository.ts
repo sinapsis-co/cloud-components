@@ -1,34 +1,42 @@
-import { batchCreateItem } from './operations/batch-create';
-import { batchGetItem } from './operations/batch-get';
-import { checkItemExists } from './operations/check-item-exists';
-import { createItem } from './operations/create';
-import { deleteItem } from './operations/delete';
-import { getItem } from './operations/get';
-import { listItem } from './operations/list';
-import { listIndex } from './operations/list-index';
-import { recoverItem } from './operations/recover';
-import { scanTable } from './operations/scan';
-import { softDeleteItem } from './operations/soft-delete';
-import { updateItem } from './operations/update';
+import { createItem } from './ops-repo/item-create';
+import { deleteItem } from './ops-repo/item-delete';
+import { checkItemExists } from './ops-repo/item-exists';
+import { getItem } from './ops-repo/item-get';
+import { recoverItem } from './ops-repo/item-recover';
+import { softDeleteItem } from './ops-repo/item-soft-delete';
+import { updateItem } from './ops-repo/item-update';
+import { batchCreateItem } from './ops-repo/items-batch-create';
+import { batchGetItem } from './ops-repo/items-batch-get';
+import { listItem } from './ops-repo/items-list';
 
 import { Model } from '../../../model';
 import { dynamodb } from './client';
-import { entityDeserialize, entitySerialized } from './mappers';
-import { IndexReq, OperationConfig } from './types/config';
-import { Repository } from './types/repository';
+import { listIndex } from './ops-repo/index-list';
+import { IndexReq, RepoOpConfig } from './types/config';
+import { Repository } from './types/repo';
 import { TableStoreBuilder } from './types/table-store-builder';
+import { entityDeserialize, entitySerialized, indexPkMapping } from './util/mappers';
 
 export const repository = <T extends TableStoreBuilder, M extends Model>(
-  table: typeof TableStoreBuilder<T['keyMapping']['PK'], T['keyMapping']['SK'], keyof T['indexes']>,
+  table: typeof TableStoreBuilder<T['keyMapping']['PK'], T['keyMapping']['SK'], keyof T['genericIndexes']>,
   repoConfig: IndexReq<T, M>
-): Repository<TableStoreBuilder, M> => {
-  const operationConfig: OperationConfig<T, M> = {
+): Repository<
+  T['keyMapping']['PK'],
+  T['keyMapping']['SK'],
+  keyof T['genericIndexes'],
+  keyof T['attIndexes'],
+  TableStoreBuilder<T['keyMapping']['PK'], T['keyMapping']['SK'], keyof T['genericIndexes'], keyof T['attIndexes']>,
+  M
+> => {
+  const operationConfig: RepoOpConfig<T, M> = {
     type: repoConfig.type,
+    dynamoClient: dynamodb,
     tableName: repoConfig.tableName,
     keySerialize: repoConfig.keySerialize,
+    genericIndexSerialize: repoConfig.genericIndexSerialize,
     entityDeserialize: entityDeserialize<M>(table),
+    indexPkMapping: indexPkMapping(table),
     entitySerialized: entitySerialized(repoConfig, table),
-    dynamoClient: dynamodb,
   };
   return {
     tableName: repoConfig.tableName,
@@ -39,7 +47,7 @@ export const repository = <T extends TableStoreBuilder, M extends Model>(
       recovered: { name: `app.${repoConfig.type}.recovered`, source: 'app' },
     },
     keySerialize: repoConfig.keySerialize,
-    entitySerialized: entitySerialized(repoConfig, table),
+    entitySerialize: entitySerialized(repoConfig, table),
     entityDeserialize: entityDeserialize<M>(table),
     createItem: createItem(operationConfig),
     checkItemExists: checkItemExists(operationConfig),
@@ -51,7 +59,6 @@ export const repository = <T extends TableStoreBuilder, M extends Model>(
     batchGetItem: batchGetItem(operationConfig),
     softDeleteItem: softDeleteItem(operationConfig),
     recoverItem: recoverItem(operationConfig),
-    scanTable: scanTable(operationConfig),
     listIndex: listIndex(operationConfig),
   };
 };

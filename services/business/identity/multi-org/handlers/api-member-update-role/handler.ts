@@ -4,7 +4,6 @@ import { updateCognitoUser } from '@sinapsis-co/cc-sdk/integration/cognito';
 import { CustomError } from '@sinapsis-co/cc-services/config/error-catalog';
 
 import { identityApi } from '../../catalog';
-import { authScope } from '../../platform/authorization';
 import { cognitoUpdateCustomMapper } from '../../platform/cognito-mapper';
 import { repoUser } from '../../repository/repo-user';
 

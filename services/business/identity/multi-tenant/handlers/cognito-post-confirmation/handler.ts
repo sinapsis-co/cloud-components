@@ -50,11 +50,11 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
 
   const { tenantId, userId: id, ...att } = cognitoToProfileMapper(userCognito);
 
-  const userEntity = repoUser.entitySerialized(
+  const userEntity = repoUser.entitySerialize(
     { tenantId, userId: id },
     { ...att, ...(userWithInvite ? {} : { tenantOwner: true }) }
   );
-  const emailEntity = repoEmail.entitySerialized(
+  const emailEntity = repoEmail.entitySerialize(
     { email: userCognito.standard.email },
     {
       tenantId,

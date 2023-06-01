@@ -11,7 +11,4 @@ export const repoInvite = repository<IdentityStoreTable, InviteModel>(IdentitySt
       SK: `INVITE#${key.inviteId}`,
     };
   },
-  // indexSerialize: (entity: InviteModel['Entity']) => {
-  //   return { GSI_1: { PK: entity.email } };
-  // },
 });

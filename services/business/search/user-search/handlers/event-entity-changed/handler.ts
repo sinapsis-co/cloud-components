@@ -9,5 +9,6 @@ export const handler = eventHandler<identityEvent.memberCreated.Event>(async (ev
   const [entityName, operation] = event['detail-type'].split('.').slice(1);
   if (!entityName || !operation) throw new Error('Invalid entity');
   const algoliaConfig = await getRuntimeSecret<searchSecret.algolia.Secret>(searchSecret.algolia.secretConfig);
-  await algoliaSyncEntity(algoliaConfig, entityName, event.detail, operation);
+  const { userId: id, ...att } = event.detail;
+  await algoliaSyncEntity(algoliaConfig, entityName, { id, att }, operation);
 });

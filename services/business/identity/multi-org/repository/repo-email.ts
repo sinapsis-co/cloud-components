@@ -11,7 +11,4 @@ export const repoEmail = repository<IdentityStoreTable, EmailModel>(IdentityStor
       SK: `EMAIL#${key.email}`,
     };
   },
-  // indexSerialize: () => {
-  //   return { GSI_1: { PK: undefined } };
-  // },
 });

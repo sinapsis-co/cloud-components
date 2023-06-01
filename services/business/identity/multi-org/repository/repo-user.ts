@@ -7,11 +7,8 @@ export const repoUser = repository<IdentityStoreTable, UserModel>(IdentityStoreT
   tableName: 'identity',
   keySerialize: (key) => {
     return {
-      PK: key.tenantId,
+      PK: `#USER#${key.userId}`,
       SK: `#USER#${key.userId}`,
     };
   },
-  // indexSerialize: (entity: UserModel['Entity']) => {
-  //   return { GSI_1: { PK: entity.email } };
-  // },
 });

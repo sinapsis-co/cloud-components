@@ -9,7 +9,6 @@ export type UserModel = Model<
       email: string;
       givenName: string;
       familyName: string;
-      tenantOwner?: true;
       avatar?: string;
       location?: FullLocation;
     };
@@ -18,8 +17,8 @@ export type UserModel = Model<
     };
   },
   {
-    omittedCreateKeys: ['email' | 'tenantOwner' | 'avatar'];
-    omittedUpdateKeys: ['email' | 'tenantOwner' | 'avatar'];
+    omittedCreateKeys: ['email' | 'avatar'];
+    omittedUpdateKeys: ['email' | 'avatar'];
   }
 >;
 

@@ -17,11 +17,11 @@ export const handler = apiHandler(async (_, req) => {
 
   const inviteId = uuid();
 
-  const invite = repoInvite.entitySerialized(
+  const invite = repoInvite.entitySerialize(
     { tenantId, inviteId },
     { email: req.body.email, companyName: companyName, role: 'member' }
   );
-  const email = repoEmail.entitySerialized({ email: req.body.email }, { email: req.body.email, tenantId });
+  const email = repoEmail.entitySerialize({ email: req.body.email }, { email: req.body.email, tenantId });
 
   await withEmailView
     .transactWrite({

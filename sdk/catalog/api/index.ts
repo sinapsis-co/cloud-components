@@ -1,6 +1,6 @@
 import { Schemy } from 'schemy-ts';
 
-export type EmptyObject = Record<string, null>;
+export type EmptyObject = Record<string, null | undefined>;
 
 export type ApiInterfaceKeys = {
   response: unknown;

@@ -23,8 +23,7 @@
     "create-user": "npx ts-node -r tsconfig-paths/register script-manager.ts create-user",
     "gen-postman-env": "npx ts-node -r tsconfig-paths/register script-manager.ts gen-postman-env",
     "prepare": "npx husky install",
-    "verify": "npx tsc --pretty --noEmit && npx eslint . --ext .ts && npx prettier -c . && npx cspell '**/*.ts'",
-    "test": "jest"
+    "verify": "npx tsc --pretty --noEmit && npx eslint . --ext .ts && npx prettier -c . && npx cspell '**/*.ts'"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.54.0",

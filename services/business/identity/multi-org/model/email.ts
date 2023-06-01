@@ -3,7 +3,7 @@ import { Model } from '@sinapsis-co/cc-sdk/model';
 export type EmailModel = Model<{
   type: 'Email';
   body: {
-    email: string;
+    userId: string;
   };
   key: {
     email: string;
