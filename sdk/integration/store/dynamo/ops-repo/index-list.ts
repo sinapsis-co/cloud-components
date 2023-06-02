@@ -1,4 +1,4 @@
-import { QueryCommand, QueryCommandInput } from '@aws-sdk/lib-dynamodb';
+import { QueryCommand, QueryCommandInput, ScanCommand } from '@aws-sdk/lib-dynamodb';
 
 import { Model } from 'model';
 import { traceableFunction } from 'tracing';
@@ -18,32 +18,45 @@ export const listIndex = <
 ): ListIndexFn<M, GenericIndexName, AttIndexName> => {
   return async (
     index: GenericIndexName | AttIndexName,
-    indexPK: string,
-    queryParams?: { limit?: number; nextToken?: string },
+    indexPK: string | null,
+    queryParams?: { limit?: string; nextToken?: string },
     params?: Partial<QueryCommandInput>
   ): Promise<M['List']> => {
     const tableName = process.env[parseTableName(operationConfig.tableName)];
 
-    const mappedPkIndex = operationConfig.indexPkMapping(index as string);
-
     const cmd = async () => {
-      const { Items, LastEvaluatedKey } = await operationConfig.dynamoClient.send(
-        new QueryCommand({
-          TableName: tableName,
-          IndexName: index as string,
-          KeyConditionExpression: '#PK = :PK',
-          ExpressionAttributeNames: { '#PK': mappedPkIndex },
-          ExpressionAttributeValues: { ':PK': indexPK },
-          ExclusiveStartKey: decodeLastEvaluatedKey(queryParams?.nextToken),
-          Limit: queryParams?.limit,
-          ...params,
-        })
-      );
-
-      return {
-        items: Items ? Items.map((item) => operationConfig.entityDeserialize(item as M['Entity'])) : [],
-        nextToken: encodeLastEvaluatedKey(LastEvaluatedKey),
-      };
+      if (indexPK === null) {
+        const { Items, LastEvaluatedKey } = await operationConfig.dynamoClient.send(
+          new ScanCommand({
+            TableName: tableName,
+            IndexName: index as string,
+            ExclusiveStartKey: decodeLastEvaluatedKey(queryParams?.nextToken),
+            Limit: parseInt(queryParams?.limit || '30'),
+            ...params,
+          })
+        );
+        return {
+          items: Items ? Items.map((item) => operationConfig.entityDeserialize(item as M['Entity'])) : [],
+          nextToken: encodeLastEvaluatedKey(LastEvaluatedKey),
+        };
+      } else {
+        const { Items, LastEvaluatedKey } = await operationConfig.dynamoClient.send(
+          new QueryCommand({
+            TableName: tableName,
+            IndexName: index as string,
+            KeyConditionExpression: '#PK = :PK',
+            ExpressionAttributeNames: { '#PK': operationConfig.indexPkMapping(index as string) },
+            ExpressionAttributeValues: { ':PK': indexPK },
+            ExclusiveStartKey: decodeLastEvaluatedKey(queryParams?.nextToken),
+            Limit: parseInt(queryParams?.limit || '30'),
+            ...params,
+          })
+        );
+        return {
+          items: Items ? Items.map((item) => operationConfig.entityDeserialize(item as M['Entity'])) : [],
+          nextToken: encodeLastEvaluatedKey(LastEvaluatedKey),
+        };
+      }
     };
 
     const meta = { tableName, index, params };

@@ -9,9 +9,13 @@ import { batchCreateItem } from './ops-repo/items-batch-create';
 import { batchGetItem } from './ops-repo/items-batch-get';
 import { listItem } from './ops-repo/items-list';
 
-import { Model } from '../../../model';
+import { Model } from 'model';
 import { dynamodb } from './client';
 import { listIndex } from './ops-repo/index-list';
+import { query } from './ops-view/query';
+import { queryIndex } from './ops-view/query-index';
+import { scan } from './ops-view/scan';
+import { transactWrite } from './ops-view/transact-write';
 import { IndexReq, RepoOpConfig } from './types/config';
 import { Repository } from './types/repo';
 import { TableStoreBuilder } from './types/table-store-builder';
@@ -20,14 +24,7 @@ import { entityDeserialize, entitySerialized, indexPkMapping } from './util/mapp
 export const repository = <T extends TableStoreBuilder, M extends Model>(
   table: typeof TableStoreBuilder<T['keyMapping']['PK'], T['keyMapping']['SK'], keyof T['genericIndexes']>,
   repoConfig: IndexReq<T, M>
-): Repository<
-  T['keyMapping']['PK'],
-  T['keyMapping']['SK'],
-  keyof T['genericIndexes'],
-  keyof T['attIndexes'],
-  TableStoreBuilder<T['keyMapping']['PK'], T['keyMapping']['SK'], keyof T['genericIndexes'], keyof T['attIndexes']>,
-  M
-> => {
+): Repository<T, M> => {
   const operationConfig: RepoOpConfig<T, M> = {
     type: repoConfig.type,
     dynamoClient: dynamodb,
@@ -60,5 +57,9 @@ export const repository = <T extends TableStoreBuilder, M extends Model>(
     softDeleteItem: softDeleteItem(operationConfig),
     recoverItem: recoverItem(operationConfig),
     listIndex: listIndex(operationConfig),
+    transactWrite: transactWrite(operationConfig),
+    query: query(operationConfig),
+    queryIndex: queryIndex(operationConfig),
+    scan: scan(operationConfig),
   };
 };

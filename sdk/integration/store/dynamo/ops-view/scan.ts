@@ -5,15 +5,13 @@ import { Model } from 'model';
 import { traceableFunction } from 'tracing';
 import { decodeLastEvaluatedKey, encodeLastEvaluatedKey } from 'util/pagination';
 import { ViewOpConfig } from '../types/config';
-import { ScanTableFn } from '../types/ops-repo';
+import { ScanFn } from '../types/ops-view';
 import { TableStoreBuilder } from '../types/table-store-builder';
 import { parseTableName } from '../util/parse-name';
 
-export const scan = <T extends TableStoreBuilder, M extends Model>(
-  operationConfig: ViewOpConfig<T, M>
-): ScanTableFn<M> => {
+export const scan = <T extends TableStoreBuilder, M extends Model>(operationConfig: ViewOpConfig<T, M>): ScanFn<M> => {
   return async (
-    queryParams?: { limit?: number; nextToken?: string },
+    queryParams?: { limit?: string; nextToken?: string },
     params?: Partial<ScanCommandInput>
   ): Promise<M['List']> => {
     const tableName = process.env[parseTableName(operationConfig.tableName)];
@@ -24,7 +22,7 @@ export const scan = <T extends TableStoreBuilder, M extends Model>(
           new ScanCommand({
             TableName: tableName,
             ExclusiveStartKey: decodeLastEvaluatedKey(queryParams?.nextToken),
-            Limit: queryParams?.limit,
+            Limit: parseInt(queryParams?.limit || '30'),
             ...params,
           })
         )

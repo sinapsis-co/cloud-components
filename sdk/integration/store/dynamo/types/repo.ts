@@ -13,16 +13,10 @@ import {
   SoftDeleteItemFn,
   UpdateItemFn,
 } from './ops-repo';
+import { QueryFn, QueryIndexFn, ScanFn, TransactWriteFn } from './ops-view';
 import { TableStoreBuilder } from './table-store-builder';
 
-export type Repository<
-  PK extends string,
-  SK extends string | undefined,
-  GenericIndexName extends string | number | symbol,
-  AttIndexName extends string | number | symbol,
-  T extends TableStoreBuilder<PK, SK, GenericIndexName, AttIndexName>,
-  M extends Model
-> = {
+export type Repository<T extends TableStoreBuilder, M extends Model> = {
   tableName: T['tableName'];
   events: {
     created: {
@@ -55,5 +49,9 @@ export type Repository<
   batchGetItem: BatchGetItemFn<M>;
   softDeleteItem: SoftDeleteItemFn<M>;
   recoverItem: RecoverItemFn<M>;
-  listIndex: ListIndexFn<M, GenericIndexName, AttIndexName>;
+  listIndex: ListIndexFn<M, keyof T['genericIndexes'], keyof T['attIndexes']>;
+  transactWrite: TransactWriteFn<M>;
+  scan: ScanFn<M>;
+  query: QueryFn<M>;
+  queryIndex: QueryIndexFn<M, keyof T['genericIndexes'], keyof T['attIndexes']>;
 };

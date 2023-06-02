@@ -16,14 +16,14 @@ export type BatchWriteFn<M extends Model> = (
 ) => Promise<void | void[]>;
 
 export type ScanFn<M extends Model> = (
-  queryParams?: { limit?: number; nextToken?: string },
+  queryParams?: { limit?: string; nextToken?: string },
   params?: Partial<Dynamo.ScanCommandInput>
 ) => Promise<M['List']>;
 
 export type QueryFn<M extends Model> = (
   keyCondition: string,
   attributesMap: Record<string, any>,
-  queryParams?: { limit?: number; nextToken?: string },
+  queryParams?: { limit?: string; nextToken?: string },
   params?: Partial<Dynamo.QueryCommandInput>
 ) => Promise<PaginatedResponse<M['Entity']>>;
 
@@ -35,7 +35,7 @@ export type QueryIndexFn<
   index: GenericIndexName | AttIndexName,
   keyCondition: string,
   attributesMap: Record<string, any>,
-  queryParams?: { limit?: number; nextToken?: string },
+  queryParams?: { limit?: string; nextToken?: string },
   params?: Partial<Dynamo.QueryCommandInput>
 ) => Promise<PaginatedResponse<M['Entity']>>;
 

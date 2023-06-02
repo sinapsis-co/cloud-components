@@ -16,7 +16,7 @@ export const query = <T extends TableStoreBuilder, M extends Model>(
   return async (
     keyCondition: string,
     attributesMap: Record<string, any>,
-    queryParams?: { limit?: number; nextToken?: string },
+    queryParams?: { limit?: string; nextToken?: string },
     params?: Partial<QueryCommandInput>
   ): Promise<M['List']> => {
     const tableName = process.env[parseTableName(operationConfig.tableName)];
@@ -29,7 +29,7 @@ export const query = <T extends TableStoreBuilder, M extends Model>(
             KeyConditionExpression: keyCondition,
             ...expressionMapper(attributesMap),
             ExclusiveStartKey: decodeLastEvaluatedKey(queryParams?.nextToken),
-            Limit: queryParams?.limit,
+            Limit: parseInt(queryParams?.limit || '30'),
             ...params,
           })
         )

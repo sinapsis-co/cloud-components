@@ -34,7 +34,7 @@ export type BatchGetItemFn<M extends Model> = (
 
 export type ListItemFn<M extends Model> = (
   pk: Partial<M['Key']> | null,
-  queryParams?: { limit: number; nextToken?: string },
+  queryParams?: { limit?: string; nextToken?: string },
   params?: Partial<Dynamo.QueryCommandInput>
 ) => Promise<PaginatedResponse<M['Entity']>>;
 
@@ -64,11 +64,6 @@ export type RecoverItemFn<M extends Model> = (
   params?: Dynamo.GetCommandInput & { emitEvent?: boolean }
 ) => Promise<M['Entity']>;
 
-export type ScanTableFn<M extends Model> = (
-  queryParams?: { limit?: number; nextToken?: string },
-  params?: Partial<Dynamo.ScanCommandInput>
-) => Promise<M['List']>;
-
 export type ListIndexFn<
   M extends Model,
   GenericIndexName extends string | number | symbol,
@@ -76,6 +71,6 @@ export type ListIndexFn<
 > = (
   index: GenericIndexName | AttIndexName,
   pk: string,
-  queryParams?: { limit: number; nextToken?: string },
+  queryParams?: { limit?: string; nextToken?: string },
   params?: Partial<Dynamo.QueryCommandInput>
 ) => Promise<M['List']>;

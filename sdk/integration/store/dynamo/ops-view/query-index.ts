@@ -21,7 +21,7 @@ export const queryIndex = <
     index: GenericIndexName | AttIndexName,
     keyCondition: string,
     attributesMap: Record<string, any>,
-    queryParams?: { limit?: number; nextToken?: string },
+    queryParams?: { limit?: string; nextToken?: string },
     params?: Partial<QueryCommandInput>
   ): Promise<M['List']> => {
     const tableName = process.env[parseTableName(operationConfig.tableName)];
@@ -34,7 +34,7 @@ export const queryIndex = <
           KeyConditionExpression: keyCondition,
           ...expressionMapper(attributesMap),
           ExclusiveStartKey: decodeLastEvaluatedKey(queryParams?.nextToken),
-          Limit: queryParams?.limit,
+          Limit: parseInt(queryParams?.limit || '30'),
           ...params,
         })
       );
