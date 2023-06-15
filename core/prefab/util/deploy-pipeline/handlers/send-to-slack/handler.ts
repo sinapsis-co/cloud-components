@@ -91,12 +91,12 @@ export const handler: SNSHandler = async (event) => {
 };
 
 const sendToSlack = async (fallback: string, color, fields, slackObject: SlackObject) => {
-  await apiCall<Slack.Interface>(
+  const a = await apiCall(
     Slack.config,
     {
       pathParams: { token: slackObject.token },
       body: { attachments: [{ pretext: fallback, fallback, color, fields }], channel: slackObject.channel },
     },
-    { tracingMeta: {} }
+    { tracingMeta: {}, ignoreResponse: true }
   );
 };

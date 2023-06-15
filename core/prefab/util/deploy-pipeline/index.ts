@@ -41,10 +41,6 @@ export class DeployPipelinePrefab extends Construct {
 
     if (props.ephemeralEnvName) return;
 
-    if (!params.buildCommand) {
-      params.buildCommand = [`yarn deploy ${props.envName}`];
-    }
-
     if (!props.useRepositoryDefaultConfig && (!props.repositoryOwner || !props.repositoryConnection))
       throw new Error('repositoryOwner and repositoryConnection are required if useRepositoryDefaultConfig is false');
 
@@ -54,8 +50,6 @@ export class DeployPipelinePrefab extends Construct {
     const repositoryConnection = props.useRepositoryDefaultConfig
       ? StringParameter.valueFromLookup(this, 'pipeline-default-repository-connection')
       : props.repositoryConnection!;
-
-    const githubTokenParameterName = 'pipeline-default-repository-token';
 
     const sourceCodeArtifact = new Artifact('sourceCode');
     const sourceCodeAction = new CodeStarConnectionsSourceAction({
@@ -72,6 +66,10 @@ export class DeployPipelinePrefab extends Construct {
     const policy: IManagedPolicy = ManagedPolicy.fromAwsManagedPolicyName('AdministratorAccess');
     deploymentRole.addManagedPolicy(policy);
 
+    if (!params.buildCommand) {
+      params.buildCommand = [`yarn deploy ${props.envName}`];
+    }
+
     const codebuildProject = new awsCodebuild.Project(this, 'CodebuildProject', {
       projectName: getResourceName('', props),
       role: deploymentRole,
@@ -82,16 +80,18 @@ export class DeployPipelinePrefab extends Construct {
       environmentVariables: {
         GITHUB_TOKEN: {
           type: awsCodebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
-          value: githubTokenParameterName,
+          value: 'pipeline-default-repository-token',
+        },
+        DEPLOY_WORKER_ROLE: {
+          type: awsCodebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
+          value: 'pipeline-deploy-worker-role',
         },
       },
       buildSpec: awsCodebuild.BuildSpec.fromObject({
         version: '0.2',
         phases: {
           install: {
-            'runtime-versions': {
-              nodejs: 16,
-            },
+            'runtime-versions': { nodejs: 18 },
           },
           pre_build: {
             commands: [
@@ -101,15 +101,16 @@ export class DeployPipelinePrefab extends Construct {
             ],
           },
           build: {
-            commands: [...(params.buildCommand || [])],
+            commands: params.buildCommand || [],
           },
           post_build: {
-            commands: [...(params.postDeployCommands || [])],
+            commands: params.postDeployCommands || [],
           },
         },
       }),
       ...params.codeBuildProjectParams,
     });
+
     const deployAction = new CodeBuildAction({
       actionName: 'Deploy',
       input: sourceCodeArtifact,
@@ -117,22 +118,16 @@ export class DeployPipelinePrefab extends Construct {
     });
 
     const pipeline = new Pipeline(this, 'Pipeline', {
+      crossAccountKeys: false,
+      pipelineName: getResourceName('', props),
       artifactBucket: new Bucket(this, 'bucket', {
         bucketName: getBucketName('bucket', props),
         autoDeleteObjects: true,
         removalPolicy: RemovalPolicy.DESTROY,
       }),
-      pipelineName: getResourceName('', props),
-      crossAccountKeys: false,
       stages: [
-        {
-          stageName: 'Source',
-          actions: [sourceCodeAction],
-        },
-        {
-          stageName: 'Deploy',
-          actions: [deployAction],
-        },
+        { stageName: 'Source', actions: [sourceCodeAction] },
+        { stageName: 'Deploy', actions: [deployAction] },
       ],
     });
 
@@ -147,7 +142,9 @@ export class DeployPipelinePrefab extends Construct {
         const slackToken = props.useRepositoryDefaultConfig
           ? StringParameter.valueFromLookup(this, 'pipeline-default-slack-token')
           : (params.slackToken as string);
+
         if (!slackToken) throw new SynthError('MissingSlackToken', props);
+
         environmentTopicFunction = {
           ...environmentTopicFunction,
           SLACK_CHANNEL: props.pipelineNotificationSlackChannel || '',
@@ -173,16 +170,14 @@ export class DeployPipelinePrefab extends Construct {
         },
       });
 
-      const events = [
-        'codepipeline-pipeline-pipeline-execution-failed',
-        'codepipeline-pipeline-pipeline-execution-succeeded',
-      ];
-
       new NotificationRule(this, 'Notification', {
         detailType: DetailType.FULL,
-        events: events,
         source: pipeline,
         targets: [topicFunction.customTopic.topic],
+        events: [
+          'codepipeline-pipeline-pipeline-execution-failed',
+          'codepipeline-pipeline-pipeline-execution-succeeded',
+        ],
       });
     }
   }

@@ -13,15 +13,11 @@ import { repoInvite } from '../../repository/repo-invite';
 import { viewEmail } from '../../repository/views';
 
 export const handler = apiHandler(async (_, req) => {
-  const { tenantId, companyName } = req.claims;
-
+  const { orgId } = req.pathParams;
   const inviteId = uuid();
 
-  const invite = repoInvite.entitySerialize(
-    { tenantId, inviteId },
-    { email: req.body.email, companyName: companyName, role: 'member' }
-  );
-  const email = repoEmail.entitySerialize({ email: req.body.email }, { email: req.body.email, tenantId });
+  const invite = repoInvite.entitySerialize({ inviteId }, { email: req.body.email, orgId, role: 'member' });
+  const email = repoEmail.entitySerialize({ email: req.body.email }, { userId: '' });
 
   await viewEmail
     .transactWrite({
@@ -52,7 +48,7 @@ export const handler = apiHandler(async (_, req) => {
         siteUrl: process.env.WEBAPP_URL!,
         baseAssetUrl: process.env.MEDIA_URL!,
         projectName: process.env.PROJECT_NAME!,
-        inviteCode: `${tenantId}#${inviteId}`,
+        inviteCode: inviteId,
       },
     },
   });

@@ -8,15 +8,15 @@ import { assetEvent } from '@sinapsis-co/cc-services/support/assets/catalog';
 
 import { identityApi, identityEvent } from '../../catalog';
 import { repoEmail } from '../../repository/repo-email';
+import { repoOrgUser } from '../../repository/repo-org-user';
 import { repoUser } from '../../repository/repo-user';
 
 export const handler = apiHandler(async (_, req) => {
-  const { tenantId } = req.claims;
-  const { userId } = req.pathParams;
+  const { orgId, userId } = req.pathParams;
 
-  const user = await repoUser
+  await repoOrgUser
     .deleteItem(
-      { tenantId, userId },
+      { orgId, userId },
       {
         ConditionExpression: 'attribute_not_exists(#tenantOwner)',
         ExpressionAttributeNames: { '#tenantOwner': 'tenantOwner' },
@@ -30,6 +30,8 @@ export const handler = apiHandler(async (_, req) => {
         });
       } else throw e;
     });
+
+  const user = await repoUser.getItem({ userId });
 
   const dispatch = [
     repoEmail.deleteItem({ email: user.email }),

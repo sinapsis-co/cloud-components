@@ -4,31 +4,30 @@ import { viewUsersAndInvites } from '../../repository/views';
 
 export const handler = apiHandler(async (_, req) => {
   const { tenantId } = req.claims;
-  const { limit, nextToken } = req.queryParams;
+
   const filter = req.queryParams.filter || '';
   const filterMap: Record<typeof filter, string | undefined> = {
     users: '#USER',
     invites: 'INVITE',
     '': undefined,
   };
-  const params = filter
+
+  const options = filter
     ? {
-        KeyConditionExpression: '#PK = :PK AND begins_with(#SK,:SK)',
-        ExpressionAttributeNames: {
-          '#PK': 'PK',
-          '#SK': 'SK',
-        },
-        ExpressionAttributeValues: {
-          ':PK': tenantId,
-          ':SK': filterMap[filter],
-        },
+        keyCondition: '#PK = :PK AND begins_with(#SK,:SK)',
+        attributesMap: { PK: tenantId, SK: filterMap[filter] },
       }
-    : {};
-  const { items, ...att } = await viewUsersAndInvites.listItem(
-    tenantId,
-    { limit: Number(limit) || 50, nextToken },
-    params
+    : {
+        keyCondition: '#PK = :PK AND begins_with(#SK,:USER) OR begins_with(#SK,:INVITE)',
+        attributesMap: { PK: tenantId, USER: filterMap.users, INVITE: filterMap.invites },
+      };
+
+  const { items, ...att } = await viewUsersAndInvites.query(
+    options.keyCondition,
+    options.attributesMap,
+    req.queryParams
   );
+
   return {
     items: items.map((r) => {
       if (r['avatar']) r['avatar'] = `${process.env.MEDIA_URL}/${r['avatar']}`;

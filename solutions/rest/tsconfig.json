@@ -1,0 +1,29 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "paths": {
+      "services/*": ["./solutions/rest-api/services/*"],
+      "config/*": ["./solutions/rest-api/config/*"],
+      "notifications/*": ["./solutions/rest-api/notifications/*"],
+      "@sinapsis-co/cc-services/*": ["./services/*"],
+      "@sinapsis-co/cc-sdk/*": ["./sdk/*"],
+      "@sinapsis-co/cc-core/*": ["./core/*"],
+      "common/*": ["./core/common/*"],
+      "prefab/*": ["./core/prefab/*"],
+      "catalog/*": ["./sdk/catalog/*"],
+      "model/*": ["./sdk/model/*"],
+      "error/*": ["./sdk/error/*"],
+      "handler/*": ["./sdk/handler/*"],
+      "integration/*": ["./sdk/integration/*"],
+      "lib/*": ["./sdk/lib/*"],
+      "util/*": ["./sdk/util/*"],
+      "model": ["./sdk/model"],
+      "logger": ["./sdk/logger"],
+      "error": ["./sdk/error"],
+      "tracing": ["./sdk/tracing"]
+    }
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["cdk.out/**/*", "node_modules/**/*", "frontend/**/*"]
+}

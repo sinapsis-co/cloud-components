@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-export type BaseRegionName = 'us-east-1';
+export type BaseRegionName = 'us-east-1' | string;
 
 export type BaseEnvName = 'dev' | 'test' | 'staging' | 'prod' | string;
 

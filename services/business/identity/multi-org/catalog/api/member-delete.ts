@@ -7,7 +7,7 @@ import { authMdw } from '../../platform/authorization';
 
 export type Interface = ApiInterface<{
   response: UserModel['Entity'];
-  pathParams: Pick<UserModel['Key'], 'userId'>;
+  pathParams: { orgId: string; userId: string };
   body: EmptyObject;
   claims: UserClaims;
   queryParams: EmptyObject;
@@ -17,7 +17,7 @@ export const definition: ApiDefinition<Interface> = {
   name: 'api-member-delete',
   method: 'DELETE',
   basePath: 'identity',
-  path: '/member/{userId}',
+  path: 'org/{orgId}/member/{userId}',
   tablePermission: 'write',
   scope: authScope.owner,
   authorizationMdw: authMdw,

@@ -1,4 +1,4 @@
-Sinapsis Manager
+Cloud Components Setup
 
 1. Generate your personal token:
    https://github.com/settings/tokens/new
@@ -22,8 +22,7 @@ Sinapsis Manager
 
 - yarn add -d @sinapsis-co/{package_name}
 
-
-Steps to add a new feature in Cloud Components v2
+Steps to add a new feature in Cloud Components
 
 1. Create a new branch from dev
 

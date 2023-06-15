@@ -8,9 +8,8 @@ import { identityApi } from '../../catalog';
 import { repoInvite } from '../../repository/repo-invite';
 
 export const handler = apiHandler(async (_, req) => {
-  const { tenantId } = req.claims;
   const { inviteId } = req.pathParams;
-  const invite = await repoInvite.getItem({ tenantId, inviteId });
+  const invite = await repoInvite.getItem({ inviteId });
 
   await dispatchEvent<notificationEvent.dispatch.Event<UserInviteTemplate>>(notificationEvent.dispatch.eventConfig, {
     via: 'email',
@@ -22,7 +21,7 @@ export const handler = apiHandler(async (_, req) => {
         siteUrl: process.env.WEBAPP_URL!,
         baseAssetUrl: process.env.MEDIA_URL!,
         projectName: process.env.PROJECT_NAME!,
-        inviteCode: `${tenantId}#${invite.inviteId}`,
+        inviteCode: invite.inviteId,
       },
     },
   });

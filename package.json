@@ -12,18 +12,17 @@
     "packages": [
       "sdk/",
       "core/",
+      "landing-zone/",
       "services/**/*",
-      "solutions/base",
-      "solutions/base/services/**/*",
-      "solutions/appsync",
-      "solutions/appsync/services/**/*",
+      "solutions/rest",
+      "solutions/rest/services/**/*",
+      "solutions/graphql",
+      "solutions/graphql/services/**/*",
       "solutions/container",
       "solutions/container/services/**/*"
     ],
     "nohoist": [
-      "solutions/appsync/frontend/*",
-      "solutions/container/frontend/*",
-      "solutions/base/frontend/*"
+      "frontend/*"
     ]
   },
   "scripts": {

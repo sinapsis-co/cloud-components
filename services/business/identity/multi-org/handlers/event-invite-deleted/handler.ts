@@ -5,8 +5,8 @@ import { repoEmail } from '../../repository/repo-email';
 import { repoInvite } from '../../repository/repo-invite';
 
 export const handler = eventHandler<identityEvent.inviteDeleted.Event>(async (event) => {
-  const { tenantId, inviteId } = event.detail;
+  const { inviteId } = event.detail;
 
-  const user = await repoInvite.deleteItem({ tenantId, inviteId });
+  const user = await repoInvite.deleteItem({ inviteId });
   await repoEmail.deleteItem({ email: user.email });
 });

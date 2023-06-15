@@ -16,13 +16,17 @@ type AssumeRoleParams = {
 };
 
 export const assumeRole = async (
-  { account, region }: AssumeRoleParams,
+  { account, region = 'us-east-1' }: AssumeRoleParams,
   roleName: string
 ): Promise<AssumeRoleResponse> => {
-  const sts = new STSClient({ region: 'us-east-1' });
+  return assumeRoleArn(`arn:aws:iam::${account}:role/${roleName}`, region);
+};
+
+export const assumeRoleArn = async (arn: string, region = 'us-east-1'): Promise<AssumeRoleResponse> => {
+  const sts = new STSClient({ region });
   const { Credentials } = await sts.send(
     new AssumeRoleCommand({
-      RoleArn: `arn:aws:iam::${account}:role/${roleName}`,
+      RoleArn: arn,
       RoleSessionName: 'cdk-scripts',
     })
   );

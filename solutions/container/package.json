@@ -39,7 +39,7 @@
     "@types/aws-lambda": "^8.10.108",
     "@types/node": "^18.11.7",
     "aws-lambda": "^1.0.7",
-    "cdk": "^2.80.0-alpha.0",
+    "cdk": "^2.82.0",
     "ts-node": "^10.7.0",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.0.2"
