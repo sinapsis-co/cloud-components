@@ -71,10 +71,11 @@ export class DeployPipelinePrefab extends Construct {
     const workerCommands = StringParameter.valueFromLookup(this, 'pipeline-deploy-worker-role')
       ? [
           'output=$(aws sts assume-role --role-arn "$DEPLOY_WORKER_ROLE" --role-session-name "CDK" --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" --output text)',
-          'IFS=$\'\t\' read -r var1 var2 var3 <<< "$output"',
-          'export AWS_ACCESS_KEY_ID=$var1',
-          'export AWS_SECRET_ACCESS_KEY=$var2',
-          'export AWS_SESSION_TOKEN=$var3',
+          'IFS="$(printf \'\t\')"',
+          'set -- $output ',
+          'export AWS_ACCESS_KEY_ID=$1',
+          'export AWS_SECRET_ACCESS_KEY=$2',
+          'export AWS_SESSION_TOKEN=$3',
         ]
       : [];
 
@@ -103,9 +104,9 @@ export class DeployPipelinePrefab extends Construct {
           },
           pre_build: {
             commands: [
+              ...workerCommands,
               'npm set //npm.pkg.github.com/:_authToken $GITHUB_TOKEN',
               'yarn --prod',
-              ...workerCommands,
               ...(params.preDeployCommands || []),
             ],
           },
