@@ -131,7 +131,7 @@ export class DeployPipelinePrefab extends Construct {
 
     const pipeline = new Pipeline(this, 'Pipeline', {
       crossAccountKeys: false,
-      pipelineName: getResourceName('', props),
+      pipelineName: `${props.serviceName}-${props.envName}`,
       artifactBucket: new Bucket(this, 'bucket', {
         bucketName: getBucketName('bucket', props),
         autoDeleteObjects: true,
