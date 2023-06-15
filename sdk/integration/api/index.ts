@@ -88,12 +88,12 @@ export const apiCall = async <
 
     if (!callResult.ok) {
       if (options.returnErrorResponse) {
-        if (options.ignoreResponse) return undefined as Response<Api, ErrorResponse, IgnoreResponse>;
         const errorResponse: Api['errorResponse'] = await callResult.json();
         return { errorResponse, statusCode } as Response<Api, ErrorResponse, IgnoreResponse>;
       }
       throw new PlatformFault({ code: 'FAULT_API_CALL_INVALID_RESPONSE', detail: await callResult.text() });
     }
+    if (options.ignoreResponse) return undefined as Response<Api, ErrorResponse, IgnoreResponse>;
     const response: Api['response'] = await callResult.json();
     return { response } as Response<Api, ErrorResponse, IgnoreResponse>;
   };
