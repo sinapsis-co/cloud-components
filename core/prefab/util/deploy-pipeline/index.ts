@@ -75,9 +75,9 @@ export class DeployPipelinePrefab extends Construct {
           "var1=$(echo \"$output\" | awk -F'\t' '{print $1}')",
           "var2=$(echo \"$output\" | awk -F'\t' '{print $2}')",
           "var3=$(echo \"$output\" | awk -F'\t' '{print $3}')",
-          'export AWS_ACCESS_KEY_ID=$1',
-          'export AWS_SECRET_ACCESS_KEY=$2',
-          'export AWS_SESSION_TOKEN=$3',
+          'export AWS_ACCESS_KEY_ID=$var1',
+          'export AWS_SECRET_ACCESS_KEY=$var2',
+          'export AWS_SESSION_TOKEN=$var3',
         ]
       : [];
 
@@ -131,7 +131,7 @@ export class DeployPipelinePrefab extends Construct {
 
     const pipeline = new Pipeline(this, 'Pipeline', {
       crossAccountKeys: false,
-      pipelineName: `${props.serviceName}-${props.envName}`,
+      pipelineName: `${props.projectName}-${props.envName}`,
       artifactBucket: new Bucket(this, 'bucket', {
         bucketName: getBucketName('bucket', props),
         autoDeleteObjects: true,
