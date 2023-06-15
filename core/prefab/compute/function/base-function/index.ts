@@ -22,7 +22,8 @@ export type BaseHandlerParams = NodejsFunctionProps & {
 };
 
 export type BaseFunctionParams = {
-  baseFunctionFolder: string;
+  baseFunctionFolder?: string;
+  baseFunctionString?: string;
   eventBus?: EventBusPrefab;
   tablePrefab?: DynamoTablePrefab;
   modifiers?: ((lambda: NodejsFunction) => any)[];
@@ -55,7 +56,9 @@ export class BaseFunction extends Construct {
       tracing: params.tracingDisabled ? Tracing.DISABLED : Tracing.ACTIVE,
       timeout: Duration.seconds(6),
       functionName: getShortResourceName(params.name, service.props),
-      entry: getFunctionEntry(params.baseFunctionFolder, params.name, params.compiled),
+      entry: params.baseFunctionString
+        ? params.baseFunctionString
+        : getFunctionEntry(params.baseFunctionFolder!, params.name, params.compiled),
       architecture: params.architecture || Architecture.ARM_64,
       ...params,
       environment: {

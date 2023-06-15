@@ -1,0 +1,46 @@
+{
+  "ssm:account=913838861210:parameterName=base-template-dev-andres-dns-subdomain-hosted-zone-hosted-zone-name-servers:region=us-east-1": "ns-124.awsdns-15.com,ns-1119.awsdns-11.org,ns-2035.awsdns-62.co.uk,ns-837.awsdns-40.net",
+  "hosted-zone:account=179850878892:domainName=sinapsis.co:region=us-east-1": {
+    "Id": "/hostedzone/ZFM2TMMUOM3B9",
+    "Name": "sinapsis.co."
+  },
+  "hosted-zone:account=913838861210:domainName=andres.dev.base.sinapsis.co:region=us-east-1": {
+    "Id": "/hostedzone/Z0247513D1FD5XQBKD74",
+    "Name": "andres.dev.base.sinapsis.co."
+  },
+  "ssm:account=913838861210:parameterName=base-template-dev-b-dns-subdomain-hosted-zone-hosted-zone-name-servers:region=us-east-1": "ns-923.awsdns-51.net,ns-86.awsdns-10.com,ns-1417.awsdns-49.org,ns-1873.awsdns-42.co.uk",
+  "hosted-zone:account=913838861210:domainName=b.dev.base.sinapsis.co:region=us-east-1": {
+    "Id": "/hostedzone/Z08321221QA2F1FSUKSQ3",
+    "Name": "b.dev.base.sinapsis.co."
+  },
+  "ssm:account=179850878892:parameterName=pipeline-default-repository-owner:region=us-east-1": "sinapsis-co",
+  "ssm:account=179850878892:parameterName=pipeline-default-repository-connection:region=us-east-1": "arn:aws:codestar-connections:us-east-1:179850878892:connection/05bb0250-aa73-4949-9ddc-8a23c82482ff",
+  "ssm:account=179850878892:parameterName=pipeline-default-slack-token:region=us-east-1": "T4M0B8VEF/B03LY8J4ACA/z6p0CQeurAtsz3oS4JYq8iAO",
+  "ssm:account=913838861210:parameterName=base-template-dev-dns-subdomain-hosted-zone-hosted-zone-name-servers:region=us-east-1": "ns-1316.awsdns-36.org,ns-109.awsdns-13.com,ns-745.awsdns-29.net,ns-1615.awsdns-09.co.uk",
+  "hosted-zone:account=913838861210:domainName=dev.base.sinapsis.co:region=us-east-1": {
+    "Id": "/hostedzone/Z04688423I3CUU8G4V9Q4",
+    "Name": "dev.base.sinapsis.co."
+  },
+  "ssm:account=491739098658:parameterName=pipeline-default-repository-owner:region=us-east-1": "sinapsis.co",
+  "ssm:account=491739098658:parameterName=pipeline-default-repository-connection:region=us-east-1": "arn:aws:codestar-connections:us-east-1:491739098658:connection/d90802f8-3a3c-4b91-bfb5-749c00bd409d",
+  "ssm:account=491739098658:parameterName=pipeline-default-slack-token:region=us-east-1": "T4M0B8VEF/B03LY8J4ACA/z6p0CQeurAtsz3oS4JYq8iAO",
+  "hosted-zone:account=491739098658:domainName=sinapsis.io:region=us-east-1": {
+    "Id": "/hostedzone/Z028396912FH4ULCLE67J",
+    "Name": "sinapsis.io."
+  },
+  "ssm:account=913838861210:parameterName=v3base-dev-dns-subdomain-hosted-zone-hosted-zone-name-servers:region=us-east-1": "ns-178.awsdns-22.com,ns-1131.awsdns-13.org,ns-839.awsdns-40.net,ns-1593.awsdns-07.co.uk",
+  "hosted-zone:account=913838861210:domainName=dev.v3base.sinapsis.io:region=us-east-1": {
+    "Id": "/hostedzone/Z0041780YFT0BCQHQJKL",
+    "Name": "dev.v3base.sinapsis.io."
+  },
+  "ssm:account=331183547525:parameterName=dev-dns-subdomain-hosted-zone-hosted-zone-name-servers:region=us-east-1": "ns-1840.awsdns-38.co.uk,ns-1508.awsdns-60.org,ns-296.awsdns-37.com,ns-589.awsdns-09.net",
+  "hosted-zone:account=331183547525:domainName=dev.base.sinapsis.io:region=us-east-1": {
+    "Id": "/hostedzone/Z06332123QNKZV5I8H527",
+    "Name": "dev.base.sinapsis.io."
+  },
+  "ssm:account=331183547525:parameterName=dev-tucu-dns-subdomain-hosted-zone-hosted-zone-name-servers:region=us-east-1": "ns-1403.awsdns-47.org,ns-643.awsdns-16.net,ns-1704.awsdns-21.co.uk,ns-213.awsdns-26.com",
+  "hosted-zone:account=331183547525:domainName=tucu.dev.base.sinapsis.io:region=us-east-1": {
+    "Id": "/hostedzone/Z06054322FZ8H6HZ3A8ND",
+    "Name": "tucu.dev.base.sinapsis.io."
+  }
+}
