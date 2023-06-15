@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as awsCodebuild from 'aws-cdk-lib/aws-codebuild';
 import { Artifact, Pipeline } from 'aws-cdk-lib/aws-codepipeline';
@@ -71,8 +72,9 @@ export class DeployPipelinePrefab extends Construct {
     const workerCommands = StringParameter.valueFromLookup(this, 'pipeline-deploy-worker-role')
       ? [
           'output=$(aws sts assume-role --role-arn "$DEPLOY_WORKER_ROLE" --role-session-name "CDK" --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" --output text)',
-          'IFS="$(printf \'\t\')"',
-          'set -- $output ',
+          "var1=$(echo \"$output\" | awk -F'\t' '{print $1}')",
+          "var2=$(echo \"$output\" | awk -F'\t' '{print $2}')",
+          "var3=$(echo \"$output\" | awk -F'\t' '{print $3}')",
           'export AWS_ACCESS_KEY_ID=$1',
           'export AWS_SECRET_ACCESS_KEY=$2',
           'export AWS_SESSION_TOKEN=$3',
