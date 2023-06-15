@@ -1,23 +1,21 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { RemovalPolicy } from 'aws-cdk-lib';
 import * as awsCodebuild from 'aws-cdk-lib/aws-codebuild';
 import { Artifact, Pipeline } from 'aws-cdk-lib/aws-codepipeline';
 import { CodeBuildAction, CodeStarConnectionsSourceAction } from 'aws-cdk-lib/aws-codepipeline-actions';
-import { DetailType, NotificationRule } from 'aws-cdk-lib/aws-codestarnotifications';
 import { IManagedPolicy, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
-import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs/lib';
-import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 
+import { getBucketName, getResourceName } from '@sinapsis-co/cc-core/common/naming/get-resource-name';
+import { SynthError } from '@sinapsis-co/cc-core/common/synth/synth-error';
+import { RemovalPolicy } from 'aws-cdk-lib';
+import { DetailType, NotificationRule } from 'aws-cdk-lib/aws-codestarnotifications';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { getLogicalName } from 'common/naming/get-logical-name';
-import { getBucketName, getResourceName } from 'common/naming/get-resource-name';
 import { Service } from 'common/service';
-import { SynthError } from 'common/synth/synth-error';
-
-import { TopicFunction } from 'prefab/compute/function/topic-function';
-import { RuntimeSecret } from 'prefab/util/config/runtime-secret';
-
+import { TopicFunction } from '../../compute/function/topic-function';
+import { RuntimeSecret } from '../config/runtime-secret';
 import { slackToken } from './catalog/secrets';
 
 export type SlackObject = {
@@ -70,6 +68,16 @@ export class DeployPipelinePrefab extends Construct {
       params.buildCommand = [`yarn deploy ${props.envName}`];
     }
 
+    const workerCommands = StringParameter.valueFromLookup(this, 'pipeline-deploy-worker-role')
+      ? [
+          'output=$(aws sts assume-role --role-arn "$DEPLOY_WORKER_ROLE" --role-session-name "CDK" --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" --output text)',
+          'IFS=$\'\t\' read -r var1 var2 var3 <<< "$output"',
+          'export AWS_ACCESS_KEY_ID=$var1',
+          'export AWS_SECRET_ACCESS_KEY=$var2',
+          'export AWS_SESSION_TOKEN=$var3',
+        ]
+      : [];
+
     const codebuildProject = new awsCodebuild.Project(this, 'CodebuildProject', {
       projectName: getResourceName('', props),
       role: deploymentRole,
@@ -97,6 +105,7 @@ export class DeployPipelinePrefab extends Construct {
             commands: [
               'npm set //npm.pkg.github.com/:_authToken $GITHUB_TOKEN',
               'yarn --prod',
+              ...workerCommands,
               ...(params.preDeployCommands || []),
             ],
           },

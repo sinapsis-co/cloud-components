@@ -2,7 +2,6 @@
 
 import { getServiceName } from '../naming/get-service-name';
 import { accountMapping } from './account-mapping';
-import { assumeRoleArn } from './assume-role';
 import {
   BaseDeployTargetName,
   BaseEnvName,
@@ -45,16 +44,9 @@ export const preScript = async <
     const ephemeralEnvName = envNameInput.includes('-') ? envNameInput.split('-')[1] : '';
     const props: BaseGlobalProps = { ...globalConstConfig, ...globalEnvConfig[envName], envName, ephemeralEnvName };
 
-    const region = globalDeployTargetConfig[envName]['services']['region'];
-    const role = process.env.DEPLOY_WORKER_ROLE
-      ? await assumeRoleArn(process.env.DEPLOY_WORKER_ROLE!, region)
-      : { region };
-
     if (!globalDeployTargetConfig[envName]) throw new SynthError('Invalid Env');
 
-    const landingZones = await Promise.all(
-      globalConstConfig.landingZones.map((l) => accountMapping(l, 'landingzone', role))
-    );
+    const landingZones = await Promise.all(globalConstConfig.landingZones.map((l) => accountMapping(l, 'landingzone')));
 
     const accountMap = parseContext(
       (
@@ -64,7 +56,7 @@ export const preScript = async <
             if (!account.includes('-')) return `${a}=${account}`;
             const [env, ...project] = account.split('-').reverse();
             const composed = project.reverse();
-            return `${a}=${await accountMapping(composed.join('-'), env, role)}`;
+            return `${a}=${await accountMapping(composed.join('-'), env)}`;
           })
         )
       ).join('&')
