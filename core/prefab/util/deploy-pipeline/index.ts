@@ -7,7 +7,7 @@ import { IManagedPolicy, ManagedPolicy, PolicyStatement, Role, ServicePrincipal 
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 
-import { getBucketName, getResourceName } from '@sinapsis-co/cc-core/common/naming/get-resource-name';
+import { getBucketName } from '@sinapsis-co/cc-core/common/naming/get-resource-name';
 import { SynthError } from '@sinapsis-co/cc-core/common/synth/synth-error';
 import { RemovalPolicy } from 'aws-cdk-lib';
 import { DetailType, NotificationRule } from 'aws-cdk-lib/aws-codestarnotifications';
@@ -82,7 +82,7 @@ export class DeployPipelinePrefab extends Construct {
       : [];
 
     const codebuildProject = new awsCodebuild.Project(this, 'CodebuildProject', {
-      projectName: getResourceName('', props),
+      projectName: `${props.projectName}-${props.envName}`,
       role: deploymentRole,
       environment: {
         computeType: awsCodebuild.ComputeType.MEDIUM,
