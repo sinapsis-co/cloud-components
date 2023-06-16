@@ -26,7 +26,7 @@ export const handler: SNSHandler = async (event) => {
       // eslint-disable-next-line no-console
       console.log(v.Sns.Message);
       const response: PipelineNotification = JSON.parse(v.Sns.Message);
-      const [envName, ...project] = response.detail.pipeline.split('-').reverse().slice(2);
+      const [envName, ...project] = response.detail.pipeline.split('-').reverse();
       const { commitId, commitMessage } = await getPipelineDetail(
         response.detail.pipeline,
         response.detail['execution-id']
