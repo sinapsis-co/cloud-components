@@ -289,6 +289,8 @@ export class SsrPrefabLatest extends Construct {
       additionalBehaviors: {
         '_next/static/*': staticFileBehaviour,
         '_next/image*': imageBehavior,
+        'image/*': imageBehavior,
+        'favicon/*': imageBehavior,
         '_next/data/*': serverBehavior,
         'api/*': serverBehavior,
       },
