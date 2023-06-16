@@ -23,16 +23,12 @@ export type PipelineNotification = {
 export const handler: SNSHandler = async (event) => {
   await Promise.all(
     event.Records.map(async (v) => {
-      // eslint-disable-next-line no-console
-      console.log(v.Sns.Message);
       const response: PipelineNotification = JSON.parse(v.Sns.Message);
-      const [envName, ...project] = response.detail.pipeline.split('-').reverse();
       const { commitId, commitMessage } = await getPipelineDetail(
         response.detail.pipeline,
         response.detail['execution-id']
       );
       const commitUrl = `https://github.com/${process.env.REPOSITORY_OWNER}/${process.env.REPOSITORY_NAME}/commit/${commitId}`;
-      const projectName = project.reverse().join('-');
       const url = `https://us-east-1.console.aws.amazon.com/codesuite/codepipeline/pipelines/${response.detail.pipeline}/view?region=us-east-1`;
       const fallback = ':robot_face: *[Deploy Pipeline]* :robot_face:\n';
       const color = response.detail.state === 'FAILED' ? '#D00000' : '#00d02d';
@@ -74,7 +70,7 @@ export const handler: SNSHandler = async (event) => {
             fallback,
             color,
             [
-              { title: 'Pipeline', short: false, value: `${projectName}-${envName}` },
+              { title: 'Pipeline', short: false, value: response.detail.pipeline },
               {
                 title: 'Commit',
                 short: false,
