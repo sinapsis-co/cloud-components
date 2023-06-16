@@ -23,14 +23,14 @@ export class SsrLanding extends Service<GlobalCoordinator> {
 
   build(dep: Dep) {
     new SsrPrefabLatest(this, {
-      baseDir: 'frontend/ssr-next',
+      baseDir: 'frontend/webpage',
       distDir: '.open-next',
       certificate: dep.dnsSubdomainCertificate.certificatePrefab.certificate,
       subDomain: this.props.subdomain.ssrLanding,
-      filesPathAssets: path.join(__dirname, '../../../frontend/ssr-next/.open-next/assets'),
-      filesPathImageFunction: path.join(__dirname, '../../../frontend/ssr-next/.open-next/image-optimization-function'),
-      filesPathMiddlewareFunction: path.join(__dirname, '../../../frontend/ssr-next/.open-next/middleware-function'),
-      filesPathNextFunction: path.join(__dirname, '../../../frontend/ssr-next/.open-next/server-function'),
+      filesPathAssets: path.join(__dirname, '../../../frontend/webpage/.open-next/assets'),
+      filesPathImageFunction: path.join(__dirname, '../../../frontend/webpage/.open-next/image-optimization-function'),
+      filesPathMiddlewareFunction: path.join(__dirname, '../../../frontend/webpage/.open-next/middleware-function'),
+      filesPathNextFunction: path.join(__dirname, '../../../frontend/webpage/.open-next/server-function'),
       calculatedSecrets: {
         SKIP_PREFLIGHT_CHECK: 'true',
         REACT_APP_API_URL: dep.cdnApi.cdnApiPrefab.baseUrl,

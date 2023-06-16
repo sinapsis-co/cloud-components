@@ -1,0 +1,98 @@
+@font-face {
+  font-family: 'Reedy Variable Regular';
+  src: url('../assets/fonts/ReedyVariableRegularVF.ttf');
+}
+
+:root {
+  font-family: Montserrat, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+
+  overscroll-behavior: none;
+
+  --main-green: #65d872;
+  --transp-green: rgba(101, 216, 114, 0.25);
+  --dark-green: #109320;
+}
+
+.grecaptcha-badge {
+  background-color: #ffffff;
+  z-index: 1000;
+}
+
+a {
+  font-weight: 400 !important;
+  text-decoration: inherit;
+  cursor: pointer;
+}
+a:hover {
+  color: #fc9823;
+}
+
+body {
+  margin: 0;
+}
+
+button:focus-visible {
+  outline: 4px auto var(--dark-green);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+@keyframes logoAnimation {
+  0% {
+    font-variation-settings: 'wdth' 100, 'vrot' 70, 'opsz' 0;
+  }
+  10% {
+    font-variation-settings: 'wdth' 100, 'vrot' 70, 'opsz' 100;
+  }
+  20% {
+    font-variation-settings: 'wdth' 100, 'vrot' 30, 'opsz' 100;
+  }
+  30% {
+    font-variation-settings: 'wdth' 100, 'vrot' 30, 'opsz' 0;
+  }
+  40% {
+    font-variation-settings: 'wdth' 100, 'vrot' 70, 'opsz' 0;
+  }
+  50% {
+    font-variation-settings: 'wdth' 10, 'vrot' 70, 'opsz' 0;
+  }
+  60% {
+    font-variation-settings: 'wdth' 10, 'vrot' 30, 'opsz' 0;
+  }
+  70% {
+    font-variation-settings: 'wdth' 10, 'vrot' 30, 'opsz' 100;
+  }
+  80% {
+    font-variation-settings: 'wdth' 100, 'vrot' 30, 'opsz' 100;
+  }
+  90% {
+    font-variation-settings: 'wdth' 100, 'vrot' 70, 'opsz' 100;
+  }
+  100% {
+    font-variation-settings: 'wdth' 100, 'vrot' 70, 'opsz' 0;
+  }
+}
