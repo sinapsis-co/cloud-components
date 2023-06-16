@@ -85,8 +85,8 @@ export class DeployPipelinePrefab extends Construct {
       projectName: `${props.projectName}-${props.envName}`,
       role: deploymentRole,
       environment: {
-        computeType: awsCodebuild.ComputeType.MEDIUM,
-        buildImage: awsCodebuild.LinuxBuildImage.STANDARD_6_0,
+        computeType: awsCodebuild.ComputeType.LARGE,
+        buildImage: awsCodebuild.LinuxBuildImage.STANDARD_7_0,
       },
       environmentVariables: {
         GITHUB_TOKEN: {
