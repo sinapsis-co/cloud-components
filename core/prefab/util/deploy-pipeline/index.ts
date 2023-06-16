@@ -183,6 +183,7 @@ export class DeployPipelinePrefab extends Construct {
       });
 
       new NotificationRule(this, 'Notification', {
+        notificationRuleName: `${props.projectName}-${props.envName}`,
         detailType: DetailType.FULL,
         source: pipeline,
         targets: [topicFunction.customTopic.topic],
