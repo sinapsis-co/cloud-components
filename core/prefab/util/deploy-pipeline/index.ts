@@ -107,8 +107,9 @@ export class DeployPipelinePrefab extends Construct {
           pre_build: {
             commands: [
               ...workerCommands,
+              'npm install --global yarn',
               'npm set //npm.pkg.github.com/:_authToken $GITHUB_TOKEN',
-              'npx yarn --prod',
+              'yarn --prod',
               ...(params.preDeployCommands || []),
             ],
           },
