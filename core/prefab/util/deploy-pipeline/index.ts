@@ -102,7 +102,7 @@ export class DeployPipelinePrefab extends Construct {
         version: '0.2',
         phases: {
           install: {
-            'runtime-versions': { nodejs: 16 },
+            'runtime-versions': { nodejs: 18 },
           },
           pre_build: {
             commands: [
