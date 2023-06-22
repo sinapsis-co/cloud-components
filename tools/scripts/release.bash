@@ -8,9 +8,9 @@ cd $package
 
 # yarn verify
 
-# if [ "$package" = "core" ]; then
-# 	yarn upgrade @sinapsis-co/cc-sdk --latest
-# fi
+if [ "$package" = "core" ]; then
+	yarn upgrade @sinapsis-co/cc-sdk --latest
+fi
 
 version=$(grep -n "version" package.json | cut -d':' -f3 | cut -d'"' -f2)
 inm=$(echo $version | cut -d'.' -f1 -f2)
