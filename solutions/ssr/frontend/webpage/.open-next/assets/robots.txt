@@ -1,4 +1,0 @@
-User-agent: *
-Disallow:
-Sitemap: https://reedy.it/sitemap.xml
-Sitemap: https://www.reedy.it/sitemap.xml

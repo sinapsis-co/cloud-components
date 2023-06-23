@@ -9,3 +9,6 @@ yarn-error.log
 .next
 merged.graphql
 infra/*
+.open-next
+.open-next/*
+.build

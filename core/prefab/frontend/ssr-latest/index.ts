@@ -5,13 +5,13 @@ import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
-import { Construct } from 'constructs';
-
 import { getDomain } from 'common/naming/get-domain';
 import { getLogicalName } from 'common/naming/get-logical-name';
 import { getResourceName, getShortResourceName } from 'common/naming/get-resource-name';
 import { Service } from 'common/service';
 import { SynthError } from 'common/synth/synth-error';
+import { Construct } from 'constructs';
+import fs from 'fs';
 
 import {
   AllowedMethods,
@@ -35,6 +35,7 @@ import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import path from 'path';
 import { WafPrefab } from 'prefab/networking/waf';
 import { PrivateBucketPrefab } from 'prefab/storage/bucket/private-bucket';
 import { FrontendEnvBuilder } from 'prefab/util/config/frontend-env-builder';
@@ -92,22 +93,8 @@ export class SsrPrefabLatest extends Construct {
       retainOnDelete: false,
     });
 
-    // next function
-    // const serverFunction = new BaseFunction(service, {
-    //   handler: 'index.handler',
-    //   currentVersionOptions: {
-    //     removalPolicy: RemovalPolicy.DESTROY,
-    //   },
-    //   logRetention: RetentionDays.FIVE_DAYS,
-    //   runtime: lambda.Runtime.NODEJS_18_X,
-    //   memorySize: 2048,
-    //   timeout: Duration.seconds(5),
-    //   baseFunctionString: params.filesPathNextFunction,
-    //   name: 'server-function',
-    // });
-
     // NextJS Server Function
-    const serverFunction = new lambda.Function(this, 'MyServerFunction', {
+    const serverFunction = new lambda.Function(this, 'SSRServerFunction', {
       functionName: getShortResourceName('server-function', service.props),
       handler: 'index.handler',
       currentVersionOptions: {
@@ -120,33 +107,8 @@ export class SsrPrefabLatest extends Construct {
       code: lambda.Code.fromAsset(params.filesPathNextFunction),
     });
 
-    // image function
-    // const imageFunction = new BaseFunction(service, {
-    //   handler: 'index.handler',
-    //   currentVersionOptions: {
-    //     removalPolicy: RemovalPolicy.DESTROY,
-    //   },
-    //   logRetention: RetentionDays.FIVE_DAYS,
-    //   runtime: lambda.Runtime.NODEJS_18_X,
-    //   memorySize: 1536,
-    //   timeout: Duration.seconds(25),
-    //   baseFunctionString: params.filesPathImageFunction,
-    //   name: 'image-function',
-    //   environment: {
-    //     BUCKET_NAME: this.bucket.bucket.bucketName,
-    //     // TODO: Add allowed domains here. These are on the nextjs config file.
-    //     NEXT_IMAGE_ALLOWED_DOMAINS: '',
-    //   },
-    //   initialPolicy: [
-    //     new PolicyStatement({
-    //       actions: ['s3:GetObject'],
-    //       resources: [this.bucket.bucket.arnForObjects('*')],
-    //     }),
-    //   ],
-    // });
-
     // Image Optimization Function
-    const imageFunction = new lambda.Function(this, 'ImageFunction', {
+    const imageFunction = new lambda.Function(this, 'SSRImageFunction', {
       functionName: getShortResourceName('image-function', service.props),
       handler: 'index.handler',
       currentVersionOptions: {
@@ -171,46 +133,22 @@ export class SsrPrefabLatest extends Construct {
       ],
     });
 
-    // middleware function
-    // const middlewareFunction = new BaseFunction(service, {
-    //   handler: 'index.handler',
-    //   currentVersionOptions: {
-    //     removalPolicy: RemovalPolicy.DESTROY,
-    //   },
-    //   logRetention: RetentionDays.FIVE_DAYS,
-    //   runtime: lambda.Runtime.NODEJS_18_X,
-    //   memorySize: 128,
-    //   timeout: Duration.seconds(25),
-    //   baseFunctionString: params.filesPathMiddlewareFunction,
-    //   name: 'middleware-function',
-    // });
-
-    // const middlewareFunction = new lambda.Function(this, 'MiddlewareFunction', {
-    //   functionName: getShortResourceName('middleware-function', service.props),
-    //   handler: 'index.handler',
-    //   currentVersionOptions: {
-    //     removalPolicy: RemovalPolicy.DESTROY,
-    //   },
-    //   logRetention: RetentionDays.FIVE_DAYS,
-    //   runtime: lambda.Runtime.NODEJS_18_X,
-    //   memorySize: 128,
-    //   code: lambda.Code.fromAsset(params.filesPathMiddlewareFunction),
-    // });
-
+    // Middleware Function (for redirects)
     const oai: IOriginAccessIdentity = new OriginAccessIdentity(this, getResourceName('oai', service.props));
-
     this.bucket.bucket.grantRead(oai);
 
-    const origin2 = new S3Origin(this.bucket.bucket, {
+    // Create origin group with the bucket and server function
+    const origin = new S3Origin(this.bucket.bucket, {
       originId: getResourceName('OriginId', service.props),
       originAccessIdentity: oai,
     });
 
-    // Create server behavior
+    // Create server behavior for the origin group with the server function and middleware function (for redirects)
     const serverFnUrl = serverFunction.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
     });
 
+    // Create server behavior for the origin group with the server function
     const serverBehavior = {
       viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
       origin: new HttpOrigin(Fn.parseDomainName(serverFnUrl.url)),
@@ -218,18 +156,14 @@ export class SsrPrefabLatest extends Construct {
       cachedMethods: CachedMethods.CACHE_GET_HEAD_OPTIONS,
       compress: true,
       cachePolicy: this.createCloudFrontServerCachePolicy(),
-      // edgeLambdas: [
-      //   {
-      //     eventType: LambdaEdgeEventType.VIEWER_REQUEST,
-      //     functionVersion: middlewareFunction.currentVersion,
-      //   },
-      // ],
     };
 
-    // Create image optimization behavior
+    // Create image optimization behavior for the origin group with the image function
     const imageFnUrl = imageFunction.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
     });
+
+    // Create image optimization behavior for the origin group with the image function
     const imageBehavior = {
       viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
       origin: new HttpOrigin(Fn.parseDomainName(imageFnUrl.url)),
@@ -237,16 +171,6 @@ export class SsrPrefabLatest extends Construct {
       cachedMethods: CachedMethods.CACHE_GET_HEAD_OPTIONS,
       compress: true,
       cachePolicy: serverBehavior.cachePolicy,
-    };
-
-    // Create statics behavior
-    const staticFileBehaviour: BehaviorOptions = {
-      origin: origin2,
-      viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-      allowedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
-      cachedMethods: CachedMethods.CACHE_GET_HEAD_OPTIONS,
-      compress: true,
-      cachePolicy: CachePolicy.CACHING_OPTIMIZED,
     };
 
     const domains = [this.domain];
@@ -262,21 +186,44 @@ export class SsrPrefabLatest extends Construct {
     //   - if failed, fall back to S3
     const fallbackOriginGroup = new OriginGroup({
       primaryOrigin: serverBehavior.origin,
-      fallbackOrigin: origin2,
+      fallbackOrigin: origin,
       fallbackStatusCodes: [404],
     });
+
     const defaultBehavior = {
       origin: fallbackOriginGroup,
-
       viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
       compress: true,
       cachePolicy: serverBehavior.cachePolicy,
+      // TODO: Add edge lambdas here
       // edgeLambdas: serverBehavior.edgeLambdas,
     };
 
-    this.distribution = new Distribution(this, 'MyDistribution', {
+    // Create statics behavior for the origin group with the bucket
+    const staticFileBehaviour: BehaviorOptions = {
+      origin,
+      viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      allowedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+      cachedMethods: CachedMethods.CACHE_GET_HEAD_OPTIONS,
+      compress: true,
+      cachePolicy: CachePolicy.CACHING_OPTIMIZED,
+    };
+
+    const staticsBehavioursStatic: Record<string, BehaviorOptions> = {};
+    const publicDir = path.join(params.filesPathAssets);
+    // Get all files and folders in the public directory
+    // and create a behaviour for each one
+    for (const item of fs.readdirSync(publicDir)) {
+      if (fs.statSync(path.join(publicDir, item)).isDirectory()) {
+        staticsBehavioursStatic[`${item}/*`] = staticFileBehaviour;
+      } else {
+        staticsBehavioursStatic[item] = staticFileBehaviour;
+      }
+    }
+
+    this.distribution = new Distribution(this, 'Distribution', {
       defaultRootObject: '',
-      domainNames: domains, // specify at least one domain name here
+      domainNames: domains,
       certificate: params.certificate,
       comment: getResourceName('cdn', service.props),
       enableIpv6: false,
@@ -287,12 +234,12 @@ export class SsrPrefabLatest extends Construct {
       sslSupportMethod: SSLMethod.SNI,
       defaultBehavior: defaultBehavior,
       additionalBehaviors: {
-        '_next/static/*': staticFileBehaviour,
-        '_next/image*': imageBehavior,
-        'image/*': imageBehavior,
-        'favicon/*': imageBehavior,
-        '_next/data/*': serverBehavior,
         'api/*': serverBehavior,
+        '_next/data/*': serverBehavior,
+        '_next/image*': imageBehavior,
+        '_next/*': staticFileBehaviour,
+        // all other static files
+        ...staticsBehavioursStatic,
       },
     });
 
