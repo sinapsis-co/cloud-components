@@ -69,17 +69,18 @@ export class DeployPipelinePrefab extends Construct {
       params.buildCommand = [`yarn deploy ${props.envName}`];
     }
 
-    const workerCommands = StringParameter.valueFromLookup(this, 'pipeline-deploy-worker-role')
-      ? [
-          'output=$(aws sts assume-role --role-arn "$DEPLOY_WORKER_ROLE" --role-session-name "CDK" --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" --output text)',
-          "var1=$(echo \"$output\" | awk -F'\t' '{print $1}')",
-          "var2=$(echo \"$output\" | awk -F'\t' '{print $2}')",
-          "var3=$(echo \"$output\" | awk -F'\t' '{print $3}')",
-          'export AWS_ACCESS_KEY_ID=$var1',
-          'export AWS_SECRET_ACCESS_KEY=$var2',
-          'export AWS_SESSION_TOKEN=$var3',
-        ]
-      : [];
+    const workerCommands =
+      StringParameter.valueFromLookup(this, 'pipeline-deploy-worker-role') !== 'null'
+        ? [
+            'output=$(aws sts assume-role --role-arn "$DEPLOY_WORKER_ROLE" --role-session-name "CDK" --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" --output text)',
+            "var1=$(echo \"$output\" | awk -F'\t' '{print $1}')",
+            "var2=$(echo \"$output\" | awk -F'\t' '{print $2}')",
+            "var3=$(echo \"$output\" | awk -F'\t' '{print $3}')",
+            'export AWS_ACCESS_KEY_ID=$var1',
+            'export AWS_SECRET_ACCESS_KEY=$var2',
+            'export AWS_SESSION_TOKEN=$var3',
+          ]
+        : [];
 
     const codebuildProject = new awsCodebuild.Project(this, 'CodebuildProject', {
       projectName: `${props.projectName}-${props.envName}`,
