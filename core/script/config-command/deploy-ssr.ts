@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { CloudFrontClient, CreateInvalidationCommand } from '@aws-sdk/client-cloudfront';
 import { GetParameterCommand, SSMClient } from '@aws-sdk/client-ssm';
-import { execSync, ExecSyncOptions } from 'child_process';
+import { ExecSyncOptions, execSync } from 'child_process';
 import { writeFileSync } from 'fs';
 import { ConfigCommand } from '..';
 import { getResourceName } from '../../common/naming/get-resource-name';
@@ -29,6 +29,8 @@ export const deploySSR: ConfigCommand = async <
 ): Promise<void> => {
   try {
     console.log('<< Deploy SSR Started >>');
+
+    const yarnCommand = args[5] || 'build';
 
     const { envName, ephemeralEnvName, servicesNamesInput, envNameInput, roleName, accountMap } = await preScript(
       globalConstConfig,
@@ -80,7 +82,7 @@ export const deploySSR: ConfigCommand = async <
 
     console.log('>> STEP: (3/4) => BUILDING');
 
-    const command = `yarn && yarn build ${envNameInput}`;
+    const command = `yarn && yarn ${yarnCommand} ${envNameInput}`;
     execSync(command, { stdio: 'inherit', cwd: `${process.cwd()}/${baseDir}` });
 
     const entries = [

@@ -29,6 +29,8 @@ export const startSPA: ConfigCommand = async <
   try {
     console.log('<< Start SPA Script >>');
 
+    const yarnCommand = args[5] || 'start';
+
     const {
       envName,
       ephemeralEnvName,
@@ -80,7 +82,7 @@ export const startSPA: ConfigCommand = async <
 
     console.log('>> STEP: (3/3) => STARTING');
 
-    const command = `yarn && yarn start ${envNameInput}`;
+    const command = `yarn && yarn ${yarnCommand} ${envNameInput}`;
 
     execSync(command, { stdio: 'inherit', cwd: `${process.cwd()}/${baseDir}` });
   } catch (error: any) {

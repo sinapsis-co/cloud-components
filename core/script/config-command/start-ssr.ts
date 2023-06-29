@@ -29,6 +29,8 @@ export const startSSR: ConfigCommand = async <
   try {
     console.log('<< Start SSR Script >>');
 
+    const yarnCommand = args[5] || 'start';
+
     const { envName, ephemeralEnvName, servicesNamesInput, envNameInput, roleName, accountMap } = await preScript(
       globalConstConfig,
       globalEnvConfig,
@@ -70,7 +72,7 @@ export const startSSR: ConfigCommand = async <
     writeFileSync(`${process.cwd()}/${baseDir}/.env.${envNameInput}`, envFile);
     console.log('>> STEP: (3/3) => STARTING');
 
-    const command = `yarn start ${envNameInput}`;
+    const command = `yarn ${yarnCommand} ${envNameInput}`;
     execSync(command, { stdio: 'inherit', cwd: `${process.cwd()}/${baseDir}` });
   } catch (error: any) {
     console.log(error);
