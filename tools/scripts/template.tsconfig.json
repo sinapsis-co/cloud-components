@@ -1,6 +1,6 @@
 {
-  "exclude": ["node_modules/**/*"],
-  "include": ["*.ts"],
+  "exclude": ["node_modules/**/*", "cdk.out/**/*"],
+  "include": ["./**/*.ts"],
   "compilerOptions": {
     "rootDir": ".",
     "target": "es2019",

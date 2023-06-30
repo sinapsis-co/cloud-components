@@ -52,11 +52,11 @@ export const globalDeployTargetConfig: GlobalDeployTargetConfig = {
     },
     deployPipeline: {
       region: 'us-east-1',
-      account: 'sinapsis-noprod',
+      account: 'sinapsis-worker',
     },
     dnsShared: {
       region: 'us-east-1',
-      account: 'sinapsis-noprod',
+      account: 'sinapsis-worker',
     },
   },
   staging: {
@@ -66,11 +66,11 @@ export const globalDeployTargetConfig: GlobalDeployTargetConfig = {
     },
     deployPipeline: {
       region: 'us-east-1',
-      account: 'sinapsis-noprod',
+      account: 'sinapsis-worker',
     },
     dnsShared: {
       region: 'us-east-1',
-      account: 'sinapsis-noprod',
+      account: 'sinapsis-worker',
     },
   },
 };

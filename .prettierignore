@@ -1,4 +1,10 @@
-.dist
-.dist/*
 node_modules
-build
+cdk.out
+.env*
+.DS_Store
+yarn-error.log
+.editorconfig
+.eslintcache
+.dist
+.next
+merged.graphql

@@ -19,11 +19,13 @@ export const handler = apiHandler(async (_, req) => {
         keyCondition: '#PK = :PK AND begins_with(#SK,:USER) OR begins_with(#SK,:INVITE)',
         attributesMap: { PK: req.pathParams.orgId, USER: filterMap.users, INVITE: filterMap.invites },
       };
+
   const { items, ...att } = await viewUsersAndInvites.query(
     options.keyCondition,
     options.attributesMap,
     req.queryParams
   );
+
   return {
     items: items.map((r) => {
       if (r['avatar']) r['avatar'] = `${process.env.MEDIA_URL}/${r['avatar']}`;

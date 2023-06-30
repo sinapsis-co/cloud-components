@@ -1,5 +1,5 @@
 import { Service } from '@sinapsis-co/cc-core/common/service';
-import { SsrPrefabLatest } from '@sinapsis-co/cc-core/prefab/frontend/ssr-latest';
+import { SsrPrefab } from '@sinapsis-co/cc-core/prefab/frontend/ssr';
 
 import { DepCheck, ServiceDependencies } from '@sinapsis-co/cc-core/common/coordinator';
 import { CdnApi } from '@sinapsis-co/cc-services/support/cdn-api';
@@ -22,7 +22,7 @@ export class SsrLanding extends Service<GlobalCoordinator> {
   }
 
   build(dep: Dep) {
-    new SsrPrefabLatest(this, {
+    new SsrPrefab(this, {
       baseDir: 'frontend/webpage',
       distDir: '.open-next',
       certificate: dep.dnsSubdomainCertificate.certificatePrefab.certificate,

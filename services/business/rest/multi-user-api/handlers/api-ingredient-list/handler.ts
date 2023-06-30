@@ -4,6 +4,6 @@ import { ingredientApi } from '../../catalog';
 import { repoIngredient } from '../../repository/repo-ingredient';
 
 export const handler = apiHandler(async (_, req) => {
-  const { limit, nextToken } = req.queryParams;
-  return await repoIngredient.listItem(null, { limit: Number(limit) || 50, nextToken });
+  //Using null as PK I'm forcing the scan
+  return await repoIngredient.listItem(null, req.queryParams);
 }, ingredientApi.list.definition);

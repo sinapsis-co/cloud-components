@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { CloudFrontClient, CreateInvalidationCommand } from '@aws-sdk/client-cloudfront';
 import { GetParameterCommand, SSMClient } from '@aws-sdk/client-ssm';
-import { execSync, ExecSyncOptions } from 'child_process';
+import { ExecSyncOptions, execSync } from 'child_process';
 import { writeFileSync } from 'fs';
 import { ConfigCommand } from '..';
 import { getResourceName } from '../../common/naming/get-resource-name';
@@ -30,12 +30,16 @@ export const deploySSR: ConfigCommand = async <
   try {
     console.log('<< Deploy SSR Started >>');
 
+    const yarnCommand = args[5] || 'build';
+
     const { envName, ephemeralEnvName, servicesNamesInput, envNameInput, roleName, accountMap } = await preScript(
       globalConstConfig,
       globalEnvConfig,
       globalDeployTargetConfig,
       args
     );
+
+    console.log(envName, ephemeralEnvName, servicesNamesInput, envNameInput, roleName, accountMap);
 
     console.log('>> STEP: (1/4) => LOADING CONFIGS');
     const projectName = globalConstConfig.projectName;
@@ -47,26 +51,20 @@ export const deploySSR: ConfigCommand = async <
         ?.split('=')[1] || '';
     const region = globalDeployTargetConfig[envName]['services']['region'];
 
+    console.log(projectName, account, region);
+
     console.log('>> STEP: (2/4) => RENDERING ENV');
 
     const getParamName = (name: string) =>
       getResourceName(name, { projectName, envName, ephemeralEnvName, serviceName: servicesNamesInput[0] });
+
     const role = await assumeRole({ account, region }, roleName);
 
     const ssm = new SSMClient(role);
     const deployConfig = await ssm.send(new GetParameterCommand({ Name: getParamName('config') }));
+    console.log('deployConfig', deployConfig);
     if (!deployConfig.Parameter?.Value) throw new Error('Invalid Config');
-    const {
-      domain,
-      distributionBucket,
-      recipeBucket,
-      distributionId,
-      assetMaxAge,
-      indexMaxAge,
-      baseDir,
-      distDir,
-      deployTriggeredEventConfig,
-    } = JSON.parse(deployConfig.Parameter?.Value);
+    const { domain, distributionBucket, distributionId, baseDir, distDir } = JSON.parse(deployConfig.Parameter?.Value);
 
     const calculatedEnv = await ssm.send(new GetParameterCommand({ Name: getParamName('env-calculated') }));
     if (!calculatedEnv.Parameter?.Value) throw new Error('Invalid CalculatedEnv');
@@ -80,22 +78,10 @@ export const deploySSR: ConfigCommand = async <
 
     console.log('>> STEP: (3/4) => BUILDING');
 
-    const command = `yarn && yarn build ${envNameInput}`;
+    const command = 'npx open-next@latest build -y';
     execSync(command, { stdio: 'inherit', cwd: `${process.cwd()}/${baseDir}` });
 
-    const entries = [
-      {
-        Source: deployTriggeredEventConfig.source,
-        DetailType: deployTriggeredEventConfig.name,
-        EventBusName: deployTriggeredEventConfig.bus,
-        Detail: JSON.stringify({ any: 'value' }),
-        Resources: [],
-      },
-    ];
-
-    const cpDistributionBucket = `aws s3 cp ${distDir} s3://${distributionBucket}/_next --cache-control "max-age=${assetMaxAge}" --exclude '*' --include 'cache/*' --include 'static/*' --recursive`;
-    const cpRecipeBucket = `aws s3 cp ${distDir} s3://${recipeBucket}/_next --cache-control "max-age=${indexMaxAge}" --exclude 'cache/*'  --exclude 'static/*' --recursive`;
-    const cpEventTrigger = `aws events put-events --entries ${JSON.stringify(JSON.stringify(entries))} --no-cli-pager`;
+    const cpDistributionBucket = `aws s3 cp ${distDir}/assets s3://${distributionBucket} --recursive`;
 
     const execOptions: ExecSyncOptions = {
       stdio: 'inherit',
@@ -109,8 +95,6 @@ export const deploySSR: ConfigCommand = async <
       },
     };
     execSync(cpDistributionBucket, execOptions);
-    execSync(cpRecipeBucket, execOptions);
-    execSync(cpEventTrigger, execOptions);
 
     console.log('STEP: (4/4) => CREATING INVALIDATION');
 

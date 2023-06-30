@@ -19,26 +19,38 @@ export type BasicAuth = {
   pass: string;
 };
 
-export type Options<TracingMeta, ErrorResponse> = {
-  basicAuth?: BasicAuth;
+export type Options<
+  TracingMeta extends Record<string, string>,
+  ErrorResponse extends boolean,
+  IgnoreResponse extends boolean
+> = {
   tracingMeta: TracingMeta;
   returnErrorResponse?: ErrorResponse;
+  ignoreResponse?: IgnoreResponse;
+  basicAuth?: BasicAuth;
   timeout?: number;
 };
 
-type Response<Api extends ApiIntegrationInterface, ErrorResponse extends boolean> = ErrorResponse extends true
+type Response<
+  Api extends ApiIntegrationInterface,
+  ErrorResponse extends boolean,
+  IgnoreResponse extends boolean
+> = IgnoreResponse extends true
+  ? undefined
+  : ErrorResponse extends true
   ? { response?: Api['response']; errorResponse?: Api['errorResponse']; statusCode: number }
   : { response: Api['response'] };
 
 export const apiCall = async <
   Api extends ApiIntegrationInterface,
-  TracingMeta extends Record<string, string> = Record<string, string>,
-  ErrorResponse extends boolean = false
+  TracingMeta extends Record<string, string>,
+  ErrorResponse extends boolean,
+  IgnoreResponse extends boolean
 >(
   config: ApiIntegrationConfig<Api>,
   params: ApiParams<Api>,
-  options: Options<TracingMeta, ErrorResponse>
-): Promise<Response<Api, ErrorResponse>> => {
+  options: Options<TracingMeta, ErrorResponse, IgnoreResponse>
+): Promise<Response<Api, ErrorResponse, IgnoreResponse>> => {
   const { url, method } = config;
   const { pathParams = {}, queryParams = {}, headers = {}, body = {} } = params as Api;
 
@@ -56,7 +68,7 @@ export const apiCall = async <
   const timeout = options.timeout || parseInt(process.env.CC_FUNCTION_TIMEOUT!) - 1;
 
   setTimeout(() => controller.abort(), timeout * 1000);
-  const cmd = async (): Promise<Response<Api, ErrorResponse>> => {
+  const cmd = async (): Promise<Response<Api, ErrorResponse, IgnoreResponse>> => {
     const callResult = await fetch(endpointWithQuery, {
       signal: controller.signal,
       method,
@@ -66,7 +78,7 @@ export const apiCall = async <
         ...(headers ? headers : {}),
       },
       ...(!['GET', 'HEAD'].includes(method) ? { body: JSON.stringify(body) } : {}),
-    }).catch((e) => {
+    }).catch((e: { type: string; message: string }) => {
       if (e.type === 'aborted') {
         throw new PlatformFault({ code: 'FAULT_API_CALL_TIMEOUT', detail: `Timeout after ${timeout} seconds` });
       }
@@ -77,12 +89,13 @@ export const apiCall = async <
     if (!callResult.ok) {
       if (options.returnErrorResponse) {
         const errorResponse: Api['errorResponse'] = await callResult.json();
-        return { errorResponse, statusCode } as Response<Api, ErrorResponse>;
+        return { errorResponse, statusCode } as Response<Api, ErrorResponse, IgnoreResponse>;
       }
       throw new PlatformFault({ code: 'FAULT_API_CALL_INVALID_RESPONSE', detail: await callResult.text() });
     }
+    if (options.ignoreResponse) return undefined as Response<Api, ErrorResponse, IgnoreResponse>;
     const response: Api['response'] = await callResult.json();
-    return { response } as Response<Api, ErrorResponse>;
+    return { response } as Response<Api, ErrorResponse, IgnoreResponse>;
   };
 
   return traceableFunction('ApiCall', 'FAULT_API_CALL_UNHANDLED', endpointWithQuery, cmd, options.tracingMeta);

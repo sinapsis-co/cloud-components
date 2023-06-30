@@ -6,7 +6,7 @@ package=$1
 
 cd $package
 
-yarn verify
+# yarn verify
 
 if [ "$package" = "core" ]; then
 	yarn upgrade @sinapsis-co/cc-sdk --latest

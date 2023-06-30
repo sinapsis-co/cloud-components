@@ -5,5 +5,6 @@ import { repoOrgUser } from '../../repository/repo-org-user';
 
 export const handler = apiHandler(async (_, req) => {
   const { sub } = req.claims;
-  return repoOrgUser.listIndex('GSI_1', `#USER#${sub}`, { limit: 100 });
+  const SK = repoOrgUser.keySerialize({ orgId: '', userId: sub }).SK;
+  return repoOrgUser.listIndex('GSI_1', SK);
 }, identityApi.userListOrg.definition);

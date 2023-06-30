@@ -8,7 +8,7 @@ import { authMdw } from '../../platform/authorization';
 
 export type Interface = ApiInterface<{
   response: InviteModel['Entity'];
-  pathParams: EmptyObject;
+  pathParams: { orgId: string };
   body: { email: string };
   claims: UserClaims;
   queryParams: EmptyObject;
@@ -18,7 +18,7 @@ export const definition: ApiDefinition<Interface> = {
   name: 'api-invite-create',
   method: 'POST',
   basePath: 'identity',
-  path: '/invite',
+  path: '/org/{orgId}/invite',
   tablePermission: 'readWrite',
   scope: authScope.owner,
   authorizationMdw: authMdw,

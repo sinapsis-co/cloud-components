@@ -1,23 +1,22 @@
+/* eslint-disable quotes */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { RemovalPolicy } from 'aws-cdk-lib';
 import * as awsCodebuild from 'aws-cdk-lib/aws-codebuild';
 import { Artifact, Pipeline } from 'aws-cdk-lib/aws-codepipeline';
 import { CodeBuildAction, CodeStarConnectionsSourceAction } from 'aws-cdk-lib/aws-codepipeline-actions';
-import { DetailType, NotificationRule } from 'aws-cdk-lib/aws-codestarnotifications';
 import { IManagedPolicy, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
-import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs/lib';
-import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 
+import { getBucketName } from '@sinapsis-co/cc-core/common/naming/get-resource-name';
+import { SynthError } from '@sinapsis-co/cc-core/common/synth/synth-error';
+import { RemovalPolicy } from 'aws-cdk-lib';
+import { DetailType, NotificationRule } from 'aws-cdk-lib/aws-codestarnotifications';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { getLogicalName } from 'common/naming/get-logical-name';
-import { getBucketName, getResourceName } from 'common/naming/get-resource-name';
 import { Service } from 'common/service';
-import { SynthError } from 'common/synth/synth-error';
-
-import { TopicFunction } from 'prefab/compute/function/topic-function';
-import { RuntimeSecret } from 'prefab/util/config/runtime-secret';
-
+import { TopicFunction } from '../../compute/function/topic-function';
+import { RuntimeSecret } from '../config/runtime-secret';
 import { slackToken } from './catalog/secrets';
 
 export type SlackObject = {
@@ -41,10 +40,6 @@ export class DeployPipelinePrefab extends Construct {
 
     if (props.ephemeralEnvName) return;
 
-    if (!params.buildCommand) {
-      params.buildCommand = [`yarn deploy ${props.envName}`];
-    }
-
     if (!props.useRepositoryDefaultConfig && (!props.repositoryOwner || !props.repositoryConnection))
       throw new Error('repositoryOwner and repositoryConnection are required if useRepositoryDefaultConfig is false');
 
@@ -54,8 +49,6 @@ export class DeployPipelinePrefab extends Construct {
     const repositoryConnection = props.useRepositoryDefaultConfig
       ? StringParameter.valueFromLookup(this, 'pipeline-default-repository-connection')
       : props.repositoryConnection!;
-
-    const githubTokenParameterName = 'pipeline-default-repository-token';
 
     const sourceCodeArtifact = new Artifact('sourceCode');
     const sourceCodeAction = new CodeStarConnectionsSourceAction({
@@ -72,44 +65,66 @@ export class DeployPipelinePrefab extends Construct {
     const policy: IManagedPolicy = ManagedPolicy.fromAwsManagedPolicyName('AdministratorAccess');
     deploymentRole.addManagedPolicy(policy);
 
+    if (!params.buildCommand) {
+      params.buildCommand = [`yarn deploy ${props.envName}`];
+    }
+
+    const workerCommands =
+      StringParameter.valueFromLookup(this, 'pipeline-deploy-worker-role') !== 'null'
+        ? [
+            'output=$(aws sts assume-role --role-arn "$DEPLOY_WORKER_ROLE" --role-session-name "CDK" --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" --output text)',
+            "var1=$(echo \"$output\" | awk -F'\t' '{print $1}')",
+            "var2=$(echo \"$output\" | awk -F'\t' '{print $2}')",
+            "var3=$(echo \"$output\" | awk -F'\t' '{print $3}')",
+            'export AWS_ACCESS_KEY_ID=$var1',
+            'export AWS_SECRET_ACCESS_KEY=$var2',
+            'export AWS_SESSION_TOKEN=$var3',
+          ]
+        : [];
+
     const codebuildProject = new awsCodebuild.Project(this, 'CodebuildProject', {
-      projectName: getResourceName('', props),
+      projectName: `${props.projectName}-${props.envName}`,
       role: deploymentRole,
       environment: {
-        computeType: awsCodebuild.ComputeType.MEDIUM,
-        buildImage: awsCodebuild.LinuxBuildImage.STANDARD_6_0,
+        computeType: awsCodebuild.ComputeType.LARGE,
+        buildImage: awsCodebuild.LinuxBuildImage.STANDARD_7_0,
       },
       environmentVariables: {
         GITHUB_TOKEN: {
           type: awsCodebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
-          value: githubTokenParameterName,
+          value: 'pipeline-default-repository-token',
+        },
+        DEPLOY_WORKER_ROLE: {
+          type: awsCodebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
+          value: 'pipeline-deploy-worker-role',
         },
       },
       buildSpec: awsCodebuild.BuildSpec.fromObject({
         version: '0.2',
         phases: {
           install: {
-            'runtime-versions': {
-              nodejs: 16,
-            },
+            'runtime-versions': { nodejs: 18 },
           },
           pre_build: {
             commands: [
+              ...workerCommands,
+              'npm install --global yarn',
               'npm set //npm.pkg.github.com/:_authToken $GITHUB_TOKEN',
               'yarn --prod',
               ...(params.preDeployCommands || []),
             ],
           },
           build: {
-            commands: [...(params.buildCommand || [])],
+            commands: params.buildCommand || [],
           },
           post_build: {
-            commands: [...(params.postDeployCommands || [])],
+            commands: params.postDeployCommands || [],
           },
         },
       }),
       ...params.codeBuildProjectParams,
     });
+
     const deployAction = new CodeBuildAction({
       actionName: 'Deploy',
       input: sourceCodeArtifact,
@@ -117,22 +132,16 @@ export class DeployPipelinePrefab extends Construct {
     });
 
     const pipeline = new Pipeline(this, 'Pipeline', {
+      crossAccountKeys: false,
+      pipelineName: `${props.projectName}-${props.envName}`,
       artifactBucket: new Bucket(this, 'bucket', {
         bucketName: getBucketName('bucket', props),
         autoDeleteObjects: true,
         removalPolicy: RemovalPolicy.DESTROY,
       }),
-      pipelineName: getResourceName('', props),
-      crossAccountKeys: false,
       stages: [
-        {
-          stageName: 'Source',
-          actions: [sourceCodeAction],
-        },
-        {
-          stageName: 'Deploy',
-          actions: [deployAction],
-        },
+        { stageName: 'Source', actions: [sourceCodeAction] },
+        { stageName: 'Deploy', actions: [deployAction] },
       ],
     });
 
@@ -147,7 +156,9 @@ export class DeployPipelinePrefab extends Construct {
         const slackToken = props.useRepositoryDefaultConfig
           ? StringParameter.valueFromLookup(this, 'pipeline-default-slack-token')
           : (params.slackToken as string);
+
         if (!slackToken) throw new SynthError('MissingSlackToken', props);
+
         environmentTopicFunction = {
           ...environmentTopicFunction,
           SLACK_CHANNEL: props.pipelineNotificationSlackChannel || '',
@@ -173,16 +184,15 @@ export class DeployPipelinePrefab extends Construct {
         },
       });
 
-      const events = [
-        'codepipeline-pipeline-pipeline-execution-failed',
-        'codepipeline-pipeline-pipeline-execution-succeeded',
-      ];
-
       new NotificationRule(this, 'Notification', {
+        notificationRuleName: `${props.projectName}-${props.envName}`,
         detailType: DetailType.FULL,
-        events: events,
         source: pipeline,
         targets: [topicFunction.customTopic.topic],
+        events: [
+          'codepipeline-pipeline-pipeline-execution-failed',
+          'codepipeline-pipeline-pipeline-execution-succeeded',
+        ],
       });
     }
   }

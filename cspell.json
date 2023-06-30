@@ -26,6 +26,7 @@
     "invisipay",
     "kinesisfirehose",
     "nextjs",
+    "noprod",
     "nosniff",
     "outfile",
     "parens",
@@ -44,7 +45,10 @@
     "wafv2"
   ],
   "ignorePaths": [
-    "*/node_modules/**",
-    "*/cdk.out/**"
+    "**/node_modules/**",
+    "**/cdk.out/**",
+    "**/yarn.lock",
+    "**/package.json",
+    "**/cdk.context.json"
   ]
 }

@@ -8,7 +8,7 @@ import { repoUser } from '../../repository/repo-user';
 export const handler = eventHandler<assetEvent.assetUploaded.Event>(async (event) => {
   const { key, meta } = event.detail;
   const { tenantId, sub } = meta;
-  const { avatar } = await repoUser.updateItem({ tenantId, userId: sub }, { avatar: key }, { ReturnValues: 'ALL_OLD' });
+  const { avatar } = await repoUser.updateItem({ userId: sub }, { avatar: key }, { ReturnValues: 'ALL_OLD' });
   if (avatar)
     await dispatchEvent<assetEvent.assetToRemove.Event>(assetEvent.assetToRemove.eventConfig, {
       assetType: 'avatar',

@@ -1,12 +1,11 @@
-name=$1
-destinationFolder=$2
-repoName=$3
+solutionTemplate=$1
+projectName=$2
+destinationFolder=$3
+repoName=$4
 
 pwd=$(pwd)
 
-solutionTemplate='base'
-
-echo $name $solutionTemplate $destinationFolder
+echo $projectName $solutionTemplate $destinationFolder
 
 cp -a ./solutions/$solutionTemplate/. $destinationFolder
 
@@ -29,32 +28,32 @@ mv $destinationFolder/config/index.ts2 $destinationFolder/config/index.ts
 
 input=$(cat $destinationFolder/config/index.ts)
 patten="projectName: 'base',"
-sub="projectName: '$name',"
+sub="projectName: '$projectName',"
 echo "${input/$patten/$sub}" >$destinationFolder/config/index.ts
 
 input=$(cat $destinationFolder/config/index.ts)
 patten="projectShortName: 'base',"
-sub="projectShortName: '$name',"
+sub="projectShortName: '$projectName',"
 echo "${input/$patten/$sub}" >$destinationFolder/config/index.ts
 
 input=$(cat $destinationFolder/config/index.ts)
 patten="baseDomainName: 'base.sinapsis.io',"
-sub="baseDomainName: '$name.sinapsis.io',"
+sub="baseDomainName: '$projectName.sinapsis.io',"
 echo "${input/$patten/$sub}" >$destinationFolder/config/index.ts
 
 input=$(cat $destinationFolder/config/index.ts)
 patten="envDomainName: 'dev.base.sinapsis.io',"
-sub="envDomainName: 'dev.$name.sinapsis.io',"
+sub="envDomainName: 'dev.$projectName.sinapsis.io',"
 echo "${input/$patten/$sub}" >$destinationFolder/config/index.ts
 
 input=$(cat $destinationFolder/config/index.ts)
 patten="pipelineNotificationSlackChannel: 'cloud-components',"
-sub="pipelineNotificationSlackChannel: '$name',"
+sub="pipelineNotificationSlackChannel: '$projectName',"
 echo "${input/$patten/$sub}" >$destinationFolder/config/index.ts
 
 input=$(cat $destinationFolder/config/index.ts)
 patten="pipelineNotificationSlackChannel: 'cloud-components',"
-sub="pipelineNotificationSlackChannel: '$name',"
+sub="pipelineNotificationSlackChannel: '$projectName',"
 echo "${input/$patten/$sub}" >$destinationFolder/config/index.ts
 input=$(cat $destinationFolder/config/index.ts)
 
@@ -67,4 +66,4 @@ yarn
 yarn add @sinapsis-co/cc-core
 yarn add @sinapsis-co/cc-sdk
 
-cd pwd
+cd $(pwd)
