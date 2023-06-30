@@ -4,7 +4,7 @@
   "scripts": {
     "deploy": "bash ../scripts/deploy.bash ssr-landing",
     "update-secrets": "bash ../scripts/update-secret.bash ssr-landing",
-    "start": "next start",
+    "start": "sh -c 'dotenv -e .env.${0} next start'",
     "start-prod": "dotenv -e .env.prod next",
     "build": "next build",
     "development": "next",

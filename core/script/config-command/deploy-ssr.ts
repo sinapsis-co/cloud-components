@@ -30,16 +30,15 @@ export const deploySSR: ConfigCommand = async <
   try {
     console.log('<< Deploy SSR Started >>');
 
-    const yarnCommand = args[5] || 'build';
-
-    const { envName, ephemeralEnvName, servicesNamesInput, envNameInput, roleName, accountMap } = await preScript(
-      globalConstConfig,
-      globalEnvConfig,
-      globalDeployTargetConfig,
-      args
-    );
-
-    console.log(envName, ephemeralEnvName, servicesNamesInput, envNameInput, roleName, accountMap);
+    const {
+      envName,
+      ephemeralEnvName,
+      servicesNamesInput,
+      envNameInput,
+      roleName,
+      accountMap,
+      isSingleProjectAccount,
+    } = await preScript(globalConstConfig, globalEnvConfig, globalDeployTargetConfig, args);
 
     console.log('>> STEP: (1/4) => LOADING CONFIGS');
     const projectName = globalConstConfig.projectName;
@@ -51,18 +50,21 @@ export const deploySSR: ConfigCommand = async <
         ?.split('=')[1] || '';
     const region = globalDeployTargetConfig[envName]['services']['region'];
 
-    console.log(projectName, account, region);
-
     console.log('>> STEP: (2/4) => RENDERING ENV');
 
     const getParamName = (name: string) =>
-      getResourceName(name, { projectName, envName, ephemeralEnvName, serviceName: servicesNamesInput[0] });
+      getResourceName(name, {
+        isSingleProjectAccount,
+        projectName,
+        envName,
+        ephemeralEnvName,
+        serviceName: servicesNamesInput[0],
+      });
 
     const role = await assumeRole({ account, region }, roleName);
 
     const ssm = new SSMClient(role);
     const deployConfig = await ssm.send(new GetParameterCommand({ Name: getParamName('config') }));
-    console.log('deployConfig', deployConfig);
     if (!deployConfig.Parameter?.Value) throw new Error('Invalid Config');
     const { domain, distributionBucket, distributionId, baseDir, distDir } = JSON.parse(deployConfig.Parameter?.Value);
 

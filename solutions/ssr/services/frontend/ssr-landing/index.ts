@@ -4,9 +4,7 @@ import { SsrPrefab } from '@sinapsis-co/cc-core/prefab/frontend/ssr';
 import { DepCheck, ServiceDependencies } from '@sinapsis-co/cc-core/common/coordinator';
 import { CdnApi } from '@sinapsis-co/cc-services/support/cdn-api';
 import { DnsSubdomainCertificate } from '@sinapsis-co/cc-services/support/dns-subdomain-certificate';
-
-import { GlobalCoordinator } from 'config/config-type';
-import path from 'path';
+import { GlobalCoordinator } from 'solutions/ssr/config/config-type';
 
 class Dep extends ServiceDependencies {
   @DepCheck()
@@ -27,10 +25,10 @@ export class SsrLanding extends Service<GlobalCoordinator> {
       distDir: '.open-next',
       certificate: dep.dnsSubdomainCertificate.certificatePrefab.certificate,
       subDomain: this.props.subdomain.ssrLanding,
-      filesPathAssets: path.join(__dirname, '../../../frontend/webpage/.open-next/assets'),
-      filesPathImageFunction: path.join(__dirname, '../../../frontend/webpage/.open-next/image-optimization-function'),
-      filesPathMiddlewareFunction: path.join(__dirname, '../../../frontend/webpage/.open-next/middleware-function'),
-      filesPathNextFunction: path.join(__dirname, '../../../frontend/webpage/.open-next/server-function'),
+      filesPathAssets: `${process.cwd()}/frontend/webpage/.open-next/assets`,
+      filesPathImageFunction: `${process.cwd()}/frontend/webpage/.open-next/image-optimization-function`,
+      filesPathMiddlewareFunction: `${process.cwd()}/frontend/webpage/.open-next/middleware-function`,
+      filesPathNextFunction: `${process.cwd()}/frontend/webpage/.open-next/server-function`,
       calculatedSecrets: {
         SKIP_PREFLIGHT_CHECK: 'true',
         REACT_APP_API_URL: dep.cdnApi.cdnApiPrefab.baseUrl,

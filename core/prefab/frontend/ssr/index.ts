@@ -35,6 +35,7 @@ import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import { execSync } from 'child_process';
 import path from 'path';
 import { WafPrefab } from 'prefab/networking/waf';
 import { PrivateBucketPrefab } from 'prefab/storage/bucket/private-bucket';
@@ -65,6 +66,9 @@ export class SsrPrefab extends Construct {
 
   constructor(service: Service, params: SsrPrefabParams) {
     super(service, getLogicalName(SsrPrefab.name, params.subDomain));
+
+    const command = 'npx open-next@latest build -y';
+    execSync(command, { stdio: 'inherit', cwd: `${process.cwd()}/${params.baseDir}` });
 
     this.domain = getDomain(params.subDomain, service.props);
     this.baseUrl = `https://${this.domain}/`;
