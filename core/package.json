@@ -22,6 +22,7 @@
     "constructs": "^10.1.143",
     "esbuild": "^0.17.18",
     "graphql": "^15.3.0",
+    "open-next": "^2.0.3",
     "reflect-metadata": "^0.1.13",
     "tsc-alias": "^1.8.6",
     "type-graphql": "^1.1.1"

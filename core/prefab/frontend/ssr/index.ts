@@ -67,7 +67,7 @@ export class SsrPrefab extends Construct {
   constructor(service: Service, params: SsrPrefabParams) {
     super(service, getLogicalName(SsrPrefab.name, params.subDomain));
 
-    const command = 'npx open-next@latest build -y';
+    const command = 'npx open-next build';
     execSync(command, { stdio: 'inherit', cwd: `${process.cwd()}/${params.baseDir}` });
 
     this.domain = getDomain(params.subDomain, service.props);
