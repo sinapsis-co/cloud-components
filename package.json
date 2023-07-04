@@ -6,8 +6,7 @@
   "repository": "git://github.com/sinapsis-co/cloud-components.git",
   "private": true,
   "cpu": [
-    "arm64",
-    "x64"
+    "arm64"
   ],
   "workspaces": {
     "packages": [
