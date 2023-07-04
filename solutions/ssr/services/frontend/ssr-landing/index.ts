@@ -27,7 +27,6 @@ export class SsrLanding extends Service<GlobalCoordinator> {
       subDomain: this.props.subdomain.ssrLanding,
       filesPathAssets: `${process.cwd()}/frontend/webpage/.open-next/assets`,
       filesPathImageFunction: `${process.cwd()}/frontend/webpage/.open-next/image-optimization-function`,
-      filesPathMiddlewareFunction: `${process.cwd()}/frontend/webpage/.open-next/middleware-function`,
       filesPathNextFunction: `${process.cwd()}/frontend/webpage/.open-next/server-function`,
       calculatedSecrets: {
         SKIP_PREFLIGHT_CHECK: 'true',

@@ -55,7 +55,6 @@ export type SsrPrefabParams = {
   filesPathAssets: string;
   filesPathNextFunction: string;
   filesPathImageFunction: string;
-  filesPathMiddlewareFunction: string;
 };
 
 export class SsrPrefab extends Construct {
