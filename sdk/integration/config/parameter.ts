@@ -4,13 +4,13 @@ import { Tracing, traceableFunction } from 'tracing';
 
 export const ssm = Tracing.captureIntegration(new SSMClient({ region: 'us-east-1' }));
 
-export const getEdgeConfig = async <T>(): Promise<T> => {
-  const Name: string = process.env.AWS_LAMBDA_FUNCTION_NAME?.split('us-east-1.')[1] as string;
+export const getParameter = async <T = string>(parameterName: string, isPlainText?: boolean): Promise<T> => {
   const cmd = async () => {
-    const { Parameter } = await ssm.send(new GetParameterCommand({ Name }));
+    const { Parameter } = await ssm.send(new GetParameterCommand({ Name: parameterName }));
     if (!Parameter || !Parameter.Value) throw new PlatformFault({ code: 'FAULT_SSM_INVALID_PARAMETER' });
+    if (isPlainText) return Parameter.Value as unknown as T;
     const config: T = JSON.parse(Parameter.Value);
     return config;
   };
-  return traceableFunction('GetEdgeConfig', 'FAULT_SSM_GET_EDGE_CONFIG', Name, cmd);
+  return traceableFunction('GetEdgeConfig', 'FAULT_SSM_GET_EDGE_CONFIG', parameterName, cmd);
 };
