@@ -130,7 +130,7 @@ export class DeployPipelinePrefab extends Construct {
 
       if (params.useExtraSlackNotification) {
         const extraSlackNotificationParam = new ParameterSecret(service, { name: extraSlackNotification });
-        modifiers.push(extraSlackNotificationParam.useModReader('DEFAULT_SLACK_TOKEN_PARAMETER'));
+        modifiers.push(extraSlackNotificationParam.useModReader('SLACK_EXTRA_CONFIG_NAME'));
       }
 
       const topicFunction = new TopicFunction(service, {
