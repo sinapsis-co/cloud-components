@@ -1,36 +1,27 @@
 /* eslint-disable quotes */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { getBucketName } from '@sinapsis-co/cc-core/common/naming/get-resource-name';
+import { RemovalPolicy } from 'aws-cdk-lib';
 import * as awsCodebuild from 'aws-cdk-lib/aws-codebuild';
 import { Artifact, Pipeline } from 'aws-cdk-lib/aws-codepipeline';
 import { CodeBuildAction, CodeStarConnectionsSourceAction } from 'aws-cdk-lib/aws-codepipeline-actions';
+import { DetailType, NotificationRule } from 'aws-cdk-lib/aws-codestarnotifications';
 import { IManagedPolicy, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 
-import { getBucketName } from '@sinapsis-co/cc-core/common/naming/get-resource-name';
-import { SynthError } from '@sinapsis-co/cc-core/common/synth/synth-error';
-import { RemovalPolicy } from 'aws-cdk-lib';
-import { DetailType, NotificationRule } from 'aws-cdk-lib/aws-codestarnotifications';
-import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { getLogicalName } from 'common/naming/get-logical-name';
 import { Service } from 'common/service';
 import { TopicFunction } from '../../compute/function/topic-function';
-import { RuntimeSecret } from '../config/runtime-secret';
-import { slackToken } from './catalog/secrets';
-
-export type SlackObject = {
-  channel: string;
-  token: string;
-};
+import { ParameterSecret } from '../config/parameter-secret';
 
 export type DeployPipelineProps = {
-  fullClone?: true;
   preDeployCommands?: string[];
   postDeployCommands?: string[];
-  slackToken?: string;
-  buildCommand?: string[];
   codeBuildProjectParams?: Partial<awsCodebuild.ProjectProps>;
+  useExtraSlackNotification?: boolean;
 };
 
 export class DeployPipelinePrefab extends Construct {
@@ -40,15 +31,8 @@ export class DeployPipelinePrefab extends Construct {
 
     if (props.ephemeralEnvName) return;
 
-    if (!props.useRepositoryDefaultConfig && (!props.repositoryOwner || !props.repositoryConnection))
-      throw new Error('repositoryOwner and repositoryConnection are required if useRepositoryDefaultConfig is false');
-
-    const repositoryOwner = props.useRepositoryDefaultConfig
-      ? StringParameter.valueFromLookup(this, 'pipeline-default-repository-owner')
-      : props.repositoryOwner!;
-    const repositoryConnection = props.useRepositoryDefaultConfig
-      ? StringParameter.valueFromLookup(this, 'pipeline-default-repository-connection')
-      : props.repositoryConnection!;
+    const repositoryOwner = StringParameter.valueFromLookup(this, 'pipeline-default-repository-owner');
+    const repositoryConnection = StringParameter.valueFromLookup(this, 'pipeline-default-repository-connection');
 
     const sourceCodeArtifact = new Artifact('sourceCode');
     const sourceCodeAction = new CodeStarConnectionsSourceAction({
@@ -58,16 +42,11 @@ export class DeployPipelinePrefab extends Construct {
       output: sourceCodeArtifact,
       owner: repositoryOwner,
       connectionArn: repositoryConnection,
-      ...(params.fullClone ? { codeBuildCloneOutput: true } : {}),
     });
 
     const deploymentRole = new Role(this, 'DeployRole', { assumedBy: new ServicePrincipal('codebuild.amazonaws.com') });
     const policy: IManagedPolicy = ManagedPolicy.fromAwsManagedPolicyName('AdministratorAccess');
     deploymentRole.addManagedPolicy(policy);
-
-    if (!params.buildCommand) {
-      params.buildCommand = [`yarn deploy ${props.envName}`];
-    }
 
     const workerCommands =
       StringParameter.valueFromLookup(this, 'pipeline-deploy-worker-role') !== 'null'
@@ -115,7 +94,7 @@ export class DeployPipelinePrefab extends Construct {
             ],
           },
           build: {
-            commands: params.buildCommand || [],
+            commands: [`yarn deploy ${props.envName}`],
           },
           post_build: {
             commands: params.postDeployCommands || [],
@@ -145,43 +124,25 @@ export class DeployPipelinePrefab extends Construct {
       ],
     });
 
-    if (props.clientNotificationSlack || !props.defaultSlackDestinationDisabled) {
-      const modifierTopicFunction = [getPipelineExecution()];
-      let environmentTopicFunction: Record<string, string> = {
-        REPOSITORY_OWNER: repositoryOwner,
-        REPOSITORY_NAME: props.repositoryName,
-      };
-
-      if (!props.defaultSlackDestinationDisabled) {
-        const slackToken = props.useRepositoryDefaultConfig
-          ? StringParameter.valueFromLookup(this, 'pipeline-default-slack-token')
-          : (params.slackToken as string);
-
-        if (!slackToken) throw new SynthError('MissingSlackToken', props);
-
-        environmentTopicFunction = {
-          ...environmentTopicFunction,
-          SLACK_CHANNEL: props.pipelineNotificationSlackChannel || '',
-          SLACK_TOKEN: slackToken,
-        };
-      }
-
-      if (props.clientNotificationSlack) {
-        const secret = new RuntimeSecret(service, {
-          secretConfig: slackToken.secretConfig,
-        });
-        modifierTopicFunction.push(secret.useModReader());
+    if (props.pipelineNotificationSlackChannel) {
+      const extraSlackNotification = 'extra-slack-notification';
+      if (params.useExtraSlackNotification) {
+        new ParameterSecret(service, { name: extraSlackNotification });
       }
 
       const topicFunction = new TopicFunction(service, {
         name: 'send-to-slack',
         baseFunctionFolder: __dirname,
         ...(props.isDemoProject ? {} : { compiled: true }),
-        environment: environmentTopicFunction,
-        modifiers: modifierTopicFunction,
-        customTopicParams: {
-          name: 'notifications',
+        environment: {
+          REPOSITORY_OWNER: repositoryOwner,
+          REPOSITORY_NAME: props.repositoryName,
+          DEFAULT_SLACK_CHANNEL: props.pipelineNotificationSlackChannel,
+          DEFAULT_SLACK_TOKEN_PARAMETER: 'pipeline-default-slack-token',
+          ...(params.useExtraSlackNotification ? { DEFAULT_SLACK_TOKEN_PARAMETER: extraSlackNotification } : {}),
         },
+        modifiers: [getPipelineExecution()],
+        customTopicParams: { name: 'notifications' },
       });
 
       new NotificationRule(this, 'Notification', {
@@ -197,6 +158,7 @@ export class DeployPipelinePrefab extends Construct {
     }
   }
 }
+// }
 
 const getPipelineExecution = (): ((lambda: NodejsFunction) => void) => {
   return (lambda: NodejsFunction): void => {

@@ -16,14 +16,10 @@ export type BaseGlobalConstConfig<ExtendedConst = {}> = {
   projectName: string;
   projectShortName: string;
   repositoryName: string;
-  useRepositoryDefaultConfig: boolean;
-  pipelineNotificationSlackChannel?: string;
-  defaultSlackDestinationDisabled?: boolean;
-  isDemoProject?: boolean;
-  repositoryOwner?: true;
-  repositoryConnection?: string;
-  bootstrappingServices?: string[];
   landingZones: string[];
+  pipelineNotificationSlackChannel?: string;
+  isDemoProject?: boolean;
+  bootstrappingServices?: string[];
   isSingleProjectAccount?: boolean;
 } & ExtendedConst;
 
@@ -34,13 +30,6 @@ export type BaseGlobalEnv<ExtendedEnv = {}> = {
   baseDomainName: string;
   envDomainName: string;
   emailSender: string;
-  useRepositoryDefaultConfig?: boolean;
-  pipelineNotificationSlackChannel?: string;
-  defaultSlackDestinationDisabled?: boolean;
-  clientNotificationSlack?: boolean;
-  repositoryName?: string;
-  repositoryOwner?: string;
-  repositoryConnection?: string;
 } & ExtendedEnv;
 
 export type BaseGlobalEnvConfig<
@@ -65,7 +54,7 @@ export type BaseServiceDependencies<ServiceDependencies = {}> = {} & ServiceDepe
 
 export type BaseServiceConstConfig<ExtendedConst = {}> = {} & ExtendedConst;
 
-export type BaseServiceEnv<ExtendedEnv = { emailSender: string }> = {} & ExtendedEnv;
+export type BaseServiceEnv<ExtendedEnv = {}> = {} & ExtendedEnv;
 
 export type BaseServiceEnvConfig<
   AllowedEnv extends BaseEnvName = BaseEnvName,
