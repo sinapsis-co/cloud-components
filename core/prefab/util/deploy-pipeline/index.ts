@@ -126,23 +126,25 @@ export class DeployPipelinePrefab extends Construct {
 
     if (props.pipelineNotificationSlackChannel) {
       const extraSlackNotification = 'extra-slack-notification';
+      const modifiers = [getPipelineExecution()];
+
       if (params.useExtraSlackNotification) {
-        new ParameterSecret(service, { name: extraSlackNotification });
+        const extraSlackNotificationParam = new ParameterSecret(service, { name: extraSlackNotification });
+        modifiers.push(extraSlackNotificationParam.useModReader('DEFAULT_SLACK_TOKEN_PARAMETER'));
       }
 
       const topicFunction = new TopicFunction(service, {
+        customTopicParams: { name: 'notifications' },
         name: 'send-to-slack',
         baseFunctionFolder: __dirname,
+        modifiers,
         ...(props.isDemoProject ? {} : { compiled: true }),
         environment: {
           REPOSITORY_OWNER: repositoryOwner,
           REPOSITORY_NAME: props.repositoryName,
           DEFAULT_SLACK_CHANNEL: props.pipelineNotificationSlackChannel,
           DEFAULT_SLACK_TOKEN_PARAMETER: 'pipeline-default-slack-token',
-          ...(params.useExtraSlackNotification ? { DEFAULT_SLACK_TOKEN_PARAMETER: extraSlackNotification } : {}),
         },
-        modifiers: [getPipelineExecution()],
-        customTopicParams: { name: 'notifications' },
       });
 
       new NotificationRule(this, 'Notification', {
