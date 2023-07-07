@@ -126,7 +126,8 @@ export class DeployPipelinePrefab extends Construct {
 
     if (props.pipelineNotificationSlackChannel) {
       const extraSlackNotification = 'extra-slack-notification';
-      const modifiers = [getPipelineExecution()];
+      const defaultSlackToken = new ParameterSecret(service, { existingName: 'pipeline-default-slack-token' });
+      const modifiers = [getPipelineExecution(), defaultSlackToken.useModReader('DEFAULT_SLACK_TOKEN_PARAMETER')];
 
       if (params.useExtraSlackNotification) {
         const extraSlackNotificationParam = new ParameterSecret(service, { name: extraSlackNotification });
@@ -143,7 +144,6 @@ export class DeployPipelinePrefab extends Construct {
           REPOSITORY_OWNER: repositoryOwner,
           REPOSITORY_NAME: props.repositoryName,
           DEFAULT_SLACK_CHANNEL: props.pipelineNotificationSlackChannel,
-          DEFAULT_SLACK_TOKEN_PARAMETER: 'pipeline-default-slack-token',
         },
       });
 
