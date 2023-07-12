@@ -1,3 +1,5 @@
+import { APIGatewayProxyStructuredResultV2 } from 'aws-lambda';
+
 export type HandledExceptionInput<Codes> = {
   code: Codes;
   statusCode?: number;
@@ -19,7 +21,7 @@ export interface HandledException extends Error {
   errorCode: string;
   errorType: string;
   meta?: Record<string, any>;
-  returnException: (headers?: Record<string, string>) => ReturnExceptionOutput;
+  returnException: (headers?: APIGatewayProxyStructuredResultV2['headers']) => ReturnExceptionOutput;
   throwException: () => void;
   throwInBatchException: () => void;
   addMeta: (newMeta: Record<string, any>) => void;
@@ -28,5 +30,5 @@ export interface HandledException extends Error {
 export type ReturnExceptionOutput = {
   statusCode: number;
   body: string;
-  headers?: Record<string, string>;
+  headers?: APIGatewayProxyStructuredResultV2['headers'];
 };

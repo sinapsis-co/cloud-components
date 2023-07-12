@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 
+import { APIGatewayProxyStructuredResultV2 } from 'aws-lambda';
 import { PlatformErrorCodes, PlatformFaultCodes } from './catalog';
 import { HandledException, HandledExceptionInput, ReturnExceptionOutput } from './types';
 
@@ -24,7 +25,7 @@ export class HandledError<CustomCodes extends string = PlatformErrorCodes> exten
     const { statusCode, errorCode, meta, errorType } = this;
     console.error({ statusCode, errorType, errorCode, errorMessage: this.message, meta });
   }
-  public returnException(headers?: Record<string, string>): ReturnExceptionOutput {
+  public returnException(headers?: APIGatewayProxyStructuredResultV2['headers']): ReturnExceptionOutput {
     this.publish();
     const { statusCode, errorCode } = this;
     return { statusCode, headers, body: JSON.stringify({ errorCode, errorMessage: this.message }) };
@@ -68,7 +69,7 @@ export class HandledFault<CustomCodes extends string = PlatformFaultCodes> exten
       stack: this.stack?.split('\n'),
     });
   }
-  public returnException(headers?: Record<string, string>): ReturnExceptionOutput {
+  public returnException(headers?: APIGatewayProxyStructuredResultV2['headers']): ReturnExceptionOutput {
     this.publish();
     const { statusCode, errorCode } = this;
     return { statusCode, headers, body: JSON.stringify({ errorCode, errorMessage: 'InternalServerError' }) }; // Prevents leaking internal details

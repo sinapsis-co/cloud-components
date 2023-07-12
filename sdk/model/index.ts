@@ -1,3 +1,5 @@
+type CollapseMapUnion<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
+
 export type EntityBuilderParams = {
   type: string;
   body: Record<string, unknown>;
@@ -14,15 +16,17 @@ export type EntityKey<EBuilderKeys extends EntityBuilderParams> = EBuilderKeys['
 
 export type EntityBody<EBuilderKeys extends EntityBuilderParams> = EBuilderKeys['body'];
 
+export type EntityType<EBuilderKeys extends EntityBuilderParams> = EBuilderKeys['type'];
+
 export type EntityBase<EBuilderKeys extends EntityBuilderParams> = {
   type: EBuilderKeys['type'];
   createdAt: string;
   updatedAt: string;
 };
 
-export type Entity<EBuilderKeys extends EntityBuilderParams> = EBuilderKeys['body'] &
-  EBuilderKeys['key'] &
-  EntityBase<EBuilderKeys>;
+export type Entity<EBuilderKeys extends EntityBuilderParams> = CollapseMapUnion<
+  EBuilderKeys['body'] & EBuilderKeys['key'] & EntityBase<EBuilderKeys>
+>;
 
 type EntityCreate<EBuilderKeys extends EntityBuilderParams, Omitted extends (keyof EBuilderKeys['body'])[] = []> = Omit<
   EBuilderKeys['body'],
@@ -65,26 +69,26 @@ export type ModelOptions<T extends EntityBuilderParams> = {
 
 export type Model<
   EBuilder extends EntityBuilder = EntityBuilder,
-  options extends ModelOptions<EBuilder> | undefined = undefined
+  Options extends ModelOptions<EBuilder> | undefined = undefined
 > = {
   Builder: EntityBuilder<EBuilder>;
   Entity: Entity<EBuilder>;
-  Type: EBuilder['type'];
+  Type: EntityType<EBuilder>;
   Base: EntityBase<EBuilder>;
   Key: EntityKey<EBuilder>;
   Body: EntityBody<EBuilder>;
   List: EntityList<EBuilder>;
-  Create: options extends ModelOptions<EBuilder>
+  Events: EntityEvents<EBuilder>;
+  Create: Options extends ModelOptions<EBuilder>
     ? EntityCreate<
         EBuilder,
-        options['omittedCreateKeys'] extends (keyof EBuilder['body'])[] ? options['omittedCreateKeys'] : []
+        Options['omittedCreateKeys'] extends (keyof EBuilder['body'])[] ? Options['omittedCreateKeys'] : []
       >
     : EntityCreate<EBuilder>;
-  Update: options extends ModelOptions<EBuilder>
+  Update: Options extends ModelOptions<EBuilder>
     ? EntityUpdate<
         EBuilder,
-        options['omittedUpdateKeys'] extends (keyof EBuilder['body'])[] ? options['omittedUpdateKeys'] : []
+        Options['omittedUpdateKeys'] extends (keyof EBuilder['body'])[] ? Options['omittedUpdateKeys'] : []
       >
     : EntityUpdate<EBuilder>;
-  Events: EntityEvents<EBuilder>;
 };
