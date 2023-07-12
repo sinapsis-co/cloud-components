@@ -21,11 +21,11 @@ export class TimestreamTablePrefab extends Construct {
   public readonly database: CfnDatabase;
 
   constructor(service: Service, params: TimestreamTableParams) {
-    super(service, getLogicalName(TimestreamTablePrefab.name));
+    super(service, getLogicalName(TimestreamTablePrefab.name, params.tableName));
 
     this.database = params.database;
 
-    this.table = new CfnTable(this, 'Table', {
+    this.table = new CfnTable(this, getLogicalName('TimestreamTable', params.tableName), {
       tableName: getResourceName(params.tableName, service.props),
       databaseName: params.database.databaseName!,
       magneticStoreWriteProperties: {
@@ -37,6 +37,7 @@ export class TimestreamTablePrefab extends Construct {
       },
     });
 
+    this.table.addDependency(this.database);
     this.table.applyRemovalPolicy(RemovalPolicy.DESTROY);
     if (service.props.envName === 'prod') this.table.applyRemovalPolicy(RemovalPolicy.RETAIN);
   }
