@@ -31,9 +31,9 @@ type ApiHandlerWithCustomResponse<T extends ApiInterface> = (
   event: APIGatewayProxyEventV2WithJWTAuthorizer,
   request: ApiInterfaceRequest<T>
 ) => Promise<{
-  body: Promise<T['response']>;
-  headers: APIGatewayProxyStructuredResultV2['headers'];
-  statusCode: number;
+  body: T['response'];
+  headers?: APIGatewayProxyStructuredResultV2['headers'];
+  statusCode?: number;
 }>;
 
 export type SuccessfulAuthorizationResult<ExtraData> = { authorized: true } & ExtraData;
@@ -87,7 +87,7 @@ export const apiHandlerWithCustomResponse = <T extends ApiInterface>(
       const { headers, body, statusCode } = await timeoutController(handler(event, request));
       tracing.close(body);
       return {
-        statusCode: statusCode,
+        statusCode: statusCode || 200,
         headers: { ...DEFAULT_HEADERS, ...headers },
         body: JSON.stringify(body),
       };
