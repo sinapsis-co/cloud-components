@@ -22,12 +22,12 @@ export type QueueFunctionParams = BaseFunctionParams;
 
 export class QueueFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
-  public readonly customQueue: QueuePrefab;
+  public readonly queuePrefab: QueuePrefab;
 
   constructor(service: Service, params: QueueFunctionParams & QueueHandlerParams) {
     super(service, getLogicalName(QueueFunction.name, params.name));
 
-    this.customQueue = params.queue || new QueuePrefab(service, { name: params.name, ...params.customQueueParams });
+    this.queuePrefab = params.queue || new QueuePrefab(service, { name: params.name, ...params.customQueueParams });
 
     this.lambdaFunction = new BaseFunction(service, {
       ...params,
@@ -35,7 +35,7 @@ export class QueueFunction extends Construct {
     }).lambdaFunction;
 
     this.lambdaFunction.addEventSource(
-      new SqsEventSource(this.customQueue.queue, {
+      new SqsEventSource(this.queuePrefab.queue, {
         ...(params.maxConcurrency ? { maxConcurrency: params.maxConcurrency } : {}),
         batchSize: params.batchSize || 10,
         maxBatchingWindow: params.batchWindow,
@@ -43,7 +43,8 @@ export class QueueFunction extends Construct {
       })
     );
 
-    this.lambdaFunction.addEnvironment('ORIGIN_QUEUE', this.customQueue.queue.queueUrl);
-    this.customQueue.queue.grantConsumeMessages(this.lambdaFunction);
+    // In case the lambda function needs to operate on the queue manually
+    this.lambdaFunction.addEnvironment('ORIGIN_QUEUE', this.queuePrefab.queue.queueUrl);
+    this.queuePrefab.queue.grantConsumeMessages(this.lambdaFunction);
   }
 }

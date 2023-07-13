@@ -3,11 +3,8 @@ import { GlobalConstConfig, GlobalDeployTargetConfig, GlobalEnvConfig } from './
 export const globalConstConfig: GlobalConstConfig = {
   projectName: 'appsync',
   projectShortName: 'appsync',
-  useRepositoryDefaultConfig: true,
   repositoryName: 'cloud-components',
-
   pipelineNotificationSlackChannel: 'cloud-components',
-  defaultSlackDestinationDisabled: false,
   bootstrappingServices: ['DnsSubdomainHostedZone'],
   landingZones: ['sinapsis'],
   isDemoProject: true,
@@ -30,7 +27,6 @@ export const globalEnvConfig: GlobalEnvConfig = {
     envDomainName: 'dev.appsync.sinapsis.io',
     emailSender: 'no-reply',
     wafEnabled: false,
-    clientNotificationSlack: false,
   },
   staging: {
     deployBranch: 'staging',
@@ -40,7 +36,6 @@ export const globalEnvConfig: GlobalEnvConfig = {
     envDomainName: 'staging.appsync.sinapsis.io',
     emailSender: 'no-reply',
     wafEnabled: false,
-    clientNotificationSlack: false,
   },
 };
 

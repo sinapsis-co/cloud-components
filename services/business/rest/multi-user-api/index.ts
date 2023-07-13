@@ -5,6 +5,7 @@ import { ApiAggregate } from '@sinapsis-co/cc-core/prefab/compute/function/api-f
 import { GlobalCoordinator } from '@sinapsis-co/cc-services/config/config-type';
 import { CdnApi } from '@sinapsis-co/cc-services/support/cdn-api';
 
+import { QueueFunction } from '@sinapsis-co/cc-core/prefab/compute/function/queue-function';
 import { ingredientApi } from './catalog';
 import { IngredientsStoreTable } from './store/table-ingredient';
 
@@ -35,5 +36,7 @@ export class Ingredient extends Service<GlobalCoordinator> {
         update: ingredientApi.update.definition,
       },
     });
+
+    new QueueFunction(this, { name: 'ingredient-queue' });
   }
 }

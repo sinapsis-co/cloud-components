@@ -25,7 +25,7 @@ export type AllowedEnvName = 'dev' | 'staging';
 export type DeployTargetName = 'services' | 'dnsShared' | 'deployPipeline';
 
 export type GlobalEnv = BaseGlobalEnv<{
-  wafEnabled: boolean;
+  wafEnabled?: boolean;
   emailSender: string;
   subdomain?: Subdomain;
 }>;

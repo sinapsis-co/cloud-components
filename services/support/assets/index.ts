@@ -125,11 +125,11 @@ export class Assets extends Service<GlobalCoordinator> {
     });
 
     this.privateAssetsBucket.addQueueNotification({
-      queue: queueFunction.customQueue.queue,
+      queue: queueFunction.queuePrefab.queue,
       filters: getFilters(assetsTypes, false),
     });
     this.publicAssetsBucket.addQueueNotification({
-      queue: queueFunction.customQueue.queue,
+      queue: queueFunction.queuePrefab.queue,
       filters: getFilters(assetsTypes, true),
     });
   }

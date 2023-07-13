@@ -62,7 +62,7 @@ export class Notifications extends Service<GlobalCoordinator> {
         eventNotificationDispatch: {
           name: 'event-notification-dispatch',
           eventConfig: [notificationEvent.dispatch.eventConfig],
-          modifiers: [this.sendEmailQueueFn.customQueue.useModWriter('EMAIL_QUEUE_URL')],
+          modifiers: [this.sendEmailQueueFn.queuePrefab.useModWriter('EMAIL_QUEUE_URL')],
         },
       },
     });

@@ -76,14 +76,14 @@ export class SsrLanding extends Service<GlobalCoordinator> {
         entityChanged: {
           name: 'event-entity-changed',
           eventConfig: [...Object.values(userRepository.events)],
-          modifiers: [this.queueFunction.customQueue.useModWriter()],
+          modifiers: [this.queueFunction.queuePrefab.useModWriter()],
         },
         deployTriggered: {
           name: 'event-deploy-triggered',
           eventConfig: [ssrLandingEvent.renderGenerator.eventConfig],
           modifiers: [
             this.ssr.distributionBucket.useMod('DISTRO_BUCKET_NAME', [PrivateBucketPrefab.modifier.reader]),
-            this.queueFunction.customQueue.useModWriter(),
+            this.queueFunction.queuePrefab.useModWriter(),
           ],
         },
       },
