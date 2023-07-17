@@ -1,14 +1,20 @@
-import Head from 'next/head';
-import Router from 'next/router';
 import type { AppProps } from 'next/app';
-import { ThemeProvider } from '@mui/material/styles';
+import Head from 'next/head';
+import Router, { useRouter } from 'next/router';
+import React, { useEffect } from 'react';
+
+import { CacheProvider, EmotionCache, Theme } from '@emotion/react';
+import { CustomThemeOptions, getPaletteMode } from '@frontend/MUI-config/theme';
 import CssBaseline from '@mui/material/CssBaseline';
-import { CacheProvider, EmotionCache } from '@emotion/react';
-import theme from '../MUI-config/theme';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import createEmotionCache from '../MUI-config/createEmotionCache';
 
-import { useEffect } from 'react';
 import TagManager from 'react-gtm-module';
+
+import { IntlProvider } from 'react-intl';
+import Italian from '../content/locales/it.json';
+
+import '../styles/global.css';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -23,6 +29,25 @@ const tagManagerArgs = {
 
 function MyApp(props: MyAppProps): JSX.Element {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  const { locale } = useRouter();
+
+  /*------------------------------- LANGUAGE CONFIGS -------------------------------/*/
+
+  const [shortLocale] = locale ? locale.split('-') : ['it'];
+
+  const messages = React.useMemo(() => {
+    return Italian;
+  }, [shortLocale]);
+
+  /*-----------------------------------------------------------------------------/*/
+
+  /*------------------------------- THEME CONFIGS -------------------------------/*/
+
+  const [theme] = React.useState<Theme>(createTheme({ ...CustomThemeOptions('light'), ...getPaletteMode('light') }));
+
+  /*-----------------------------------------------------------------------------/*/
+
+  /*------------------------------- TAG MANAGER -------------------------------/*/
 
   useEffect(() => {
     TagManager.initialize(tagManagerArgs);
@@ -50,6 +75,8 @@ function MyApp(props: MyAppProps): JSX.Element {
     };
   }, []);
 
+  /*-----------------------------------------------------------------------------/*/
+
   return (
     <CacheProvider value={emotionCache}>
       <Head>
@@ -58,38 +85,44 @@ function MyApp(props: MyAppProps): JSX.Element {
         <meta name="msapplication-TileImage" content="favicon/ms-icon-144x144.png" />
         <meta name="theme-color" content="#ffffff" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#ED3438" />
+        <meta name="theme-color" content="#65d872" />
         <meta
           name="description"
-          content="We empower independent artists with the tools needed to launch &amp; grow their career."
+          content="Reedy offre agli studenti un computer attraverso un servizio accessibile, flessibile ed ecosostenibile.
+  Il miglior computer per i tuoi bisogni, senza fare investimenti, ad un costo mensile basso."
         />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@tracco" />
-        <meta name="twitter:creator" content="@tracco" />
-        <meta name="twitter:title" content="trac.co" />
+        <meta name="twitter:site" content="@reedy_it" />
+        <meta name="twitter:creator" content="@reedy_it" />
+        <meta name="twitter:title" content="reedy.it" />
         <meta
           name="twitter:description"
-          content="We empower independent artists with the tools needed to launch &amp; grow their career."
+          content="Reedy offre agli studenti un computer attraverso un servizio accessibile, flessibile ed ecosostenibile.
+  Il miglior computer per i tuoi bisogni, senza fare investimenti, ad un costo mensile basso."
         />
-        <meta name="twitter:image" content="/images/tw.jpg" />
-        <meta property="og:url" content="https://trac.co/" />
+        <meta name="twitter:image" content="/image/tw.jpg" />
+        <meta property="og:url" content="https://reedy.it/" />
         <meta property="og:type" content="article" />
-        <meta property="og:title" content="trac.co" />
+        <meta property="og:title" content="reedy.it" />
         <meta
           property="og:description"
-          content="We empower independent artists with the tools needed to launch &amp; grow their career."
+          content="Reedy offre agli studenti un computer attraverso un servizio accessibile, flessibile ed ecosostenibile.
+  Il miglior computer per i tuoi bisogni, senza fare investimenti, ad un costo mensile basso."
         />
-        <meta property="og:image" content="/images/fb.jpg" />
-        <meta property="og:title" content="trac.co" />
-        <meta property="og:image" content="/images/og.jpg" />
+        <meta property="og:image" content="/image/fb.jpg" />
+        <meta property="og:title" content="reedy.it" />
+        <meta property="og:image" content="/image/og.jpg" />
         <meta
           name="description"
-          content="We empower independent artists with the tools needed to launch &amp; grow their career."
+          content="Reedy offre agli studenti un computer attraverso un servizio accessibile, flessibile ed ecosostenibile.
+  Il miglior computer per i tuoi bisogni, senza fare investimenti, ad un costo mensile basso."
         />
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Component {...pageProps} />
+        <IntlProvider locale={shortLocale} messages={messages} defaultLocale="it-IT" onError={() => null}>
+          <Component {...pageProps} />
+        </IntlProvider>
       </ThemeProvider>
     </CacheProvider>
   );

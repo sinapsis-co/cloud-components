@@ -4,6 +4,13 @@ const withOptimizedImages = require('next-optimized-images');
 const path = require('path');
 
 module.exports = withOptimizedImages({
+  i18n: {
+    locales: ['it-IT'],
+    defaultLocale: 'it-IT',
+  },
+  images: {
+    formats: ['image/webp'],
+  },
   webpack: (config) => {
     if (config.resolve.plugins) {
       config.resolve.plugins.push(new TsconfigPathsPlugin());
@@ -57,5 +64,4 @@ module.exports = withOptimizedImages({
     config.resolve.alias.images = path.join(__dirname, 'images');
     return config;
   },
-  target: 'serverless',
 });
