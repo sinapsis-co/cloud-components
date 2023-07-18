@@ -8,11 +8,11 @@ type GetServiceNameParams = {
 };
 
 export const getServiceName = (
-  genericServiceName: string,
+  simpleServiceName: string,
   { projectName, envName, ephemeralEnvName }: GetServiceNameParams
 ): string => {
   const env = ephemeralEnvName
     ? `${capFirstLetter(envName)}-${capFirstLetter(ephemeralEnvName)}`
     : capFirstLetter(envName);
-  return `${capFirstLetter(projectName)}-${env}-${capFirstLetter(genericServiceName)}`;
+  return `${capFirstLetter(projectName)}-${env}-${capFirstLetter(simpleServiceName)}`;
 };
