@@ -3,7 +3,7 @@ import React from 'react';
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { Elements } from '@stripe/react-stripe-js';
+// import { Elements } from '@stripe/react-stripe-js';
 
 import { SnackbarProvider } from 'notistack';
 import ReactDOM from 'react-dom/client';
@@ -14,7 +14,7 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { TranslationsProvider } from './translations';
 import { BrowserRouter } from 'react-router-dom';
-import { BugsnagInitializer, ELEMENTS_OPTIONS, GTMInitializer, stripePromise } from './3rd-party-initializer';
+// import { BugsnagInitializer, ELEMENTS_OPTIONS, GTMInitializer, stripePromise } from './3rd-party-initializer';
 
 const queryClient = new QueryClient({
   defaultOptions: {
