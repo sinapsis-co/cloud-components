@@ -13,7 +13,11 @@ type ServiceClass<MyCoord extends Coordinator = Coordinator> = {
   build(args: any): void;
 };
 
-// export type BaseDeps<DepsNames extends readonly string[]> = Record<DepsNames[number], unknown>;
+type ServiceOptions<DeployTargetName extends BaseDeployTargetName = BaseDeployTargetName> = {
+  deployTargetName?: DeployTargetName;
+  stackName?: string;
+};
+
 export abstract class Service<
     MyCoord extends Coordinator = Coordinator,
     DeployTargetName extends BaseDeployTargetName = BaseDeployTargetName
@@ -30,12 +34,12 @@ export abstract class Service<
     coordinator: MyCoord,
     name: string,
     dep: typeof ServiceDependencies,
-    deployTargetName?: DeployTargetName
+    serviceOptions?: ServiceOptions<DeployTargetName>
   ) {
     super(
       coordinator,
-      getServiceName(name, coordinator.globalProps),
-      getDeployConfig(coordinator.globalProps, deployTargetName)
+      serviceOptions?.stackName || getServiceName(name, coordinator.globalProps),
+      getDeployConfig(coordinator.globalProps, serviceOptions?.deployTargetName)
     );
     this.props = getServiceProps(name, coordinator.globalProps);
     this.name = name;
