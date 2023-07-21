@@ -2457,10 +2457,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@sinapsis-co/cc-sdk@^3.0.20":
-  version "3.0.20"
-  resolved "https://npm.pkg.github.com/download/@sinapsis-co/cc-sdk/3.0.20/24702eee5ed5b9662c682dd92164512cf08219ec#24702eee5ed5b9662c682dd92164512cf08219ec"
-  integrity sha512-LwVRYdcL6VIjGr8vSGInoyVwilkCxh3tLlvhrN+b15q1vWEgNspkirCvc9tzR3eYhLYSwLsX6F6F0dZ1iMJJyQ==
+"@sinapsis-co/cc-sdk@^3.0.21":
+  version "3.0.21"
+  resolved "https://npm.pkg.github.com/download/@sinapsis-co/cc-sdk/3.0.21/31496bee0d1494ef379a66f452fe3768e32efc21#31496bee0d1494ef379a66f452fe3768e32efc21"
+  integrity sha512-j2cJvHJlPSeg9liWFyKVWIbVPzx1y+pc3eJ1RsWGtYZwQnfpgNZVFmLz/fSNrw5Ahbqemr5qvnEx20tsxQehZA==
   dependencies:
     "@aws-sdk/client-cloudfront" "^3.295.0"
     "@aws-sdk/client-codepipeline" "^3.295.0"
