@@ -1,0 +1,90 @@
+:root {
+  --text: #212b36;
+  --background: #ffffff;
+  --main-green: #65d872;
+  --transp-green: rgba(101, 216, 114, 0.25);
+  --dark-green: #1dac64;
+  --light-green: #b3edb9;
+
+  --swiper-theme-color: #212b36;
+
+  font-family: Montserrat, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: var(--text);
+  background-color: var(--background);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+
+  overscroll-behavior: none;
+}
+
+.grecaptcha-badge {
+  background-color: var(--background);
+  z-index: 1000;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button:focus-visible {
+  outline: 4px auto var(--dark-green);
+}
+
+::selection {
+  background: var(--light-green);
+  color: var(--text);
+}
+
+@keyframes logoAnimation {
+  0% {
+    font-variation-settings: 'wdth' 100, 'vrot' 70, 'opsz' 0;
+  }
+  10% {
+    font-variation-settings: 'wdth' 100, 'vrot' 70, 'opsz' 100;
+  }
+  20% {
+    font-variation-settings: 'wdth' 100, 'vrot' 30, 'opsz' 100;
+  }
+  30% {
+    font-variation-settings: 'wdth' 100, 'vrot' 30, 'opsz' 0;
+  }
+  40% {
+    font-variation-settings: 'wdth' 100, 'vrot' 70, 'opsz' 0;
+  }
+  50% {
+    font-variation-settings: 'wdth' 10, 'vrot' 70, 'opsz' 0;
+  }
+  60% {
+    font-variation-settings: 'wdth' 10, 'vrot' 30, 'opsz' 0;
+  }
+  70% {
+    font-variation-settings: 'wdth' 10, 'vrot' 30, 'opsz' 100;
+  }
+  80% {
+    font-variation-settings: 'wdth' 100, 'vrot' 30, 'opsz' 100;
+  }
+  90% {
+    font-variation-settings: 'wdth' 100, 'vrot' 70, 'opsz' 100;
+  }
+  100% {
+    font-variation-settings: 'wdth' 100, 'vrot' 70, 'opsz' 0;
+  }
+}

@@ -1,31 +1,23 @@
-import { useState, useEffect } from 'react';
-import { size } from '../components/styles';
+import { useTheme } from '@mui/material/styles';
+import { useEffect, useState } from 'react';
 
-interface WindowSize {
-  width?: number;
-  height?: number;
-}
-
-export default function useIsMobile(): boolean {
-  const [windowSize, setWindowSize] = useState<WindowSize>({
-    width: undefined,
-    height: undefined,
-  });
+export const useIsMobile = (): boolean => {
+  const theme = useTheme();
+  const [isMobile, setIsMobile] = useState<boolean>(
+    typeof window !== 'undefined' ? theme.breakpoints.values.sm > window.innerWidth : false
+  );
 
   useEffect(() => {
-    function handleResize() {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
+    if (typeof window !== 'undefined') {
+      const handleResize = () => {
+        setIsMobile(theme.breakpoints.values.sm > window.innerWidth);
+      };
+      window.addEventListener('resize', handleResize);
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
     }
+  }, [theme.breakpoints.values.sm]);
 
-    window.addEventListener('resize', handleResize);
-
-    handleResize();
-
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  return windowSize.width ? windowSize.width <= size.laptopS : false;
-}
+  return isMobile;
+};

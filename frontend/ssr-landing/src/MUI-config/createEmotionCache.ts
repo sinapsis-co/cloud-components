@@ -1,6 +1,6 @@
-import createCache from '@emotion/cache';
+import createCache, { EmotionCache } from '@emotion/cache';
 
-const createEmotionCache = () => {
+const createEmotionCache = (): EmotionCache => {
   return createCache({ key: 'css' });
 };
 
