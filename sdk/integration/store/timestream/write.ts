@@ -20,16 +20,18 @@ export const timestreamWrite = async (
   return traceableFunction('Write', 'FAULT_TS_WRITE', TableName, cmd);
 };
 
-// Internal use only
+// Private Method
 const timestreamWriteBatch = async (
   Records: WriteRecordsCommandInput['Records'],
   DatabaseName: string,
   TableName: string
 ): Promise<void> => {
-  const request: any = timestream.send(new WriteRecordsCommand({ DatabaseName, TableName, Records })).catch((err) => {
-    throw new PlatformFault({
-      code: 'FAULT_TS_WRITE',
-      detail: err.code === 'RejectedRecordsException' ? request.response.httpResponse.body.toString() : err.message,
+  const request: any = await timestream
+    .send(new WriteRecordsCommand({ DatabaseName, TableName, Records }))
+    .catch((err) => {
+      throw new PlatformFault({
+        code: 'FAULT_TS_WRITE',
+        detail: err.code === 'RejectedRecordsException' ? request.response.httpResponse.body.toString() : err.message,
+      });
     });
-  });
 };
