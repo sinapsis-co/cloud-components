@@ -1,0 +1,7 @@
+#root,
+#home-page {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin: 0 auto;
+}
