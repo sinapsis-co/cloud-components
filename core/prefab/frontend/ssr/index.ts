@@ -62,6 +62,8 @@ export class SsrPrefab extends Construct {
   public readonly baseUrl: string;
   public readonly distribution: awsCloudfront.Distribution;
   public readonly bucket: PrivateBucketPrefab;
+  public readonly serverFunction: lambda.Function;
+  public readonly imageFunction: lambda.Function;
 
   constructor(service: Service, params: SsrPrefabParams) {
     super(service, getLogicalName(SsrPrefab.name, params.subDomain));
@@ -96,7 +98,7 @@ export class SsrPrefab extends Construct {
     });
 
     // NextJS Server Function
-    const serverFunction = new lambda.Function(this, 'SSRServerFunction', {
+    this.serverFunction = new lambda.Function(this, 'SSRServerFunction', {
       functionName: getShortResourceName('server-function', service.props),
       handler: 'index.handler',
       currentVersionOptions: {
@@ -107,10 +109,13 @@ export class SsrPrefab extends Construct {
       memorySize: 2048,
       timeout: Duration.seconds(5),
       code: lambda.Code.fromAsset(params.filesPathNextFunction),
+      environment: {
+        ...params.calculatedSecrets,
+      },
     });
 
     // Image Optimization Function
-    const imageFunction = new lambda.Function(this, 'SSRImageFunction', {
+    this.imageFunction = new lambda.Function(this, 'SSRImageFunction', {
       functionName: getShortResourceName('image-function', service.props),
       handler: 'index.handler',
       currentVersionOptions: {
@@ -126,6 +131,7 @@ export class SsrPrefab extends Construct {
         BUCKET_NAME: this.bucket.bucket.bucketName,
         // TODO: Add allowed domains here. These are on the nextjs config file.
         NEXT_IMAGE_ALLOWED_DOMAINS: '',
+        ...params.calculatedSecrets,
       },
       initialPolicy: [
         new PolicyStatement({
@@ -146,7 +152,7 @@ export class SsrPrefab extends Construct {
     });
 
     // Create server behavior for the origin group with the server function and middleware function (for redirects)
-    const serverFnUrl = serverFunction.addFunctionUrl({
+    const serverFnUrl = this.serverFunction.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
     });
 
@@ -161,7 +167,7 @@ export class SsrPrefab extends Construct {
     };
 
     // Create image optimization behavior for the origin group with the image function
-    const imageFnUrl = imageFunction.addFunctionUrl({
+    const imageFnUrl = this.imageFunction.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
     });
 
