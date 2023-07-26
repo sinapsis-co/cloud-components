@@ -7,8 +7,7 @@ import { GlobalCoordinator } from '@sinapsis-co/cc-services/config/config-type';
 import { EnvVpc } from '../env-vpc';
 
 class Dep extends ServiceDependencies {
-  @DepCheck()
-  envVpc: EnvVpc;
+  @DepCheck() envVpc: EnvVpc;
 }
 
 export class EnvCluster extends Service<GlobalCoordinator> {

@@ -8,8 +8,7 @@ import { GlobalEventBus } from '../../../support/global-event-bus';
 import { identityEvent } from '../../identity/multi-tenant/catalog';
 
 class Dep extends ServiceDependencies {
-  @DepCheck()
-  globalEventBus: GlobalEventBus;
+  @DepCheck() globalEventBus: GlobalEventBus;
 }
 
 export class Tenant extends Service<GlobalCoordinator> {

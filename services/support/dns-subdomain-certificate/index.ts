@@ -8,10 +8,8 @@ import { DnsDomainRef } from '../dns-domain-ref';
 import { DnsSubdomainHostedZone } from '../dns-subdomain-hosted-zone';
 
 class Dep extends ServiceDependencies {
-  @DepCheck()
-  dnsSubdomainHostedZone: DnsSubdomainHostedZone;
-  @DepCheck()
-  dnsDomainRef: DnsDomainRef;
+  @DepCheck() dnsSubdomainHostedZone: DnsSubdomainHostedZone;
+  @DepCheck() dnsDomainRef: DnsDomainRef;
 }
 
 export class DnsSubdomainCertificate extends Service<GlobalCoordinator> {

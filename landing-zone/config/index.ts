@@ -3,10 +3,8 @@ import { GlobalConstConfig, GlobalDeployTargetConfig, GlobalEnvConfig } from './
 export const globalConstConfig: GlobalConstConfig = {
   projectName: 'landingzone',
   projectShortName: 'lz',
-  useRepositoryDefaultConfig: true,
   repositoryName: 'cloud-components',
   pipelineNotificationSlackChannel: 'cloud-components',
-  defaultSlackDestinationDisabled: false,
   bootstrappingServices: ['DnsSubdomainHostedZone'],
   landingZones: ['sinapsis'],
   isDemoProject: true,
@@ -30,7 +28,6 @@ export const globalEnvConfig: GlobalEnvConfig = {
     envDomainName: 'dev.landing.sinapsis.io',
     emailSender: 'no-reply',
     wafEnabled: false,
-    clientNotificationSlack: false,
   },
   staging: {
     deployBranch: 'staging',
@@ -40,7 +37,6 @@ export const globalEnvConfig: GlobalEnvConfig = {
     envDomainName: 'staging.base.sinapsis.io',
     emailSender: 'no-reply',
     wafEnabled: false,
-    clientNotificationSlack: false,
   },
 };
 
@@ -48,15 +44,15 @@ export const globalDeployTargetConfig: GlobalDeployTargetConfig = {
   dev: {
     services: {
       region: 'us-east-1',
-      account: 'v3-dev',
+      account: 'cc-demos',
     },
     deployPipeline: {
       region: 'us-east-1',
-      account: 'sinapsis-noprod',
+      account: 'sinapsis-worker',
     },
     dnsShared: {
       region: 'us-east-1',
-      account: 'sinapsis-noprod',
+      account: 'sinapsis-worker',
     },
   },
   staging: {
@@ -66,11 +62,11 @@ export const globalDeployTargetConfig: GlobalDeployTargetConfig = {
     },
     deployPipeline: {
       region: 'us-east-1',
-      account: 'sinapsis-noprod',
+      account: 'sinapsis-worker',
     },
     dnsShared: {
       region: 'us-east-1',
-      account: 'sinapsis-noprod',
+      account: 'sinapsis-worker',
     },
   },
 };

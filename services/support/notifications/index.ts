@@ -14,12 +14,9 @@ import { GlobalEventBus } from '../global-event-bus';
 import { notificationEvent } from './catalog';
 
 class Deps extends ServiceDependencies {
-  @DepCheck()
-  globalEventBus: GlobalEventBus;
-  @DepCheck()
-  dnsSubdomainHostedZone: DnsSubdomainHostedZone;
-  @DepCheck()
-  dnsDomainRef: DnsDomainRef;
+  @DepCheck() globalEventBus: GlobalEventBus;
+  @DepCheck() dnsSubdomainHostedZone: DnsSubdomainHostedZone;
+  @DepCheck() dnsDomainRef: DnsDomainRef;
 }
 export class Notifications extends Service<GlobalCoordinator> {
   public templatesBucket: PrivateBucketPrefab;

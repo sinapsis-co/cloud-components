@@ -8,10 +8,8 @@ import { DnsSubdomainCertificate } from '../dns-subdomain-certificate';
 import { EnvVpc } from '../env-vpc';
 
 class Dep extends ServiceDependencies {
-  @DepCheck()
-  envVpc: EnvVpc;
-  @DepCheck()
-  dnsSubdomainCertificate: DnsSubdomainCertificate;
+  @DepCheck() envVpc: EnvVpc;
+  @DepCheck() dnsSubdomainCertificate: DnsSubdomainCertificate;
 }
 
 export class EnvAlb extends Service<GlobalCoordinator> {

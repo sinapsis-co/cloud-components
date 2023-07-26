@@ -19,14 +19,10 @@ import { Asset } from './entities/asset';
 import { AssetType, assetsTypes } from './lib/assets-type';
 
 class Dep extends ServiceDependencies {
-  @DepCheck()
-  globalEventBus: GlobalEventBus;
-  @DepCheck()
-  cdnApi: CdnApi;
-  @DepCheck()
-  identity: Identity;
-  @DepCheck()
-  dnsSubdomainCertificate: DnsSubdomainCertificate;
+  @DepCheck() globalEventBus: GlobalEventBus;
+  @DepCheck() cdnApi: CdnApi;
+  @DepCheck() identity: Identity;
+  @DepCheck() dnsSubdomainCertificate: DnsSubdomainCertificate;
 }
 
 export class Assets extends Service<GlobalCoordinator> {

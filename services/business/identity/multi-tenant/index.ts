@@ -28,14 +28,10 @@ import { IdentityStoreTable } from './store/table-identity';
  */
 
 class Dep extends ServiceDependencies {
-  @DepCheck()
-  notifications: Notifications;
-  @DepCheck()
-  globalEventBus: GlobalEventBus;
-  @DepCheck()
-  dnsSubdomainCertificate: DnsSubdomainCertificate;
-  @DepCheck()
-  cdnApi: CdnApi;
+  @DepCheck() notifications: Notifications;
+  @DepCheck() globalEventBus: GlobalEventBus;
+  @DepCheck() dnsSubdomainCertificate: DnsSubdomainCertificate;
+  @DepCheck() cdnApi: CdnApi;
 }
 
 export class Identity extends Service<GlobalCoordinator> {

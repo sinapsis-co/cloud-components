@@ -7,8 +7,7 @@ import { GlobalCoordinator } from '@sinapsis-co/cc-services/config/config-type';
 import { DnsSubdomainCertificate } from '../dns-subdomain-certificate';
 
 class Dep {
-  @DepCheck()
-  dnsSubdomainCertificate: DnsSubdomainCertificate;
+  @DepCheck() dnsSubdomainCertificate: DnsSubdomainCertificate;
 }
 
 export class CdnApi extends Service<GlobalCoordinator> {

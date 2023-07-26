@@ -13,12 +13,9 @@ import { GlobalEventBus } from '@sinapsis-co/cc-services/support/global-event-bu
 import { searchApi, searchSecret } from './catalog';
 
 class Dep extends ServiceDependencies {
-  @DepCheck()
-  globalEventBus: GlobalEventBus;
-  @DepCheck()
-  cdnApi: CdnApi;
-  @DepCheck()
-  identity: Identity;
+  @DepCheck() globalEventBus: GlobalEventBus;
+  @DepCheck() cdnApi: CdnApi;
+  @DepCheck() identity: Identity;
 }
 export class Search extends Service<GlobalCoordinator> {
   public apiAggregate: ApiAggregate;

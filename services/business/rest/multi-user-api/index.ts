@@ -10,8 +10,7 @@ import { ingredientApi } from './catalog';
 import { IngredientsStoreTable } from './store/table-ingredient';
 
 class Dep extends ServiceDependencies {
-  @DepCheck()
-  cdnApi: CdnApi;
+  @DepCheck() cdnApi: CdnApi;
 }
 
 export class Ingredient extends Service<GlobalCoordinator> {

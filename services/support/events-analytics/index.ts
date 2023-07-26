@@ -7,8 +7,7 @@ import { GlobalCoordinator } from '@sinapsis-co/cc-services/config/config-type';
 import { GlobalEventBus } from '../global-event-bus';
 
 class Dep extends ServiceDependencies {
-  @DepCheck()
-  globalEventBus: GlobalEventBus;
+  @DepCheck() globalEventBus: GlobalEventBus;
 }
 
 export class EventsAnalytics extends Service<GlobalCoordinator> {

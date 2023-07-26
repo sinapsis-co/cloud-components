@@ -7,13 +7,12 @@ import { DeployTargetName, GlobalCoordinator } from '@sinapsis-co/cc-services/co
 import { DnsSubdomainHostedZone } from '../dns-subdomain-hosted-zone';
 
 class Dep extends ServiceDependencies {
-  @DepCheck()
-  dnsSubdomainHostedZone: DnsSubdomainHostedZone;
+  @DepCheck() dnsSubdomainHostedZone: DnsSubdomainHostedZone;
 }
 
 export class DnsDomainRef extends Service<GlobalCoordinator, DeployTargetName> {
   constructor(coordinator: GlobalCoordinator) {
-    super(coordinator, DnsDomainRef.name, Dep, 'dnsShared');
+    super(coordinator, DnsDomainRef.name, Dep, { deployTargetName: 'dnsShared' });
     coordinator.addService(this);
   }
 

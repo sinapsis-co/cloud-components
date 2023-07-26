@@ -10,10 +10,8 @@ import { CdnApi } from '@sinapsis-co/cc-services/support/cdn-api';
 import { EnvVpc } from '@sinapsis-co/cc-services/support/env-vpc';
 
 class Dep extends ServiceDependencies {
-  @DepCheck()
-  cdnApi: CdnApi;
-  @DepCheck()
-  envVpc: EnvVpc;
+  @DepCheck() cdnApi: CdnApi;
+  @DepCheck() envVpc: EnvVpc;
 }
 
 export class Ingredient extends Service<GlobalCoordinator> {
