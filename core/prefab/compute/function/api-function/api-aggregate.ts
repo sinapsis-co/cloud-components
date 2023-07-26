@@ -53,6 +53,9 @@ export class ApiAggregate<HandlerName extends string = string> extends Construct
       });
     }
 
+    if (params.tableBuilder && params.tablePrefab)
+      throw new SynthError('Invalid params: tableBuilder and tablePrefab are mutually exclusive', service.props);
+    if (params.tablePrefab) this.tablePrefab = params.tablePrefab;
     if (params.tableBuilder) this.tablePrefab = new DynamoTablePrefab(service, params.tableBuilder);
 
     Object.keys(params.handlers).forEach((handler: string) => {
