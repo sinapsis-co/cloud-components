@@ -29,18 +29,18 @@ export class QueuePrefab extends Construct {
   constructor(service: Service, params: QueuePrefabParams) {
     super(service, getLogicalName(QueuePrefab.name, params.name));
 
-    const queueName = params.fifo ? `${params.name}-fifo` : params.name;
+    const queueName = params.fifo ? `${params.name}.fifo` : params.name;
 
     this.dlq =
       params.dlq ||
       new Queue(this, getLogicalName(params.name, 'DLQ'), {
-        queueName: getResourceName(`${queueName}-dlq`, service.props),
+        queueName: getResourceName(params.fifo ? `${params.name}-dlq.fifo` : `${params.name}-dlq`, service.props),
         retentionPeriod: params.dlqRetention || Duration.hours(48),
         ...(params.fifo ? { fifo: true } : {}),
       });
 
     this.queue = new Queue(this, getLogicalName(params.name, 'Queue'), {
-      queueName: getResourceName(queueName, service.props),
+      queueName: getResourceName(params.fifo ? `${params.name}.fifo` : params.name, service.props),
       visibilityTimeout: params.visibilityTimeout || Duration.seconds(30),
       deliveryDelay: params.deliveryDelay || Duration.seconds(0),
       ...(params.fifo ? { fifo: true, ...params.fifo } : {}),
