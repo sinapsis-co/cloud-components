@@ -31,6 +31,7 @@ export class QueueFunction extends Construct {
 
     this.lambdaFunction = new BaseFunction(service, {
       ...params,
+      name: params.functionName || params.name,
       environment: { ...params.environment, CC_FUNCTION_TYPE: 'QUEUE' },
     }).lambdaFunction;
 
