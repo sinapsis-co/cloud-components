@@ -62,7 +62,13 @@ export const transactWrite = <T extends TableStoreBuilder, M extends Model>(
     const cmd = async () => {
       await Promise.all(chunk.map((c) => call(operationConfig, c)));
     };
-    return traceableFunction('transactWrite', 'FAULT_DYN_TRANSACT_WRITE', 'batch', cmd, { tableName });
+    return traceableFunction('transactWrite', 'FAULT_DYN_TRANSACT_WRITE', 'batch', cmd, {
+      tableName,
+      putItems,
+      deleteItems,
+      updateItems,
+      conditionCheck,
+    });
   };
 };
 

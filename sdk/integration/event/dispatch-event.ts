@@ -23,7 +23,7 @@ export const dispatchEvent = async <
     Detail: JSON.stringify(payload),
   };
   const cmd = () => eventBridge.send(new PutEventsCommand({ Entries: [event] }));
-  await traceableFunction('Dispatch', 'FAULT_EVENT_DISPATCH', eventConfig.name, cmd, tracingMeta);
+  await traceableFunction('Dispatch', 'FAULT_EVENT_DISPATCH', eventConfig.name, cmd, { ...tracingMeta, ...event });
 };
 
 export const dispatchEventBatch = async <
