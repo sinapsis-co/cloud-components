@@ -40,12 +40,16 @@ export type QueryIndexFn<
 ) => Promise<PaginatedResponse<M['Entity']>>;
 
 export type BatchOps<M extends Model> = {
-  conditionCheck?: { key: M['Key']; ConditionExpression: string; params?: Omit<ConditionCheck, 'TableName' | 'Key'> };
+  conditionCheck?: {
+    key: TableStoreBuilder['keyMapping'];
+    ConditionExpression: string;
+    params?: Omit<ConditionCheck, 'TableName' | 'Key'>;
+  };
   putItems?: { entity: M['Entity']; params?: Omit<Put, 'TableName' | 'Item'> }[];
   updateItems?: {
-    key: M['Key'];
+    key: TableStoreBuilder['keyMapping'];
     body: Partial<M['Body']>;
     params?: Omit<Update, 'TableName' | 'Key' | 'UpdateExpression'>;
   }[];
-  deleteItems?: { key: M['Key']; params?: Omit<Delete, 'TableName' | 'Key'> }[];
+  deleteItems?: { key: TableStoreBuilder['keyMapping']; params?: Omit<Delete, 'TableName' | 'Key'> }[];
 };
