@@ -22,7 +22,7 @@ export const sendMessages = async <T>(
   messages: Array<T>,
   params?: SendMessagesParams
 ): Promise<Array<SendMessageBatchCommandOutput>> => {
-  if (!params?.queueUrl || !process.env.DEST_QUEUE)
+  if (!params?.queueUrl && !process.env.DEST_QUEUE)
     throw new PlatformFault({ code: 'FAULT_SQS_SEND_MESSAGES', detail: 'Queue URL not found' });
   const queueUrl = params?.queueUrl || process.env.DEST_QUEUE!;
   const cmd = async () => {
