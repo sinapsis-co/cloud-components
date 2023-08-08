@@ -31,6 +31,7 @@ export class AuroraServerlessV2Prefab extends Construct {
     super(service, getLogicalName(AuroraServerlessV2Prefab.name, params.clusterName));
 
     const sg = new SecurityGroup(this, 'ClusterSecurityGroup', {
+      securityGroupName: getResourceName(params.clusterName, service.props),
       vpc: params.vpcPrefab.vpc,
       allowAllOutbound: true,
     });
@@ -47,7 +48,7 @@ export class AuroraServerlessV2Prefab extends Construct {
       port: 5432, // Default port for postgres
       clusterIdentifier: getResourceName(params.clusterName, service.props),
       vpc: params.vpcPrefab.vpc,
-      ...(params.publicAccess ? { subnetGroup: subnetGroup } : {}),
+      ...(params.publicAccess ? { vpcSubnets: subnetGroup } : {}),
       securityGroups: [sg],
       engine: awsRds.DatabaseClusterEngine.auroraPostgres({
         version: awsRds.AuroraPostgresEngineVersion.VER_15_2,
