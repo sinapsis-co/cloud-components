@@ -6,7 +6,7 @@ import { getLogicalName } from 'common/naming/get-logical-name';
 import { getResourceName } from 'common/naming/get-resource-name';
 import { Service } from 'common/service';
 
-import { Peer, Port, SecurityGroup, SubnetType } from 'aws-cdk-lib/aws-ec2';
+import { Peer, Port, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { VpcPrefab } from 'prefab/networking/vpc';
@@ -39,7 +39,7 @@ export class AuroraServerlessV2Prefab extends Construct {
     const subnetGroup = new awsRds.SubnetGroup(this, 'SubnetGroup', {
       vpc: params.vpcPrefab.vpc,
       subnetGroupName: getResourceName(params.clusterName, service.props),
-      vpcSubnets: { subnets: params.vpcPrefab.vpc.publicSubnets, subnetType: SubnetType.PUBLIC },
+      vpcSubnets: { subnets: params.vpcPrefab.vpc.publicSubnets },
       description: 'Public VPN Subnet Group',
     });
 
