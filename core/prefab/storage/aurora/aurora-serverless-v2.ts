@@ -7,6 +7,7 @@ import { getLogicalName } from 'common/naming/get-logical-name';
 import { getResourceName } from 'common/naming/get-resource-name';
 import { Service } from 'common/service';
 
+import { Peer, Port, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { VpcPrefab } from 'prefab/networking/vpc';
 
@@ -29,15 +30,17 @@ export class AuroraServerlessV2Prefab extends Construct {
   constructor(service: Service, params: AuroraServerlessV2PrefabParams) {
     super(service, getLogicalName(AuroraServerlessV2Prefab.name, params.clusterName));
 
-    // const sg = new SecurityGroup(this, 'ClusterSecurityGroup', {
-    //   vpc: params.vpcPrefab.vpc,
-    //   allowAllOutbound: true,
-    // });
-    // sg.addIngressRule(Peer.anyIpv4(), Port.tcp(5432), 'allow inbound traffic from anywhere to the db on port 5432');
+    const sg = new SecurityGroup(this, 'ClusterSecurityGroup', {
+      vpc: params.vpcPrefab.vpc,
+      allowAllOutbound: true,
+    });
+    sg.addIngressRule(Peer.anyIpv4(), Port.tcp(5432), 'allow inbound traffic from anywhere to the db on port 5432');
 
     const cluster = new awsRds.DatabaseCluster(this, 'Cluster', {
       port: 5432, // Default port for postgres
       clusterIdentifier: getResourceName(params.clusterName, service.props),
+      vpc: params.vpcPrefab.vpc,
+      securityGroups: [sg],
       engine: awsRds.DatabaseClusterEngine.auroraPostgres({
         version: awsRds.AuroraPostgresEngineVersion.VER_15_2,
       }),
