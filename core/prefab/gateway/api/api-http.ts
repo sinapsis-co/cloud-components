@@ -15,7 +15,7 @@ import { CdnApiPrefab } from 'prefab/gateway/cdn-api';
 
 export type ApiHttPrefabParams = {
   basePath: string;
-  cdnApiPrefab: CdnApiPrefab;
+  cdnApiPrefab?: CdnApiPrefab;
   userPool?: UserPool;
   userPoolClient?: UserPoolClient;
   customAuthorizerHandler?: IFunction;
@@ -55,7 +55,7 @@ export class ApiHttpPrefab extends Construct {
 
     const apiUrl: string = Fn.join('', [this.api.apiId, '.execute-api.', service.props.regionName, '.amazonaws.com']);
 
-    params.cdnApiPrefab.addApiGateway(params.basePath, apiUrl);
+    params.cdnApiPrefab?.addApiGateway(params.basePath, apiUrl);
 
     new CfnOutput(this, 'ApiUrl', { value: apiUrl });
   }

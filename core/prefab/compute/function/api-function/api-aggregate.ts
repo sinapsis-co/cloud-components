@@ -24,7 +24,7 @@ export type ApiAuthPoolParams = {
 export type ApiAggregateParams<HandlerName extends string = string> = BaseFunctionParams & {
   basePath: string;
   handlers: Record<HandlerName, ApiHandlerParams>;
-  cdnApiPrefab: CdnApiPrefab;
+  cdnApiPrefab: CdnApiPrefab | undefined;
   authPool?: ApiAuthPoolParams;
   customAuthorizerHandler?: IFunction;
   useRestApi?: true;
