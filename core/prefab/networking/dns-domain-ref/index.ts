@@ -15,15 +15,17 @@ export class DnsDomainRefPrefab extends Construct {
   constructor(service: Service, params: DnsBaseDomainRefConstructParams) {
     super(service, getLogicalName(DnsDomainRefPrefab.name));
 
-    if (!params.hostedZoneNS || !service.props.hostedZoneName) return;
+    const props = { ...service.props, isSingleProjectAccount: false };
 
-    const rootHostedZone = HostedZone.fromLookup(this, 'RootHostedZone', { domainName: service.props.hostedZoneName });
+    if (!params.hostedZoneNS || !props.hostedZoneName) return;
+
+    const rootHostedZone = HostedZone.fromLookup(this, 'RootHostedZone', { domainName: props.hostedZoneName });
 
     const nsValues = params.hostedZoneNS.split(',');
 
-    const recordName = service.props.ephemeralEnvName
-      ? `${service.props.ephemeralEnvName}.${service.props.envName}.${service.props.baseDomainName}`
-      : `${service.props.envName}.${service.props.baseDomainName}`;
+    const recordName = props.ephemeralEnvName
+      ? `${props.ephemeralEnvName}.${props.envName}.${props.baseDomainName}`
+      : `${props.envName}.${props.baseDomainName}`;
 
     new NsRecord(this, 'NsRecord', { recordName, values: nsValues, zone: rootHostedZone });
   }

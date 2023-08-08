@@ -49,7 +49,10 @@ export class AuroraServerlessV2Prefab extends Construct {
       }),
       writer: awsRds.ClusterInstance.serverlessV2('writer', { publiclyAccessible: params.publicAccess }),
       readers: [...Array(params.performanceTunning.instances).keys()].map((i) =>
-        awsRds.ClusterInstance.serverlessV2(`reader${i}`, { publiclyAccessible: params.publicAccess })
+        awsRds.ClusterInstance.serverlessV2(`reader${i}`, {
+          ...(i === 0 ? { scaleWithWriter: true } : {}),
+          publiclyAccessible: params.publicAccess,
+        })
       ),
       serverlessV2MinCapacity: params.performanceTunning.minCapacity,
       serverlessV2MaxCapacity: params.performanceTunning.maxCapacity,

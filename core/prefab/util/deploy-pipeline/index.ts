@@ -27,7 +27,7 @@ export type DeployPipelineProps = {
 export class DeployPipelinePrefab extends Construct {
   constructor(service: Service, params: DeployPipelineProps) {
     super(service, getLogicalName(DeployPipelinePrefab.name));
-    const props = { ...service.props, isDefaultProject: false };
+    const props = { ...service.props, isSingleProjectAccount: false };
 
     if (props.ephemeralEnvName) return;
 
