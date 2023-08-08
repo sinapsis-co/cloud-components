@@ -53,7 +53,7 @@ export class AuroraServerlessV2Prefab extends Construct {
       }),
       readers: [...Array(params.performanceTunning.readInstances).keys()].map((i) =>
         awsRds.ClusterInstance.serverlessV2(`reader-${i}`, {
-          instanceIdentifier: getResourceName(`reader${i}`, service.props),
+          instanceIdentifier: getResourceName(`reader-${i}`, service.props),
           ...(i === 0 ? { scaleWithWriter: true } : {}),
           publiclyAccessible: params.publicAccess,
         })
