@@ -12,7 +12,8 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { VpcPrefab } from 'prefab/networking/vpc';
 
 export type AuroraPerformanceTunning = {
-  instances: number;
+  writeInstances: number;
+  readInstances: number;
   minCapacity: number;
   maxCapacity: number;
 };
@@ -48,11 +49,11 @@ export class AuroraServerlessV2Prefab extends Construct {
         secretName: getResourceName(params.clusterName, service.props),
       }),
       writer: awsRds.ClusterInstance.serverlessV2('writer', {
-        instanceIdentifier: getResourceName('writer', service.props),
+        instanceIdentifier: getResourceName('writer-master', service.props),
         publiclyAccessible: params.publicAccess,
       }),
-      readers: [...Array(params.performanceTunning.instances).keys()].map((i) =>
-        awsRds.ClusterInstance.serverlessV2(`reader${i}`, {
+      readers: [...Array(params.performanceTunning.readInstances).keys()].map((i) =>
+        awsRds.ClusterInstance.serverlessV2(`reader-${i}`, {
           instanceIdentifier: getResourceName(`reader${i}`, service.props),
           ...(i === 0 ? { scaleWithWriter: true } : {}),
           publiclyAccessible: params.publicAccess,
