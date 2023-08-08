@@ -12,7 +12,6 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { VpcPrefab } from 'prefab/networking/vpc';
 
 export type AuroraPerformanceTunning = {
-  writeInstances: number;
   readInstances: number;
   minCapacity: number;
   maxCapacity: number;
