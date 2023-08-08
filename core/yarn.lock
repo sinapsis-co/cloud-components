@@ -1530,7 +1530,46 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@sinapsis-co/cc-sdk@^3.0.23", "@sinapsis-co/cc-sdk@^3.0.7":
+"@sinapsis-co/cc-sdk@^3.0.28":
+  version "3.0.28"
+  resolved "https://npm.pkg.github.com/download/@sinapsis-co/cc-sdk/3.0.28/5f287a6c4420de97a6bd07345d23823deaf90de6#5f287a6c4420de97a6bd07345d23823deaf90de6"
+  integrity sha512-N/1IBPk0CY3GHOG16gbyncsR3f56YQn3xsdK9EqpQItYIFmWBsW93l3Y3FpTgyIoEGa88TvbMEN3iH44olMCyw==
+  dependencies:
+    "@aws-sdk/client-cloudfront" "^3.295.0"
+    "@aws-sdk/client-codepipeline" "^3.295.0"
+    "@aws-sdk/client-cognito-identity-provider" "^3.295.0"
+    "@aws-sdk/client-dynamodb" "^3.294.0"
+    "@aws-sdk/client-eventbridge" "^3.282.0"
+    "@aws-sdk/client-s3" "^3.282.0"
+    "@aws-sdk/client-secrets-manager" "^3.295.0"
+    "@aws-sdk/client-sesv2" "^3.295.0"
+    "@aws-sdk/client-sns" "^3.295.0"
+    "@aws-sdk/client-sqs" "^3.282.0"
+    "@aws-sdk/client-ssm" "^3.282.0"
+    "@aws-sdk/client-sts" "^3.295.0"
+    "@aws-sdk/client-timestream-query" "^3.315.0"
+    "@aws-sdk/client-timestream-write" "^3.295.0"
+    "@aws-sdk/lib-dynamodb" "^3.294.0"
+    "@aws-sdk/lib-storage" "^3.282.0"
+    "@aws-sdk/rds-signer" "^3.315.0"
+    "@aws-sdk/s3-presigned-post" "^3.284.0"
+    "@aws-sdk/s3-request-presigner" "^3.282.0"
+    "@sinapsis-co/cc-sdk" "^3.0.7"
+    aws-lambda "^1.0.7"
+    aws-xray-sdk-core "^3.4.1"
+    dayjs "^1.11.0"
+    html-minifier-terser "^7.0.0-alpha.1"
+    mustache "^4.2.0"
+    node-fetch "2.6.6"
+    nodemailer "^6.7.5"
+    pg "^8.10.0"
+    reflect-metadata "^0.1.13"
+    schemy-ts "^1.5.6"
+    tsc-alias "^1.8.6"
+    typeorm "^0.3.15"
+    uuid "^8.3.2"
+
+"@sinapsis-co/cc-sdk@^3.0.7":
   version "3.0.27"
   resolved "https://npm.pkg.github.com/download/@sinapsis-co/cc-sdk/3.0.27/2c2e6ea8fd1ccc4ab561934668b7e9eaab630ae7#2c2e6ea8fd1ccc4ab561934668b7e9eaab630ae7"
   integrity sha512-nn6bymYq4UDPYShNUKlKKj5HMC8mX3GU5fX+Ihf5lZw4uH0aYeOCLnFPUmxSB6vtFjY0rY1lBr4FdctFjEbYCw==
