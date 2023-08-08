@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Aspects } from 'aws-cdk-lib';
-import { InstanceType, Peer, Port, SecurityGroup, SubnetType } from 'aws-cdk-lib/aws-ec2';
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import * as awsRds from 'aws-cdk-lib/aws-rds';
 import { Construct } from 'constructs';
@@ -22,6 +20,7 @@ export type AuroraServerlessV2PrefabParams = {
   clusterName: string;
   vpcPrefab: VpcPrefab;
   performanceTunning: AuroraPerformanceTunning;
+  publicAccess?: boolean;
 };
 
 export class AuroraServerlessV2Prefab extends Construct {
@@ -30,13 +29,14 @@ export class AuroraServerlessV2Prefab extends Construct {
   constructor(service: Service, params: AuroraServerlessV2PrefabParams) {
     super(service, getLogicalName(AuroraServerlessV2Prefab.name, params.clusterName));
 
-    const sg = new SecurityGroup(this, 'ClusterSecurityGroup', {
-      vpc: params.vpcPrefab.vpc,
-      allowAllOutbound: true,
-    });
-    sg.addIngressRule(Peer.anyIpv4(), Port.tcp(5432), 'allow inbound traffic from anywhere to the db on port 5432');
+    // const sg = new SecurityGroup(this, 'ClusterSecurityGroup', {
+    //   vpc: params.vpcPrefab.vpc,
+    //   allowAllOutbound: true,
+    // });
+    // sg.addIngressRule(Peer.anyIpv4(), Port.tcp(5432), 'allow inbound traffic from anywhere to the db on port 5432');
 
     const cluster = new awsRds.DatabaseCluster(this, 'Cluster', {
+      port: 5432, // Default port for postgres
       clusterIdentifier: getResourceName(params.clusterName, service.props),
       engine: awsRds.DatabaseClusterEngine.auroraPostgres({
         version: awsRds.AuroraPostgresEngineVersion.VER_15_2,
@@ -44,28 +44,21 @@ export class AuroraServerlessV2Prefab extends Construct {
       credentials: awsRds.Credentials.fromGeneratedSecret('postgres', {
         secretName: getResourceName(params.clusterName, service.props),
       }),
-      instanceProps: {
-        vpc: params.vpcPrefab.vpc,
-        instanceType: new InstanceType('serverless'),
-        autoMinorVersionUpgrade: true,
-        publiclyAccessible: true,
-        securityGroups: [sg],
-        vpcSubnets: params.vpcPrefab.vpc.selectSubnets({ subnetType: SubnetType.PUBLIC }),
-      },
-      instances: params.performanceTunning.instances,
-      port: 5432, // Default port for postgres
-    });
-
-    // Capacity
-    Aspects.of(cluster).add({
-      visit(node) {
-        if (node instanceof awsRds.CfnDBCluster) {
-          node.serverlessV2ScalingConfiguration = {
-            minCapacity: params.performanceTunning.minCapacity,
-            maxCapacity: params.performanceTunning.maxCapacity,
-          };
-        }
-      },
+      writer: awsRds.ClusterInstance.serverlessV2('writer', { publiclyAccessible: params.publicAccess }),
+      readers: [...Array(params.performanceTunning.instances).keys()].map((i) =>
+        awsRds.ClusterInstance.serverlessV2(`reader${i}`, { publiclyAccessible: params.publicAccess })
+      ),
+      serverlessV2MinCapacity: params.performanceTunning.minCapacity,
+      serverlessV2MaxCapacity: params.performanceTunning.maxCapacity,
+      // instanceProps: {
+      //   vpc: params.vpcPrefab.vpc,
+      //   instanceType: new InstanceType('serverless'),
+      //   autoMinorVersionUpgrade: true,
+      //   publiclyAccessible: true,
+      //   securityGroups: [sg],
+      //   vpcSubnets: params.vpcPrefab.vpc.selectSubnets({ subnetType: SubnetType.PUBLIC }),
+      // },
+      // instances: params.performanceTunning.instances,
     });
 
     // RDS Proxy
