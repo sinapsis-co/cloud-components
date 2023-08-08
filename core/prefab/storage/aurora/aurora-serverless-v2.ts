@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import * as awsRds from 'aws-cdk-lib/aws-rds';
 import { Construct } from 'constructs';
 
@@ -8,6 +7,7 @@ import { getResourceName } from 'common/naming/get-resource-name';
 import { Service } from 'common/service';
 
 import { Peer, Port, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
+import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { VpcPrefab } from 'prefab/networking/vpc';
 
@@ -47,24 +47,19 @@ export class AuroraServerlessV2Prefab extends Construct {
       credentials: awsRds.Credentials.fromGeneratedSecret('postgres', {
         secretName: getResourceName(params.clusterName, service.props),
       }),
-      writer: awsRds.ClusterInstance.serverlessV2('writer', { publiclyAccessible: params.publicAccess }),
+      writer: awsRds.ClusterInstance.serverlessV2('writer', {
+        instanceIdentifier: getResourceName('writer', service.props),
+        publiclyAccessible: params.publicAccess,
+      }),
       readers: [...Array(params.performanceTunning.instances).keys()].map((i) =>
         awsRds.ClusterInstance.serverlessV2(`reader${i}`, {
+          instanceIdentifier: getResourceName(`reader${i}`, service.props),
           ...(i === 0 ? { scaleWithWriter: true } : {}),
           publiclyAccessible: params.publicAccess,
         })
       ),
       serverlessV2MinCapacity: params.performanceTunning.minCapacity,
       serverlessV2MaxCapacity: params.performanceTunning.maxCapacity,
-      // instanceProps: {
-      //   vpc: params.vpcPrefab.vpc,
-      //   instanceType: new InstanceType('serverless'),
-      //   autoMinorVersionUpgrade: true,
-      //   publiclyAccessible: true,
-      //   securityGroups: [sg],
-      //   vpcSubnets: params.vpcPrefab.vpc.selectSubnets({ subnetType: SubnetType.PUBLIC }),
-      // },
-      // instances: params.performanceTunning.instances,
     });
 
     // RDS Proxy
@@ -80,7 +75,6 @@ export class AuroraServerlessV2Prefab extends Construct {
       vpc: params.vpcPrefab.vpc,
       role: rdsRole,
     });
-    // this.proxy.grantConnect(rdsRole);
   }
 
   public useMod(variableName = 'DB', mods: ((proxy: awsRds.DatabaseProxy) => any)[]): (lambda: NodejsFunction) => void {
