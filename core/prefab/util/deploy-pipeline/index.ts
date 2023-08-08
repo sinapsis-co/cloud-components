@@ -27,9 +27,13 @@ export type DeployPipelineProps = {
 export class DeployPipelinePrefab extends Construct {
   constructor(service: Service, params: DeployPipelineProps) {
     super(service, getLogicalName(DeployPipelinePrefab.name));
-    const props = { ...service.props, isSingleProjectAccount: false };
 
-    if (props.ephemeralEnvName) return;
+    const overriddenService: Service = Object.assign(
+      { props: { ...service.props, isSingleProjectAccount: false } },
+      service
+    );
+
+    if (overriddenService.props.ephemeralEnvName) return;
 
     const repositoryOwner = StringParameter.valueFromLookup(this, 'pipeline-default-repository-owner');
     const repositoryConnection = StringParameter.valueFromLookup(this, 'pipeline-default-repository-connection');
@@ -37,8 +41,8 @@ export class DeployPipelinePrefab extends Construct {
     const sourceCodeArtifact = new Artifact('sourceCode');
     const sourceCodeAction = new CodeStarConnectionsSourceAction({
       actionName: 'FetchRepo',
-      branch: props.deployBranch,
-      repo: props.repositoryName,
+      branch: overriddenService.props.deployBranch,
+      repo: overriddenService.props.repositoryName,
       output: sourceCodeArtifact,
       owner: repositoryOwner,
       connectionArn: repositoryConnection,
@@ -62,7 +66,7 @@ export class DeployPipelinePrefab extends Construct {
         : [];
 
     const codebuildProject = new awsCodebuild.Project(this, 'CodebuildProject', {
-      projectName: `${props.projectName}-${props.envName}`,
+      projectName: `${overriddenService.props.projectName}-${overriddenService.props.envName}`,
       role: deploymentRole,
       environment: {
         computeType: awsCodebuild.ComputeType.LARGE,
@@ -94,7 +98,7 @@ export class DeployPipelinePrefab extends Construct {
             ],
           },
           build: {
-            commands: [`yarn deploy ${props.envName}`],
+            commands: [`yarn deploy ${overriddenService.props.envName}`],
           },
           post_build: {
             commands: params.postDeployCommands || [],
@@ -112,9 +116,9 @@ export class DeployPipelinePrefab extends Construct {
 
     const pipeline = new Pipeline(this, 'Pipeline', {
       crossAccountKeys: false,
-      pipelineName: `${props.projectName}-${props.envName}`,
+      pipelineName: `${overriddenService.props.projectName}-${overriddenService.props.envName}`,
       artifactBucket: new Bucket(this, 'bucket', {
-        bucketName: getBucketName('bucket', props),
+        bucketName: getBucketName('bucket', overriddenService.props),
         autoDeleteObjects: true,
         removalPolicy: RemovalPolicy.DESTROY,
       }),
@@ -124,7 +128,7 @@ export class DeployPipelinePrefab extends Construct {
       ],
     });
 
-    if (props.pipelineNotificationSlackChannel) {
+    if (overriddenService.props.pipelineNotificationSlackChannel) {
       const extraSlackNotification = 'extra-slack-notification';
       const defaultSlackToken = new ParameterSecret(service, { existingName: 'pipeline-default-slack-token' });
       const modifiers = [getPipelineExecution(), defaultSlackToken.useModReader('DEFAULT_SLACK_TOKEN_PARAMETER')];
@@ -139,16 +143,16 @@ export class DeployPipelinePrefab extends Construct {
         name: 'send-to-slack',
         baseFunctionFolder: __dirname,
         modifiers,
-        ...(props.isDemoProject ? {} : { compiled: true }),
+        ...(overriddenService.props.isDemoProject ? {} : { compiled: true }),
         environment: {
           REPOSITORY_OWNER: repositoryOwner,
-          REPOSITORY_NAME: props.repositoryName,
-          DEFAULT_SLACK_CHANNEL: props.pipelineNotificationSlackChannel,
+          REPOSITORY_NAME: overriddenService.props.repositoryName,
+          DEFAULT_SLACK_CHANNEL: overriddenService.props.pipelineNotificationSlackChannel,
         },
       });
 
       new NotificationRule(this, 'Notification', {
-        notificationRuleName: `${props.projectName}-${props.envName}`,
+        notificationRuleName: `${overriddenService.props.projectName}-${overriddenService.props.envName}`,
         detailType: DetailType.FULL,
         source: pipeline,
         targets: [topicFunction.customTopic.topic],

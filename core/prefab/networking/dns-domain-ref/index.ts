@@ -15,17 +15,22 @@ export class DnsDomainRefPrefab extends Construct {
   constructor(service: Service, params: DnsBaseDomainRefConstructParams) {
     super(service, getLogicalName(DnsDomainRefPrefab.name));
 
-    const props = { ...service.props, isSingleProjectAccount: false };
+    const overriddenService: Service = Object.assign(
+      { props: { ...service.props, isSingleProjectAccount: false } },
+      service
+    );
 
-    if (!params.hostedZoneNS || !props.hostedZoneName) return;
+    if (!params.hostedZoneNS || !overriddenService.props.hostedZoneName) return;
 
-    const rootHostedZone = HostedZone.fromLookup(this, 'RootHostedZone', { domainName: props.hostedZoneName });
+    const rootHostedZone = HostedZone.fromLookup(this, 'RootHostedZone', {
+      domainName: overriddenService.props.hostedZoneName,
+    });
 
     const nsValues = params.hostedZoneNS.split(',');
 
-    const recordName = props.ephemeralEnvName
-      ? `${props.ephemeralEnvName}.${props.envName}.${props.baseDomainName}`
-      : `${props.envName}.${props.baseDomainName}`;
+    const recordName = overriddenService.props.ephemeralEnvName
+      ? `${overriddenService.props.ephemeralEnvName}.${overriddenService.props.envName}.${overriddenService.props.baseDomainName}`
+      : `${overriddenService.props.envName}.${overriddenService.props.baseDomainName}`;
 
     new NsRecord(this, 'NsRecord', { recordName, values: nsValues, zone: rootHostedZone });
   }
