@@ -32,12 +32,15 @@ export const deploySPA: ConfigCommand = async <
 
     const yarnCommand = args[5] || 'build';
 
-    const { envName, ephemeralEnvName, servicesNamesInput, envNameInput, roleName, accountMap } = await preScript(
-      globalConstConfig,
-      globalEnvConfig,
-      globalDeployTargetConfig,
-      args
-    );
+    const {
+      envName,
+      ephemeralEnvName,
+      servicesNamesInput,
+      envNameInput,
+      roleName,
+      accountMap,
+      isSingleProjectAccount,
+    } = await preScript(globalConstConfig, globalEnvConfig, globalDeployTargetConfig, args);
 
     console.log('>> STEP: (1/4) => LOADING CONFIGS');
     const projectName = globalConstConfig.projectName;
@@ -55,6 +58,7 @@ export const deploySPA: ConfigCommand = async <
 
     const getParamName = (name: string) =>
       getResourceName(name, {
+        isSingleProjectAccount,
         projectName,
         envName,
         ephemeralEnvName,
