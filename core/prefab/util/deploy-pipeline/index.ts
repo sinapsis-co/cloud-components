@@ -28,10 +28,8 @@ export class DeployPipelinePrefab extends Construct {
   constructor(service: Service, params: DeployPipelineProps) {
     super(service, getLogicalName(DeployPipelinePrefab.name));
 
-    const overriddenService: Service = Object.assign(
-      { props: { ...service.props, isSingleProjectAccount: false } },
-      service
-    );
+    const overriddenService: Service = Object.assign({ props: { ...service.props } }, service);
+    overriddenService.props.isSingleProjectAccount = false;
 
     if (overriddenService.props.ephemeralEnvName) return;
 

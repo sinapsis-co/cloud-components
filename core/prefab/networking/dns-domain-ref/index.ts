@@ -15,10 +15,8 @@ export class DnsDomainRefPrefab extends Construct {
   constructor(service: Service, params: DnsBaseDomainRefConstructParams) {
     super(service, getLogicalName(DnsDomainRefPrefab.name));
 
-    const overriddenService: Service = Object.assign(
-      { props: { ...service.props, isSingleProjectAccount: false } },
-      service
-    );
+    const overriddenService: Service = Object.assign({ props: { ...service.props } }, service);
+    overriddenService.props.isSingleProjectAccount = false;
 
     if (!params.hostedZoneNS || !overriddenService.props.hostedZoneName) return;
 
