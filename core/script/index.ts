@@ -13,6 +13,7 @@ import { deploySSR } from './config-command/deploy-ssr';
 import { destroy } from './config-command/destroy';
 import { startSPA } from './config-command/start-spa';
 import { startSSR } from './config-command/start-ssr';
+import { syncRDS } from './config-command/sync-rds';
 import { synth } from './config-command/synth';
 import { createUser } from './output-command/create-user';
 import { genPostmanEnv } from './output-command/gen-postman-env';
@@ -41,6 +42,7 @@ export const getCommandSignature = (command: string): SignatureType => {
     'start-spa': 'config',
     'deploy-ssr': 'config',
     'start-ssr': 'config',
+    'sync-rds': 'config',
     'create-user': 'output',
     'gen-postman-env': 'output',
   };
@@ -58,6 +60,7 @@ export const executeConfigCommand = (command: string): any => {
     'start-spa': startSPA,
     'deploy-ssr': deploySSR,
     'start-ssr': startSSR,
+    'sync-rds': syncRDS,
   };
   if (!ops[command]) throw new Error('Missing command');
   return ops[command];

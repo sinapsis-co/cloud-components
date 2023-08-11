@@ -11,6 +11,8 @@ import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { VpcPrefab } from 'prefab/networking/vpc';
 
+import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+
 export type AuroraPerformanceTunning = {
   readInstances: number;
   minCapacity: number;
@@ -22,6 +24,8 @@ export type AuroraServerlessV2PrefabParams = {
   vpcPrefab: VpcPrefab;
   performanceTunning: AuroraPerformanceTunning;
   publicAccess?: boolean;
+  entitiesDir?: string;
+  migrationsDir?: string;
 };
 
 export class AuroraServerlessV2Prefab extends Construct {
@@ -83,6 +87,16 @@ export class AuroraServerlessV2Prefab extends Construct {
       iamAuth: true,
       vpc: params.vpcPrefab.vpc,
       role: rdsRole,
+    });
+
+    new StringParameter(this, 'Config', {
+      simpleName: true,
+      parameterName: getResourceName('config', service.props),
+      stringValue: JSON.stringify({
+        entitiesDir: params.entitiesDir || `${service.props.serviceName}/entities`,
+        migrationsDir: params.migrationsDir || `${service.props.serviceName}/migrations`,
+        clusterSecretArn: cluster.secret?.secretArn,
+      }),
     });
   }
 

@@ -25,6 +25,7 @@
     "open-next": "^2.0.3",
     "reflect-metadata": "^0.1.13",
     "tsc-alias": "^1.8.6",
-    "type-graphql": "^1.1.1"
+    "type-graphql": "^1.1.1",
+    "typeorm": "^0.3.17"
   }
 }
