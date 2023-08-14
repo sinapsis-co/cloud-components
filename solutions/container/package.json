@@ -13,7 +13,8 @@
     "node": ">= 14.14.0"
   },
   "scripts": {
-    "sync-rds": "npx ts-node -r tsconfig-paths/register script-manager.ts sync-rds",
+    "rds-sync": "npx ts-node -r tsconfig-paths/register script-manager.ts rds-sync",
+    "rds-migration": "npx ts-node -r tsconfig-paths/register script-manager.ts rds-migration",
     "synth": "npx ts-node -r tsconfig-paths/register script-manager.ts synth",
     "bootstrap": "npx ts-node -r tsconfig-paths/register script-manager.ts bootstrap",
     "deploy": "npx ts-node -r tsconfig-paths/register script-manager.ts deploy",

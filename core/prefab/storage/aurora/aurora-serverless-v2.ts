@@ -24,8 +24,7 @@ export type AuroraServerlessV2PrefabParams = {
   vpcPrefab: VpcPrefab;
   performanceTunning: AuroraPerformanceTunning;
   publicAccess?: boolean;
-  entitiesDir?: string;
-  migrationsDir?: string;
+  baseDir?: string;
 };
 
 export class AuroraServerlessV2Prefab extends Construct {
@@ -93,8 +92,7 @@ export class AuroraServerlessV2Prefab extends Construct {
       simpleName: true,
       parameterName: getResourceName('config', service.props),
       stringValue: JSON.stringify({
-        entitiesDir: params.entitiesDir || `${service.props.serviceName}/entities`,
-        migrationsDir: params.migrationsDir || `${service.props.serviceName}/migrations`,
+        baseDir: params.baseDir || `support/${service.props.serviceName}`,
         clusterSecretArn: cluster.secret?.secretArn,
       }),
     });

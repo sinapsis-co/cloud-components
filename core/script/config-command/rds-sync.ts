@@ -17,7 +17,7 @@ import {
   BaseGlobalEnvConfig,
 } from '../../common/synth/props-types';
 
-export const syncRDS: ConfigCommand = async <
+export const rdsSync: ConfigCommand = async <
   GlobalConst,
   AllowedEnv extends BaseEnvName = BaseEnvName,
   GlobalEnv extends BaseGlobalEnv = BaseGlobalEnv,
@@ -64,7 +64,7 @@ export const syncRDS: ConfigCommand = async <
     const configs = await ssm.send(new GetParameterCommand({ Name: getParamName('config') }));
 
     if (!configs.Parameter?.Value) throw new Error('Invalid Config');
-    const { entitiesDir, clusterSecretArn } = JSON.parse(configs.Parameter?.Value);
+    const { clusterSecretArn } = JSON.parse(configs.Parameter?.Value);
 
     const sm: SecretsManagerClient = new SecretsManagerClient(role);
     const response = await sm.send(
@@ -85,7 +85,7 @@ export const syncRDS: ConfigCommand = async <
       port,
       username,
       password,
-      entities: [`${process.cwd()}/services/${entitiesDir}/*.{ts, js}`],
+      entities: [`${process.cwd()}/services/**/**/entities/*.{ts, js}`],
     });
     await dataSource.initialize();
     await dataSource.synchronize();

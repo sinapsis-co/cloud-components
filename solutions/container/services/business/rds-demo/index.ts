@@ -32,8 +32,7 @@ export class RdsDemo extends Service<GlobalCoordinator> {
         minCapacity: 0.5,
         maxCapacity: 2,
       },
-      entitiesDir: 'business/rds-demo/entities',
-      migrationsDir: 'business/rds-demo/migrations',
+      baseDir: 'business/rds-demo',
     });
     // this.apiAggregate = new ApiAggregate(this, {
     //   basePath: 'base',
