@@ -39,12 +39,8 @@ export const rdsMigration: ConfigCommand = async <
     if (!['generate', 'run', 'revert'].includes(commandArg))
       throw new Error('Action not allowed, you can use: generate, run or revert');
 
-    const { envName, ephemeralEnvName, servicesNamesInput, roleName, accountMap } = await preScript(
-      globalConstConfig,
-      globalEnvConfig,
-      globalDeployTargetConfig,
-      args
-    );
+    const { envName, ephemeralEnvName, servicesNamesInput, roleName, accountMap, isSingleProjectAccount } =
+      await preScript(globalConstConfig, globalEnvConfig, globalDeployTargetConfig, args);
 
     log('>> STEP: (1/2) => LOADING CONFIGS');
     const projectName = globalConstConfig.projectName;
@@ -60,6 +56,7 @@ export const rdsMigration: ConfigCommand = async <
 
     const getParamName = (name: string) =>
       getResourceName(name, {
+        isSingleProjectAccount,
         projectName,
         envName,
         ephemeralEnvName,

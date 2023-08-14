@@ -31,12 +31,8 @@ export const rdsSync: ConfigCommand = async <
   try {
     log('<< Syncronization RDS Started >>');
 
-    const { envName, ephemeralEnvName, servicesNamesInput, roleName, accountMap } = await preScript(
-      globalConstConfig,
-      globalEnvConfig,
-      globalDeployTargetConfig,
-      args
-    );
+    const { envName, ephemeralEnvName, servicesNamesInput, roleName, accountMap, isSingleProjectAccount } =
+      await preScript(globalConstConfig, globalEnvConfig, globalDeployTargetConfig, args);
 
     if (!['dev', 'develop'].includes(envName)) throw new Error('Syncronization only allowed in DEV');
 
@@ -54,6 +50,7 @@ export const rdsSync: ConfigCommand = async <
 
     const getParamName = (name: string) =>
       getResourceName(name, {
+        isSingleProjectAccount,
         projectName,
         envName,
         ephemeralEnvName,
