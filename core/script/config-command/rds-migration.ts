@@ -88,7 +88,7 @@ export const rdsMigration: ConfigCommand = async <
 
       const execOptions: ExecSyncOptions = {
         stdio: 'inherit',
-        cwd: `${process.cwd()}/services/${baseDir}`,
+        cwd: `${process.cwd()}`,
         env: {
           ...process.env,
           CC_HOST: host,
