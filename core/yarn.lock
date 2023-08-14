@@ -3642,7 +3642,7 @@ type-graphql@^1.1.1:
     semver "^7.3.2"
     tslib "^2.0.1"
 
-typeorm@^0.3.15:
+typeorm@^0.3.15, typeorm@^0.3.17:
   version "0.3.17"
   resolved "https://registry.yarnpkg.com/typeorm/-/typeorm-0.3.17.tgz#a73c121a52e4fbe419b596b244777be4e4b57949"
   integrity sha512-UDjUEwIQalO9tWw9O2A4GU+sT3oyoUXheHJy4ft+RFdnRdQctdQ34L9SqE2p7LdwzafHx1maxT+bqXON+Qnmig==

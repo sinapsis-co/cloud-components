@@ -6,11 +6,10 @@ import { DepCheck } from '@sinapsis-co/cc-core/common/coordinator';
 import { EnvVpc } from '@sinapsis-co/cc-services/support/env-vpc';
 
 import { GlobalCoordinator } from 'config/config-type';
-import { CdnApi } from '../../support/cdn-api';
 
 class Dep {
-  @DepCheck()
-  cdnApi: CdnApi;
+  // @DepCheck()
+  // cdnApi: CdnApi;
   @DepCheck()
   envVpc: EnvVpc;
 }
@@ -26,12 +25,14 @@ export class RdsDemo extends Service<GlobalCoordinator> {
   build(dep: Dep): void {
     new AuroraServerlessV2Prefab(this, {
       clusterName: 'demo',
+      publicAccess: true,
       vpcPrefab: dep.envVpc.vpcPrefab,
       performanceTunning: {
-        instances: 1,
+        readInstances: 1,
         minCapacity: 0.5,
         maxCapacity: 2,
       },
+      baseDir: 'business/rds-demo',
     });
     // this.apiAggregate = new ApiAggregate(this, {
     //   basePath: 'base',

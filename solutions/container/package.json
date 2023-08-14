@@ -13,6 +13,8 @@
     "node": ">= 14.14.0"
   },
   "scripts": {
+    "rds-sync": "npx ts-node -r tsconfig-paths/register script-manager.ts rds-sync",
+    "rds-migration": "npx ts-node -r tsconfig-paths/register script-manager.ts rds-migration",
     "synth": "npx ts-node -r tsconfig-paths/register script-manager.ts synth",
     "bootstrap": "npx ts-node -r tsconfig-paths/register script-manager.ts bootstrap",
     "deploy": "npx ts-node -r tsconfig-paths/register script-manager.ts deploy",
@@ -39,7 +41,7 @@
     "@types/aws-lambda": "^8.10.108",
     "@types/node": "^18.11.7",
     "aws-lambda": "^1.0.7",
-    "cdk": "^2.82.0",
+    "cdk": "^2.68.0",
     "ts-node": "^10.7.0",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.0.2"
