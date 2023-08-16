@@ -11,6 +11,7 @@ import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { VpcPrefab } from 'prefab/networking/vpc';
 
+import { ISecret } from 'aws-cdk-lib/aws-secretsmanager';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 
 export type AuroraPerformanceTunning = {
@@ -29,6 +30,7 @@ export type AuroraServerlessV2PrefabParams = {
 
 export class AuroraServerlessV2Prefab extends Construct {
   public readonly proxy: awsRds.DatabaseProxy;
+  public readonly secret: ISecret;
 
   constructor(service: Service, params: AuroraServerlessV2PrefabParams) {
     super(service, getLogicalName(AuroraServerlessV2Prefab.name, params.clusterName));
@@ -87,6 +89,8 @@ export class AuroraServerlessV2Prefab extends Construct {
       vpc: params.vpcPrefab.vpc,
       role: rdsRole,
     });
+
+    this.secret = cluster.secret!;
 
     new StringParameter(this, 'Config', {
       simpleName: true,
