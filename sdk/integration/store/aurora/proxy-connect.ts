@@ -5,25 +5,21 @@ import { BaseDataSourceOptions } from 'typeorm/data-source/BaseDataSourceOptions
 
 let dataSource: DataSource | undefined;
 
-export const auroraProxyConnect = async (
-  secretArn: string,
-  { entities }: Pick<BaseDataSourceOptions, 'entities' | 'migrations'>
-): Promise<DataSource> => {
+export const auroraProxyConnect = async ({
+  entities,
+}: Pick<BaseDataSourceOptions, 'entities' | 'migrations'>): Promise<DataSource> => {
   const cmd = async () => {
     if (!dataSource) {
-      const signer = new Signer({ hostname: process.env.DB_HOST!, port: 5432, username: 'postgres' });
+      const signer = new Signer({ hostname: process.env.DB!, port: 5432, username: 'postgres' });
+      const password = await signer.getAuthToken();
       dataSource = new DataSource({
         type: 'postgres',
         database: 'postgres',
-        host: process.env.DB_HOST,
+        host: process.env.DB!,
         port: 5432,
         username: 'postgres',
-        password: await signer.getAuthToken(),
+        password,
         entities,
-        // database: 'test',
-        // entities: [Photo],
-        // synchronize: true,
-        // logging: false,
       });
       await dataSource.initialize();
     }

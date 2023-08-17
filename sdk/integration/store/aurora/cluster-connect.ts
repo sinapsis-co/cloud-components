@@ -37,10 +37,6 @@ export const auroraClusterConnect = async (
         username,
         password,
         entities,
-        // database: 'test',
-        // entities: [Photo],
-        // synchronize: true,
-        // logging: false,
       });
       await dataSource.initialize();
     }
