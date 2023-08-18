@@ -24,6 +24,7 @@ export type AuroraServerlessV2PrefabParams = {
   clusterName: string;
   vpcPrefab: VpcPrefab;
   performanceTunning: AuroraPerformanceTunning;
+  requireTLS: boolean;
   publicAccess?: boolean;
   baseDir?: string;
 };
@@ -89,6 +90,7 @@ export class AuroraServerlessV2Prefab extends Construct {
       vpc: params.vpcPrefab.vpc,
       securityGroups: [sg],
       role: rdsRole,
+      requireTLS: params.requireTLS,
     });
 
     this.secret = cluster.secret!;
