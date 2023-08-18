@@ -82,6 +82,7 @@ export class AuroraServerlessV2Prefab extends Construct {
       secrets: [cluster.secret!],
       iamAuth: true,
       vpc: params.vpcPrefab.vpc,
+      securityGroups: [sg],
       role: rdsRole,
     });
   }
