@@ -22,5 +22,13 @@
   "hosted-zone:account=331183547525:domainName=dev.ecs.sinapsis.io:region=us-east-1": {
     "Id": "/hostedzone/Z0975742HZ9U2REGM886",
     "Name": "dev.ecs.sinapsis.io."
-  }
+  },
+  "availability-zones:account=688032350249:region=us-east-1": [
+    "us-east-1a",
+    "us-east-1b",
+    "us-east-1c",
+    "us-east-1d",
+    "us-east-1e",
+    "us-east-1f"
+  ]
 }

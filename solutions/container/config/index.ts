@@ -1,7 +1,7 @@
 import { GlobalConstConfig, GlobalDeployTargetConfig, GlobalEnvConfig } from './config-type';
 
 export const globalConstConfig: GlobalConstConfig = {
-  projectName: 'ecs-template',
+  projectName: 'container-template',
   projectShortName: 'ecs',
   repositoryName: 'cloud-components',
   pipelineNotificationSlackChannel: 'cloud-components',
@@ -43,7 +43,7 @@ export const globalDeployTargetConfig: GlobalDeployTargetConfig = {
   dev: {
     services: {
       region: 'us-east-1',
-      account: 'v3-dev',
+      account: 'cc-dev',
     },
     deployPipeline: {
       region: 'us-east-1',
