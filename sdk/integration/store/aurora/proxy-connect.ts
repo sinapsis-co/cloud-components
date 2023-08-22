@@ -20,6 +20,12 @@ export const auroraProxyConnect = async ({
         username: 'postgres',
         password,
         entities,
+        ssl: true,
+        extra: {
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        },
       });
       await dataSource.initialize();
     }
