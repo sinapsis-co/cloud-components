@@ -9,7 +9,7 @@ export type TransactWriteFn<M extends Model> = (ops: BatchOps<M>) => Promise<voi
 export type BatchGetFn<M extends Model, T extends TableStoreBuilder> = (
   keys: T['keyMapping'][],
   autoRetry?: boolean
-) => Promise<M['Entity'][] | undefined[]>;
+) => Promise<(M['Entity'] | undefined)[]>;
 
 export type BatchWriteFn<M extends Model> = (
   ops: Omit<BatchOps<M>, 'updateItems' | 'conditionCheck'>
