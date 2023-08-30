@@ -70,7 +70,11 @@ export const traceableFunction = async <PromiseReturn, TracingMeta extends Recor
         throw exception;
       });
       innerSubsegment?.close();
-      debug({ op, phase: 'output', id, result: JSON.stringify(result) });
+      try {
+        debug({ op, phase: 'output', id, result: JSON.stringify(result) });
+      } catch (error) {
+        debug({ op, phase: 'output', id, result });
+      }
       return result;
     });
   } else {
@@ -78,7 +82,11 @@ export const traceableFunction = async <PromiseReturn, TracingMeta extends Recor
       const exception = catchException(e, op, faultCode, target, tracingMeta);
       throw exception;
     });
-    debug({ op, phase: 'output', id, result: JSON.stringify(result) });
+    try {
+      debug({ op, phase: 'output', id, result: JSON.stringify(result) });
+    } catch (error) {
+      debug({ op, phase: 'output', id, result });
+    }
     return result;
   }
 };
