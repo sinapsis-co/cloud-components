@@ -24,11 +24,13 @@ export type ApiInterfaceRequest<T extends ApiInterfaceKeys = ApiInterfaceKeys> =
   keyof OmittedProps<T>
 >;
 
+// Maps the input list of DynamoDB interface
 export type PaginatedQueryParams = {
   limit?: string;
   nextToken?: string;
 };
 
+// Maps the output list of DynamoDB interface
 export type PaginatedResponse<ResponseType> = {
   items: ResponseType[];
   nextToken: string | number | null;
@@ -37,7 +39,7 @@ export type PaginatedResponse<ResponseType> = {
 export type ApiMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 export type TablePermission = 'read' | 'write' | 'readWrite' | 'none';
 
-export type ApiDefinition<T extends ApiInterface> = {
+export type ApiDefinition<Api extends ApiInterface> = {
   name: string;
   basePath: string;
   path: string;
@@ -47,5 +49,5 @@ export type ApiDefinition<T extends ApiInterface> = {
   scope?: string;
   schema?: Schemy;
   tablePermission?: TablePermission;
-  authorizationMdw?: (request: ApiInterfaceRequest<T>, scope?: string) => void;
+  authorizationMdw?: (request: ApiInterfaceRequest<Api>, scope?: string) => void;
 };

@@ -3,13 +3,13 @@ import type {
   APIGatewayProxyResultV2,
   APIGatewayProxyStructuredResultV2,
 } from 'aws-lambda';
-import { Schemy } from 'schemy-ts';
 
-import { ApiDefinition, ApiInterface, ApiInterfaceKeys, ApiInterfaceRequest } from 'catalog/api';
+import { ApiDefinition, ApiInterface, ApiInterfaceRequest } from 'catalog/api';
 import { PlatformError, PlatformFault } from 'error';
 import { HandledException } from 'error/types';
 import { Tracing } from 'tracing';
 import { timeoutController } from 'util/timeout';
+import { apiParser } from './helpers';
 
 const DEFAULT_MAX_AGE = process.env.CC_CACHE_MAX_AGE ? parseInt(process.env.CC_CACHE_MAX_AGE) : 10;
 
@@ -20,14 +20,14 @@ export const DEFAULT_HEADERS = {
   'Content-Type': 'application/json',
 };
 
-type Response = (event: APIGatewayProxyEventV2WithJWTAuthorizer) => Promise<APIGatewayProxyResultV2>;
+type RawHandlerFn = (event: APIGatewayProxyEventV2WithJWTAuthorizer) => Promise<APIGatewayProxyResultV2>;
 
-type ApiHandler<T extends ApiInterface> = (
+type ApiHandlerFn<T extends ApiInterface> = (
   event: APIGatewayProxyEventV2WithJWTAuthorizer,
   request: ApiInterfaceRequest<T>
 ) => Promise<T['response']>;
 
-type ApiHandlerWithCustomResponse<T extends ApiInterface> = (
+type ApiHandlerWithCustomFn<T extends ApiInterface> = (
   event: APIGatewayProxyEventV2WithJWTAuthorizer,
   request: ApiInterfaceRequest<T>
 ) => Promise<{
@@ -36,21 +36,10 @@ type ApiHandlerWithCustomResponse<T extends ApiInterface> = (
   statusCode?: number;
 }>;
 
-export type SuccessfulAuthorizationResult<ExtraData> = { authorized: true } & ExtraData;
-export type FailedAuthorizationResult<ExtraData> = { authorized: false } & Partial<ExtraData>;
-export type AuthorizerResult<ExtraData = object> =
-  | SuccessfulAuthorizationResult<ExtraData>
-  | FailedAuthorizationResult<ExtraData>;
-
-export type AuthorizerFunction<T extends ApiInterface, AuthorizerData = object> = (
-  event: APIGatewayProxyEventV2WithJWTAuthorizer,
-  request: ApiInterfaceRequest<T>
-) => Promise<AuthorizerResult<AuthorizerData>>;
-
 export const apiHandler = <T extends ApiInterface>(
-  handler: ApiHandler<T>,
+  handler: ApiHandlerFn<T>,
   apiDefinition: ApiDefinition<T>
-): Response => {
+): RawHandlerFn => {
   return async (event) => {
     const tracing = new Tracing(event);
     try {
@@ -76,9 +65,9 @@ export const apiHandler = <T extends ApiInterface>(
 };
 
 export const apiHandlerWithCustomResponse = <T extends ApiInterface>(
-  handler: ApiHandlerWithCustomResponse<T>,
+  handler: ApiHandlerWithCustomFn<T>,
   apiDefinition: ApiDefinition<T>
-): Response => {
+): RawHandlerFn => {
   return async (event) => {
     const tracing = new Tracing(event);
     try {
@@ -101,37 +90,4 @@ export const apiHandlerWithCustomResponse = <T extends ApiInterface>(
       return handledException.returnException(DEFAULT_HEADERS);
     }
   };
-};
-
-export const apiParser = async <T extends ApiInterfaceKeys>(
-  event: APIGatewayProxyEventV2WithJWTAuthorizer,
-  schema?: Schemy
-): Promise<ApiInterfaceRequest<T>> => {
-  const body = await bodyParser<T['body']>(event.body, schema);
-  const pathParams = paramsParser<T['pathParams']>(event.pathParameters);
-  const queryParams = paramsParser<T['queryParams']>(event.queryStringParameters);
-  const claims = paramsParser<T['claims']>(event.requestContext.authorizer?.jwt?.claims);
-  return { body, pathParams, queryParams, claims };
-};
-
-export const bodyParser = async <BodyType>(body?: string, schema?: Schemy): Promise<BodyType> => {
-  try {
-    const parsedBody = JSON.parse(body || '{}');
-    if (schema) {
-      return await Schemy.validate<BodyType>(parsedBody, schema, false).catch((e) => {
-        throw new PlatformError({ code: 'ERROR_BODY_VALIDATION', detail: e });
-      });
-    }
-    return parsedBody;
-  } catch (e: any) {
-    if (e instanceof PlatformError) throw e;
-    throw new PlatformError({ code: 'ERROR_MALFORMED_BODY', detail: e.message });
-  }
-};
-
-export const paramsParser = <T>(params: Record<string, unknown> = {}): T => {
-  Object.keys(params).forEach((pName) => {
-    if (pName.startsWith('custom:')) params[pName.replace('custom:', '')] = params[pName];
-  });
-  return params as T;
 };
