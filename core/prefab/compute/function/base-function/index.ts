@@ -13,6 +13,8 @@ import { Service } from 'common/service';
 import { EventBusPrefab } from 'prefab/integration/event-bus';
 import { DynamoTablePrefab } from 'prefab/storage/dynamo/table';
 
+export const FUNCTION_DEFAULT_TIMEOUT = 6;
+
 export type BaseHandlerParams = NodejsFunctionProps & {
   name: ApiDefinition<ApiInterface>['name'];
   modifiers?: ((lambda: NodejsFunction) => any)[];
@@ -54,7 +56,7 @@ export class BaseFunction extends Construct {
       handler: 'handler',
       role,
       tracing: params.tracingDisabled ? Tracing.DISABLED : Tracing.ACTIVE,
-      timeout: Duration.seconds(6),
+      timeout: Duration.seconds(FUNCTION_DEFAULT_TIMEOUT),
       functionName: getShortResourceName(params.name, service.props),
       entry: params.baseFunctionString
         ? params.baseFunctionString
