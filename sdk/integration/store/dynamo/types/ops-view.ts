@@ -49,7 +49,7 @@ export type BatchOps<M extends Model> = {
   updateItems?: {
     key: TableStoreBuilder['keyMapping'];
     body: Partial<M['Body']>;
-    params?: Omit<Update, 'TableName' | 'Key' | 'UpdateExpression'>;
+    params?: Partial<Update>;
   }[];
   deleteItems?: { key: TableStoreBuilder['keyMapping']; params?: Omit<Delete, 'TableName' | 'Key'> }[];
 };
