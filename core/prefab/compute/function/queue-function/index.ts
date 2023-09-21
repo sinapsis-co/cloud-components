@@ -64,12 +64,6 @@ export class QueueFunction extends Construct {
       })
     );
 
-    new QueueFunction(service, {
-      name: 'my-queue-function',
-      timeout: Duration.seconds(5),
-      visibilityTimeoutRatio: 2,
-    });
-
     // In case the lambda function needs to operate on the queue manually
     this.lambdaFunction.addEnvironment('ORIGIN_QUEUE', this.queuePrefab.queue.queueUrl);
     this.queuePrefab.queue.grantConsumeMessages(this.lambdaFunction);
