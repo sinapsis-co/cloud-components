@@ -1,5 +1,6 @@
 import { ConditionCheck, Delete, Put, Update } from '@aws-sdk/client-dynamodb';
 import * as Dynamo from '@aws-sdk/lib-dynamodb';
+import { NativeAttributeValue } from '@aws-sdk/util-dynamodb/dist-types/models';
 import { PaginatedResponse } from 'catalog/api';
 import { Model } from 'model';
 import { TableStoreBuilder } from './table-store-builder';
@@ -43,13 +44,39 @@ export type BatchOps<M extends Model> = {
   conditionCheck?: {
     key: TableStoreBuilder['keyMapping'];
     ConditionExpression: string;
-    params?: Omit<ConditionCheck, 'TableName' | 'Key'>;
+    params?: Partial<
+      Omit<ConditionCheck, 'Key' | 'ExpressionAttributeValues'> & {
+        Key: Record<string, NativeAttributeValue> | undefined;
+        ExpressionAttributeValues?: Record<string, NativeAttributeValue>;
+      }
+    >;
   };
-  putItems?: { entity: M['Entity']; params?: Omit<Put, 'TableName' | 'Item'> }[];
+  putItems?: {
+    entity: M['Entity'];
+    params?: Partial<
+      Omit<Put, 'Key' | 'ExpressionAttributeValues'> & {
+        Key: Record<string, NativeAttributeValue> | undefined;
+        ExpressionAttributeValues?: Record<string, NativeAttributeValue>;
+      }
+    >;
+  }[];
   updateItems?: {
     key: TableStoreBuilder['keyMapping'];
     body: Partial<M['Body']>;
-    params?: Partial<Update>;
+    params?: Partial<
+      Omit<Update, 'Key' | 'ExpressionAttributeValues'> & {
+        Key: Record<string, NativeAttributeValue> | undefined;
+        ExpressionAttributeValues?: Record<string, NativeAttributeValue>;
+      }
+    >;
   }[];
-  deleteItems?: { key: TableStoreBuilder['keyMapping']; params?: Omit<Delete, 'TableName' | 'Key'> }[];
+  deleteItems?: {
+    key: TableStoreBuilder['keyMapping'];
+    params?: Partial<
+      Omit<Delete, 'Key' | 'ExpressionAttributeValues'> & {
+        Key: Record<string, NativeAttributeValue> | undefined;
+        ExpressionAttributeValues?: Record<string, NativeAttributeValue>;
+      }
+    >;
+  }[];
 };
