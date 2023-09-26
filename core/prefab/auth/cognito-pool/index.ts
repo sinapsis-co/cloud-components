@@ -83,7 +83,13 @@ export class CognitoAuthPoolPrefab extends Construct {
       userPool,
       ...(!service.props.ephemeralEnvName && params.userPoolDomain
         ? params.userPoolDomain
-        : { cognitoDomain: { domainPrefix: getDomain('auth', service.props).replace(/\./g, '-') } }),
+        : {
+            cognitoDomain: {
+              domainPrefix: (
+                params.userPoolDomain?.cognitoDomain?.domainPrefix || getDomain('auth', service.props)
+              ).replace(/\./g, '-'),
+            },
+          }),
     });
 
     if (params.userPoolDomain) {
