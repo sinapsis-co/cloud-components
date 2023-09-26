@@ -3,13 +3,9 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Queue, QueueProps } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 
-import { EventConfig } from '@sinapsis-co/cc-sdk/catalog/event';
-import { Rule } from 'aws-cdk-lib/aws-events';
-import { SqsQueue } from 'aws-cdk-lib/aws-events-targets';
 import { getLogicalName } from 'common/naming/get-logical-name';
-import { getResourceName, getShortResourceName } from 'common/naming/get-resource-name';
+import { getResourceName } from 'common/naming/get-resource-name';
 import { Service } from 'common/service';
-import { EventBusPrefab } from '../event-bus';
 
 export type FifoProperties = Pick<
   QueueProps,
@@ -24,8 +20,6 @@ export type QueuePrefabParams = {
   deliveryDelay?: Duration;
   dlq?: Queue;
   fifo?: FifoProperties;
-  eventBus?: EventBusPrefab;
-  eventConfig?: EventConfig[];
 };
 
 export class QueuePrefab extends Construct {
@@ -55,23 +49,6 @@ export class QueuePrefab extends Construct {
         maxReceiveCount: params.maxRetries || 3,
       },
     });
-
-    if (params.eventBus && params.eventConfig) {
-      const source = params.eventConfig.map((e) => e.source);
-      const detailType = params.eventConfig.map((e) => e.name);
-      const detailRules = params.eventConfig.reduce((memo, e) => ({ ...memo, ...(e.detail || {}) }), {});
-
-      new Rule(service, getLogicalName('EventProcessorRule', params.name), {
-        ruleName: getShortResourceName(params.name, service.props),
-        eventBus: params.eventBus?.bus,
-        eventPattern: {
-          ...(source.filter((e) => !!e).length > 0 ? { source } : {}),
-          ...(detailType.filter((e) => !!e).length > 0 ? { detailType } : {}),
-          ...(Object.keys(detailRules).length > 0 ? { detail: detailRules } : {}),
-        },
-        targets: [new SqsQueue(this.queue)],
-      });
-    }
   }
 
   public useMod(variableName = 'DEST_QUEUE', mods: ((queue: Queue) => any)[]): (lambda: NodejsFunction) => void {
