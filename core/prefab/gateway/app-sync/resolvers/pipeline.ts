@@ -4,6 +4,6 @@ export function request() {
 }
 
 // The after step
-export function response(ctx) {
+export function response(ctx: any) {
   return ctx.prev.result;
 }
