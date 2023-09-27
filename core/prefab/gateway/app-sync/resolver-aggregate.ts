@@ -9,6 +9,7 @@ import { Service } from 'common/service';
 import { readFileSync, writeFileSync } from 'fs';
 import { DynamoTablePrefab } from 'prefab/storage/dynamo/table';
 import { AppSyncPrefab } from '.';
+import { pipelineCode } from './resolvers/pipeline';
 import { FunctionResolver } from './types';
 
 type Resolver = {
@@ -72,7 +73,7 @@ export class AppSyncResolverAggregate<T> extends Construct {
         typeName: resolver.typeName,
         fieldName: fieldName,
         pipelineConfig: fnPipeline,
-        code: appsync.Code.fromAsset(`${__dirname}/resolvers/pipeline.js`),
+        code: appsync.Code.fromInline(pipelineCode),
         runtime: appsync.FunctionRuntime.JS_1_0_0,
       });
     });

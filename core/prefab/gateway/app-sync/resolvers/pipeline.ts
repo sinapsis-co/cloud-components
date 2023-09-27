@@ -1,3 +1,4 @@
+export const pipelineCode = `
 // The before step
 export function request() {
   return {};
@@ -7,3 +8,4 @@ export function request() {
 export function response(ctx: any) {
   return ctx.prev.result;
 }
+`;
