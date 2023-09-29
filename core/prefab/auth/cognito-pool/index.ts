@@ -81,15 +81,9 @@ export class CognitoAuthPoolPrefab extends Construct {
 
     const userPoolDomain = new awsCognito.UserPoolDomain(this, 'UserPoolDomain', {
       userPool,
-      ...(!service.props.ephemeralEnvName && params.userPoolDomain
+      ...(params.userPoolDomain
         ? params.userPoolDomain
-        : {
-            cognitoDomain: {
-              domainPrefix: (
-                params.userPoolDomain?.cognitoDomain?.domainPrefix || getDomain('auth', service.props)
-              ).replace(/\./g, '-'),
-            },
-          }),
+        : { cognitoDomain: { domainPrefix: getDomain('auth', service.props).replace(/\./g, '-') } }),
     });
 
     if (params.userPoolDomain) {
