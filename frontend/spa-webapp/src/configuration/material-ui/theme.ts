@@ -1,29 +1,17 @@
 import { MaterialDesignContent } from 'notistack';
 
-import { PaletteColorOptions, PaletteMode } from '@mui/material';
+import { PaletteColor, PaletteColorOptions, PaletteMode } from '@mui/material';
 import '@mui/material/Button';
 import { alpha, styled } from '@mui/material/styles';
 import { ThemeOptions } from '@mui/material/styles/createTheme';
+import type {} from '@mui/x-data-grid-pro/themeAugmentation';
 
-// Alert
-type AlertTypes = 'filled' | 'outlined' | 'standard';
-export const AlertType: AlertTypes = 'filled';
+import { button } from './button';
+import { colors } from './colors';
+import { sizes } from './sizes';
+import { typography } from './typography';
 
-// Button
-type ButtonTypes = 'text' | 'outlined' | 'contained';
-export const buttonVariant: ButtonTypes = 'contained';
-const buttonFontSizeLarge = '14px';
-const buttonPaddingLarge = '16px 24px';
-const buttonFontSizeSmall = '14px';
-const buttonPaddingSmall = '12px 16px';
-
-// Inputs
-type InputTypes = 'standard' | 'filled' | 'outlined';
-export const inputVariant: InputTypes = 'outlined';
-
-type InputSizeTypes = 'small' | 'medium' | undefined;
-export const inputSize: InputSizeTypes = 'medium';
-
+// Extend the Material-UI palette to include custom colors
 declare module '@mui/material/styles' {
   interface CustomPalette {
     white: PaletteColorOptions;
@@ -32,111 +20,109 @@ declare module '@mui/material/styles' {
   interface PaletteOptions extends CustomPalette {}
 }
 
+declare module '@mui/material/styles' {
+  interface Palette {
+    customBackground: PaletteColor;
+  }
+  interface PaletteOptions {
+    customBackground?: PaletteColorOptions;
+  }
+}
+
 declare module '@mui/material/Button' {
   interface ButtonPropsColorOverrides {
     white: true;
   }
 }
 
-// Colors
-const primaryMain = '#F9A825';
-const primaryDark = '#CC7E00';
-const primaryLight = '#FFECAD';
-const contrastText = '#16181d';
-const secondaryMain = '#e6332a';
-const secondaryDark = '#a20008';
-const secondaryLight = '#ff7a70';
-const success = '#1dac64';
-const error = '#dc2a2a';
-const errorLight = '#FFA6A6';
-const warning = '#ff9a00';
-const commonText = '#212b36';
-
-// Typography
-const fontFamily = 'Montserrat';
-// const superFontSize = '48px';
-const h1FontSize = '40px';
-const h2FontSize = '32px';
-const h2FontWeight = '600';
-const h3FontSize = '24px';
-const h3FontWeight = '600';
-const h4FontSize = '20px';
-const h5FontSize = '16px';
-const h5FontWeight = '600';
-const body1FontSize = '14px';
-const tooltipFontSize = '14px';
-const captionFontSize = '12px';
-const linkFontSize = '14px';
-const linkFontWeight = '600';
-
-// Common
-const borderRadius = '8px';
-
+// Define color palettes for dark and light modes
 const darkModePalette = [
+  // Define dark mode color palette
   {
-    background: '#212b36',
-    primaryText: '#ffffff',
-    secondaryText: '#c4c4c4',
-    grey100: '#202124',
-    grey300: '#42525e',
-    paper: '#1D1E21',
-    divider: '#16181d',
+    background: colors.text.primary,
+    primaryText: colors.common.white,
+    secondaryText: colors.common.grey300,
+    textDisabled: colors.text.disabled,
+    grey100: colors.common.grey100,
+    grey300: colors.common.grey300,
+    paper: colors.text.secondary,
+    contrastBackground: colors.common.contrastBackgroundDark,
+    divider: colors.primary.contrastText,
   },
 ];
 
 const lightModePalette = [
+  // Define light mode color palette
   {
-    background: '#ffffff',
-    primaryText: '#212b36',
-    secondaryText: '#777a7c',
-    grey100: '#F9FBFC',
-    grey300: '#DEDEDE',
-    paper: '#F2F1F0',
-    divider: alpha('#e8e8e8', 0.75),
+    background: colors.common.white,
+    primaryText: colors.text.primary,
+    secondaryText: colors.text.secondary,
+    textDisabled: colors.text.disabled,
+    grey100: colors.common.grey100Light,
+    grey300: colors.common.grey300Light,
+    paper: colors.common.greyPaper,
+    contrastBackground: colors.common.contrastBackgroundLight,
+    divider: colors.common.grey300,
   },
 ];
 
+/**
+ * Function to get the palette mode configuration based on the selected mode.
+ *
+ * @param mode The selected palette mode (either 'light' or 'dark').
+ * @returns Partial ThemeOptions for the selected mode.
+ */
 export const getPaletteMode = (mode: PaletteMode): Partial<ThemeOptions> => ({
   palette: {
     mode,
     ...(mode === 'dark'
       ? {
+          // Custom dark mode palette
           primary: {
-            main: primaryMain,
-            dark: primaryDark,
-            light: primaryLight,
-            contrastText: contrastText,
+            main: colors.primary.main,
+            dark: colors.primary.dark,
+            light: colors.primary.light,
+            contrastText: colors.primary.contrastText,
           },
           secondary: {
-            main: secondaryMain,
-            dark: secondaryDark,
-            light: secondaryLight,
+            main: colors.secondary.main,
+            dark: colors.secondary.dark,
+            light: colors.secondary.light,
           },
           white: {
-            main: '#ffffff',
+            main: colors.common.white,
           },
+          divider: darkModePalette[0].divider,
           text: {
             primary: darkModePalette[0].primaryText,
             secondary: darkModePalette[0].secondaryText,
+            disabled: darkModePalette[0].textDisabled,
           },
           grey: {
             100: darkModePalette[0].grey100,
             300: darkModePalette[0].grey300,
           },
           success: {
-            main: success,
+            main: colors.success.main,
+            dark: colors.success.dark,
+            light: colors.success.light,
           },
           error: {
-            main: error,
+            main: colors.error.main,
+            dark: colors.error.dark,
+            light: colors.error.light,
           },
           warning: {
-            main: warning,
-            dark: secondaryDark,
-            light: secondaryLight,
+            main: colors.warning.main,
+            dark: colors.warning.dark,
+            light: colors.warning.light,
           },
           background: {
             default: darkModePalette[0].background,
             paper: darkModePalette[0].paper,
+          },
+          customBackground: {
+            main: darkModePalette[0].contrastBackground,
           },
           originalBackground: {
             default: darkModePalette[0].background,
@@ -146,40 +132,52 @@ export const getPaletteMode = (mode: PaletteMode): Partial<ThemeOptions> => ({
           },
         }
       : {
+          // Custom light mode palette
           primary: {
-            main: primaryMain,
-            dark: primaryDark,
-            light: primaryLight,
-            contrastText: contrastText,
+            main: colors.primary.main,
+            dark: colors.primary.dark,
+            light: colors.primary.light,
+            contrastText: colors.primary.contrastText,
           },
           secondary: {
-            main: secondaryMain,
-            dark: secondaryDark,
-            light: secondaryLight,
+            main: colors.secondary.main,
+            dark: colors.secondary.dark,
+            light: colors.secondary.light,
           },
           white: {
-            main: '#ffffff',
+            main: colors.common.white,
           },
+          divider: lightModePalette[0].divider,
           text: {
             primary: lightModePalette[0].primaryText,
             secondary: lightModePalette[0].secondaryText,
+            disabled: darkModePalette[0].textDisabled,
           },
           grey: {
             100: lightModePalette[0].grey100,
             300: lightModePalette[0].grey300,
           },
           success: {
-            main: success,
+            main: colors.success.main,
+            dark: colors.success.dark,
+            light: colors.success.light,
           },
           error: {
-            main: error,
+            main: colors.error.main,
+            dark: colors.error.dark,
+            light: colors.error.light,
           },
           warning: {
-            main: warning,
+            main: colors.warning.main,
+            dark: colors.warning.dark,
+            light: colors.warning.light,
           },
           background: {
             default: lightModePalette[0].background,
             paper: lightModePalette[0].paper,
+          },
+          customBackground: {
+            main: lightModePalette[0].contrastBackground,
           },
           originalBackground: {
             default: lightModePalette[0].background,
@@ -191,36 +189,50 @@ export const getPaletteMode = (mode: PaletteMode): Partial<ThemeOptions> => ({
   },
 });
 
+/**
+ * Function to create custom theme options based on the selected palette mode.
+ *
+ * @param mode The selected palette mode (either 'light' or 'dark').
+ * @returns Partial ThemeOptions for the selected mode.
+ */
 export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => ({
   typography: {
-    fontFamily: [fontFamily, 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'].join(','),
+    fontFamily: [typography.fontFamily, 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'].join(','),
     h1: {
-      fontSize: h1FontSize,
+      fontSize: typography.h1.fontSize,
+      fontWeight: typography.h1.fontWeight,
     },
     h2: {
-      fontSize: h2FontSize,
-      fontWeight: h2FontWeight,
+      fontSize: typography.h2.fontSize,
+      fontWeight: typography.h2.fontWeight,
     },
     h3: {
-      fontSize: h3FontSize,
-      fontWeight: h3FontWeight,
+      fontSize: typography.h3.fontSize,
+      fontWeight: typography.h3.fontWeight,
     },
     h4: {
-      fontSize: h4FontSize,
+      fontSize: typography.h4.fontSize,
+      fontWeight: typography.h4.fontWeight,
     },
     h5: {
-      fontSize: h5FontSize,
-      fontWeight: h5FontWeight,
+      fontSize: typography.h5.fontSize,
+      fontWeight: typography.h5.fontWeight,
     },
     body1: {
-      fontSize: body1FontSize,
+      fontSize: typography.body1.fontSize,
+      fontWeight: typography.body1.fontWeight,
+    },
+    body2: {
+      fontSize: typography.body2.fontSize,
+      fontWeight: typography.body2.fontWeight,
     },
     caption: {
-      fontSize: captionFontSize,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.caption.fontWeight,
     },
   },
   shape: {
-    borderRadius: 8,
+    borderRadius: sizes.borderRadius, // Define the default border radius for components
   },
   components: {
     MuiPaper: {
@@ -228,7 +240,7 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
         root: {
           boxShadow: 'none',
           border: `1px solid ${mode === 'dark' ? darkModePalette[0].grey300 : lightModePalette[0].grey300}`,
-          borderRadius: borderRadius,
+          borderRadius: sizes.borderRadius,
           backgroundColor: mode === 'dark' ? darkModePalette[0].background : lightModePalette[0].background,
         },
       },
@@ -237,11 +249,11 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
       styleOverrides: {
         root: {
           boxShadow: 'none',
+          borderRadius: sizes.borderRadius,
+          padding: button.large.padding,
+          fontSize: button.large.fontSize,
           fontWeight: '700',
-          textTransform: 'capitalize',
-          borderRadius: borderRadius,
-          padding: buttonPaddingLarge,
-          fontSize: buttonFontSizeLarge,
+          textTransform: 'none',
           transition: 'all 250ms cubic-bezier(0.4, 0, 0.2, 1)',
           '&:hover': {
             boxShadow: 'none',
@@ -252,7 +264,7 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
         {
           props: { variant: 'contained' },
           style: {
-            color: commonText,
+            color: colors.text.primary,
           },
         },
         {
@@ -280,27 +292,27 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
           props: { variant: 'contained', color: 'primary' },
           style: {
             '&:hover': {
-              backgroundColor: primaryLight,
+              backgroundColor: colors.primary.light,
             },
           },
         },
         {
           props: { variant: 'contained', color: 'secondary' },
           style: {
-            color: '#ffffff',
+            color: colors.common.white,
             '&:hover': {
-              backgroundColor: secondaryDark,
+              backgroundColor: colors.secondary.dark,
             },
           },
         },
         {
           props: { variant: 'contained', color: 'error' },
           style: {
-            color: '#ffffff',
-            backgroundColor: error,
+            color: colors.common.white,
+            backgroundColor: colors.error.main,
             '&:hover': {
-              color: commonText,
-              backgroundColor: errorLight,
+              color: colors.text.primary,
+              backgroundColor: colors.error.light,
             },
           },
         },
@@ -308,20 +320,20 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
           props: { variant: 'outlined', color: 'primary' },
           style: {
             borderWidth: 1,
-            borderColor: primaryDark,
-            color: primaryDark,
+            borderColor: colors.primary.dark,
+            color: colors.primary.dark,
             '&:hover': {
-              backgroundColor: alpha(primaryLight, 0.15),
+              backgroundColor: alpha(colors.primary.light, 0.15),
             },
           },
         },
         {
           props: { size: 'small' },
           style: {
-            padding: buttonPaddingSmall,
-            fontSize: buttonFontSizeSmall,
-            lineHeight: '16px',
-            maxHeight: '40px',
+            padding: button.small.padding,
+            fontSize: button.small.fontSize,
+            lineHeight: button.small.lineHeight,
+            maxHeight: button.small.maxHeight,
           },
         },
       ],
@@ -341,7 +353,7 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
         root: {
           color: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
           background: 'transparent',
-          borderRadius: borderRadius,
+          borderRadius: sizes.borderRadius,
           transition: 'border 250ms ease-in',
           '& :-webkit-autofill': {
             animation: 'none !important',
@@ -358,7 +370,7 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
         root: {
           color: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
           background: mode === 'dark' ? darkModePalette[0].background : lightModePalette[0].background,
-          borderRadius: borderRadius,
+          borderRadius: sizes.borderRadius,
           transition: 'border 250ms ease-in',
           '& :-webkit-autofill': {
             animation: 'none !important',
@@ -369,7 +381,7 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
           },
         },
         notchedOutline: {
-          borderRadius: borderRadius,
+          borderRadius: sizes.borderRadius,
           borderWidth: '2px',
           transition: 'border 250ms ease-in',
         },
@@ -385,10 +397,10 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
     MuiFormLabel: {
       styleOverrides: {
         root: {
-          color: commonText,
+          color: colors.text.primary,
           fontWeight: 500,
           '.MuiFormLabel-asterisk, .MuiInputLabel-asterisk': {
-            color: `${error} !important`,
+            color: `${colors.error.main} !important`,
           },
         },
       },
@@ -400,7 +412,7 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
         },
         colorPrimary: {
           '&.Mui-checked': {
-            color: primaryDark,
+            color: colors.primary.dark,
           },
         },
       },
@@ -408,12 +420,12 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
     MuiInputBase: {
       styleOverrides: {
         root: {
-          borderRadius: borderRadius,
+          borderRadius: sizes.borderRadius,
           outline: 'none',
           background: 'transparent',
         },
         input: {
-          borderRadius: borderRadius,
+          borderRadius: sizes.borderRadius,
           color: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
           background: 'transparent',
           '& label': {
@@ -426,7 +438,7 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
       styleOverrides: {
         root: {
           color: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
-          borderRadius: borderRadius,
+          borderRadius: sizes.borderRadius,
           outline: 'none',
           background: 'transparent',
           '& label': {
@@ -438,35 +450,35 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
-          fontSize: tooltipFontSize,
+          fontSize: typography.tooltip.fontSize,
         },
       },
     },
     MuiTypography: {
       styleOverrides: {
         h1: {
-          fontSize: h1FontSize,
+          fontSize: typography.h1.fontSize,
         },
         h2: {
-          fontSize: h2FontSize,
-          fontWeight: h2FontWeight,
+          fontSize: typography.h2.fontSize,
+          fontWeight: typography.h2.fontWeight,
         },
         h3: {
-          fontSize: h3FontSize,
-          fontWeight: h3FontWeight,
+          fontSize: typography.h3.fontSize,
+          fontWeight: typography.h3.fontWeight,
         },
         h4: {
-          fontSize: h4FontSize,
+          fontSize: typography.h4.fontSize,
         },
         h5: {
-          fontSize: h5FontSize,
-          fontWeight: h5FontWeight,
+          fontSize: typography.h5.fontSize,
+          fontWeight: typography.h5.fontWeight,
         },
         body1: {
-          fontSize: body1FontSize,
+          fontSize: typography.body1.fontSize,
         },
         caption: {
-          fontSize: captionFontSize,
+          fontSize: typography.caption.fontSize,
         },
       },
     },
@@ -501,44 +513,44 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
     MuiAlert: {
       styleOverrides: {
         root: {
-          borderRadius: borderRadius,
+          borderRadius: sizes.borderRadius,
         },
         action: {
           padding: '4px 0',
         },
         standardSuccess: {
-          color: success,
-          backgroundColor: success,
-          borderRadius: borderRadius,
+          color: colors.success.main,
+          backgroundColor: colors.success.main,
+          borderRadius: sizes.borderRadius,
         },
         standardError: {
-          backgroundColor: error,
-          borderRadius: borderRadius,
+          backgroundColor: colors.error.main,
+          borderRadius: sizes.borderRadius,
         },
         outlinedSuccess: {
-          borderColor: error,
-          backgroundColor: alpha(success, 0.1),
+          borderColor: colors.error.main,
+          backgroundColor: alpha(colors.success.main, 0.1),
         },
         outlinedError: {
-          borderRadius: borderRadius,
-          backgroundColor: alpha(error, 0.1),
-          borderColor: error,
+          borderRadius: sizes.borderRadius,
+          backgroundColor: alpha(colors.error.main, 0.1),
+          borderColor: colors.error.main,
         },
         outlinedInfo: {
-          color: commonText,
-          borderColor: commonText,
-          backgroundColor: alpha(commonText, 0.1),
+          color: colors.text.primary,
+          borderColor: colors.text.primary,
+          backgroundColor: alpha(colors.text.primary, 0.1),
         },
         filledSuccess: {
-          borderColor: success,
-          backgroundColor: alpha(success, 0.1),
+          borderColor: colors.success.main,
+          backgroundColor: alpha(colors.success.main, 0.1),
         },
         filledError: {
-          backgroundColor: alpha(error, 0.1),
+          backgroundColor: alpha(colors.error.main, 0.1),
         },
         filledInfo: {
-          color: commonText,
-          backgroundColor: alpha(commonText, 0.1),
+          color: colors.text.primary,
+          backgroundColor: alpha(colors.text.primary, 0.1),
         },
       },
     },
@@ -546,20 +558,20 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
       styleOverrides: {
         root: {
           boxShadow: 'none',
-          borderRadius: borderRadius,
+          borderRadius: sizes.borderRadius,
         },
       },
     },
     MuiLink: {
       styleOverrides: {
         root: {
-          fontSize: linkFontSize,
-          fontWeight: linkFontWeight,
-          color: primaryDark,
+          fontSize: typography.link.fontSize,
+          fontWeight: typography.link.fontWeight,
+          color: colors.primary.dark,
           cursor: 'pointer',
           transition: 'color 250ms cubic-bezier(0.4, 0, 0.2, 1)',
           '&:hover': {
-            color: primaryMain,
+            color: colors.primary.main,
           },
         },
       },
@@ -567,15 +579,15 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
         {
           props: { variant: 'caption' },
           style: {
-            fontSize: captionFontSize,
+            fontSize: typography.caption.fontSize,
           },
         },
         {
           props: { color: 'secondary' },
           style: {
-            color: secondaryMain,
+            color: colors.secondary.main,
             '&:hover': {
-              color: secondaryDark,
+              color: colors.secondary.dark,
             },
           },
         },
@@ -607,21 +619,21 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
           props: { variant: 'filled', color: 'primary' },
           style: {
             color: 'white',
-            backgroundColor: primaryDark,
+            backgroundColor: colors.primary.dark,
           },
         },
         {
           props: { variant: 'filled', color: 'warning' },
           style: {
             color: 'white',
-            backgroundColor: warning,
+            backgroundColor: colors.warning.main,
           },
         },
         {
           props: { variant: 'filled', color: 'error' },
           style: {
             color: 'white',
-            backgroundColor: error,
+            backgroundColor: colors.error.main,
           },
         },
         {
@@ -638,25 +650,25 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
         {
           props: { variant: 'outlined', color: 'primary' },
           style: {
-            borderColor: primaryDark,
-            color: primaryDark,
-            backgroundColor: alpha(primaryLight, 0.15),
+            borderColor: colors.primary.dark,
+            color: colors.primary.dark,
+            backgroundColor: alpha(colors.primary.light, 0.15),
           },
         },
         {
           props: { variant: 'outlined', color: 'warning' },
           style: {
-            borderColor: warning,
-            color: warning,
-            backgroundColor: alpha(warning, 0.15),
+            borderColor: colors.warning.main,
+            color: colors.warning.main,
+            backgroundColor: alpha(colors.warning.main, 0.15),
           },
         },
         {
           props: { variant: 'outlined', color: 'error' },
           style: {
-            borderColor: error,
-            color: error,
-            backgroundColor: alpha(error, 0.15),
+            borderColor: colors.error.main,
+            color: colors.error.main,
+            backgroundColor: alpha(colors.error.main, 0.15),
           },
         },
       ],
@@ -672,7 +684,7 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
       styleOverrides: {
         root: {
           '& .MuiTabs-indicator': {
-            backgroundColor: primaryMain,
+            backgroundColor: colors.primary.main,
           },
         },
       },
@@ -689,8 +701,8 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
             backgroundColor: mode === 'dark' ? darkModePalette[0].grey100 : lightModePalette[0].grey100,
           },
           '&.Mui-selected': {
-            backgroundColor: primaryMain,
-            color: commonText,
+            backgroundColor: colors.primary.main,
+            color: colors.text.primary,
           },
           '&.Mui-disabled': {
             color: mode === 'dark' ? darkModePalette[0].grey300 : lightModePalette[0].grey300,
@@ -701,17 +713,18 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
   },
 });
 
+// Create a styled version of the MaterialDesignContent component
 export const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
   '.notistack-Snackbar': {
-    borderRadius: borderRadius,
+    borderRadius: sizes.borderRadius,
   },
   '&.notistack-MuiContent-success': {
-    backgroundColor: success,
+    backgroundColor: colors.success.main,
   },
   '&.notistack-MuiContent-error': {
-    backgroundColor: error,
+    backgroundColor: colors.error.main,
   },
   '&.notistack-MuiContent-warning': {
-    backgroundColor: warning,
+    backgroundColor: colors.warning.main,
   },
 }));
