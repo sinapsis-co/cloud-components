@@ -14,8 +14,7 @@ export class EnvVpc extends Service<GlobalCoordinator> {
     coordinator.addService(this);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   build(dep: Dep): void {
-    this.vpcPrefab = new VpcPrefab(this, { name: this.props.envName });
+    this.vpcPrefab = new VpcPrefab(this, { name: this.props.envName, vpcProps: { cidr: '72.31.0.0/16' } });
   }
 }

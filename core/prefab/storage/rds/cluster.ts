@@ -14,7 +14,7 @@ import { Service } from 'common/service';
 import { CronAggregate } from 'prefab/compute/function/cron-function/cron-aggregate';
 import { VpcPrefab } from 'prefab/networking/vpc';
 
-export type AuroraPerformanceTunning = {
+export type AuroraPerformanceTuning = {
   readInstances?: number;
   readInstanceType?: awsRds.IClusterInstance;
   readers?: awsRds.IClusterInstance[];
@@ -25,7 +25,7 @@ export type AuroraPerformanceTunning = {
 export type AuroraServerlessV2PrefabParams = {
   clusterName: string;
   vpcPrefab: VpcPrefab;
-  performanceTunning: AuroraPerformanceTunning;
+  performanceTuning: AuroraPerformanceTuning;
   port?: number;
   engine?: awsRds.IClusterEngine;
   publicAccess?: boolean;
@@ -71,16 +71,16 @@ export class RdsClusterPrefab extends Construct {
         publiclyAccessible: params.publicAccess,
       }),
       readers:
-        params.performanceTunning.readers ||
-        [...Array(params.performanceTunning.readInstances).keys()].map((i) =>
+        params.performanceTuning.readers ||
+        [...Array(params.performanceTuning.readInstances).keys()].map((i) =>
           awsRds.ClusterInstance.serverlessV2(`reader-${i}`, {
             instanceIdentifier: getResourceName(`reader-${i}`, service.props),
             ...(i === 0 ? { scaleWithWriter: true } : {}),
             publiclyAccessible: params.publicAccess,
           })
         ),
-      serverlessV2MinCapacity: params.performanceTunning.minCapacity,
-      serverlessV2MaxCapacity: params.performanceTunning.maxCapacity,
+      serverlessV2MinCapacity: params.performanceTuning.minCapacity,
+      serverlessV2MaxCapacity: params.performanceTuning.maxCapacity,
     });
 
     // RDS Proxy

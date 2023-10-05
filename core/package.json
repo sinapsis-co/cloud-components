@@ -17,7 +17,7 @@
     "@aws-cdk/aws-apigatewayv2-authorizers-alpha": "^2.24.1-alpha.0",
     "@aws-cdk/aws-apigatewayv2-integrations-alpha": "^2.24.1-alpha.0",
     "@aws-sdk/client-rds": "^3.391.0",
-    "@sinapsis-co/cc-sdk": "^3.0.35",
+    "@sinapsis-co/cc-sdk": "^3.0.36",
     "aws-cdk-lib": "^2.68.0",
     "aws-lambda": "^1.0.7",
     "constructs": "^10.1.143",
