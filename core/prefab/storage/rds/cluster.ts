@@ -127,29 +127,29 @@ export class RdsClusterPrefab extends Construct {
           },
         },
       });
+      this.cronAggregate.handlers.start.role?.addToPrincipalPolicy(
+        new PolicyStatement({
+          actions: ['rds:StartDBCluster'],
+          resources: [
+            Fn.join('', [
+              `arn:aws:rds:${service.props.regionName}:${service.account}:cluster:`,
+              this.cluster.clusterIdentifier,
+            ]),
+          ],
+        })
+      );
+      this.cronAggregate.handlers.stop.role?.addToPrincipalPolicy(
+        new PolicyStatement({
+          actions: ['rds:StopDBCluster'],
+          resources: [
+            Fn.join('', [
+              `arn:aws:rds:${service.props.regionName}:${service.account}:cluster:`,
+              this.cluster.clusterIdentifier,
+            ]),
+          ],
+        })
+      );
     }
-    this.cronAggregate.handlers.start.role?.addToPrincipalPolicy(
-      new PolicyStatement({
-        actions: ['rds:StartDBCluster'],
-        resources: [
-          Fn.join('', [
-            `arn:aws:rds:${service.props.regionName}:${service.account}:cluster:`,
-            this.cluster.clusterIdentifier,
-          ]),
-        ],
-      })
-    );
-    this.cronAggregate.handlers.stop.role?.addToPrincipalPolicy(
-      new PolicyStatement({
-        actions: ['rds:StopDBCluster'],
-        resources: [
-          Fn.join('', [
-            `arn:aws:rds:${service.props.regionName}:${service.account}:cluster:`,
-            this.cluster.clusterIdentifier,
-          ]),
-        ],
-      })
-    );
   }
 
   public useMod(variableName = 'DB', mods: ((proxy: awsRds.DatabaseProxy) => any)[]): (lambda: NodejsFunction) => void {
