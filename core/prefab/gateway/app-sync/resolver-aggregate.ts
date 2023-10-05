@@ -72,7 +72,17 @@ export class AppSyncResolverAggregate<T> extends Construct {
         typeName: resolver.typeName,
         fieldName: fieldName,
         pipelineConfig: fnPipeline,
-        code: appsync.Code.fromAsset(`${__dirname}/resolvers/pipeline.js`),
+        code: appsync.Code.fromInline(`
+          // The before step
+          export function request() {
+            return {};
+          }
+
+          // The after step
+          export function response(ctx) {
+            return ctx.prev.result;
+          }
+        `),
         runtime: appsync.FunctionRuntime.JS_1_0_0,
       });
     });
