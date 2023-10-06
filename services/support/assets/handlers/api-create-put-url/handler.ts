@@ -10,7 +10,7 @@ import { assetsTypes } from '../../lib/assets-type';
 
 export const handler = apiHandler<assetApi.createPutUrl.Interface>(async (event, request) => {
   const { tenantId, sub } = request.claims;
-  const { assetType, mediaType, extension } = request.body;
+  const { assetType, mediaType, extension, entity, metadata } = request.body;
 
   const selected = assetsTypes[assetType];
   if (!selected || !selected.presignedPutOptions) throw new CustomError({ code: 'ERROR_ASSET_INVALID_TYPE' });
@@ -27,19 +27,23 @@ export const handler = apiHandler<assetApi.createPutUrl.Interface>(async (event,
     mediaType,
     extension,
     uuid: uuid(),
+    entity,
   };
   const key = `${selected.rootPath}/${selected.presignedPutOptions.keyGenerator(keyParams)}`;
 
   const assetUrl = selected.isPublic ? `${process.env.MEDIA_URL!}/${key}` : undefined;
 
-  const presignedPost = await createPutPresignedUrl({
-    Bucket: selected.isPublic ? process.env.PUBLIC_BUCKET! : process.env.PRIVATE_BUCKET!,
-    Key: key,
-    ContentType: mediaType,
-    ...(selected.presignedPutOptions.maxSize
-      ? { ContentLengthRange: { min: 0, max: selected.presignedPutOptions.maxSize } }
-      : {}),
-  });
+  const presignedPost = await createPutPresignedUrl(
+    {
+      Bucket: selected.isPublic ? process.env.PUBLIC_BUCKET! : process.env.PRIVATE_BUCKET!,
+      Key: key,
+      ContentType: mediaType,
+      ...(selected.presignedPutOptions.maxSize
+        ? { ContentLengthRange: { min: 0, max: selected.presignedPutOptions.maxSize } }
+        : {}),
+    },
+    Object.keys(metadata || {}).length ? { ...metadata } : {}
+  );
 
   return { presignedPost, assetUrl };
 }, assetApi.createPutUrl.config);

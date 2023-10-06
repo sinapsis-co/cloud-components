@@ -2,12 +2,13 @@ import { GlobalConstConfig, GlobalDeployTargetConfig, GlobalEnvConfig } from './
 
 export const globalConstConfig: GlobalConstConfig = {
   projectName: 'container-template',
-  projectShortName: 'ecs',
+  projectShortName: 'container',
   repositoryName: 'cloud-components',
   pipelineNotificationSlackChannel: 'cloud-components',
   bootstrappingServices: ['DeployPipeline', 'DnsSubdomainHostedZone'],
   landingZones: ['sinapsis'],
   isDemoProject: true,
+  isSingleProjectAccount: false,
   subdomain: {
     ssrLanding: '',
     spaWebapp: 'app',
@@ -23,8 +24,8 @@ export const globalEnvConfig: GlobalEnvConfig = {
     deployBranch: 'dev',
     roleName: 'SinapsisDevRole',
     hostedZoneName: 'sinapsis.io',
-    baseDomainName: 'ecs.sinapsis.io',
-    envDomainName: 'dev.ecs.sinapsis.io',
+    baseDomainName: 'container.sinapsis.io',
+    envDomainName: 'dev.container.sinapsis.io',
     emailSender: 'no-reply',
     wafEnabled: false,
   },

@@ -9,7 +9,13 @@ import { AssetType } from '../../lib/assets-type';
 export type Interface = ApiInterface<{
   response: PresignedPutUrl;
   pathParams: EmptyObject;
-  body: { assetType: AssetType; mediaType: string; extension: string };
+  body: {
+    assetType: AssetType;
+    mediaType: string;
+    extension: string;
+    entity: string;
+    metadata: Record<string, string>;
+  };
   claims: UserClaims;
   queryParams: EmptyObject;
 }>;
@@ -23,5 +29,7 @@ export const config: ApiDefinition<Interface> = {
     assetType: { type: String, required: true },
     mediaType: { type: String, required: true },
     extension: { type: String, required: true },
+    entity: { type: String, required: false },
+    metadata: { type: Object, required: false },
   }),
 };

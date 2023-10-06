@@ -1,10 +1,11 @@
 import { queueBatchHandler } from '@sinapsis-co/cc-sdk/handler/queue/queue-batch-handler';
 import { dispatchEvent } from '@sinapsis-co/cc-sdk/integration/event/dispatch-event';
+import { sendMessages } from '@sinapsis-co/cc-sdk/integration/queue';
 import { S3Event } from 'aws-lambda';
 
-import { assetEvent } from '../../catalog';
+import { assetEvent, assetMessage } from '../../catalog';
 import { Asset } from '../../entities/asset';
-import { assetsTypes, AssetType } from '../../lib/assets-type';
+import { AssetType, assetsTypes } from '../../lib/assets-type';
 
 export const handler = queueBatchHandler<S3Event>(async (event, record, payload) => {
   await Promise.allSettled(
@@ -21,27 +22,44 @@ export const handler = queueBatchHandler<S3Event>(async (event, record, payload)
       if (!selected.presignedPutOptions) throw new Error('Missing presignedPutOptions');
       const meta = selected.presignedPutOptions.keyDecoder(partialKey);
 
-      if (selected.middleware) {
-        if (selected.middleware.resize) {
-          await dispatchEvent<assetEvent.assetToResize.Event>(
-            assetEvent.assetToResize.eventConfig,
+      switch (selected.rootPath) {
+        case 'rawCsv':
+          await sendMessages<assetMessage.csvUploaded.Message>(
+            [
+              {
+                entity: partialKey.split('.')[0],
+                key: object.key,
+              },
+            ],
             {
-              assetType,
-              bucketName: bucket.name,
-              key: partialKey,
-              meta,
-              resize: selected.middleware.resize,
-              nextPartialKey: selected.middleware.resize.newKeyGenerator(meta),
-            },
-            { tenantId: meta.tenantId }
+              queueUrl: process.env.DEST_QUEUE,
+            }
           );
-        }
-      } else {
-        await dispatchEvent<assetEvent.assetUploaded.Event>(
-          assetEvent.assetUploaded.eventConfig,
-          { assetType, bucketName: bucket.name, key: object.key, meta },
-          { tenantId: meta.tenantId }
-        );
+          break;
+        case 'rawAvatar':
+          if (selected.middleware && selected.middleware.resize) {
+            await dispatchEvent<assetEvent.assetToResize.Event>(
+              assetEvent.assetToResize.eventConfig,
+              {
+                assetType,
+                bucketName: bucket.name,
+                key: partialKey,
+                meta,
+                resize: selected.middleware.resize,
+                nextPartialKey: selected.middleware.resize.newKeyGenerator(meta),
+              },
+              { tenantId: meta.tenantId }
+            );
+          } else {
+            await dispatchEvent<assetEvent.assetUploaded.Event>(
+              assetEvent.assetUploaded.eventConfig,
+              { assetType, bucketName: bucket.name, key: object.key, meta },
+              { tenantId: meta.tenantId }
+            );
+          }
+          break;
+        default:
+          break;
       }
     })
   );
