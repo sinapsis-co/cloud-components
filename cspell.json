@@ -21,6 +21,7 @@
     "eventbridge",
     "Fargate",
     "fullname",
+    "grecaptcha",
     "hstore",
     "ingestions",
     "invisipay",

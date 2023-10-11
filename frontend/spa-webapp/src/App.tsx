@@ -2,7 +2,9 @@ import React, { useContext } from 'react';
 
 import TagManager from 'react-gtm-module';
 import { useIntl } from 'react-intl';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
+
+import ProjectRoutes from './routes';
 
 import { CssBaseline, PaletteMode } from '@mui/material';
 import { enUS, esES, itIT } from '@mui/material/locale';
@@ -10,7 +12,6 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import './App.css';
 import { CustomThemeOptions, getPaletteMode } from './configuration/material-ui/theme';
-import ProjectRoutes from './routes';
 import { ColorModeContext } from './context';
 
 const tagManagerArgs = {
@@ -54,18 +55,9 @@ const App: React.FunctionComponent = (): JSX.Element => {
     [mode]
   );
 
-  const location = useLocation();
-
-  const hasDarkBackground = React.useMemo(() => {
-    const darkBackgroundRoutes = ['/dashboard'];
-    return darkBackgroundRoutes.some((route) => location.pathname.startsWith(route));
-  }, [location.pathname]);
-
-  // This effect sets the background color of the document body to the default background color or to grey[100] if the background is dark.
   React.useEffect(() => {
-    const backgroundColor = hasDarkBackground ? theme.palette.grey[100] : theme.palette.background.default;
-    document.body.style.backgroundColor = backgroundColor;
-  }, [hasDarkBackground, theme.palette.background.default, theme.palette.grey[100]]);
+    document.body.setAttribute('data-theme', mode);
+  }, [mode]);
 
   return (
     <main className="App">

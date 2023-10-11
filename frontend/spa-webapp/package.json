@@ -49,6 +49,7 @@
     "react-router-dom": "^6.4.5",
     "react-scripts": "^5.0.1",
     "react-share": "^4.4.1",
+    "sass": "^1.68.0",
     "styled-components": "^5.3.9",
     "swiper": "^9.2.4",
     "vite-tsconfig-paths": "^4.0.7",

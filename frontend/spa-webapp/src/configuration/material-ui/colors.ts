@@ -1,3 +1,4 @@
+// This file contains the colors configuration for the Material UI theme.
 const primaryMain = '#F9A825';
 const primaryDark = '#CC7E00';
 const primaryLight = '#FFECAD';

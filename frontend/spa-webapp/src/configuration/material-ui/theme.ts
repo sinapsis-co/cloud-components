@@ -1,11 +1,12 @@
-import { MaterialDesignContent } from 'notistack';
-
 import { PaletteColor, PaletteColorOptions, PaletteMode } from '@mui/material';
 import '@mui/material/Button';
 import { alpha, styled } from '@mui/material/styles';
 import { ThemeOptions } from '@mui/material/styles/createTheme';
 import type {} from '@mui/x-data-grid-pro/themeAugmentation';
 
+import { MaterialDesignContent } from 'notistack';
+
+// Custom theme configuration
 import { button } from './button';
 import { colors } from './colors';
 import { sizes } from './sizes';
@@ -66,6 +67,117 @@ const lightModePalette = [
   },
 ];
 
+export const darkModePaletteColors = {
+  // Custom dark mode palette
+  primary: {
+    main: colors.primary.main,
+    dark: colors.primary.dark,
+    light: colors.primary.light,
+    contrastText: colors.primary.contrastText,
+  },
+  secondary: {
+    main: colors.secondary.main,
+    dark: colors.secondary.dark,
+    light: colors.secondary.light,
+  },
+  white: {
+    main: colors.common.white,
+  },
+  divider: darkModePalette[0].divider,
+  text: {
+    primary: darkModePalette[0].primaryText,
+    secondary: darkModePalette[0].secondaryText,
+    disabled: darkModePalette[0].textDisabled,
+  },
+  grey: {
+    100: darkModePalette[0].grey100,
+    300: darkModePalette[0].grey300,
+  },
+  success: {
+    main: colors.success.main,
+    dark: colors.success.dark,
+    light: colors.success.light,
+  },
+  error: {
+    main: colors.error.main,
+    dark: colors.error.dark,
+    light: colors.error.light,
+  },
+  warning: {
+    main: colors.warning.main,
+    dark: colors.warning.dark,
+    light: colors.warning.light,
+  },
+  background: {
+    default: darkModePalette[0].background,
+    paper: darkModePalette[0].paper,
+  },
+  customBackground: {
+    main: darkModePalette[0].contrastBackground,
+  },
+  originalBackground: {
+    default: darkModePalette[0].background,
+  },
+  action: {
+    hover: lightModePalette[0].grey300,
+  },
+};
+export const lightModePaletteColors = {
+  // Custom light mode palette
+  primary: {
+    main: colors.primary.main,
+    dark: colors.primary.dark,
+    light: colors.primary.light,
+    contrastText: colors.primary.contrastText,
+  },
+  secondary: {
+    main: colors.secondary.main,
+    dark: colors.secondary.dark,
+    light: colors.secondary.light,
+  },
+  white: {
+    main: colors.common.white,
+  },
+  divider: lightModePalette[0].divider,
+  text: {
+    primary: lightModePalette[0].primaryText,
+    secondary: lightModePalette[0].secondaryText,
+    disabled: darkModePalette[0].textDisabled,
+  },
+  grey: {
+    100: lightModePalette[0].grey100,
+    300: lightModePalette[0].grey300,
+  },
+  success: {
+    main: colors.success.main,
+    dark: colors.success.dark,
+    light: colors.success.light,
+  },
+  error: {
+    main: colors.error.main,
+    dark: colors.error.dark,
+    light: colors.error.light,
+  },
+  warning: {
+    main: colors.warning.main,
+    dark: colors.warning.dark,
+    light: colors.warning.light,
+  },
+  background: {
+    default: lightModePalette[0].background,
+    paper: lightModePalette[0].paper,
+  },
+  customBackground: {
+    main: lightModePalette[0].contrastBackground,
+  },
+  originalBackground: {
+    default: lightModePalette[0].background,
+  },
+  action: {
+    hover: lightModePalette[0].grey300,
+  },
+};
+
 /**
  * Function to get the palette mode configuration based on the selected mode.
  *
@@ -75,117 +187,7 @@ const lightModePalette = [
 export const getPaletteMode = (mode: PaletteMode): Partial<ThemeOptions> => ({
   palette: {
     mode,
-    ...(mode === 'dark'
-      ? {
-          // Custom dark mode palette
-          primary: {
-            main: colors.primary.main,
-            dark: colors.primary.dark,
-            light: colors.primary.light,
-            contrastText: colors.primary.contrastText,
-          },
-          secondary: {
-            main: colors.secondary.main,
-            dark: colors.secondary.dark,
-            light: colors.secondary.light,
-          },
-          white: {
-            main: colors.common.white,
-          },
-          divider: darkModePalette[0].divider,
-          text: {
-            primary: darkModePalette[0].primaryText,
-            secondary: darkModePalette[0].secondaryText,
-            disabled: darkModePalette[0].textDisabled,
-          },
-          grey: {
-            100: darkModePalette[0].grey100,
-            300: darkModePalette[0].grey300,
-          },
-          success: {
-            main: colors.success.main,
-            dark: colors.success.dark,
-            light: colors.success.light,
-          },
-          error: {
-            main: colors.error.main,
-            dark: colors.error.dark,
-            light: colors.error.light,
-          },
-          warning: {
-            main: colors.warning.main,
-            dark: colors.warning.dark,
-            light: colors.warning.light,
-          },
-          background: {
-            default: darkModePalette[0].background,
-            paper: darkModePalette[0].paper,
-          },
-          customBackground: {
-            main: darkModePalette[0].contrastBackground,
-          },
-          originalBackground: {
-            default: darkModePalette[0].background,
-          },
-          action: {
-            hover: lightModePalette[0].grey300,
-          },
-        }
-      : {
-          // Custom light mode palette
-          primary: {
-            main: colors.primary.main,
-            dark: colors.primary.dark,
-            light: colors.primary.light,
-            contrastText: colors.primary.contrastText,
-          },
-          secondary: {
-            main: colors.secondary.main,
-            dark: colors.secondary.dark,
-            light: colors.secondary.light,
-          },
-          white: {
-            main: colors.common.white,
-          },
-          divider: lightModePalette[0].divider,
-          text: {
-            primary: lightModePalette[0].primaryText,
-            secondary: lightModePalette[0].secondaryText,
-            disabled: darkModePalette[0].textDisabled,
-          },
-          grey: {
-            100: lightModePalette[0].grey100,
-            300: lightModePalette[0].grey300,
-          },
-          success: {
-            main: colors.success.main,
-            dark: colors.success.dark,
-            light: colors.success.light,
-          },
-          error: {
-            main: colors.error.main,
-            dark: colors.error.dark,
-            light: colors.error.light,
-          },
-          warning: {
-            main: colors.warning.main,
-            dark: colors.warning.dark,
-            light: colors.warning.light,
-          },
-          background: {
-            default: lightModePalette[0].background,
-            paper: lightModePalette[0].paper,
-          },
-          customBackground: {
-            main: lightModePalette[0].contrastBackground,
-          },
-          originalBackground: {
-            default: lightModePalette[0].background,
-          },
-          action: {
-            hover: lightModePalette[0].grey300,
-          },
-        }),
+    ...(mode === 'dark' ? darkModePaletteColors : lightModePaletteColors),
   },
 });
 
@@ -197,7 +199,7 @@ export const getPaletteMode = (mode: PaletteMode): Partial<ThemeOptions> => ({
  */
 export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => ({
   typography: {
-    fontFamily: [typography.fontFamily, 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'].join(','),
+    fontFamily: typography.fontFamily,
     h1: {
       fontSize: typography.h1.fontSize,
       fontWeight: typography.h1.fontWeight,
@@ -672,6 +674,95 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
           },
         },
       ],
+    },
+    MuiBadge: {
+      styleOverrides: {
+        root: {
+          ':has(.MuiBadge-colorPrimary)': {
+            '.MuiBadge-badge': {
+              color: 'white',
+              fontWeight: 600,
+            },
+          },
+        },
+      },
+    },
+    MuiDataGrid: {
+      styleOverrides: {
+        root: {
+          background: mode === 'dark' ? darkModePalette[0].background : lightModePalette[0].background,
+          border: 'none',
+          color: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+          '& .MuiDataGrid-withBorderColor': {
+            borderColor: mode === 'dark' ? darkModePalette[0].grey300 : lightModePalette[0].grey300,
+          },
+          '& .MuiDataGrid-main': {
+            border: `1px solid ${mode === 'dark' ? darkModePalette[0].grey300 : lightModePalette[0].grey300}`,
+            borderRadius: sizes.borderRadius,
+          },
+          '& .MuiDataGrid-columnHeaders, .MuiDataGrid-pinnedColumnHeaders': {
+            background: mode === 'dark' ? darkModePalette[0].grey100 : lightModePalette[0].grey100,
+          },
+          '& .MuiDataGrid-columnsContainer': {
+            backgroundColor: mode === 'dark' ? darkModePalette[0].background : lightModePalette[0].background,
+          },
+          '& .MuiDataGrid-iconSeparator': {
+            display: 'none',
+          },
+          '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {
+            borderRight: `1px solid ${mode === 'dark' ? darkModePalette[0].grey300 : lightModePalette[0].grey300}`,
+          },
+          '.MuiDataGrid-cell.actions': {
+            borderRight: 'none',
+          },
+          '& .MuiDataGrid-columnsContainer, .MuiDataGrid-cell': {
+            borderBottom: `1px solid ${mode === 'dark' ? darkModePalette[0].grey300 : lightModePalette[0].grey300}`,
+          },
+          '& .MuiDataGrid-cell': {
+            color: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+          },
+          '& .MuiDataGrid-row': {
+            '&:hover, &.Mui-hovered': {
+              backgroundColor: `${alpha(
+                mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+                0.05
+              )} !important`,
+            },
+            '&--lastVisible': {
+              '& .MuiDataGrid-cell': {
+                borderBottom: 'none',
+              },
+            },
+          },
+          '& .MuiDataGrid-pinnedColumnHeaders': {
+            '& .MuiDataGrid-columnHeader': {
+              '&[data-field="actions"]': {
+                borderRight: 'none !important',
+              },
+            },
+          },
+          '& .MuiDataGrid-cell--editing': {
+            '& .MuiInputBase-root': {
+              '&:has(.MuiSelect-select)': {
+                height: '80%',
+                maxWidth: '90%',
+                margin: '0 auto',
+              },
+              '&:has(.MuiInputBase-input[type=date])': {
+                maxWidth: '90%',
+                margin: '0 auto',
+              },
+            },
+          },
+        },
+      },
+    },
+    MuiTable: {
+      styleOverrides: {
+        root: {
+          borderRadius: sizes.borderRadius,
+        },
+      },
     },
     MuiTableCell: {
       styleOverrides: {

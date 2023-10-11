@@ -1,5 +1,6 @@
-const fontFamily = 'Montserrat';
-// const superFontSize = '48px';
+// This file contains the typography configuration for the Material UI theme.
+const projectFont = 'Montserrat';
+const fontFamily = [projectFont, 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'].join(',');
 const h1FontSize = '40px';
 const h1FontWeight = '600';
 const h2FontSize = '32px';
