@@ -6,10 +6,10 @@ import englishTranslations from './en.json';
 import spanishTranslations from './es.json';
 import italianTranslations from './it.json';
 
-export type AllowedLanguages = 'it' | 'es' | 'en';
+export type AllowedLanguages = 'en' | 'es' | 'it';
 interface Translations {
-  ['it']: Record<string, string>;
   ['en']: Record<string, string>;
+  ['it']: Record<string, string>;
   ['es']: Record<string, string>;
 }
 interface TranslationsProviderProps {
@@ -21,11 +21,11 @@ export interface TranslationsContext {
 }
 
 const globalTranslations: Translations = {
-  ['it']: italianTranslations,
   ['en']: englishTranslations,
+  ['it']: italianTranslations,
   ['es']: spanishTranslations,
 };
-const defaultLanguage = localStorage.getItem('lang') || 'it';
+const defaultLanguage = localStorage.getItem('lang') || 'en';
 const translationsContext = createContext<TranslationsContext | null>(null);
 
 const TranslationsProvider: FC<TranslationsProviderProps> = ({ children }) => {
@@ -43,11 +43,11 @@ const TranslationsProvider: FC<TranslationsProviderProps> = ({ children }) => {
       case 'es':
         setLanguage('es');
         break;
-      case 'en':
-        setLanguage('en');
+      case 'it':
+        setLanguage('it');
         break;
       default:
-        setLanguage('it');
+        setLanguage('en');
     }
   };
 
@@ -65,4 +65,4 @@ const TranslationsProvider: FC<TranslationsProviderProps> = ({ children }) => {
   );
 };
 
-export { TranslationsProvider, translationsContext, globalTranslations };
+export { TranslationsProvider, globalTranslations, translationsContext };

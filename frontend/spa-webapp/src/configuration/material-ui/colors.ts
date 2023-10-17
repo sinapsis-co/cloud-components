@@ -21,16 +21,18 @@ const warningLight = '#ffc149';
 const warningDark = '#c66c00';
 
 const textPrimary = '#212b36';
-const textSecondary = '#526666';
+const textSecondary = '#7A9A9F';
+const textSecondaryLight = '#526666';
 const textDisabled = '#B4BDBD';
 const commonWhite = '#FFFFFF';
 const grey100 = '#202124';
 const grey300 = '#42525e';
 const greyPaper = '#F0F0F2';
+const greyPaperDark = '#2F2F2F';
 const grey100Light = '#F9FBFC';
 const grey300Light = '#E6E6E6';
-const contrastBackgroundDark = '#333333';
-const contrastBackgroundLight = '#F5F5F5';
+const contrastBackgroundDark = '#161616';
+const contrastBackgroundLight = '#F8FAFC';
 
 export const colors = {
   primary: {
@@ -66,6 +68,7 @@ export const colors = {
   text: {
     primary: textPrimary,
     secondary: textSecondary,
+    secondaryLight: textSecondaryLight,
     disabled: textDisabled,
   },
   common: {
@@ -73,6 +76,7 @@ export const colors = {
     grey100,
     grey300,
     greyPaper,
+    greyPaperDark,
     grey100Light,
     grey300Light,
     contrastBackgroundDark,

@@ -1,14 +1,11 @@
-import { Button } from '@mui/material';
-import { ColorModeContext } from '@webapp/context';
-import { FunctionComponent, useContext } from 'react';
+import { FunctionComponent } from 'react';
+
+import ThemeToggle from '@webapp/components/theme-toggle';
 
 const HomePage: FunctionComponent = () => {
-  const context = useContext(ColorModeContext);
   return (
-    <div>
-      <Button variant="contained" onClick={context.toggleColorMode}>
-        Change Mode
-      </Button>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100vw', height: '100vh' }}>
+      <ThemeToggle />
     </div>
   );
 };

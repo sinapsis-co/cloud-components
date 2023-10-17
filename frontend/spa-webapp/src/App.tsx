@@ -21,10 +21,10 @@ const tagManagerArgs = {
 import.meta.env.VITE_APP_STAGE === 'prod' && TagManager.initialize(tagManagerArgs);
 
 const App: React.FunctionComponent = (): JSX.Element => {
-  const intl = useIntl();
+  const { locale } = useIntl();
 
   const getLocale = () => {
-    switch (intl.locale) {
+    switch (locale) {
       case 'it':
         return itIT;
       case 'en':

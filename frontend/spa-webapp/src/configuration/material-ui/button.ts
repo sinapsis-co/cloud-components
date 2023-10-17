@@ -1,6 +1,6 @@
 // This file contains the button configuration for the Material UI theme.
 export type ButtonTypes = 'text' | 'outlined' | 'contained';
-const buttonVariant: ButtonTypes = 'contained';
+export const buttonVariant: ButtonTypes = 'contained';
 
 const buttonFontSizeLarge = '14px';
 const buttonLineHeightLarge = '20px';

@@ -1,6 +1,6 @@
 {
   "version": "0.2",
-  "language": "en",
+  "language": "en, it, es",
   "words": [
     "algoliasearch",
     "amazoncognito",
@@ -25,6 +25,8 @@
     "hstore",
     "ingestions",
     "invisipay",
+    "isologo",
+    "isologotipo",
     "kinesisfirehose",
     "listbox",
     "Neue",
@@ -47,11 +49,5 @@
     "valueof",
     "wafv2"
   ],
-  "ignorePaths": [
-    "**/node_modules/**",
-    "**/cdk.out/**",
-    "**/yarn.lock",
-    "**/package.json",
-    "**/cdk.context.json"
-  ]
+  "ignorePaths": ["**/node_modules/**", "**/cdk.out/**", "**/yarn.lock", "**/package.json", "**/cdk.context.json"]
 }

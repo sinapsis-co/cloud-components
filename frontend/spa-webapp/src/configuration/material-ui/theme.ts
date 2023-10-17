@@ -40,13 +40,13 @@ declare module '@mui/material/Button' {
 const darkModePalette = [
   // Define dark mode color palette
   {
-    background: colors.text.primary,
+    background: colors.common.contrastBackgroundDark,
     primaryText: colors.common.white,
-    secondaryText: colors.common.grey300,
+    secondaryText: colors.text.secondary,
     textDisabled: colors.text.disabled,
     grey100: colors.common.grey100,
     grey300: colors.common.grey300,
-    paper: colors.text.secondary,
+    paper: colors.common.greyPaperDark,
     contrastBackground: colors.common.contrastBackgroundDark,
     divider: colors.primary.contrastText,
   },
@@ -55,15 +55,15 @@ const darkModePalette = [
 const lightModePalette = [
   // Define light mode color palette
   {
-    background: colors.common.white,
+    background: colors.common.contrastBackgroundLight,
     primaryText: colors.text.primary,
-    secondaryText: colors.text.secondary,
+    secondaryText: colors.text.secondaryLight,
     textDisabled: colors.text.disabled,
     grey100: colors.common.grey100Light,
     grey300: colors.common.grey300Light,
     paper: colors.common.greyPaper,
     contrastBackground: colors.common.contrastBackgroundLight,
-    divider: colors.common.grey300,
+    divider: colors.common.grey300Light,
   },
 ];
 
@@ -399,8 +399,8 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
     MuiFormLabel: {
       styleOverrides: {
         root: {
-          color: colors.text.primary,
-          fontWeight: 500,
+          color: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+          fontWeight: 600,
           '.MuiFormLabel-asterisk, .MuiInputLabel-asterisk': {
             color: `${colors.error.main} !important`,
           },
@@ -449,10 +449,36 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
         },
       },
     },
+    MuiSelect: {
+      styleOverrides: {
+        select: {
+          color: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+          borderRadius: sizes.borderRadius,
+          outline: 'none',
+          background: 'transparent',
+          '& label': {
+            color: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+          },
+        },
+      },
+    },
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
           fontSize: typography.tooltip.fontSize,
+          fontWeight: typography.tooltip.fontWeight,
+          backdropFilter: 'blur(4px)',
+          color: mode !== 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+          backgroundColor: alpha(
+            mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+            0.75
+          ),
+        },
+        arrow: {
+          color: alpha(mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText, 0.75),
+          '&::before': {
+            borderRadius: `{0 0 0 ${sizes.borderRadius}}`,
+          },
         },
       },
     },

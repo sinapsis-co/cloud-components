@@ -29,8 +29,8 @@ $grey300: '#42525e';
 $greyPaper: '#F0F0F2';
 $grey100Light: '#F9FBFC';
 $grey300Light: '#E6E6E6';
-$contrastBackgroundDark: '#333333';
-$contrastBackgroundLight: '#F5F5F5';
+$contrastBackgroundDark: '#161616';
+$contrastBackgroundLight: '#F8FAFC';
 
 // Define your font variables
 $projectFont: 'Montserrat';
@@ -69,7 +69,7 @@ $projectFont: 'Montserrat';
   --grey-300-light: #{$grey300Light};
   --contrast-background-dark: #{$contrastBackgroundDark};
   --contrast-background-light: #{$contrastBackgroundLight};
-  --background-default: #{$greyPaper}; // Add background color here
+  --background-default: #{$contrastBackgroundDark}; // Add background color here
   --fontFamily: #{$projectFont}, 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 
   [data-theme='light'] {
@@ -106,7 +106,7 @@ $projectFont: 'Montserrat';
     --grey-300-light: #{$grey300Light};
     --contrast-background-dark: #{$contrastBackgroundDark};
     --contrast-background-light: #{$contrastBackgroundLight};
-    --background-default: #{$commonWhite}; // Add background color here
+    --background-default: #{$contrastBackgroundLight}; // Add background color here
   }
 }
 
