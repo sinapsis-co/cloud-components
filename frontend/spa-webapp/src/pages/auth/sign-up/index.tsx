@@ -1,15 +1,19 @@
 import React, { FunctionComponent, useState } from 'react';
 
+import { AnimatePresence } from 'framer-motion';
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
+import SignUpImageLight from '@webapp/assets/images/content/sign-up-light.webp';
 import SignUpImage from '@webapp/assets/images/content/sign-up.webp';
 import FormWrapper from '@webapp/components/auth/form-wrapper';
 import PasswordRequirements from '@webapp/components/auth/password-requirements';
 import Button from '@webapp/components/button';
 import InputField from '@webapp/components/form/input';
+import ContentImage from '@webapp/components/layout/content-image';
 import ContentWrapper from '@webapp/components/layout/content-wrapper';
 import HalfAndHalf from '@webapp/components/layout/half-and-half';
+
 import { useIsMobile } from '@webapp/hooks/is-mobile';
 import { validateEmail } from '@webapp/utils/input-validations';
 
@@ -20,8 +24,7 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
-import ContentImage from '@webapp/components/layout/content-image';
-import { AnimatePresence } from 'framer-motion';
+import { useTheme } from '@mui/material/styles';
 
 interface SignUpPageProps {
   className?: string;
@@ -36,9 +39,12 @@ interface FormErrors {
 }
 
 const SignUpPage: FunctionComponent<SignUpPageProps> = ({ className }) => {
+  const theme = useTheme();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { formatMessage } = useIntl();
+
+  const colorMode = theme.palette.mode;
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -287,7 +293,7 @@ const SignUpPage: FunctionComponent<SignUpPageProps> = ({ className }) => {
         }
         rightContent={
           <ContentImage
-            src={SignUpImage}
+            src={colorMode === 'dark' ? SignUpImage : SignUpImageLight}
             alt={`${formatMessage({ id: 'AUTH.SIGN_UP.TITLE' })} image`}
             aria-hidden="true"
           />

@@ -3,6 +3,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
+import ForgotPasswordImgLight from '@webapp/assets/images/content/forgot-password-light.webp';
 import ForgotPasswordImg from '@webapp/assets/images/content/forgot-password.webp';
 import FormWrapper from '@webapp/components/auth/form-wrapper';
 import Button from '@webapp/components/button';
@@ -15,6 +16,7 @@ import { normalizeUserData } from '@webapp/utils/normalize-user-data';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
 import ContentImage from '@webapp/components/layout/content-image';
 
 interface ForgotPasswordPageProps {
@@ -22,9 +24,13 @@ interface ForgotPasswordPageProps {
 }
 
 const ForgotPasswordPage: FunctionComponent<ForgotPasswordPageProps> = ({ className }) => {
+  const theme = useTheme();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { formatMessage } = useIntl();
+
+  const colorMode = theme.palette.mode;
+
   const loading = false;
   const username = 'admin@sinapsis.com';
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -119,7 +125,7 @@ const ForgotPasswordPage: FunctionComponent<ForgotPasswordPageProps> = ({ classN
         }
         rightContent={
           <ContentImage
-            src={ForgotPasswordImg}
+            src={colorMode === 'dark' ? ForgotPasswordImg : ForgotPasswordImgLight}
             alt={`${formatMessage({ id: 'AUTH.FORGOT_PASSWORD.TITLE' })} image`}
             aria-hidden="true"
           />

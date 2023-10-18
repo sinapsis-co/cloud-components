@@ -565,9 +565,12 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
           borderColor: colors.error.main,
         },
         outlinedInfo: {
-          color: colors.text.primary,
-          borderColor: colors.text.primary,
-          backgroundColor: alpha(colors.text.primary, 0.1),
+          color: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+          borderColor: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+          backgroundColor: alpha(
+            mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+            0.1
+          ),
         },
         filledSuccess: {
           borderColor: colors.success.main,
@@ -577,8 +580,11 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
           backgroundColor: alpha(colors.error.main, 0.1),
         },
         filledInfo: {
-          color: colors.text.primary,
-          backgroundColor: alpha(colors.text.primary, 0.1),
+          color: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+          backgroundColor: alpha(
+            mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+            0.1
+          ),
         },
       },
     },
@@ -819,7 +825,7 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
           },
           '&.Mui-selected': {
             backgroundColor: colors.primary.main,
-            color: colors.text.primary,
+            color: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
           },
           '&.Mui-disabled': {
             color: mode === 'dark' ? darkModePalette[0].grey300 : lightModePalette[0].grey300,

@@ -3,6 +3,7 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import NewPasswordImgLight from '@webapp/assets/images/content/forgot-password-light.webp';
 import NewPasswordImg from '@webapp/assets/images/content/forgot-password.webp';
 import FormWrapper from '@webapp/components/auth/form-wrapper';
 import PasswordRequirements from '@webapp/components/auth/password-requirements';
@@ -30,10 +31,13 @@ interface ForgotPasswordVerifyPageProps {
 }
 
 const ForgotPasswordVerifyPage: FunctionComponent<ForgotPasswordVerifyPageProps> = ({ className }) => {
-  const isMobile = useIsMobile();
   const theme = useTheme();
-  const { formatMessage } = useIntl();
+  const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const { formatMessage } = useIntl();
+
+  const colorMode = theme.palette.mode;
+
   const params = new URLSearchParams(useLocation().search);
 
   const username = 'admin@sinapsis.com';
@@ -259,7 +263,7 @@ const ForgotPasswordVerifyPage: FunctionComponent<ForgotPasswordVerifyPageProps>
         }
         rightContent={
           <ContentImage
-            src={NewPasswordImg}
+            src={colorMode === 'dark' ? NewPasswordImg : NewPasswordImgLight}
             alt={`${formatMessage({ id: 'AUTH.FORGOT_PASSWORD_VERIFY.TITLE' })} image`}
             aria-hidden="true"
           />

@@ -3,6 +3,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
 
+import verificationCodeImgLight from '@webapp/assets/images/content/verification-code-light.webp';
 import verificationCodeImg from '@webapp/assets/images/content/verification-code.webp';
 import FormWrapper from '@webapp/components/auth/form-wrapper';
 import VerificationCodeCtrl from '@webapp/components/auth/verification-code';
@@ -26,6 +27,8 @@ const VerificationCodePage: FunctionComponent<VerificationCodePageProps> = ({ cl
   const theme = useTheme();
   const params = new URLSearchParams(useLocation().search);
   const { formatMessage } = useIntl();
+
+  const colorMode = theme.palette.mode;
 
   const username = 'admin@sinapsis.com';
 
@@ -158,7 +161,7 @@ const VerificationCodePage: FunctionComponent<VerificationCodePageProps> = ({ cl
         }
         rightContent={
           <ContentImage
-            src={verificationCodeImg}
+            src={colorMode === 'dark' ? verificationCodeImg : verificationCodeImgLight}
             alt={`${formatMessage({ id: 'AUTH.VERIFICATION_CODE.TITLE' })} image`}
             aria-hidden="true"
           />

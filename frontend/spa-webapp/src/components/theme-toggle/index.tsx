@@ -48,7 +48,7 @@ const ThemeToggle: FunctionComponent<ThemeToggleProps> = ({ className, monochrom
     <Tooltip
       id="theme-toggle"
       arrow
-      placement="left"
+      placement="bottom-end"
       TransitionComponent={Zoom}
       title={tooltipTitle}
       aria-label={ariaLabel}

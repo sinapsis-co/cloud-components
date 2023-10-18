@@ -3,6 +3,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
+import SignInImgLight from '@webapp/assets/images/content/sign-in-light.webp';
 import SignInImg from '@webapp/assets/images/content/sign-in.webp';
 import FormWrapper from '@webapp/components/auth/form-wrapper';
 import Button from '@webapp/components/button';
@@ -18,6 +19,7 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
 import ContentImage from '@webapp/components/layout/content-image';
 
 interface SignInPageProps {
@@ -25,9 +27,12 @@ interface SignInPageProps {
 }
 
 const SignInPage: FunctionComponent<SignInPageProps> = ({ className }) => {
+  const theme = useTheme();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { formatMessage } = useIntl();
+
+  const colorMode = theme.palette.mode;
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -152,7 +157,13 @@ const SignInPage: FunctionComponent<SignInPageProps> = ({ className }) => {
             </FormWrapper>
           </ContentWrapper>
         }
-        rightContent={<ContentImage src={SignInImg} alt="Sign In" aria-hidden="true" />}
+        rightContent={
+          <ContentImage
+            src={colorMode === 'dark' ? SignInImg : SignInImgLight}
+            alt={formatMessage({ id: 'AUTH.SIGN_IN.TITLE' })}
+            aria-hidden="true"
+          />
+        }
       />
     </section>
   );
