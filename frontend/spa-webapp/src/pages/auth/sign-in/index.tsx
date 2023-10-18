@@ -8,6 +8,7 @@ import SignInImg from '@webapp/assets/images/content/sign-in.webp';
 import FormWrapper from '@webapp/components/auth/form-wrapper';
 import Button from '@webapp/components/button';
 import InputField from '@webapp/components/form/input';
+import ContentImage from '@webapp/components/layout/content-image';
 import ContentWrapper from '@webapp/components/layout/content-wrapper';
 import HalfAndHalf from '@webapp/components/layout/half-and-half';
 import { useIsMobile } from '@webapp/hooks/is-mobile';
@@ -20,7 +21,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
-import ContentImage from '@webapp/components/layout/content-image';
 
 interface SignInPageProps {
   className?: string;

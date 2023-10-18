@@ -8,6 +8,7 @@ import ForgotPasswordImg from '@webapp/assets/images/content/forgot-password.web
 import FormWrapper from '@webapp/components/auth/form-wrapper';
 import Button from '@webapp/components/button';
 import InputField from '@webapp/components/form/input';
+import ContentImage from '@webapp/components/layout/content-image';
 import ContentWrapper from '@webapp/components/layout/content-wrapper';
 import HalfAndHalf from '@webapp/components/layout/half-and-half';
 import { EMAIL_REGEX } from '@webapp/configuration/regex';
@@ -17,7 +18,6 @@ import { normalizeUserData } from '@webapp/utils/normalize-user-data';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
-import ContentImage from '@webapp/components/layout/content-image';
 
 interface ForgotPasswordPageProps {
   className?: string;

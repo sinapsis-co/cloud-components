@@ -8,15 +8,15 @@ import verificationCodeImg from '@webapp/assets/images/content/verification-code
 import FormWrapper from '@webapp/components/auth/form-wrapper';
 import VerificationCodeCtrl from '@webapp/components/auth/verification-code';
 import Button from '@webapp/components/button';
+import ContentImage from '@webapp/components/layout/content-image';
 import ContentWrapper from '@webapp/components/layout/content-wrapper';
 import HalfAndHalf from '@webapp/components/layout/half-and-half';
 import { useIsMobile } from '@webapp/hooks/is-mobile';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import ContentImage from '@webapp/components/layout/content-image';
+import { useTheme } from '@mui/material/styles';
 
 interface VerificationCodePageProps {
   className?: string;

@@ -4,8 +4,6 @@ import TagManager from 'react-gtm-module';
 import { useIntl } from 'react-intl';
 import { Route, Routes } from 'react-router-dom';
 
-import ProjectRoutes from './routes';
-
 import { CssBaseline, PaletteMode } from '@mui/material';
 import { enUS, esES, itIT } from '@mui/material/locale';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -13,6 +11,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import './App.css';
 import { CustomThemeOptions, getPaletteMode } from './configuration/material-ui/theme';
 import { ColorModeContext } from './context';
+import ProjectRoutes from './routes';
 
 const tagManagerArgs = {
   gtmId: import.meta.env.VITE_APP_GTM_ID || '',

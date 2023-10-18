@@ -1,9 +1,10 @@
 import React, { FunctionComponent } from 'react';
 
+import { motion } from 'framer-motion';
+
 // Import necessary dependencies
 import { easing } from '@webapp/components/framer';
 import { useIsTablet } from '@webapp/hooks/is-tablet';
-import { motion } from 'framer-motion';
 
 import { styled } from '@mui/material/styles';
 

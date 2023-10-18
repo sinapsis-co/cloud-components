@@ -4,16 +4,16 @@ import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-qu
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 // import { Elements } from '@stripe/react-stripe-js';
-
 import { SnackbarProvider } from 'notistack';
 import ReactDOM from 'react-dom/client';
-
 import { BrowserRouter } from 'react-router-dom';
+
 import App from './App';
 import { StyledMaterialDesignContent } from './configuration/material-ui/theme';
 import './index.scss';
 import reportWebVitals from './reportWebVitals';
 import { TranslationsProvider } from './translations';
+
 // import { BugsnagInitializer, ELEMENTS_OPTIONS, GTMInitializer, stripePromise } from './3rd-party-initializer';
 
 const queryClient = new QueryClient({

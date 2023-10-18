@@ -1,7 +1,30 @@
 {
+  "plugins": ["@trivago/prettier-plugin-sort-imports"],
   "trailingComma": "es5",
   "tabWidth": 2,
   "singleQuote": true,
   "printWidth": 120,
-  "proseWrap": "preserve"
+  "proseWrap": "preserve",
+  "importOrderParserPlugins": ["typescript", "decorators-legacy", "jsx"],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "importOrder": ["aws-cdk-lib", "@sinapsis-co/cc-core", "@sinapsis-co/cc-sdk", "<THIRD_PARTY_MODULES>", "^[./]"],
+  "overrides": [
+    {
+      "files": ["frontend/**/*"],
+      "options": {
+        "importOrder": [
+          "^react$",
+          "^@tanstack/(.*)$",
+          "<THIRD_PARTY_MODULES>",
+          "^@(?!webapp/)(?!backoffice/)(?!webpage/)(?!mui/).*$",
+          "^@webapp/(.*)$",
+          "^@backoffice/(.*)$",
+          "^@webpage/(.*)$",
+          "^@mui/(.*)$",
+          "^[./]"
+        ]
+      }
+    }
+  ]
 }

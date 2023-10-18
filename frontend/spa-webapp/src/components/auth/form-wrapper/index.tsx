@@ -3,11 +3,10 @@ import React, { FunctionComponent } from 'react';
 // Import necessary dependencies
 import GoBackLink from '@webapp/components/go-back-link';
 
-import { SxProps, Theme, styled, useTheme } from '@mui/material/styles';
-
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { SxProps, Theme, styled, useTheme } from '@mui/material/styles';
 
 /**
  * `FormWrapper` is a component for wrapping form content.

@@ -1,11 +1,11 @@
 // Bugsnag
+// GTM
+import TagManager from 'react-gtm-module';
+
 import Bugsnag from '@bugsnag/js';
 import BugsnagPluginReact from '@bugsnag/plugin-react';
 // Stripe
 import { StripeConstructorOptions, loadStripe } from '@stripe/stripe-js';
-
-// GTM
-import TagManager from 'react-gtm-module';
 
 //---------------------------------------------STRIPE-------------------------------------------------------------//
 const locale = navigator.languages && navigator.languages.length ? navigator.languages[0] : navigator.language;

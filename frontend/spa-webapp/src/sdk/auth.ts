@@ -1,7 +1,8 @@
-import { CognitoHostedUIIdentityProvider } from '@aws-amplify/auth';
-import { ICredentials } from '@aws-amplify/core';
 import { ISignUpResult } from 'amazon-cognito-identity-js';
 import { Auth } from 'aws-amplify';
+
+import { CognitoHostedUIIdentityProvider } from '@aws-amplify/auth';
+import { ICredentials } from '@aws-amplify/core';
 
 import { AccountVerificationData } from '../types/auth/account-verification-data';
 import { BasicAccountData } from '../types/auth/basic-account-data';

@@ -1,8 +1,8 @@
 import React from 'react';
+
 import { Navigate } from 'react-router-dom';
 
 import HomePage from '@webapp/pages';
-
 // Auth pages
 import ForgotPasswordPage from '@webapp/pages/auth/forgot-password';
 import ForgotPasswordVerifyPage from '@webapp/pages/auth/forgot-password-verify';

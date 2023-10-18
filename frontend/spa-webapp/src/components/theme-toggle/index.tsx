@@ -9,12 +9,10 @@ import { ColorModeContext } from '@webapp/context';
 // Icons
 import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded';
 import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded';
-
 // Material UI components
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
-
 // Material UI styles
 import { useTheme } from '@mui/material/styles';
 

@@ -1,15 +1,13 @@
 import React, { FunctionComponent } from 'react';
 
 import KeyboardArrowDownRounded from '@mui/icons-material/KeyboardArrowDownRounded';
-
-import { SxProps, Theme, alpha, styled, useTheme } from '@mui/material/styles';
-
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import { default as MuiSelect, SelectProps as MuiSelectProps } from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
+import { SxProps, Theme, alpha, styled, useTheme } from '@mui/material/styles';
 
 interface SelectProps extends MuiSelectProps {
   className?: string;

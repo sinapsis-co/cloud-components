@@ -1,14 +1,12 @@
 import React, { useContext } from 'react';
 
+import { motion, useReducedMotion } from 'framer-motion';
 import { useIntl } from 'react-intl';
 
 import { AllowedLanguages, translationsContext } from '@webapp/translations';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-
-import { motion, useReducedMotion } from 'framer-motion';
-
 import { SxProps, Theme, styled } from '@mui/material/styles';
 
 /**

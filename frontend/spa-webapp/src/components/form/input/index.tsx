@@ -1,13 +1,12 @@
 import { FunctionComponent } from 'react';
 
-// Import necessary dependencies
-import TextField, { TextFieldProps } from '@mui/material/TextField';
-
 // This takes the inputSize and inputVariant from the theme file
 import { inputSize, inputVariant } from '@webapp/configuration/material-ui/input';
-
 // Import custom hook
 import { useIsMobile } from '@webapp/hooks/is-mobile';
+
+// Import necessary dependencies
+import TextField, { TextFieldProps } from '@mui/material/TextField';
 
 type InputFieldProps = {
   className?: string;

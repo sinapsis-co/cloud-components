@@ -7,10 +7,12 @@
     "amazonses",
     "andiago",
     "apigatewayv2",
+    "backoffice",
     "barcodes",
     "Behaviour",
     "Behaviours",
     "Brotli",
+    "Bugsnag",
     "certificatemanager",
     "codestarnotifications",
     "cognitoidentityserviceprovider",
@@ -43,11 +45,19 @@
     "sinapsis",
     "spawebapp",
     "spreedly",
+    "tanstack",
     "timestream",
+    "trivago",
     "tspm",
     "typeorm",
     "valueof",
     "wafv2"
   ],
-  "ignorePaths": ["**/node_modules/**", "**/cdk.out/**", "**/yarn.lock", "**/package.json", "**/cdk.context.json"]
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/cdk.out/**",
+    "**/yarn.lock",
+    "**/package.json",
+    "**/cdk.context.json"
+  ]
 }

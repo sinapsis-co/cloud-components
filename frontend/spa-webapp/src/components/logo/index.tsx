@@ -1,9 +1,11 @@
 import React, { FunctionComponent } from 'react';
 
+import { motion, useReducedMotion } from 'framer-motion';
+
+import { easing } from '@webapp/components/framer';
+
 // Import necessary dependencies
 import { styled, useTheme } from '@mui/material/styles';
-import { easing } from '@webapp/components/framer';
-import { motion, useReducedMotion } from 'framer-motion';
 
 /**
  * `Logo` is a component representing a custom SVG logo.

@@ -1,10 +1,10 @@
+import { MaterialDesignContent } from 'notistack';
+
 import { PaletteColor, PaletteColorOptions, PaletteMode } from '@mui/material';
 import '@mui/material/Button';
 import { alpha, styled } from '@mui/material/styles';
 import { ThemeOptions } from '@mui/material/styles/createTheme';
 import type {} from '@mui/x-data-grid-pro/themeAugmentation';
-
-import { MaterialDesignContent } from 'notistack';
 
 // Custom theme configuration
 import { button } from './button';

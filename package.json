@@ -43,6 +43,7 @@
     "*.{js,css,md}": "prettier --write"
   },
   "dependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.2.0",
     "@types/aws-lambda": "^8.10.108",
     "@types/babel__core": "^7.20.0",
     "@types/node": "^18.11.7",

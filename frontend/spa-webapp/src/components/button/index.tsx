@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from 'react';
 
-import { LoadingButtonProps, default as MuiLoadingButton } from '@mui/lab/LoadingButton';
-
 // This sets the default variant for all buttons in the app.
 import { buttonVariant } from '@webapp/configuration/material-ui/button';
+
+import { LoadingButtonProps, default as MuiLoadingButton } from '@mui/lab/LoadingButton';
 
 export type ButtonColors = 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
 
