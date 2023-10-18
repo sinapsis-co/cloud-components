@@ -35,17 +35,21 @@ const App: React.FunctionComponent = (): JSX.Element => {
     }
   };
 
-  const [mode, setMode] = React.useState<PaletteMode>(useContext(ColorModeContext).initialMode);
+  const initialMode = localStorage.getItem('colorMode') as PaletteMode || useContext(ColorModeContext).initialMode;
+  const [mode, setMode] = React.useState<PaletteMode>(initialMode);
+
+  const toggleColorMode = () => {
+    const newMode = mode === 'light' ? 'dark' : 'light';
+    setMode(newMode);
+    localStorage.setItem('colorMode', newMode);
+  };
 
   const colorMode = React.useMemo(
     () => ({
-      // The dark mode switch would invoke this method
       initialMode: mode,
-      toggleColorMode: () => {
-        setMode((themeMode: PaletteMode) => (themeMode === 'light' ? 'dark' : 'light'));
-      },
+      toggleColorMode: toggleColorMode,
     }),
-    []
+    [mode]
   );
 
   // Update the theme only if the mode changes
