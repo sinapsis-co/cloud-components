@@ -2,7 +2,7 @@ import { uuid } from '@sinapsis-co/cc-sdk/lib/uuid';
 
 import { Asset, AssetKeyGeneratorParams } from '../entities/asset';
 
-export type AssetType = 'asset' | 'privateAsset' | 'rawAvatar' | 'avatar';
+export type AssetType = 'asset' | 'privateAsset' | 'rawAvatar' | 'avatar' | 'rawCsv';
 
 export const assetsTypes: Record<AssetType, Asset<AssetType>> = {
   asset: {
@@ -14,6 +14,21 @@ export const assetsTypes: Record<AssetType, Asset<AssetType>> = {
     rootPath: 'privateAsset',
     isPublic: false,
     eventEmitterEnabled: false,
+  },
+  rawCsv: {
+    rootPath: 'rawCsv',
+    isPublic: false,
+    eventEmitterEnabled: true,
+    presignedPutOptions: {
+      maxSize: 1024 * 1024 * 5, // 5MBs
+      allowedMediaType: ['text/csv'],
+      keyGenerator: (p: AssetKeyGeneratorParams) => `${p.entity}.${p.extension}`,
+      keyDecoder: (key: string) => {
+        const [payload, extension] = key.split('.');
+        const [tenantId, sub] = payload.split('/');
+        return { tenantId, sub, uuid: uuid(), mediaType: 'text/csv', extension };
+      },
+    },
   },
   rawAvatar: {
     rootPath: 'rawAvatar',

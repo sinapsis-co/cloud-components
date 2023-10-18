@@ -1,4 +1,4 @@
-import { IVpc, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { IVpc, Vpc, VpcProps } from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 
 import { getLogicalName } from 'common/naming/get-logical-name';
@@ -6,7 +6,7 @@ import { Service } from 'common/service';
 
 export type VpcPrefabParams = {
   name: string;
-  maxAzs?: number;
+  vpcProps?: Partial<VpcProps>;
   existingResource?: {
     vpcId: string;
     availabilityZones: string[];
@@ -33,7 +33,8 @@ export class VpcPrefab extends Construct {
 
     this.vpc = new Vpc(this, getLogicalName(params.name, 'vpc'), {
       vpcName: params.name,
-      maxAzs: params.maxAzs || 2,
+      maxAzs: params.vpcProps?.maxAzs || 2,
+      ...params.vpcProps,
     });
   }
 }

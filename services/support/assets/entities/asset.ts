@@ -30,4 +30,5 @@ export type AssetKeyGeneratorParams = {
   mediaType: string;
   extension: string;
   uuid: string;
+  entity?: string;
 };

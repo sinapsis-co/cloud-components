@@ -14,6 +14,7 @@ import { CdnApi } from '@sinapsis-co/cc-services/support/cdn-api';
 import { DnsSubdomainCertificate } from '@sinapsis-co/cc-services/support/dns-subdomain-certificate';
 import { GlobalEventBus } from '@sinapsis-co/cc-services/support/global-event-bus';
 
+import { QueuePrefab } from '@sinapsis-co/cc-core/prefab/integration/queue';
 import { assetApi, assetEvent } from './catalog';
 import { Asset } from './entities/asset';
 import { AssetType, assetsTypes } from './lib/assets-type';
@@ -32,6 +33,7 @@ export class Assets extends Service<GlobalCoordinator> {
   public eventRaw: EventAggregate;
   public eventAggregate: EventAggregate;
   public cdnAssetPrefab: CdnAssetPrefab;
+  public queueCsvRaw: QueuePrefab;
 
   constructor(coordinator: GlobalCoordinator) {
     super(coordinator, Assets.name, Dep);
@@ -104,6 +106,14 @@ export class Assets extends Service<GlobalCoordinator> {
       },
     });
 
+    const csvProcessFunction = new QueueFunction(this, {
+      name: 'msg-csv-uploaded',
+      baseFunctionFolder: __dirname,
+      eventBus: dep.globalEventBus.eventBusPrefab,
+      modifiers: [this.privateAssetsBucket.useMod('PRIVATE_BUCKET', [PrivateBucketPrefab.modifier.reader])],
+    });
+    csvProcessFunction.queuePrefab.queue.grantSendMessages(csvProcessFunction.lambdaFunction);
+
     const queueFunction = new QueueFunction(this, {
       name: 'msg-asset-uploaded',
       baseFunctionFolder: __dirname,
@@ -117,26 +127,29 @@ export class Assets extends Service<GlobalCoordinator> {
           PrivateBucketPrefab.modifier.reader,
           PrivateBucketPrefab.modifier.writer,
         ]),
+        csvProcessFunction.queuePrefab.useModWriter(),
       ],
     });
 
-    this.privateAssetsBucket.addQueueNotification({
-      queue: queueFunction.queuePrefab.queue,
-      filters: getFilters(assetsTypes, false),
-    });
-    this.publicAssetsBucket.addQueueNotification({
-      queue: queueFunction.queuePrefab.queue,
-      filters: getFilters(assetsTypes, true),
-    });
+    addFilters(this.privateAssetsBucket, queueFunction.queuePrefab, assetsTypes, false);
+    addFilters(this.publicAssetsBucket, queueFunction.queuePrefab, assetsTypes, true);
   }
 }
 
-const getFilters = (assetsTypes: Record<AssetType, Asset<AssetType>>, filterPublicOnly: boolean) => {
+const addFilters = (
+  bucketPrefab: PrivateBucketPrefab,
+  queuePrefab: QueuePrefab,
+  assetsTypes: Record<AssetType, Asset<AssetType>>,
+  filterPublicOnly: boolean
+) => {
   return Object.values(assetsTypes)
     .filter((a) => a.isPublic === filterPublicOnly)
     .map((a) => {
-      if (a.eventEmitterEnabled) return { prefix: a.rootPath };
-      else return {};
-    })
-    .filter((a) => Object.keys(a).length > 0);
+      if (a.eventEmitterEnabled) {
+        bucketPrefab.addQueueNotification({
+          queue: queuePrefab.queue,
+          filters: [{ prefix: a.rootPath }],
+        });
+      }
+    });
 };

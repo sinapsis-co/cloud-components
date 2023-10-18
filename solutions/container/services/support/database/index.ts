@@ -24,7 +24,7 @@ export class Database extends Service<GlobalCoordinator> {
       publicAccess: true,
       clusterName: 'database',
       vpcPrefab: dep.envVpc.vpcPrefab,
-      performanceTunning: {
+      performanceTuning: {
         readInstances: 0,
         minCapacity: 0.5,
         maxCapacity: 1,

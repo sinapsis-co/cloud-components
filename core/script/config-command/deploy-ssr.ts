@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import { CloudFrontClient, CreateInvalidationCommand } from '@aws-sdk/client-cloudfront';
 import { GetParameterCommand, SSMClient } from '@aws-sdk/client-ssm';
-import { ExecSyncOptions, execSync } from 'child_process';
 import { writeFileSync } from 'fs';
 import { ConfigCommand } from '..';
 import { getResourceName } from '../../common/naming/get-resource-name';
@@ -40,7 +39,7 @@ export const deploySSR: ConfigCommand = async <
       isSingleProjectAccount,
     } = await preScript(globalConstConfig, globalEnvConfig, globalDeployTargetConfig, args);
 
-    console.log('>> STEP: (1/4) => LOADING CONFIGS');
+    console.log('>> STEP: (1/3) => LOADING CONFIGS');
     const projectName = globalConstConfig.projectName;
 
     const account =
@@ -50,7 +49,7 @@ export const deploySSR: ConfigCommand = async <
         ?.split('=')[1] || '';
     const region = globalDeployTargetConfig[envName]['services']['region'];
 
-    console.log('>> STEP: (2/4) => RENDERING ENV');
+    console.log('>> STEP: (2/3) => RENDERING ENV');
 
     const getParamName = (name: string) =>
       getResourceName(name, {
@@ -66,7 +65,7 @@ export const deploySSR: ConfigCommand = async <
     const ssm = new SSMClient(role);
     const deployConfig = await ssm.send(new GetParameterCommand({ Name: getParamName('config') }));
     if (!deployConfig.Parameter?.Value) throw new Error('Invalid Config');
-    const { domain, distributionBucket, distributionId, baseDir, distDir } = JSON.parse(deployConfig.Parameter?.Value);
+    const { domain, distributionId, baseDir } = JSON.parse(deployConfig.Parameter?.Value);
 
     const calculatedEnv = await ssm.send(new GetParameterCommand({ Name: getParamName('env-calculated') }));
     if (!calculatedEnv.Parameter?.Value) throw new Error('Invalid CalculatedEnv');
@@ -78,27 +77,7 @@ export const deploySSR: ConfigCommand = async <
 
     writeFileSync(`${process.cwd()}/${baseDir}/.env.${envNameInput}`, envFile);
 
-    console.log('>> STEP: (3/4) => BUILDING');
-
-    const command = 'npx open-next@latest build -y';
-    execSync(command, { stdio: 'inherit', cwd: `${process.cwd()}/${baseDir}` });
-
-    const cpDistributionBucket = `aws s3 cp ${distDir}/assets s3://${distributionBucket} --recursive`;
-
-    const execOptions: ExecSyncOptions = {
-      stdio: 'inherit',
-      cwd: `${process.cwd()}/${baseDir}`,
-      env: {
-        ...process.env,
-        AWS_ACCESS_KEY_ID: role.credentials.accessKeyId,
-        AWS_SECRET_ACCESS_KEY: role.credentials.secretAccessKey,
-        AWS_SESSION_TOKEN: role.credentials.sessionToken,
-        AWS_REGION: role.region,
-      },
-    };
-    execSync(cpDistributionBucket, execOptions);
-
-    console.log('STEP: (4/4) => CREATING INVALIDATION');
+    console.log('STEP: (3/3) => CREATING INVALIDATION');
 
     const cf = new CloudFrontClient(role);
     await cf.send(

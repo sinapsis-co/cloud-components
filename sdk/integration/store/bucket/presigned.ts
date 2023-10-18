@@ -1,5 +1,6 @@
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { createPresignedPost, PresignedPost } from '@aws-sdk/s3-presigned-post';
+import { Conditions } from '@aws-sdk/s3-presigned-post/dist-types/types';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { traceableFunction } from 'tracing';
 import { s3 } from '.';
@@ -22,14 +23,22 @@ export const createPutPresignedUrl = async (
 ): Promise<PresignedPost> => {
   const { Key, ContentType, ContentLengthRange, Bucket, Expires } = params;
   const cmd = () => {
+    const conditions: Conditions[] = [
+      ['content-length-range', ContentLengthRange?.min ?? 0, ContentLengthRange?.max ?? DEFAULT_MAX_LENGTH],
+    ];
+
+    if (metadata) {
+      Object.keys(metadata).forEach((md) => {
+        conditions.push(['starts-with', `$${md}`, `${metadata[md]}`]);
+      });
+    }
+
     return createPresignedPost(s3, {
       Bucket,
       Expires: Expires || 3600,
       Key,
       Fields: { 'Content-Type': ContentType, ...(metadata || {}) },
-      Conditions: [
-        ['content-length-range', ContentLengthRange?.min ?? 0, ContentLengthRange?.max ?? DEFAULT_MAX_LENGTH],
-      ],
+      Conditions: conditions,
     });
   };
   return traceableFunction('CreatePutPresignedUrl', 'FAULT_S3_PRESIGNED_PUT', Bucket, cmd, { key: Key });
