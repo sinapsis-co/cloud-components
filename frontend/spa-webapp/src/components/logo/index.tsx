@@ -18,14 +18,16 @@ import { styled, useTheme } from '@mui/material/styles';
 
 type LogoVariant = 'primary' | 'normal' | 'white' | 'dark';
 
-interface LogoProps extends React.SVGProps<SVGSVGElement> {
+interface LogoProps {
   className?: string;
   variant?: LogoVariant;
 }
 
-const Logo: FunctionComponent<LogoProps> = ({ className, ...props }) => {
+const Logo: FunctionComponent<LogoProps> = ({ className, variant }) => {
   const theme = useTheme();
   const prefersReducedMotion = useReducedMotion(); // Check for reduced motion preference
+
+  const [isAnimated, setIsAnimated] = React.useState(false);
 
   const getLogoColor = (variant: LogoVariant) => {
     switch (variant) {
@@ -42,22 +44,30 @@ const Logo: FunctionComponent<LogoProps> = ({ className, ...props }) => {
     }
   };
 
+  const animations = {
+    rest: prefersReducedMotion ? {} : { pathLength: 1 },
+    animate: prefersReducedMotion ? {} : { pathLength: [0, 1] },
+  };
+
   return (
     <SVG
       className={className || ''}
       id="isologotipo"
-      color={getLogoColor(props.variant || 'white')}
+      color={getLogoColor(variant || 'white')}
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 187.4 48.5"
       role="img"
       aria-label="Sinapsis Logo"
-      {...props}
+      initial="rest"
+      animate="rest"
+      whileHover={isAnimated ? undefined : 'animate'}
+      onMouseEnter={() => setIsAnimated(true)}
+      onAnimationComplete={() => setIsAnimated(false)}
+      onAnimationEnd={() => setIsAnimated(false)}
     >
       <motion.path
         className="isologo"
-        initial={prefersReducedMotion ? {} : { pathLength: 0 }}
-        animate={prefersReducedMotion ? {} : { pathLength: 1 }}
-        whileHover={prefersReducedMotion ? {} : { pathLength: [0, 1] }}
+        variants={animations}
         transition={prefersReducedMotion ? {} : { duration: 2, ...easing }}
         d="M3.4 29L26.9 5.5c0.8-0.8 0.4-2.3-0.8-2.4C20 2.5 13.8 4.6 9.2 9.2c-8 8-8.2 20.6-1 29 0.6 0.7 1.5 0.8 2.1 0.1l28-28.1c0.7-0.7 1.5-0.6 2.1 0.1 7.3 8.4 6.9 21-1 29 -4.6 4.6-10.9 6.7-16.9 6.1 -1.2-0.1-1.8-1.6-0.8-2.4l23.5-23.5"
       />
@@ -107,7 +117,7 @@ Logo.defaultProps = {
 
 export default Logo;
 
-const SVG = styled('svg')<{ color?: string }>(({ theme, color }) => ({
+const SVG = styled(motion.svg)<{ color?: string }>(({ theme, color }) => ({
   width: '100%',
   maxWidth: 192,
   fill: color,
