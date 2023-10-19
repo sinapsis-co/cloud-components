@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion, useAnimationControls, useReducedMotion } from 'framer-motion';
 
 import { easing } from '@webapp/components/framer';
 
@@ -25,7 +25,9 @@ interface LogoProps {
 
 const Logo: FunctionComponent<LogoProps> = ({ className, variant }) => {
   const theme = useTheme();
-  const prefersReducedMotion = useReducedMotion(); // Check for reduced motion preference
+  const shouldReduceMotion = useReducedMotion(); // Check for reduced motion preference
+
+  const controls = useAnimationControls();
 
   const [isAnimated, setIsAnimated] = React.useState(false);
 
@@ -44,10 +46,16 @@ const Logo: FunctionComponent<LogoProps> = ({ className, variant }) => {
     }
   };
 
-  const animations = {
-    rest: prefersReducedMotion ? {} : { pathLength: 1 },
-    animate: prefersReducedMotion ? {} : { pathLength: [0, 1] },
-  };
+  React.useEffect(() => {
+    if (shouldReduceMotion) return;
+    if (isAnimated) {
+      controls.start({ pathLength: [0, 1] });
+      const timer = setTimeout(() => setIsAnimated(false), 2000);
+      return () => clearTimeout(timer);
+    } else {
+      controls.start({ pathLength: 1 });
+    }
+  }, [controls, isAnimated]);
 
   return (
     <SVG
@@ -58,17 +66,16 @@ const Logo: FunctionComponent<LogoProps> = ({ className, variant }) => {
       viewBox="0 0 187.4 48.5"
       role="img"
       aria-label="Sinapsis Logo"
-      initial="rest"
-      animate="rest"
-      whileHover={isAnimated ? undefined : 'animate'}
       onMouseEnter={() => setIsAnimated(true)}
-      onAnimationComplete={() => setIsAnimated(false)}
       onAnimationEnd={() => setIsAnimated(false)}
+      style={{
+        pointerEvents: isAnimated ? 'none' : 'auto',
+      }}
     >
       <motion.path
         className="isologo"
-        variants={animations}
-        transition={prefersReducedMotion ? {} : { duration: 2, ...easing }}
+        animate={controls}
+        transition={shouldReduceMotion ? {} : { duration: 2, ...easing }}
         d="M3.4 29L26.9 5.5c0.8-0.8 0.4-2.3-0.8-2.4C20 2.5 13.8 4.6 9.2 9.2c-8 8-8.2 20.6-1 29 0.6 0.7 1.5 0.8 2.1 0.1l28-28.1c0.7-0.7 1.5-0.6 2.1 0.1 7.3 8.4 6.9 21-1 29 -4.6 4.6-10.9 6.7-16.9 6.1 -1.2-0.1-1.8-1.6-0.8-2.4l23.5-23.5"
       />
       <path

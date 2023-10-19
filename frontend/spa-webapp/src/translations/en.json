@@ -1,4 +1,5 @@
 {
+  "COMMON.LOADING": "Loading",
   "CHANGE_MODE_LIGHT": "Switch to Light Mode",
   "CHANGE_MODE_DARK": "Switch to Dark Mode",
   "CHANGE_MODE_ARIA": "Toggle Dark/Light Mode",

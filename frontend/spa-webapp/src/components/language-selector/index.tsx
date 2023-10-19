@@ -86,7 +86,7 @@ interface LanguageSelectorProps {
  * @returns {React.ReactElement} A LanguageSelector component.
  */
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className, sx }) => {
-  const prefersReducedMotion = useReducedMotion(); // Check for reduced motion preference
+  const shouldReduceMotion = useReducedMotion(); // Check for reduced motion preference
   const { formatMessage } = useIntl();
   const context = useContext(translationsContext)!;
 
@@ -114,9 +114,9 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className, sx }) =>
               lang={item.lang}
               aria-label={formatMessage({ id: 'LANGUAGE_SWITCHER.LINK.ARIA' }, { lang: item.lang })}
               data-highlight={item.lang === context.currentLanguage}
-              whileHover={context.currentLanguage !== item.lang ? (prefersReducedMotion ? {} : { scale: 1.1 }) : {}}
-              whileTap={context.currentLanguage !== item.lang ? (prefersReducedMotion ? {} : { scale: 0.9 }) : {}}
-              transition={prefersReducedMotion ? {} : { type: 'spring', stiffness: 300 }}
+              whileHover={context.currentLanguage !== item.lang ? (shouldReduceMotion ? {} : { scale: 1.1 }) : {}}
+              whileTap={context.currentLanguage !== item.lang ? (shouldReduceMotion ? {} : { scale: 0.9 }) : {}}
+              transition={shouldReduceMotion ? {} : { type: 'spring', stiffness: 300 }}
             >
               {item.label}
             </Selector>
@@ -124,7 +124,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className, sx }) =>
               <motion.div
                 className="tab-bg"
                 layoutId="tab-bg"
-                transition={prefersReducedMotion ? {} : { type: 'spring', stiffness: 80, duration: 0.25 }}
+                transition={shouldReduceMotion ? {} : { type: 'spring', stiffness: 80, duration: 0.25 }}
               />
             ) : null}
           </li>

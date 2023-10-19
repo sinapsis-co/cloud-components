@@ -21,6 +21,7 @@
           "^@webapp/(.*)$",
           "^@backoffice/(.*)$",
           "^@webpage/(.*)$",
+          "^@mui/icons-material/(.*)$",
           "^@mui/(.*)$",
           "^[./]"
         ]
