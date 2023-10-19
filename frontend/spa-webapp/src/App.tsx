@@ -35,7 +35,7 @@ const App: React.FunctionComponent = (): JSX.Element => {
     }
   };
 
-  const initialMode = localStorage.getItem('colorMode') as PaletteMode || useContext(ColorModeContext).initialMode;
+  const initialMode = (localStorage.getItem('colorMode') as PaletteMode) || useContext(ColorModeContext).initialMode;
   const [mode, setMode] = React.useState<PaletteMode>(initialMode);
 
   const toggleColorMode = () => {
