@@ -1,5 +1,8 @@
 {
   "COMMON.LOADING": "Loading",
+  "COMMON.SELECT_ICON": "Select an icon",
+  "COMMON.ICON_NAME": "{icon} Icon",
+  "FORM.NO.OPTION": "Oops! We don't have that option!",
   "CHANGE_MODE_LIGHT": "Switch to Light Mode",
   "CHANGE_MODE_DARK": "Switch to Dark Mode",
   "CHANGE_MODE_ARIA": "Toggle Dark/Light Mode",

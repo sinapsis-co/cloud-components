@@ -533,6 +533,7 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
       styleOverrides: {
         root: {
           span: {
+            color: 'red',
             fontWeight: 500,
           },
         },

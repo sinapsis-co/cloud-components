@@ -1,5 +1,8 @@
 {
   "COMMON.LOADING": "Cargando",
+  "COMMON.SELECT_ICON": "Seleccionar icono",
+  "COMMON.ICON_NAME": "{icon} Icono",
+  "FORM.NO.OPTION": "No hay opciones disponibles",
   "CHANGE_MODE_LIGHT": "Cambiar a Modo Claro",
   "CHANGE_MODE_DARK": "Cambiar a Modo Oscuro",
   "CHANGE_MODE_ARIA": "Alternar Modo Claro/Oscuro",
