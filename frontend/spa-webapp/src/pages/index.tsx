@@ -3,6 +3,7 @@ import { FunctionComponent, useState } from 'react';
 import { AutocompleteOption } from '@webapp/components/form/autocomplete';
 import IconAutocomplete from '@webapp/components/icon-autocomplete';
 import { icons } from '@webapp/components/icon-autocomplete/icons';
+import ThemeToggle from '@webapp/components/theme-toggle';
 
 const HomePage: FunctionComponent = () => {
   const [selectedIcon, setSelectedIcon] = useState<AutocompleteOption>();
@@ -18,6 +19,7 @@ const HomePage: FunctionComponent = () => {
         height: '100vh',
       }}
     >
+      <ThemeToggle />
       <IconAutocomplete
         iconList={icons}
         onSelect={(selectedIcon) => {

@@ -41,10 +41,11 @@ const IconAutocomplete: FunctionComponent<IconAutocompleteProps> = ({ iconList, 
 
   return (
     <Autocomplete
+      open
       options={icons}
       label={formatMessage({ id: 'COMMON.SELECT_ICON' })}
-      renderInput={(params) => <InputField label="aca" {...params} />}
-      // startIcon={selectedIcon ? <span className="material-symbols-rounded">{selectedIcon.value}</span> : undefined}
+      // TODO: I don't find a way to stop this renderInput from being required when it's already declared on the father component.
+      renderInput={(params) => <InputField {...params} />}
       // Render each option as a list item, showing the icon and its name.
       renderOption={(props, option) => (
         <ListItem {...props} role="option" aria-selected={props['aria-selected']}>
@@ -57,6 +58,7 @@ const IconAutocomplete: FunctionComponent<IconAutocompleteProps> = ({ iconList, 
           <ListItemText>{option.label}</ListItemText>
         </ListItem>
       )}
+      isOptionEqualToValue={(option, value) => option.value === value.value}
       // When the user selects an option, trigger the onSelect callback.
       onChange={(_, selectedIcon) => {
         if (selectedIcon) {

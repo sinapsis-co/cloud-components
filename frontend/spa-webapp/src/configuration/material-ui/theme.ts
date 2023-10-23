@@ -533,7 +533,6 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
       styleOverrides: {
         root: {
           span: {
-            color: 'red',
             fontWeight: 500,
           },
         },
@@ -630,9 +629,26 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
     },
     MuiAutocomplete: {
       styleOverrides: {
+        root: {
+          '.MuiAutocomplete-option': {
+            '&.Mui.focused': {
+              backgroundColor: `${
+                mode === 'dark' ? darkModePalette[0].grey300 : lightModePalette[0].grey300
+              } !important`,
+            },
+          },
+        },
         listbox: {
           position: 'relative',
           zIndex: 999,
+          '.MuiAutocomplete-option': {
+            '&.Mui-focused': {
+              backgroundColor: `${
+                mode === 'dark' ? darkModePalette[0].grey300 : lightModePalette[0].grey300
+              } !important`,
+              color: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+            },
+          },
         },
       },
     },

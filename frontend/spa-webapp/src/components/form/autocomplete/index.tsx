@@ -68,6 +68,7 @@ const Autocomplete: FunctionComponent<AutocompleteProps<AutocompleteOption>> = (
       sx={{ position: 'relative', zIndex: '500', ...props.sx }}
       size={inputSize}
       // fullWidth={true}
+      forcePopupIcon
       id={props.id}
       value={props.value}
       noOptionsText={<FormattedMessage id="FORM.NO.OPTION" />}
@@ -92,9 +93,9 @@ const Autocomplete: FunctionComponent<AutocompleteProps<AutocompleteOption>> = (
           name={inputName}
           error={error}
           variant={inputVariant}
+          size={inputSize}
           spellCheck={false}
           fullWidth={true}
-          // InputLabelProps={{ shrink: false }}
           noDefaultHelperText={noDefaultHelperText}
           role="combobox"
           aria-autocomplete="both"
