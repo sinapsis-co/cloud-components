@@ -2,12 +2,13 @@ import React, { FunctionComponent } from 'react';
 
 import { useIntl } from 'react-intl';
 
+import Autocomplete from '@mui/material/Autocomplete';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import TextField from '@mui/material/TextField';
 
-import Autocomplete, { AutocompleteOption } from '../form/autocomplete';
-import InputField from '../form/input';
+import { AutocompleteOption } from '../form/autocomplete';
 
 /**
  * IconAutocomplete is a component that allows users to search and select icons.
@@ -42,9 +43,27 @@ const IconAutocomplete: FunctionComponent<IconAutocompleteProps> = ({ iconList, 
   return (
     <Autocomplete
       options={icons}
-      label={formatMessage({ id: 'COMMON.SELECT_ICON' })}
       // TODO: I don't find a way to stop this renderInput from being required when it's already declared on the father component.
-      renderInput={(params) => <InputField {...params} />}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          variant="outlined"
+          label="Select Icon"
+          InputProps={{
+            ...params.InputProps,
+            startAdornment: (
+              <>
+                {selectedIcon ? (
+                  <span className="material-symbols-rounded" style={{ marginRight: 5 }}>
+                    {selectedIcon.value}
+                  </span>
+                ) : null}
+                {params.InputProps.startAdornment}
+              </>
+            ),
+          }}
+        />
+      )}
       // Render each option as a list item, showing the icon and its name.
       renderOption={(props, option) => (
         <ListItem {...props} role="option" aria-selected={props['aria-selected']}>
