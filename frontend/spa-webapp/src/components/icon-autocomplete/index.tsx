@@ -41,7 +41,6 @@ const IconAutocomplete: FunctionComponent<IconAutocompleteProps> = ({ iconList, 
 
   return (
     <Autocomplete
-      open
       options={icons}
       label={formatMessage({ id: 'COMMON.SELECT_ICON' })}
       // TODO: I don't find a way to stop this renderInput from being required when it's already declared on the father component.

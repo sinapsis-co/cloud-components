@@ -648,6 +648,11 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
               } !important`,
               color: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
             },
+            '&[aria-selected="true"]': {
+              backgroundColor: `${colors.primary.main} !important`,
+              color: colors.primary.contrastText,
+              fontWeight: 500,
+            },
           },
         },
       },
