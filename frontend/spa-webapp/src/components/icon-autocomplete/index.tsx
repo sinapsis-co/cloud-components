@@ -85,7 +85,7 @@ const IconAutocomplete: FunctionComponent<IconAutocompleteProps> = ({ iconList, 
           <ListItemText>{option.label}</ListItemText>
         </ListItem>
       )}
-      onInputChange={(event, newInputValue, reason) => {
+      onInputChange={(_, __, reason) => {
         if (reason === 'clear') {
           setSelectedIcon(null);
         }
