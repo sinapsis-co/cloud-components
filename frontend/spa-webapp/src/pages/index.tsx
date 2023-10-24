@@ -26,12 +26,6 @@ const HomePage: FunctionComponent = () => {
           setSelectedIcon(selectedIcon);
         }}
       />
-      {selectedIcon && (
-        <div>
-          <div className="material-symbols-rounded">{selectedIcon.value}</div>
-          <div>{selectedIcon.label}</div>
-        </div>
-      )}
     </div>
   );
 };
