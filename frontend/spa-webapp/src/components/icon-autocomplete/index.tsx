@@ -3,12 +3,16 @@ import React, { FunctionComponent } from 'react';
 // Destructure useState
 import { useIntl } from 'react-intl';
 
+import { inputSize, inputVariant } from '@webapp/configuration/material-ui/input';
+
+import KeyboardArrowDownRounded from '@mui/icons-material/KeyboardArrowDownRounded';
+
 import Autocomplete from '@mui/material/Autocomplete';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import TextField from '@mui/material/TextField';
-import { useTheme } from '@mui/material/styles';
+import { alpha, useTheme } from '@mui/material/styles';
 
 import { AutocompleteOption } from '../form/autocomplete';
 
@@ -44,11 +48,14 @@ const IconAutocomplete: FunctionComponent<IconAutocompleteProps> = ({ iconList, 
 
   return (
     <Autocomplete
+      id="icon-autocomplete"
       options={icons}
+      size={inputSize}
       renderInput={(params) => (
         <TextField
           {...params}
-          variant="outlined"
+          variant={inputVariant}
+          size={inputSize}
           label={formatMessage({ id: 'COMMON.SELECT_ICON' })}
           placeholder={formatMessage({ id: 'COMMON.SELECT_ICON.PLACEHOLDER' })}
           InputProps={{
@@ -90,6 +97,12 @@ const IconAutocomplete: FunctionComponent<IconAutocompleteProps> = ({ iconList, 
           setSelectedIcon(selectedIcon as AutocompleteOption);
         }
       }}
+      noOptionsText={formatMessage({ id: 'FORM.NO.OPTION' })}
+      forcePopupIcon
+      popupIcon={<KeyboardArrowDownRounded sx={{ color: alpha(theme.palette.text.primary, 0.5) }} />}
+      filterOptions={(options, state) =>
+        options.filter((opt) => (opt.label || '').toLowerCase().includes((state.inputValue || '').toLowerCase()))
+      }
       role="combobox"
       aria-label={formatMessage({ id: 'COMMON.SELECT_ICON' })}
       aria-expanded={iconList.length > 0 ? 'true' : 'false'}
