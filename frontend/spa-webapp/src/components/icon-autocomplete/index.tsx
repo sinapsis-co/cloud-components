@@ -1,9 +1,8 @@
 import React, { FunctionComponent } from 'react';
 
-// Destructure useState
 import { useIntl } from 'react-intl';
 
-import { inputSize, inputVariant } from '@webapp/configuration/material-ui/input';
+import { InputSizeTypes, inputSize, inputVariant } from '@webapp/configuration/material-ui/input';
 
 import KeyboardArrowDownRounded from '@mui/icons-material/KeyboardArrowDownRounded';
 
@@ -12,7 +11,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import TextField from '@mui/material/TextField';
-import { alpha, useTheme } from '@mui/material/styles';
+import { SxProps, Theme, alpha, useTheme } from '@mui/material/styles';
 
 import { AutocompleteOption } from '../form/autocomplete';
 
@@ -22,16 +21,22 @@ import { AutocompleteOption } from '../form/autocomplete';
  * @component
  * @param {Object} props - The component's properties.
  * @param {string[]} props.iconList - The list of available icons.
+ * @param {AutocompleteOption} props.value - The currently selected icon.
+ * @param {InputSizeTypes} props.size - The size of the input.
  * @param {(selectedIcon: AutocompleteOption | null) => void} props.onSelect - A callback function to handle icon selection.
+ * @param {SxProps<Theme>} props.sx - Custom style for the component.
  */
 interface IconAutocompleteProps {
   iconList: string[];
+  value?: AutocompleteOption;
+  size?: InputSizeTypes;
   onSelect: (selectedIcon: AutocompleteOption | null) => void;
+  sx?: SxProps<Theme>;
 }
 
-const IconAutocomplete: FunctionComponent<IconAutocompleteProps> = ({ iconList, onSelect }) => {
+const IconAutocomplete: FunctionComponent<IconAutocompleteProps> = ({ iconList, value, size, onSelect, sx }) => {
   const theme = useTheme();
-  const [selectedIcon, setSelectedIcon] = React.useState<AutocompleteOption | null>(null);
+  const [selectedIcon, setSelectedIcon] = React.useState<AutocompleteOption | null>(value ? value : null);
   const { formatMessage } = useIntl();
 
   const makePrettierLabel = (label: string) => {
@@ -50,12 +55,13 @@ const IconAutocomplete: FunctionComponent<IconAutocompleteProps> = ({ iconList, 
     <Autocomplete
       id="icon-autocomplete"
       options={icons}
-      size={inputSize}
+      size={size ? size : inputSize}
+      value={value}
       renderInput={(params) => (
         <TextField
           {...params}
           variant={inputVariant}
-          size={inputSize}
+          size={size ? size : inputSize}
           label={formatMessage({ id: 'COMMON.SELECT_ICON' })}
           placeholder={formatMessage({ id: 'COMMON.SELECT_ICON.PLACEHOLDER' })}
           InputProps={{
@@ -109,6 +115,7 @@ const IconAutocomplete: FunctionComponent<IconAutocompleteProps> = ({ iconList, 
       aria-haspopup="listbox"
       sx={{
         minWidth: 300,
+        ...sx,
       }}
     />
   );

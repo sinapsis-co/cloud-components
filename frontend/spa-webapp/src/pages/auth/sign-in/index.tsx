@@ -32,14 +32,33 @@ const SignInPage: FunctionComponent<SignInPageProps> = ({ className }) => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { formatMessage } = useIntl();
-
   const colorMode = theme.palette.mode;
+
+  const makeAnimationStartHandler = (
+    stateSetter: (value: boolean) => void
+  ): ((e: React.AnimationEvent<HTMLInputElement | HTMLTextAreaElement>) => void) => {
+    return (e) => {
+      const autofilled = !!(e.target as Element)?.matches('*:-webkit-autofill');
+      if (e.animationName === 'mui-auto-fill') {
+        stateSetter(autofilled);
+      }
+
+      if (e.animationName === 'mui-auto-fill-cancel') {
+        stateSetter(autofilled);
+      }
+    };
+  };
+
+  const [emailHasAutoFilled, setEmailHasAutoFilled] = useState<boolean>(false);
+  const [passwordHasAutoFilled, setPasswordHasAutoFilled] = useState<boolean>(false);
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+  const hasValue = (value: string) => value !== '';
 
   const isLoginLoading = false;
 
@@ -90,13 +109,22 @@ const SignInPage: FunctionComponent<SignInPageProps> = ({ className }) => {
                     label={formatMessage({ id: 'AUTH.SIGN_IN.EMAIL.LABEL' })}
                     value={email}
                     onBlur={() => setTouched({ ...touched, email: true })}
-                    onChange={(ev) => setEmail(ev.target.value)}
+                    onChange={(ev) => {
+                      setEmail(ev.target.value);
+                      setEmailHasAutoFilled(hasValue(ev.target.value));
+                    }}
                     error={(touched.email && !email) || !!loginFailed}
                     helperText={touched.email && !email ? formatMessage({ id: 'COMMON.REQUIRED' }) : ''}
                     name="email"
                     autoComplete="email"
                     autoFocus
                     aria-label="Email"
+                    inputProps={{
+                      onAnimationStart: makeAnimationStartHandler(setEmailHasAutoFilled),
+                    }}
+                    InputLabelProps={{
+                      shrink: emailHasAutoFilled,
+                    }}
                   />
                   <InputField
                     required
@@ -105,7 +133,10 @@ const SignInPage: FunctionComponent<SignInPageProps> = ({ className }) => {
                     label={formatMessage({ id: 'AUTH.SIGN_IN.PASSWORD.LABEL' })}
                     value={password}
                     onBlur={() => setTouched({ ...touched, password: true })}
-                    onChange={(ev) => setPassword(ev.target.value)}
+                    onChange={(ev) => {
+                      setPassword(ev.target.value);
+                      setPasswordHasAutoFilled(hasValue(ev.target.value));
+                    }}
                     error={(touched.password && !password) || !!loginFailed}
                     helperText={touched.password && !password ? formatMessage({ id: 'COMMON.REQUIRED' }) : ''}
                     type={showPassword ? 'text' : 'password'}
@@ -121,6 +152,12 @@ const SignInPage: FunctionComponent<SignInPageProps> = ({ className }) => {
                       ),
                     }}
                     aria-label="Password"
+                    inputProps={{
+                      onAnimationStart: makeAnimationStartHandler(setPasswordHasAutoFilled),
+                    }}
+                    InputLabelProps={{
+                      shrink: passwordHasAutoFilled,
+                    }}
                   />
                   <Link
                     underline="hover"
@@ -140,7 +177,13 @@ const SignInPage: FunctionComponent<SignInPageProps> = ({ className }) => {
                   }}
                   sx={{ mt: { xs: 5, sm: 4 } }}
                 >
-                  <Button variant="text" onClick={goToRegister} fullWidth={isMobile} aria-label="Register">
+                  <Button
+                    variant="text"
+                    onClick={goToRegister}
+                    fullWidth={isMobile}
+                    aria-label={formatMessage({ id: 'AUTH.SIGN_IN.LINK.LABEL' })}
+                    sx={{ textWrap: 'balance' }}
+                  >
                     {formatMessage({ id: 'AUTH.SIGN_IN.LINK.LABEL' })}
                   </Button>
                   <Button
@@ -149,7 +192,7 @@ const SignInPage: FunctionComponent<SignInPageProps> = ({ className }) => {
                     loading={isLoginLoading}
                     sx={{ flexShrink: 0 }}
                     fullWidth={isMobile}
-                    aria-label="Sign In"
+                    aria-label={formatMessage({ id: 'AUTH.SIGN_IN.BUTTON.LABEL' })}
                   >
                     {formatMessage({ id: 'AUTH.SIGN_IN.BUTTON.LABEL' })}
                   </Button>

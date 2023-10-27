@@ -358,11 +358,41 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
           borderRadius: sizes.borderRadius,
           transition: 'border 250ms ease-in',
           '& :-webkit-autofill': {
-            animation: 'none !important',
             WebkitBoxShadow: `0 0 0 1000px ${
               mode === 'dark' ? darkModePalette[0].background : lightModePalette[0].background
             } inset !important`,
             WebkitTextFillColor: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+          },
+        },
+      },
+    },
+    MuiInputAdornment: {
+      styleOverrides: {
+        root: {
+          '&:not(.MuiInputAdornment-hiddenLabel)': {
+            marginTop: '0 !important',
+          },
+        },
+      },
+    },
+    MuiFilledInput: {
+      styleOverrides: {
+        root: {
+          color: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+          background: mode === 'dark' ? darkModePalette[0].paper : lightModePalette[0].paper,
+          '&:before': {
+            borderBottomColor: 'transparent !important',
+          },
+          '& :-internal-autofill-selected': {
+            backgroundColor: `${mode === 'dark' ? darkModePalette[0].paper : lightModePalette[0].paper} !important`,
+          },
+          '& :-webkit-autofill': {
+            WebkitBoxShadow: `0 0 0 1000px ${
+              mode === 'dark' ? darkModePalette[0].paper : lightModePalette[0].paper
+            } inset !important`,
+            WebkitTextFillColor: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+            // This crazy transition is needed to prevent Chrome from animating the background color
+            transition: 'background-color 50000s ease-in-out 0s !important',
           },
         },
       },
@@ -375,11 +405,12 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
           borderRadius: sizes.borderRadius,
           transition: 'border 250ms ease-in',
           '& :-webkit-autofill': {
-            animation: 'none !important',
             WebkitBoxShadow: `0 0 0 1000px ${
               mode === 'dark' ? darkModePalette[0].background : lightModePalette[0].background
             } inset !important`,
             WebkitTextFillColor: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+            // This crazy transition is needed to prevent Chrome from animating the background color
+            transition: 'background-color 50000s ease-in-out 0s !important',
           },
         },
         notchedOutline: {
@@ -445,6 +476,14 @@ export const CustomThemeOptions = (mode: PaletteMode): Partial<ThemeOptions> => 
           background: 'transparent',
           '& label': {
             color: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+          },
+          '& :-webkit-autofill': {
+            WebkitBoxShadow: `0 0 0 1000px ${
+              mode === 'dark' ? darkModePalette[0].background : lightModePalette[0].background
+            } inset !important`,
+            WebkitTextFillColor: mode === 'dark' ? darkModePalette[0].primaryText : lightModePalette[0].primaryText,
+            // This crazy transition is needed to prevent Chrome from animating the background color
+            transition: 'background-color 50000s ease-in-out 0s !important',
           },
         },
       },
