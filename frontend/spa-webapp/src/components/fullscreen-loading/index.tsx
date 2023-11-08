@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 
 import { motion, useReducedMotion } from 'framer-motion';
 import { useIntl } from 'react-intl';
@@ -100,6 +100,21 @@ interface FullscreenLoadingProps {
 const FullscreenLoading: FunctionComponent<FullscreenLoadingProps> = ({ className, isFullscreen, hasBackdrop }) => {
   const shouldReduceMotion = useReducedMotion();
   const { formatMessage } = useIntl();
+
+  // disable pointer events on the whole document when loading
+  React.useEffect(() => {
+    if (!isFullscreen) {
+      return;
+    }
+    if (document) {
+      document.body.style.pointerEvents = 'none';
+    }
+    return () => {
+      if (document) {
+        document.body.style.pointerEvents = 'auto';
+      }
+    };
+  }, []);
 
   return (
     <Container
