@@ -1,0 +1,10 @@
+node_modules
+cdk.out
+.env*
+.DS_Store
+yarn-error.log
+.editorconfig
+.eslintcache
+.dist
+.next
+merged.graphql

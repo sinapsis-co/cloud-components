@@ -1,0 +1,43 @@
+{
+  "name": "sinapsis-cloud-components",
+  "description": "Cloud Components",
+  "author": "sinapsis.co",
+  "license": "MIT",
+  "repository": "git://github.com/sinapsis-co/cloud-components.git",
+  "private": true,
+  "cpu": [
+    "arm64"
+  ],
+  "workspaces": {
+    "packages": [
+      "sdk/",
+      "core/"
+    ]
+  },
+  "lint-staged": {
+    "*.ts": [
+      "tsc --pretty --noEmit --esModuleInterop",
+      "eslint . --ext .ts",
+      "prettier --write",
+      "npx cspell '**/*.ts'"
+    ],
+    "*.json": "prettier --write",
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
+  },
+  "dependencies": {
+    "@types/aws-lambda": "^8.10.108",
+    "@types/babel__core": "^7.20.0",
+    "@types/node": "^18.11.7",
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
+    "@typescript-eslint/parser": "^5.54.0",
+    "cspell": "^5.13.3",
+    "eslint": "^7.30.0",
+    "husky": "^7.0.4",
+    "lint-staged": ">=10",
+    "prettier": "^2.3.2",
+    "ts-node": "^10.7.0",
+    "typescript": "^5.0.2",
+    "tsconfig-paths": "^4.2.0"
+  }
+}
