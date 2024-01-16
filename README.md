@@ -1,15 +1,15 @@
 [![Sinapsis - We make it simple](https://s3.amazonaws.com/sinapsis.co/branding/cc-github-cover.jpg?)](https://sinapsis.co/)
 
-[![serverless](http://public.serverless.com/badges/v3.svg)]()
-[![npm](https://img.shields.io/npm/v/%40sinapsis-cloud-components%2Fcore?style=flat)](https://www.npmjs.com/package/%40sinapsis-cloud-components%2Fcore)
-[![awssdk](https://img.shields.io/badge/aws_sdk-2.118.0-blue?style=flat)](https://aws.amazon.com/es/sdk-for-javascript)
-[![awsCdk](https://img.shields.io/badge/aws_cdk-2.118.0-blue?style=flat)](https://aws.amazon.com/es/cdk/)
+![serverless](http://public.serverless.com/badges/v3.svg)
+<a href="https://www.npmjs.com/package/%40sinapsis-cloud-components%2Fcore" target="_blank">![npm](https://img.shields.io/npm/v/%40sinapsis-cloud-components%2Fcore?style=flat)</a>
+<a href="https://aws.amazon.com/es/sdk-for-javascript" target="_blank">![awssdk](https://img.shields.io/badge/aws_sdk-2.118.0-blue?style=flat)</a>
+<a href="https://aws.amazon.com/es/cdk/" target="_blank">![awsCdk](https://img.shields.io/badge/aws_cdk-2.118.0-blue?style=flat)</a>
 
-[Website](https://sinapsis.co/) • [Community Slack](https://sinapsisco.slack.com/archives/C06DPUXHT4H/) • [Meetups](https://www.meetup.com/pro/serverless/)
+<a href="https://sinapsis.co/" target="_blank">Website</a> • <a href="https://sinapsisco.slack.com/archives/C06DPUXHT4H/" target="_blank">Community Slack</a> • <a href="https://www.meetup.com/es-ES/serverless-architectures/" target="_blank">Meetups</a>
 
 **Sinapsis Cloud Components** – Streamlines the development of modern full-stack serverless applications on AWS by integrating best practices aligned with the core principles of the AWS Well-Architected Framework: Operational Excellence, Security, Reliability, Performance Efficiency, Cost Optimization, and Sustainability. This platform ensures efficient development, auto-scaling capabilities, and cost-effectiveness, empowering you to concentrate on building more business features while minimizing management efforts in your serverless applications. With Sinapsis Cloud Components, we embody the belief in knowledge-as-code, providing a library that enhances ease of use and adaptability in serverless application development. At Sinapsis, we love to empower dev teams to build and manage Serverless Apps with confidence and innovation.
 
-Actively maintained by [Sinapsis](https://sinapsis.co).
+Actively maintained by <a href="https://sinapsis.co/" target="_blank">Sinapsis</a>.
 
 # Contents
 
@@ -46,14 +46,16 @@ The CC Framework isn't just about technologies; it's about our commitment to eng
 
 # <a name="contributing"></a>Contributing
 
-Every contribution will be welcomed! Take a look at our [ToDo list](https://github.com/sinapsis-co/cloud-components/issues) to identify the tasks we’re working on, thanks to your help.
+Every contribution will be welcomed! Take a look at our <a href="https://github.com/sinapsis-co/cloud-components/issues" target="_blank">ToDo list</a> to identify the tasks we’re working on, thanks to your help.
 
 # <a name="c"></a>Community
 
-- [Linkedin](https://www.linkedin.com/company/sinapsis.co/)
-- [Slack](https://sinapsisco.slack.com/archives/C06DPUXHT4H)
-- [Meetups](https://www.meetup.com/pro/serverless/)
-- [Contact Us](https://sinapsis.co/aws/serverless.html#contact)
+<ul>
+  <li><a href="https://www.linkedin.com/company/sinapsis.co/" target="_blank">Linkedin</a></li>
+  <li><a href="https://sinapsisco.slack.com/archives/C06DPUXHT4H" target="_blank">Slack</a></li>
+  <li><a href="https://www.meetup.com/es-ES/serverless-architectures/" target="_blank">Meetups</a></li>
+  <li><a href="https://sinapsis.co/aws/serverless.html#contact" target="_blank">Contact Us</a></li>
+</ul>
 
 # <a name="license"></a>License
 
