@@ -1,4 +1,4 @@
-[![Sinapsis - We make it simple](https://s3.amazonaws.com/sinapsis.co/branding/cc-github-cover.jpg)](https://sinapsis.co/)
+[![Sinapsis - We make it simple](https://s3.amazonaws.com/sinapsis.co/branding/cc-github-cover.jpg?)](https://sinapsis.co/)
 
 [![serverless](http://public.serverless.com/badges/v3.svg)]()
 [![npm](https://img.shields.io/npm/v/%40sinapsis-cloud-components%2Fcore?style=flat)](https://www.npmjs.com/package/%40sinapsis-cloud-components%2Fcore)
