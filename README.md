@@ -3,7 +3,7 @@
 ![serverless](http://public.serverless.com/badges/v3.svg)
 <a href="https://www.npmjs.com/package/%40sinapsis-cloud-components%2Fcore" target="_blank">![npm](https://img.shields.io/npm/v/%40sinapsis-cloud-components%2Fcore?style=flat)</a>
 <a href="https://aws.amazon.com/es/sdk-for-javascript" target="_blank">![awssdk](https://img.shields.io/badge/aws_sdk-2.118.0-blue?style=flat)</a>
-<a href="https://aws.amazon.com/es/cdk/" target="_blank">![awsCdk](https://img.shields.io/badge/aws_cdk-2.118.0-blue?style=flat)</a>
+<a href="https://aws.amazon.com/es/cdk/" target="_blank">![awsCdk](https://img.shields.io/badge/aws_cdk-2.118.0-blue?style=flat)</a> 
 
 <a href="https://sinapsis.co/" target="_blank">Website</a> • <a href="https://sinapsisco.slack.com/archives/C06DPUXHT4H/" target="_blank">Community Slack</a> • <a href="https://www.meetup.com/es-ES/serverless-architectures/" target="_blank">Meetups</a>
 
