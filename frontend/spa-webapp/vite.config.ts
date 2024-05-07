@@ -18,6 +18,9 @@ export default defineConfig({
     ]),
     tsconfigPaths(),
   ],
+  define: {
+    'process.env': {},
+  },
   optimizeDeps: {
     esbuildOptions: {
       // Node.js global to browser globalThis

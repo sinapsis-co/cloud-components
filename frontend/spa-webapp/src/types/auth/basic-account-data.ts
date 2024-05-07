@@ -4,6 +4,5 @@ export interface BasicAccountData {
   password: string;
   given_name?: string;
   family_name?: string;
-  ['custom:university']?: string;
   ['custom:tenantId']?: string;
 }

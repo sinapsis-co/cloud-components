@@ -1,6 +1,6 @@
-import { getToken } from './auth';
+import { getToken } from '../actions/auth/amplify-actions';
 
-const API_DOMAIN = process.env.REACT_APP_API_URL || '';
+const API_DOMAIN = process.env.VITE_APP_API_URL || '';
 
 export class ApiException extends Error {
   public errorCode: string;
@@ -15,13 +15,25 @@ export class ApiException extends Error {
   }
 }
 
-export type ApiClient = (endpoint: string, method: string, data?: unknown, isPublic?: boolean) => Promise<Response>;
+export type ApiClient = (
+  endpoint: string,
+  method: string,
+  data?: unknown,
+  isPublic?: boolean,
+  optionalHeaders?: Record<string, string>
+) => Promise<Response>;
 
 export const getFullUrl = (service: string, endpoint: string): string => `${API_DOMAIN}${service}${endpoint}`;
 
 export const CallApi =
   (service: string): ApiClient =>
-  async (endpoint: string, method: string, body?: unknown, isPublic?: boolean) => {
+  async (
+    endpoint: string,
+    method: string,
+    body?: unknown,
+    isPublic?: boolean,
+    optionalHeaders?: Record<string, string>
+  ) => {
     const token = await getToken();
     const headers = new Headers();
 
@@ -31,6 +43,12 @@ export const CallApi =
 
     if (token) {
       headers.append('Authorization', token);
+    }
+
+    if (optionalHeaders) {
+      Object.keys(optionalHeaders).forEach((key) => {
+        headers.append(key, optionalHeaders[key]);
+      });
     }
 
     headers.append('Content-Type', 'application/json');

@@ -12,6 +12,8 @@ import ContentImage from '@webapp/components/layout/content-image';
 import ContentWrapper from '@webapp/components/layout/content-wrapper';
 import HalfAndHalf from '@webapp/components/layout/half-and-half';
 import { useIsMobile } from '@webapp/hooks/is-mobile';
+import { useLoginMutation } from '@webapp/lib/apis/cc-backend/queries-mutations/auth/login';
+import { useAuthStore } from '@webapp/store/auth';
 
 import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded';
 import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
@@ -34,6 +36,29 @@ const SignInPage: FunctionComponent<SignInPageProps> = ({ className }) => {
   const { formatMessage } = useIntl();
   const colorMode = theme.palette.mode;
 
+  const [emailHasAutoFilled, setEmailHasAutoFilled] = useState<boolean>(false);
+  const [passwordHasAutoFilled, setPasswordHasAutoFilled] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+  const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
+
+  const useLogInMutation = useLoginMutation({
+    loginData: {
+      email,
+      password,
+    },
+    handleSuccess: () => {
+      setLoggedIn(true);
+      navigate('/home');
+    },
+    handleError: (error) => {
+      console.error(error);
+    },
+  });
+
   const makeAnimationStartHandler = (
     stateSetter: (value: boolean) => void
   ): ((e: React.AnimationEvent<HTMLInputElement | HTMLTextAreaElement>) => void) => {
@@ -49,23 +74,13 @@ const SignInPage: FunctionComponent<SignInPageProps> = ({ className }) => {
     };
   };
 
-  const [emailHasAutoFilled, setEmailHasAutoFilled] = useState<boolean>(false);
-  const [passwordHasAutoFilled, setPasswordHasAutoFilled] = useState<boolean>(false);
-
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
-
   const hasValue = (value: string) => value !== '';
 
   const isLoginLoading = false;
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // TODO: this is only for demo.
-    navigate('/step-1');
+    useLogInMutation.mutate();
     return;
   };
 
