@@ -1,0 +1,148 @@
+// Define your color variables
+$primaryMain: '#F9A825';
+$primaryDark: '#CC7E00';
+$primaryLight: '#FFECAD';
+$contrastText: '#16181d';
+
+$secondaryMain: '#007FFF';
+$secondaryDark: '#0057b3';
+$secondaryLight: '#66a3ff';
+
+$success: '#1dac64';
+$successLight: '#58d681';
+$successDark: '#0e6d3c';
+
+$error: '#dc2a2a';
+$errorLight: '#f05959';
+$errorDark: '#9e0000';
+
+$warning: '#ff9a00';
+$warningLight: '#ffc149';
+$warningDark: '#c66c00';
+
+$textPrimary: '#212b36';
+$textSecondary: '#526666';
+$textDisabled: '#B4BDBD';
+$commonWhite: '#FFFFFF';
+$grey100: '#202124';
+$grey300: '#42525e';
+$greyPaper: '#F0F0F2';
+$grey100Light: '#F9FBFC';
+$grey300Light: '#E6E6E6';
+$contrastBackgroundDark: '#161616';
+$contrastBackgroundLight: '#F8FAFC';
+
+// Define your font variables
+$projectFont: 'Montserrat';
+
+:root {
+  --primary-main: #{$primaryMain};
+  --primary-dark: #{$primaryDark};
+  --primary-light: #{$primaryLight};
+  --contrast-text: #{$contrastText};
+
+  --secondary-main: #{$secondaryMain};
+  --secondary-dark: #{$secondaryDark};
+  --secondary-light: #{$secondaryLight};
+
+  --success: #{$success};
+  --success-light: #{$successLight};
+  --success-dark: #{$successDark};
+
+  --error: #{$error};
+  --error-light: #{$errorLight};
+  --error-dark: #{$errorDark};
+
+  --warning: #{$warning};
+  --warning-light: #{$warningLight};
+  --warning-dark: #{$warningDark};
+
+  --text-primary: #{$textPrimary};
+  --text-secondary: #{$textSecondary};
+  --text-disabled: #{$textDisabled};
+
+  --common-white: #{$commonWhite};
+  --grey-100: #{$grey100};
+  --grey-300: #{$grey300};
+  --grey-paper: #{$greyPaper};
+  --grey-100-light: #{$grey100Light};
+  --grey-300-light: #{$grey300Light};
+  --contrast-background-dark: #{$contrastBackgroundDark};
+  --contrast-background-light: #{$contrastBackgroundLight};
+  --background-default: #{$contrastBackgroundDark}; // Add background color here
+  --fontFamily: #{$projectFont}, 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+
+  [data-theme='light'] {
+    --primary-main: #{$primaryMain};
+    --primary-dark: #{$primaryDark};
+    --primary-light: #{$primaryLight};
+    --contrast-text: #{$contrastText};
+
+    --secondary-main: #{$secondaryMain};
+    --secondary-dark: #{$secondaryDark};
+    --secondary-light: #{$secondaryLight};
+
+    --success: #{$success};
+    --success-light: #{$successLight};
+    --success-dark: #{$successDark};
+
+    --error: #{$error};
+    --error-light: #{$errorLight};
+    --error-dark: #{$errorDark};
+
+    --warning: #{$warning};
+    --warning-light: #{$warningLight};
+    --warning-dark: #{$warningDark};
+
+    --text-primary: #{$textPrimary};
+    --text-secondary: #{$textSecondary};
+    --text-disabled: #{$textDisabled};
+
+    --common-white: #{$commonWhite};
+    --grey-100: #{$grey100};
+    --grey-300: #{$grey300};
+    --grey-paper: #{$greyPaper};
+    --grey-100-light: #{$grey100Light};
+    --grey-300-light: #{$grey300Light};
+    --contrast-background-dark: #{$contrastBackgroundDark};
+    --contrast-background-light: #{$contrastBackgroundLight};
+    --background-default: #{$contrastBackgroundLight}; // Add background color here
+  }
+}
+
+.grecaptcha-badge {
+  background-color: var(--background-default);
+  z-index: 1000;
+}
+
+html {
+  font-family: var(--font-family);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  overscroll-behavior: none;
+
+  ::selection {
+    background: var(--primary-main);
+    color: var(--contrast-text);
+  }
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  color: var(--text-primary);
+  background-color: var(--background-default);
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button:focus-visible {
+  outline: 4px auto var(--primary-dark);
+}
