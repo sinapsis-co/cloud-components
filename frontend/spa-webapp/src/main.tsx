@@ -13,6 +13,7 @@ import { StyledMaterialDesignContent } from './configuration/material-ui/theme';
 import './index.scss';
 import reportWebVitals from './reportWebVitals';
 import { TranslationsProvider } from './translations';
+import { SnackbarUtilsConfigurator } from './components/snackbar';
 
 // import { BugsnagInitializer, ELEMENTS_OPTIONS, GTMInitializer, stripePromise } from './3rd-party-initializer';
 
@@ -52,6 +53,7 @@ root.render(
               warning: StyledMaterialDesignContent,
             }}
           >
+            <SnackbarUtilsConfigurator />
             <App />
           </SnackbarProvider>
           {/* </Elements> */}

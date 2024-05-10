@@ -21,6 +21,7 @@
   "COMMON.PASSWORD.MATCH": "Please enter a different password",
   "AUTH.SIGN_IN.ERRORS.NotAuthorizedException": "Incorrect email or password.",
   "AUTH.SIGN_IN.ERRORS.UserNotConfirmedException": "The email address is not verified",
+  "AUTH.SIGN_IN.ERRORS.Auth UserPool not configured.": "Auth UserPool not configured",
   "AUTH.SIGN_IN.TITLE": "Welcome back!",
   "AUTH.SIGN_IN.SUBTITLE": "Sign in to your account.",
   "AUTH.SIGN_IN.LOGIN.FAIL": "The email address or password is incorrect",
@@ -84,4 +85,5 @@
   "AUTH.VERIFICATION_CODE.RESEND_CODE.LINK.SENDING.LABEL": "Sending code...",
   "AUTH.VERIFICATION_CODE.RESEND_CODE.LINK.SENT.LABEL": "Your code has been sent",
   "AUTH.PASSWORD_CHANGE.SUCCESS": "Password successfully changed"
+  
 }

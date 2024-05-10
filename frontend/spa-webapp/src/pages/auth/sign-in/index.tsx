@@ -13,7 +13,6 @@ import ContentWrapper from '@webapp/components/layout/content-wrapper';
 import HalfAndHalf from '@webapp/components/layout/half-and-half';
 import { useIsMobile } from '@webapp/hooks/is-mobile';
 import { useLoginMutation } from '@webapp/lib/apis/cc-backend/queries-mutations/auth/login';
-import { useAuthStore } from '@webapp/store/auth';
 
 import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded';
 import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
@@ -43,21 +42,7 @@ const SignInPage: FunctionComponent<SignInPageProps> = ({ className }) => {
   const [password, setPassword] = useState<string>('');
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
-
-  const useLogInMutation = useLoginMutation({
-    loginData: {
-      email,
-      password,
-    },
-    handleSuccess: () => {
-      setLoggedIn(true);
-      navigate('/home');
-    },
-    handleError: (error) => {
-      console.error(error);
-    },
-  });
+  const { mutate: loginMutation } = useLoginMutation();
 
   const makeAnimationStartHandler = (
     stateSetter: (value: boolean) => void
@@ -80,7 +65,15 @@ const SignInPage: FunctionComponent<SignInPageProps> = ({ className }) => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    useLogInMutation.mutate();
+    loginMutation({
+      loginData: { email, password },
+      onError: () => {
+        console.log('Error');
+      },
+      onSuccess: () => {
+        console.log('Success');
+      },
+    });
     return;
   };
 
