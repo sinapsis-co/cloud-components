@@ -1,6 +1,6 @@
 /* eslint-disable quotes */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { getBucketName } from '@sinapsis-cloud-components/core/common/naming/get-resource-name';
+import { getBucketName } from 'common/naming/get-resource-name';
 import { RemovalPolicy } from 'aws-cdk-lib';
 import * as awsCodebuild from 'aws-cdk-lib/aws-codebuild';
 import { Artifact, Pipeline } from 'aws-cdk-lib/aws-codepipeline';
@@ -70,16 +70,6 @@ export class DeployPipelinePrefab extends Construct {
         computeType: awsCodebuild.ComputeType.LARGE,
         buildImage: awsCodebuild.LinuxBuildImage.STANDARD_7_0,
       },
-      environmentVariables: {
-        GITHUB_TOKEN: {
-          type: awsCodebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
-          value: 'pipeline-default-repository-token',
-        },
-        DEPLOY_WORKER_ROLE: {
-          type: awsCodebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
-          value: 'pipeline-deploy-worker-role',
-        },
-      },
       buildSpec: awsCodebuild.BuildSpec.fromObject({
         version: '0.2',
         phases: {
@@ -104,6 +94,18 @@ export class DeployPipelinePrefab extends Construct {
         },
       }),
       ...params.codeBuildProjectParams,
+      // I put this at the end because we need to prevent to override the environment variables
+      environmentVariables: {
+        GITHUB_TOKEN: {
+          type: awsCodebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
+          value: 'pipeline-default-repository-token',
+        },
+        DEPLOY_WORKER_ROLE: {
+          type: awsCodebuild.BuildEnvironmentVariableType.PARAMETER_STORE,
+          value: 'pipeline-deploy-worker-role',
+        },
+        ...params.codeBuildProjectParams?.environmentVariables,
+      },
     });
 
     const deployAction = new CodeBuildAction({

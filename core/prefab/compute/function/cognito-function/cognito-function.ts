@@ -7,13 +7,13 @@ import { getLogicalName } from 'common/naming/get-logical-name';
 import { Service } from 'common/service';
 import { SynthError } from 'common/synth/synth-error';
 
-import { BaseFunction, BaseFunctionParams, BaseHandlerParams } from '../base-function';
+import { BaseFunction, BaseAggregateParams, BaseHandlerParams } from '../base-function';
 
 export type CognitoHandlerParams = BaseHandlerParams & {
   operation: UserPoolOperation;
 };
 
-export type CognitoFunctionParams = BaseFunctionParams & {
+export type CognitoFunctionParams = BaseAggregateParams & {
   userPool: UserPool;
 };
 

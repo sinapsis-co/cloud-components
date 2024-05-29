@@ -1,7 +1,7 @@
 import { HostedZone, NsRecord } from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
 
-import { getDomain } from '@sinapsis-cloud-components/core/common/naming/get-domain';
+import { getDomain } from 'common/naming/get-domain';
 import { getLogicalName } from 'common/naming/get-logical-name';
 import { Service } from 'common/service';
 

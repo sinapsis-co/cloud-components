@@ -1,4 +1,4 @@
-import { Model } from '@sinapsis-cloud-components/sdk/model';
+import { Model } from 'model';
 import { dynamodb } from './client';
 import { batchGet } from './ops-view/batch-get';
 import { batchWrite } from './ops-view/batch-write';

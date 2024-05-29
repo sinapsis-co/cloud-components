@@ -1,4 +1,5 @@
 import { ConditionCheck, Delete, Put, Update } from '@aws-sdk/client-dynamodb';
+import { KeysAndAttributes } from '@aws-sdk/client-dynamodb/dist-types/models/models_0';
 import * as Dynamo from '@aws-sdk/lib-dynamodb';
 import { NativeAttributeValue } from '@aws-sdk/util-dynamodb/dist-types/models';
 import { PaginatedResponse } from 'catalog/api';
@@ -9,12 +10,10 @@ export type TransactWriteFn<M extends Model> = (ops: BatchOps<M>) => Promise<voi
 
 export type BatchGetFn<M extends Model, T extends TableStoreBuilder> = (
   keys: T['keyMapping'][],
-  autoRetry?: boolean
+  params?: Omit<KeysAndAttributes, 'Keys'> & { AutoRetry?: boolean }
 ) => Promise<(M['Entity'] | undefined)[]>;
 
-export type BatchWriteFn<M extends Model> = (
-  ops: Omit<BatchOps<M>, 'updateItems' | 'conditionCheck'>
-) => Promise<void | void[]>;
+export type BatchWriteFn<M extends Model> = (ops: Omit<BatchOps<M>, 'updateItems' | 'conditionCheck'>) => Promise<void | void[]>;
 
 export type ScanFn<M extends Model> = (
   queryParams?: { limit?: string; nextToken?: string },
@@ -28,11 +27,7 @@ export type QueryFn<M extends Model> = (
   params?: Partial<Dynamo.QueryCommandInput>
 ) => Promise<PaginatedResponse<M['Entity']>>;
 
-export type QueryIndexFn<
-  M extends Model,
-  GenericIndexName extends string | number | symbol,
-  AttIndexName extends string | number | symbol
-> = (
+export type QueryIndexFn<M extends Model, GenericIndexName extends string | number | symbol, AttIndexName extends string | number | symbol> = (
   index: GenericIndexName | AttIndexName,
   keyCondition: string,
   attributesMap: Record<string, any>,

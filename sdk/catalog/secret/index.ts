@@ -10,4 +10,5 @@ export type SecretInterface<keys extends SecretInterfaceKeys = SecretInterfaceKe
 
 export type SecretConfig<Event extends SecretInterface = SecretInterface> = {
   name: Event['name'];
+  envName?: string; 
 };

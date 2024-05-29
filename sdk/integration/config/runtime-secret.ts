@@ -4,17 +4,17 @@ import { SecretConfig, SecretInterface } from 'catalog/secret';
 import { PlatformFault } from 'error';
 import { Tracing, traceableFunction } from 'tracing';
 
-const _secrets = {};
+const _secrets: Record<string, unknown> = {};
 
 export const sm: SecretsManagerClient = Tracing.captureIntegration(new SecretsManagerClient({}) as any);
 
-export const getRuntimeSecret = async <Secret extends SecretInterface = SecretInterface>(
-  secretConfig: SecretConfig,
+export const getRuntimeSecret = async <Secret extends SecretInterface>(
+  secretConfig: SecretConfig<Secret>,
   secretArn?: string
 ): Promise<Secret['payload']> => {
   const cmd = async () => {
     if (!_secrets[secretConfig.name]) {
-      if (!secretArn) secretArn = process.env[secretConfig.name]!;
+      if (!secretArn) secretArn = process.env[secretConfig.envName || secretConfig.name]!;
       if (!secretArn) throw new PlatformFault({ code: 'FAULT_SM_MISSING_SECRET', detail: secretArn });
       const response = await sm.send(new GetSecretValueCommand({ SecretId: secretArn }));
       const secret: Secret['payload'] = JSON.parse(response.SecretString!);

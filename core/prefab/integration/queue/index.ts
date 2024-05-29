@@ -2,7 +2,7 @@ import { Duration } from 'aws-cdk-lib';
 import { Queue, QueueProps } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 
-import { Modifier } from '@sinapsis-cloud-components/core/common/modifier';
+import { Modifier } from 'common/modifier';
 import { EventConfig } from '@sinapsis-cloud-components/sdk/catalog/event';
 import { Rule } from 'aws-cdk-lib/aws-events';
 import { SqsQueue } from 'aws-cdk-lib/aws-events-targets';

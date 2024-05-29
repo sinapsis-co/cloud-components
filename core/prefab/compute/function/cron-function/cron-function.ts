@@ -6,13 +6,13 @@ import { Construct } from 'constructs';
 import { getLogicalName } from 'common/naming/get-logical-name';
 import { Service } from 'common/service';
 
-import { BaseFunction, BaseFunctionParams, BaseHandlerParams } from '../base-function';
+import { BaseFunction, BaseAggregateParams, BaseHandlerParams } from '../base-function';
 
 export type CronHandlerParams = BaseHandlerParams & {
   cronOptions: CronOptions;
 };
 
-export type CronFunctionParams = BaseFunctionParams;
+export type CronFunctionParams = BaseAggregateParams;
 
 export class CronFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;

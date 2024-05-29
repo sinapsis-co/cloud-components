@@ -8,13 +8,13 @@ import { getLogicalName } from 'common/naming/get-logical-name';
 import { getShortResourceName } from 'common/naming/get-resource-name';
 import { Service } from 'common/service';
 
-import { BaseFunction, BaseFunctionParams, BaseHandlerParams } from '../base-function';
+import { BaseFunction, BaseAggregateParams, BaseHandlerParams } from '../base-function';
 
 export type EventHandlerParams = BaseHandlerParams & {
   eventConfig: EventConfig[];
 };
 
-export type EventFunctionParams = BaseFunctionParams;
+export type EventFunctionParams = BaseAggregateParams;
 export class EventFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
 

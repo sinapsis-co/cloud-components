@@ -1,7 +1,7 @@
 import { ApiDefinition, ApiInterface, TablePermission } from '@sinapsis-cloud-components/sdk/catalog/api';
-import { Duration } from 'aws-cdk-lib';
+import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
-import { Architecture, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
+import { Alias, Architecture, Runtime, Tracing, Version } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 
@@ -12,23 +12,27 @@ import { Service } from 'common/service';
 
 import { EventBusPrefab } from 'prefab/integration/event-bus';
 import { DynamoTablePrefab } from 'prefab/storage/dynamo/table';
+import { Modifier } from 'common/modifier';
+import { LambdaDeploymentConfig, LambdaDeploymentGroup } from 'aws-cdk-lib/aws-codedeploy';
 
 export const FUNCTION_DEFAULT_TIMEOUT = 6;
 
 export type BaseHandlerParams = NodejsFunctionProps & {
   name: ApiDefinition<ApiInterface>['name'];
-  modifiers?: ((lambda: NodejsFunction) => any)[];
+  modifiers?: Modifier[];
   environment?: Record<string, string>;
   architecture?: Architecture;
   tablePermission?: TablePermission;
+  provisionedConcurrentExecutions?: number;
 };
 
-export type BaseFunctionParams = {
+export type BaseAggregateParams = {
   baseFunctionFolder?: string;
   baseFunctionString?: string;
+  globalConfigs?: NodejsFunctionProps;
   eventBus?: EventBusPrefab;
   tablePrefab?: DynamoTablePrefab;
-  modifiers?: ((lambda: NodejsFunction) => any)[];
+  modifiers?: Modifier[];
   environment?: Record<string, string>;
   compiled?: true;
   tracingDisabled?: true;
@@ -36,8 +40,9 @@ export type BaseFunctionParams = {
 
 export class BaseFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;
+  public readonly aliasFunction: Alias;
 
-  constructor(service: Service, params: BaseHandlerParams & BaseFunctionParams) {
+  constructor(service: Service, params: BaseHandlerParams & BaseAggregateParams) {
     super(service, getLogicalName(BaseFunction.name, params.name));
 
     const role = new Role(this, getLogicalName('role', params.name), {
@@ -58,10 +63,9 @@ export class BaseFunction extends Construct {
       tracing: params.tracingDisabled ? Tracing.DISABLED : Tracing.ACTIVE,
       timeout: Duration.seconds(FUNCTION_DEFAULT_TIMEOUT),
       functionName: getShortResourceName(params.name, service.props),
-      entry: params.baseFunctionString
-        ? params.baseFunctionString
-        : getFunctionEntry(params.baseFunctionFolder!, params.name, params.compiled),
+      entry: params.baseFunctionString || getFunctionEntry(params.baseFunctionFolder!, params.name, params.compiled),
       architecture: params.architecture || Architecture.ARM_64,
+      ...params.globalConfigs,
       ...params,
       environment: {
         CC_SERVICE: service.props.serviceName,
@@ -70,10 +74,19 @@ export class BaseFunction extends Construct {
         ...params.environment,
       },
     });
+
+    const version = Version.fromVersionArn(this, 'LambdaVersion', this.lambdaFunction.currentVersion.functionArn);
+
+    this.aliasFunction = new Alias(this, 'LambdaAlias', {
+      aliasName: service.props.envName,
+      version,
+      provisionedConcurrentExecutions: params.provisionedConcurrentExecutions || 0,
+    });
+
     this.lambdaFunction.addEnvironment('CC_FUNCTION_TIMEOUT', this.lambdaFunction.timeout!.toSeconds().toString());
     if (!params.tracingDisabled) this.lambdaFunction.addEnvironment('CC_TRACING', 'true');
 
-    if (params.vpc) {
+    if (this.lambdaFunction.isBoundToVpc) {
       role.addToPolicy(
         new PolicyStatement({
           actions: [

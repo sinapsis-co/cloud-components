@@ -1,6 +1,6 @@
 {
   "name": "@sinapsis-cloud-components/sdk",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "author": "sinapsis.co",
   "license": "MIT",
   "repository": "git://github.com/sinapsis-co/cloud-components.git",
@@ -35,6 +35,7 @@
     "@aws-sdk/rds-signer": "^3.315.0",
     "@aws-sdk/s3-presigned-post": "^3.284.0",
     "@aws-sdk/s3-request-presigner": "^3.282.0",
+    "@sinapsis-co/cc-sdk": "^3.0.7",
     "aws-lambda": "^1.0.7",
     "aws-xray-sdk-core": "^3.4.1",
     "dayjs": "^1.11.0",

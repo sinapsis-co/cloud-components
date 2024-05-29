@@ -9,13 +9,16 @@ import { UpdateItemFn } from '../types/ops-repo';
 import { TableStoreBuilder } from '../types/table-store-builder';
 import { updateMapper } from '../util/update-mapper';
 
-export const updateItem = <T extends TableStoreBuilder, M extends Model>(
-  operationConfig: RepoOpConfig<T, M>
-): UpdateItemFn<M> => {
+export const updateItem = <T extends TableStoreBuilder, M extends Model>(operationConfig: RepoOpConfig<T, M>): UpdateItemFn<M> => {
   return async (
     key: M['Key'],
     body: Partial<M['Body']>,
-    params?: Partial<UpdateCommandInput> & { emitEvent?: boolean }
+    params?: Partial<UpdateCommandInput> & {
+      emitEvent?: boolean;
+      extraUpdateExpression?: string;
+      extraAttributeValues?: UpdateCommandInput['ExpressionAttributeValues'];
+      extraAttributeNames?: UpdateCommandInput['ExpressionAttributeNames'];
+    }
   ): Promise<M['Entity']> => {
     const tableName = process.env[operationConfig.dynamoTableNameEnvVar]!;
 
@@ -29,13 +32,14 @@ export const updateItem = <T extends TableStoreBuilder, M extends Model>(
             TableName: tableName,
             Key: serializedKey,
             ReturnValues: 'ALL_NEW',
-            ...mapper,
+            UpdateExpression: params?.UpdateExpression ? `${mapper.UpdateExpression}, ${params.extraUpdateExpression}` : mapper.UpdateExpression,
+            ExpressionAttributeNames: { ...mapper.ExpressionAttributeNames, ...params?.extraAttributeNames },
+            ExpressionAttributeValues: { ...mapper.ExpressionAttributeValues, ...params?.extraAttributeValues },
             ...params,
           })
         )
         .catch((e) => {
-          if (e.name === 'ConditionalCheckFailedException')
-            throw new PlatformError({ code: 'ERROR_CONDITIONAL_CHECK_FAILED', statusCode: 400 });
+          if (e.name === 'ConditionalCheckFailedException') throw new PlatformError({ code: 'ERROR_CONDITIONAL_CHECK_FAILED', statusCode: 400 });
           else throw e;
         });
 
@@ -44,10 +48,7 @@ export const updateItem = <T extends TableStoreBuilder, M extends Model>(
       const entity: M['Entity'] = operationConfig.entityDeserialize(Attributes as M['Entity']);
 
       if (params?.emitEvent) {
-        await dispatchEvent<M['Events']['updated']>(
-          { name: `app.${operationConfig.type}.updated`, source: 'app' },
-          entity
-        );
+        await dispatchEvent<M['Events']['updated']>({ name: `app.${operationConfig.type}.updated`, source: 'app' }, entity);
       }
 
       return entity;

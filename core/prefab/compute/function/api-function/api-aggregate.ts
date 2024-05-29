@@ -13,7 +13,7 @@ import { ApiRestPrefab } from 'prefab/gateway/api/api-rest';
 import { CdnApiPrefab } from 'prefab/gateway/cdn-api';
 import { DynamoTablePrefab } from 'prefab/storage/dynamo/table';
 
-import { BaseFunctionParams } from '../base-function';
+import { BaseAggregateParams } from '../base-function';
 import { ApiFunction, ApiHandlerParams } from './api-function';
 
 export type ApiAuthPoolParams = {
@@ -21,7 +21,7 @@ export type ApiAuthPoolParams = {
   userPoolClient?: UserPoolClient;
 };
 
-export type ApiAggregateParams<HandlerName extends string = string> = BaseFunctionParams & {
+export type ApiAggregateParams<HandlerName extends string = string> = BaseAggregateParams & {
   basePath: string;
   handlers: Record<HandlerName, ApiHandlerParams>;
   cdnApiPrefab: CdnApiPrefab | undefined;

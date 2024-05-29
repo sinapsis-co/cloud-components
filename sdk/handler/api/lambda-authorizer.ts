@@ -1,4 +1,4 @@
-import { ApiInterface, ApiInterfaceRequest } from '@sinapsis-cloud-components/sdk/catalog/api';
+import { ApiInterface, ApiInterfaceRequest } from 'catalog/api';
 import { APIGatewayProxyEventV2WithJWTAuthorizer } from 'aws-lambda';
 
 export type SuccessfulAuthorizationResult<ExtraData> = { authorized: true } & ExtraData;

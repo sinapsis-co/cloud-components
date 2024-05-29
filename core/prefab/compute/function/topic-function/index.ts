@@ -8,7 +8,7 @@ import { Service } from 'common/service';
 
 import { CustomTopicParams, TopicPrefab } from 'prefab/integration/topic';
 
-import { BaseFunction, BaseFunctionParams, BaseHandlerParams } from '../base-function';
+import { BaseFunction, BaseAggregateParams, BaseHandlerParams } from '../base-function';
 
 export type TopicHandlerParams = BaseHandlerParams & {
   topic?: TopicPrefab;
@@ -17,7 +17,7 @@ export type TopicHandlerParams = BaseHandlerParams & {
   batchWindow?: Duration;
 };
 
-export type TopicFunctionParams = BaseFunctionParams;
+export type TopicFunctionParams = BaseAggregateParams;
 
 export class TopicFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;

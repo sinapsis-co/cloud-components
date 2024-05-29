@@ -16,9 +16,7 @@ type Handler<Payload> = (event: SQSEvent, record: SQSRecord, payload: Payload) =
  * @returns void
  */
 
-export const queueBatchHandler = <Payload>(
-  handler: Handler<Payload>
-): ((event: SQSEvent) => Promise<SQSBatchResponse>) => {
+export const queueBatchHandler = <Payload>(handler: Handler<Payload>): ((event: SQSEvent) => Promise<SQSBatchResponse>) => {
   return async (event: SQSEvent): Promise<SQSBatchResponse> => {
     const batchSize = event.Records.length;
     const promises = await Promise.allSettled(
@@ -52,9 +50,7 @@ export const queueBatchHandler = <Payload>(
     }
     // CASE: Partial success/failure
     else {
-      const toDelete: PromiseFulfilledResult<string>[] = promises.filter(
-        (p) => p.status === 'fulfilled'
-      ) as PromiseFulfilledResult<string>[];
+      const toDelete: PromiseFulfilledResult<string>[] = promises.filter((p) => p.status === 'fulfilled') as PromiseFulfilledResult<string>[];
       info({
         namespace: 'QUEUE_BATCH_FINISHED',
         size: batchSize,

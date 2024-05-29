@@ -1,5 +1,5 @@
-import { ApiInterfaceKeys, ApiInterfaceRequest } from '@sinapsis-cloud-components/sdk/catalog/api';
-import { PlatformError } from '@sinapsis-cloud-components/sdk/error';
+import { ApiInterfaceKeys, ApiInterfaceRequest } from 'catalog/api';
+import { PlatformError } from 'error';
 import { APIGatewayProxyEventV2WithJWTAuthorizer } from 'aws-lambda';
 import { Schemy } from 'schemy-ts';
 
@@ -33,6 +33,7 @@ export const paramsParser = <T>(params: Record<string, unknown> = {}): T => {
   // Replaces custom: prefix in custom claims attributes (from cognito authorizer)
   Object.keys(params).forEach((pName) => {
     if (pName.startsWith('custom:')) params[pName.replace('custom:', '')] = params[pName];
+    if (pName.startsWith('cognito:')) params[pName.replace('cognito:', '')] = params[pName];
   });
   return params as T;
 };

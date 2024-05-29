@@ -8,21 +8,22 @@ import { wait } from 'util/executers';
 import { ViewOpConfig } from '../types/config';
 import { BatchGetFn } from '../types/ops-view';
 import { TableStoreBuilder } from '../types/table-store-builder';
+import { KeysAndAttributes } from '@aws-sdk/client-dynamodb/dist-types/models/models_0';
 
 const batchGetLimit = 100;
 
 export const batchGet = <T extends TableStoreBuilder<any, any, any, any>, M extends Model>(
   operationConfig: ViewOpConfig<T, M>
 ): BatchGetFn<M, T> => {
-  return async (serializedKey: T['keyMapping'][], autoRetry?: boolean): Promise<M['Entity'][] | undefined[]> => {
+  return async (serializedKey: T['keyMapping'][], params?: Omit<KeysAndAttributes, "Keys"> & { AutoRetry?: boolean}): Promise<M['Entity'][] | undefined[]> => {
     const tableName = process.env[operationConfig.dynamoTableNameEnvVar]!;
 
     const chunk = chunkArray(serializedKey, batchGetLimit);
 
     const result = await Promise.all(
       chunk.map(async (c): Promise<M['Entity'][] | []> => {
-        const RequestItems = { [tableName]: { Keys: c } };
-        const response = await call(operationConfig.dynamoClient, RequestItems, tableName, autoRetry);
+        const RequestItems = { [tableName]: { Keys: c, ...(params ? params : {}) } };
+        const response = await call(operationConfig.dynamoClient, RequestItems, tableName, params?.AutoRetry);
         return response.map((item) => {
           return operationConfig.entityDeserialize(item as M['Entity']);
         });

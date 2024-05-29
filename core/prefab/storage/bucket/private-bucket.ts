@@ -7,7 +7,7 @@ import { Topic } from 'aws-cdk-lib/aws-sns';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 
-import { Modifier } from '@sinapsis-cloud-components/core/common/modifier';
+import { Modifier } from 'common/modifier';
 import { getLogicalName } from 'common/naming/get-logical-name';
 import { getBucketName } from 'common/naming/get-resource-name';
 import { Service } from 'common/service';

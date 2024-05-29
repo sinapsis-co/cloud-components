@@ -65,7 +65,7 @@ export class HandledFault<CustomCodes extends string = PlatformFaultCodes> exten
       errorType,
       errorCode,
       errorMessage: this.message,
-      meta,
+      meta: JSON.stringify(meta),
       stack: this.stack?.split('\n'),
     });
   }

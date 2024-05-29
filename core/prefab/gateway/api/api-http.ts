@@ -1,9 +1,13 @@
-import { CorsHttpMethod, HttpApi, HttpMethod, IHttpRouteAuthorizer } from '@aws-cdk/aws-apigatewayv2-alpha';
-import * as awsApigatewayv2AuthorizersAlpha from '@aws-cdk/aws-apigatewayv2-authorizers-alpha';
-import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
 import { ApiDefinition, ApiInterface } from '@sinapsis-cloud-components/sdk/catalog/api';
+import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations';
 import { CfnOutput, Duration, Fn } from 'aws-cdk-lib';
 import { UserPool, UserPoolClient } from 'aws-cdk-lib/aws-cognito';
+import { CorsHttpMethod, HttpApi, HttpMethod, IHttpRouteAuthorizer } from 'aws-cdk-lib/aws-apigatewayv2';
+import {
+  HttpUserPoolAuthorizer,
+  HttpLambdaAuthorizer,
+  HttpLambdaResponseType,
+} from 'aws-cdk-lib/aws-apigatewayv2-authorizers';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 
@@ -29,19 +33,15 @@ export class ApiHttpPrefab extends Construct {
     super(service, getLogicalName(ApiHttpPrefab.name));
 
     if (params.userPool && params.userPoolClient)
-      this.authorizer = new awsApigatewayv2AuthorizersAlpha.HttpUserPoolAuthorizer('Authorizer', params.userPool, {
+      this.authorizer = new HttpUserPoolAuthorizer('Authorizer', params.userPool, {
         userPoolClients: [params.userPoolClient],
         identitySource: ['$request.header.Authorization'],
       });
 
     if (params.customAuthorizerHandler)
-      this.authorizer = new awsApigatewayv2AuthorizersAlpha.HttpLambdaAuthorizer(
-        'LambdaAuthorizer',
-        params.customAuthorizerHandler,
-        {
-          responseTypes: [awsApigatewayv2AuthorizersAlpha.HttpLambdaResponseType.SIMPLE],
-        }
-      );
+      this.authorizer = new HttpLambdaAuthorizer('LambdaAuthorizer', params.customAuthorizerHandler, {
+        responseTypes: [HttpLambdaResponseType.SIMPLE],
+      });
 
     this.api = new HttpApi(this, 'HttpApi', {
       apiName: getResourceName('', service.props),

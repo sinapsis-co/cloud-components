@@ -5,11 +5,11 @@ import { getLogicalName } from 'common/naming/get-logical-name';
 import { Service } from 'common/service';
 
 import { EventBusPrefab } from 'prefab/integration/event-bus';
-import { BaseFunctionParams } from '../base-function';
+import { BaseAggregateParams } from '../base-function';
 
 import { EventFunction, EventHandlerParams } from './event-function';
 
-export type EventAggregateParams<HandlerName extends string = string> = BaseFunctionParams & {
+export type EventAggregateParams<HandlerName extends string = string> = BaseAggregateParams & {
   name?: string;
   handlers: Record<HandlerName, EventHandlerParams>;
   eventBus: EventBusPrefab;

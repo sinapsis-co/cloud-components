@@ -19,14 +19,15 @@ import { ISecret } from 'aws-cdk-lib/aws-secretsmanager';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 
-import { Modifier } from '@sinapsis-cloud-components/core/common/modifier';
-import { SynthError } from '@sinapsis-cloud-components/core/common/synth/synth-error';
+import { Modifier } from 'common/modifier';
+import { SynthError } from 'common/synth/synth-error';
 import { Fn, RemovalPolicy } from 'aws-cdk-lib';
 import { getLogicalName } from 'common/naming/get-logical-name';
 import { getResourceName, getShortResourceName } from 'common/naming/get-resource-name';
 import { Service } from 'common/service';
 import { CronAggregate } from 'prefab/compute/function/cron-function/cron-aggregate';
 import { VpcPrefab } from 'prefab/networking/vpc';
+import { BaseAggregateParams } from '../../compute/function/base-function';
 
 export type AuroraPerformanceTuning = {
   writeInstanceProps?: awsRds.ServerlessV2ClusterInstanceProps;
@@ -57,6 +58,7 @@ export type AuroraServerlessV2PrefabParams = {
 
 export class RdsClusterPrefab extends Construct {
   public readonly cluster: awsRds.DatabaseCluster;
+  public readonly securityGroupForLambda: SecurityGroup;
   public readonly securityGroup: SecurityGroup;
   public readonly securityGroupBastion: SecurityGroup;
   public readonly roleBastion: Role;
@@ -80,13 +82,19 @@ export class RdsClusterPrefab extends Construct {
       this.securityGroupBastion.addEgressRule(Peer.anyIpv4(), Port.tcp(params.port || 5432), 'RdsBastionPort');
       this.securityGroupBastion.addEgressRule(Peer.anyIpv4(), Port.tcp(params.port || 443), 'HttpsBastionPort');
 
-      // Create Role for EC2 to allow use SSMManagedIntance
+      // Create Role for EC2 to allow use SSMManagedInstance
       this.roleBastion = new Role(this, getLogicalName('role', 'ec2Bastion'), {
         assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
         roleName: getShortResourceName('ec2BastionSSM', service.props),
       });
       this.roleBastion.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'));
     }
+
+    this.securityGroupForLambda = new SecurityGroup(this, 'LambdaSecurityGroup', {
+      securityGroupName: getResourceName(`LambdaToCluster${params.clusterName}`, service.props),
+      vpc: params.vpcPrefab.vpc,
+      allowAllOutbound: true,
+    });
 
     this.securityGroup = new SecurityGroup(this, 'ClusterSecurityGroup', {
       securityGroupName: getResourceName(params.clusterName, service.props),
@@ -243,27 +251,13 @@ export class RdsClusterPrefab extends Construct {
     }
   }
 
-  // Mods
-  // public useMod(variableName = 'DB', mods: ((proxy: awsRds.DatabaseProxy) => any)[]): (lambda: NodejsFunction) => void {
-  //   return (lambda: NodejsFunction): void => {
-  //     lambda.addEnvironment(variableName, this.proxy.endpoint);
-  //     mods.map((fn) => fn(this.proxy)(lambda));
-  //   };
-  // }
+  public useClusterVpcGlobalConfigs(): BaseAggregateParams['globalConfigs'] {
+    return {
+      vpc: this.cluster.vpc,
+      securityGroups: [this.securityGroupForLambda],
+    };
+  }
 
-  // Class Mods
-  // public static modifier = {
-  //   connect: (proxy: awsRds.DatabaseProxy): ((lambda: NodejsFunction) =>   NodejsFunction) => {
-  //     return (lambda: NodejsFunction): NodejsFunction => {
-  //       proxy.grantConnect(lambda);
-  //       return lambda;
-  //     };
-  //   },
-  // };
-
-  // public useModWriter(variableName = 'DB'): (lambda: NodejsFunction) => void {
-  //   return this.useMod(variableName, [RdsClusterPrefab.modifier.connect]);
-  // }
   public useModAccess(access: 'readWrite' | 'readOnly' = 'readWrite', variableName = 'DB'): Modifier {
     return (lambda) => {
       if (!lambda.isBoundToVpc) {

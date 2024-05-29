@@ -1,8 +1,4 @@
-import type {
-  APIGatewayProxyEventV2WithJWTAuthorizer,
-  APIGatewayProxyResultV2,
-  APIGatewayProxyStructuredResultV2,
-} from 'aws-lambda';
+import type { APIGatewayProxyEventV2WithJWTAuthorizer, APIGatewayProxyResultV2, APIGatewayProxyStructuredResultV2 } from 'aws-lambda';
 
 import { ApiDefinition, ApiInterface, ApiInterfaceRequest } from 'catalog/api';
 import { PlatformError, PlatformFault } from 'error';
@@ -36,10 +32,7 @@ type ApiHandlerWithCustomFn<T extends ApiInterface> = (
   statusCode?: number;
 }>;
 
-export const apiHandler = <T extends ApiInterface>(
-  handler: ApiHandlerFn<T>,
-  apiDefinition: ApiDefinition<T>
-): RawHandlerFn => {
+export const apiHandler = <T extends ApiInterface>(handler: ApiHandlerFn<T>, apiDefinition: ApiDefinition<T>): RawHandlerFn => {
   return async (event) => {
     const tracing = new Tracing(event);
     try {

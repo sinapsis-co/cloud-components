@@ -1,3 +1,4 @@
+import { KeysAndAttributes } from '@aws-sdk/client-dynamodb/dist-types/models/models_0';
 import * as Dynamo from '@aws-sdk/lib-dynamodb';
 import { PaginatedResponse } from 'catalog/api';
 import dayjs from 'dayjs';
@@ -22,14 +23,11 @@ export type CheckItemExistsFn<M extends Model> = (
   params?: Partial<Dynamo.GetCommandInput>
 ) => Promise<{ exists: boolean; entity?: M['Entity'] }>;
 
-export type GetItemFn<M extends Model> = (
-  key: M['Key'],
-  params?: Partial<Dynamo.GetCommandInput>
-) => Promise<M['Entity']>;
+export type GetItemFn<M extends Model> = (key: M['Key'], params?: Partial<Dynamo.GetCommandInput>) => Promise<M['Entity']>;
 
 export type BatchGetItemFn<M extends Model> = (
   keys: M['Key'][],
-  autoRetry?: boolean
+  params?: Omit<KeysAndAttributes, 'Keys'> & { AutoRetry?: boolean }
 ) => Promise<M['Entity'][] | undefined[]>;
 
 export type ListItemFn<M extends Model> = (
@@ -56,19 +54,17 @@ export type SoftDeleteItemFn<M extends Model> = (
 export type UpdateItemFn<M extends Model> = (
   key: M['Key'],
   body: Partial<M['Body']>,
-  params?: Partial<Dynamo.UpdateCommandInput> & { emitEvent?: boolean }
+  params?: Partial<Dynamo.UpdateCommandInput> & {
+    emitEvent?: boolean;
+    extraUpdateExpression?: string;
+    extraAttributeValues?: Dynamo.UpdateCommandInput['ExpressionAttributeValues'];
+    extraAttributeNames?: Dynamo.UpdateCommandInput['ExpressionAttributeNames'];
+  }
 ) => Promise<M['Entity']>;
 
-export type RecoverItemFn<M extends Model> = (
-  key: M['Key'],
-  params?: Dynamo.GetCommandInput & { emitEvent?: boolean }
-) => Promise<M['Entity']>;
+export type RecoverItemFn<M extends Model> = (key: M['Key'], params?: Dynamo.GetCommandInput & { emitEvent?: boolean }) => Promise<M['Entity']>;
 
-export type ListIndexFn<
-  M extends Model,
-  GenericIndexName extends string | number | symbol,
-  AttIndexName extends string | number | symbol
-> = (
+export type ListIndexFn<M extends Model, GenericIndexName extends string | number | symbol, AttIndexName extends string | number | symbol> = (
   index: GenericIndexName | AttIndexName,
   pk: string,
   queryParams?: { limit?: string; nextToken?: string },

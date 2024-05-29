@@ -8,11 +8,12 @@ import { wait } from 'util/executers';
 import { RepoOpConfig } from '../types/config';
 import { BatchGetItemFn } from '../types/ops-repo';
 import { TableStoreBuilder } from '../types/table-store-builder';
+import { KeysAndAttributes } from '@aws-sdk/client-dynamodb/dist-types/models/models_0';
 
 export const batchGetItem = <T extends TableStoreBuilder, M extends Model>(
   operationConfig: RepoOpConfig<T, M>
 ): BatchGetItemFn<M> => {
-  return async (keys: M['Key'][], autoRetry?: boolean): Promise<M['Entity'][] | undefined[]> => {
+  return async (keys: M['Key'][], params?: Omit<KeysAndAttributes, "Keys"> & { AutoRetry?: boolean }): Promise<M['Entity'][] | undefined[]> => {
     const tableName = process.env[operationConfig.dynamoTableNameEnvVar]!;
 
     const items = keys.map((k) => operationConfig.keySerialize(k));
@@ -20,8 +21,8 @@ export const batchGetItem = <T extends TableStoreBuilder, M extends Model>(
 
     const result = await Promise.all(
       chunk.map(async (c): Promise<M['Entity'][] | []> => {
-        const RequestItems = { [tableName]: { Keys: c } };
-        const response = await call(operationConfig.dynamoClient, RequestItems, tableName, autoRetry);
+        const RequestItems = { [tableName]: { Keys: c, ...(params? params : {})} };
+        const response = await call(operationConfig.dynamoClient, RequestItems, tableName, params?.AutoRetry);
         return response.map((item) => {
           return operationConfig.entityDeserialize(item as M['Entity']);
         });

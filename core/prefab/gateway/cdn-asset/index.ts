@@ -76,7 +76,7 @@ export class CdnAssetPrefab extends Construct {
       ...params.distributionProps,
     });
 
-    if (!params.explicitDomains && !params.skipRecord) {
+    if (!params.explicitDomains || !params.skipRecord) {
       const hostedZone = HostedZone.fromLookup(this, 'HostedZoneEnvDns', { domainName: getDomain('', service.props) });
       new ARecord(service, 'Record', {
         zone: hostedZone,

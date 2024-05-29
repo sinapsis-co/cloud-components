@@ -1,4 +1,4 @@
-import { CfnUserPool } from 'aws-cdk-lib/aws-cognito/lib';
+import { UserPoolSESOptions } from 'aws-cdk-lib/aws-cognito/lib';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs/lib/function';
 import { CnameRecord, HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53';
@@ -106,28 +106,22 @@ export class SesDomain extends Construct {
   public static modifier = {
     emailSender: (): ((lambda: NodejsFunction) => void) => {
       return (lambda: NodejsFunction): void => {
-        lambda.addToRolePolicy(
-          new PolicyStatement({ effect: Effect.ALLOW, actions: ['ses:SendRawEmail'], resources: ['*'] })
-        );
+        lambda.addToRolePolicy(new PolicyStatement({ effect: Effect.ALLOW, actions: ['ses:SendRawEmail'], resources: ['*'] }));
       };
     },
     smsSender: (): ((lambda: NodejsFunction) => void) => {
       return (lambda: NodejsFunction): void => {
-        lambda.addToRolePolicy(
-          new PolicyStatement({ effect: Effect.ALLOW, actions: ['sns:Publish'], resources: ['*'] })
-        );
+        lambda.addToRolePolicy(new PolicyStatement({ effect: Effect.ALLOW, actions: ['sns:Publish'], resources: ['*'] }));
       };
     },
   };
 
-  public static getCognitoRef(props: BaseGlobalProps): CfnUserPool.EmailConfigurationProperty {
+  public static getCognitoRef(props: BaseGlobalProps): UserPoolSESOptions {
     return {
-      emailSendingAccount: 'DEVELOPER',
-      from: props.emailSender,
-      sourceArn: `arn:aws:ses:${props.regionName}:${props.deployTarget['services'].account}:identity/${getDomain(
-        '',
-        props
-      )}`,
+      // emailSendingAccount: 'DEVELOPER',
+      fromEmail: props.emailSender,
+      sesVerifiedDomain: getDomain('', props),
+      // sourceArn: `arn:aws:ses:${props.regionName}:${props.deployTarget['services'].account}:identity/${getDomain('', props)}`,
     };
   }
 }

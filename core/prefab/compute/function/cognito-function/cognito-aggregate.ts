@@ -5,10 +5,10 @@ import { Construct } from 'constructs';
 import { getLogicalName } from 'common/naming/get-logical-name';
 import { Service } from 'common/service';
 
-import { BaseFunctionParams } from '../base-function';
+import { BaseAggregateParams } from '../base-function';
 import { CognitoFunction, CognitoHandlerParams } from './cognito-function';
 
-export type CognitoAggregateParams<HandlerName extends string = string> = BaseFunctionParams & {
+export type CognitoAggregateParams<HandlerName extends string = string> = BaseAggregateParams & {
   handlers: Record<HandlerName, CognitoHandlerParams>;
   userPool: UserPool;
 };

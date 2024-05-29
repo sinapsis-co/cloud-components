@@ -27,6 +27,7 @@ export type CdnApiPrefabParams = {
   waf?: WafPrefab;
   skipRecord?: true;
   explicitDomains?: string[];
+  cachePolicyProps?: Omit<awsCloudfront.CachePolicyProps, 'cachePolicyName' | 'headerBehavior' | 'queryStringBehavior'>
 };
 
 export class CdnApiPrefab extends Construct {
@@ -57,6 +58,7 @@ export class CdnApiPrefab extends Construct {
         behavior: 'whitelist',
         headers: [...(params.headersWhitelist || []), 'Authorization'],
       },
+      ...params.cachePolicyProps
     });
 
     this.apiGatewayRequestPolicy = new awsCloudfront.OriginRequestPolicy(this, 'OriginRequestPolicy', {

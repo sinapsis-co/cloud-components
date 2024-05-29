@@ -55,12 +55,7 @@ export class ApiRestPrefab extends Construct {
       },
     });
 
-    const apiUrl: string = Fn.join('', [
-      this.api.restApiId,
-      '.execute-api.',
-      service.props.regionName,
-      '.amazonaws.com',
-    ]);
+    const apiUrl: string = Fn.join('', [this.api.restApiId, '.execute-api.', service.props.regionName, '.amazonaws.com']);
 
     this.basePath = this.api.root.resourceForPath(params.basePath);
 

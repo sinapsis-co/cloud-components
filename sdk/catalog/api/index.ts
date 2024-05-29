@@ -20,10 +20,7 @@ export type ApiInterface<keys extends ApiInterfaceKeys = ApiInterfaceKeys> = {
 };
 
 type OmittedProps<T extends ApiInterfaceKeys> = Pick<ApiInterface<T>, 'response'>;
-export type ApiInterfaceRequest<T extends ApiInterfaceKeys = ApiInterfaceKeys> = Omit<
-  ApiInterface<T>,
-  keyof OmittedProps<T>
->;
+export type ApiInterfaceRequest<T extends ApiInterfaceKeys = ApiInterfaceKeys> = Omit<ApiInterface<T>, keyof OmittedProps<T>>;
 
 // Maps the input list of DynamoDB interface
 export type PaginatedQueryParams = {
@@ -37,7 +34,8 @@ export type PaginatedResponse<ResponseType> = {
   nextToken: string | number | null;
 };
 
-export type ApiMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+export type ApiMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'ALL';
+
 export type TablePermission = 'read' | 'write' | 'readWrite' | 'none';
 
 export type ApiDefinition<Api extends ApiInterface> = {
@@ -50,9 +48,5 @@ export type ApiDefinition<Api extends ApiInterface> = {
   scope?: string;
   schema?: Schemy;
   tablePermission?: TablePermission;
-  authorizationMdw?: (
-    event: APIGatewayProxyEventV2WithJWTAuthorizer,
-    request: ApiInterfaceRequest<Api>,
-    scope?: string
-  ) => Promise<void> | void;
+  authorizationMdw?: (event: APIGatewayProxyEventV2WithJWTAuthorizer, request: ApiInterfaceRequest<Api>, scope?: string) => Promise<void> | void;
 };

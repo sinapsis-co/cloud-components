@@ -38,10 +38,10 @@ export const bucketGetObject = async <TracingMeta extends Record<string, string>
       stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
     });
 
-  const cmd = async () => {
+  const cmd = async (): Promise<Omit<S3.GetObjectOutput, 'Body'> & { Body: string }> => {
     const { Body, ...att } = await s3.send(new S3.GetObjectCommand(params));
-    const bodyContents: string = await streamToString(Body as Readable);
-    return { Body: bodyContents, ...att };
+    const bodyContents: string = (await streamToString(Body as Readable)) as string;
+    return { ...att, Body: bodyContents };
   };
   return traceableFunction('GetObject', 'FAULT_S3_GET_OBJECT', params.Bucket!, cmd, {
     key: params.Key!,

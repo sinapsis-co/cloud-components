@@ -8,8 +8,8 @@ import { Service } from 'common/service';
 
 import { QueuePrefab, QueuePrefabParams } from 'prefab/integration/queue';
 
-import { SynthError } from '@sinapsis-cloud-components/core/common/synth/synth-error';
-import { BaseFunction, BaseFunctionParams, BaseHandlerParams, FUNCTION_DEFAULT_TIMEOUT } from '../base-function';
+import { SynthError } from 'common/synth/synth-error';
+import { BaseFunction, BaseAggregateParams, BaseHandlerParams, FUNCTION_DEFAULT_TIMEOUT } from '../base-function';
 
 export type QueueHandlerParams = BaseHandlerParams & {
   queuePrefab?: QueuePrefab;
@@ -20,7 +20,7 @@ export type QueueHandlerParams = BaseHandlerParams & {
   visibilityTimeoutRatio?: number;
 };
 
-export type QueueFunctionParams = BaseFunctionParams;
+export type QueueFunctionParams = BaseAggregateParams;
 
 export class QueueFunction extends Construct {
   public readonly lambdaFunction: NodejsFunction;

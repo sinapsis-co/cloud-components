@@ -20,31 +20,34 @@ export type CustomDataSourceOptions = Omit<
   | 'type'
 >;
 
-// let dataSource: DataSource | undefined;
+let dataSource: DataSource | undefined;
+let signerTime: number = 0;
 
 export const auroraProxyConnect = async (parameters: CustomDataSourceOptions): Promise<DataSource> => {
   const cmd = async () => {
-    // if (!dataSource) {
-    const signer = new Signer({ hostname: process.env.DB!, port: 5432, username: 'postgres' });
-    const password = await signer.getAuthToken();
-    const dataSource = new DataSource({
-      type: 'postgres',
-      database: 'postgres',
-      host: process.env.DB!,
-      port: 5432,
-      username: 'postgres',
-      password,
-      ssl: true,
-      extra: {
-        ssl: {
-          rejectUnauthorized: false,
+    const time = Date.now();
+    if (time - signerTime > 90000) { // AFTER 15 MIN, SIGNER TOKEN EXPIRES
+      signerTime = new Date().getTime();
+      const signer = new Signer({ hostname: process.env.DB!, port: 5432, username: 'postgres' });
+      const password = await signer.getAuthToken();
+      dataSource = new DataSource({
+        type: 'postgres',
+        database: 'postgres',
+        host: process.env.DB!,
+        port: 5432,
+        username: 'postgres',
+        password,
+        ssl: true,
+        extra: {
+          ssl: {
+            rejectUnauthorized: false,
+          },
         },
-      },
-      ...parameters,
-    });
-    await dataSource.initialize();
-    // }
-    return dataSource;
+        ...parameters,
+      });
+      await dataSource.initialize();
+    }
+    return dataSource!;
   };
   return traceableFunction('Connect', 'FAULT_AURORA_CONNECT', 'Connect', cmd);
 };
