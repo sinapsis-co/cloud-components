@@ -32,12 +32,10 @@ export const createUser = async <
     console.log('<< Create Cognito User >>');
 
     console.log('>> STEP: (1/3) => LOADING CONFIGS');
-    const name = args[4];
-    const password = args[5];
-    const postfix = args[6];
-    const tenant = args[7];
-
-    const email = `${name}+${postfix}@sinapsis.co`;
+    const name = args[4]; // givenName@familyName
+    const email = args[5]; 
+    const password = args[6]
+    const tenant = args[7]; // companyName@something
 
     const { envNameInput, roleName, accountMap, envName } = await preScript(
       globalConstConfig,
@@ -74,10 +72,12 @@ export const createUser = async <
 
     const cognito = new CognitoIdentityProviderClient(role);
 
+    const [givenName, familyName] = name.split('@');
+
     const att = [
       { Name: 'email', Value: email },
-      { Name: 'given_name', Value: name },
-      { Name: 'family_name', Value: name },
+      { Name: 'given_name', Value: givenName },
+      { Name: 'family_name', Value: familyName },
     ];
     if (tenant) {
       const [name, value] = tenant.split('@');
